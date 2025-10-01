@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* YouTube-inspired light mode color scheme */
+:root {
+  --yt-red: #ff0000;
+  --yt-red-dark: #cc0000;
+  --yt-blue: #1b72e8;
+  --yt-blue-dark: #1565c0;
+  --yt-light-bg: #f8f9fa;
+  --yt-light-gray: #f8f9fa;
+  --yt-light-border: #dadce0;
+  --yt-light-hover: #f1f3f4;
+  --yt-light-blue: #e8f0fe;
+  --yt-card: #ffffff;
+  --yt-text-dark: #202124;
+  --yt-text-gray: #5f6368;
+  --yt-text-light: #80868b;
+  --yt-progress-light-bg: #f1f3f4;
+}
+
+.bg-yt-light-gray { background-color: var(--yt-light-gray); }
+.bg-yt-light-bg { background-color: var(--yt-light-bg); }
+.bg-yt-card { background-color: var(--yt-card); }
+.bg-yt-light-hover { background-color: var(--yt-light-hover); }
+.bg-yt-light-blue { background-color: var(--yt-light-blue); }
+.bg-yt-progress-light-bg { background-color: var(--yt-progress-light-bg); }
+.bg-yt-blue { background-color: var(--yt-blue); }
+.bg-yt-blue-dark { background-color: var(--yt-blue-dark); }
+.bg-yt-red { background-color: var(--yt-red); }
+.bg-yt-red-dark { background-color: var(--yt-red-dark); }
+
+.border-yt-light-border { border-color: var(--yt-light-border); }
+
+.text-yt-text-dark { color: var(--yt-text-dark); }
+.text-yt-text-gray { color: var(--yt-text-gray); }
+.text-yt-text-light { color: var(--yt-text-light); }
+.text-yt-blue { color: var(--yt-blue); }
+
+
+.thumbnail-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
