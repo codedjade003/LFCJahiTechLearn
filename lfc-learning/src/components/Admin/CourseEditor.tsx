@@ -25,6 +25,7 @@ interface CourseEditorProps {
 }
 
 export default function CourseEditor({ courseId, onBack, onCourseUpdated }: CourseEditorProps) {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [loading, setLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("info");
@@ -46,7 +47,7 @@ export default function CourseEditor({ courseId, onBack, onCourseUpdated }: Cour
   const fetchCourseData = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/courses/${courseId}`, {
+      const res = await fetch(`${API_BASE}/api/courses/${courseId}`, {
         headers: {
           "Authorization": `Bearer ${token}`,
         },

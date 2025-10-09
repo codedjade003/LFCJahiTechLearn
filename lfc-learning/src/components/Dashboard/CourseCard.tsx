@@ -26,7 +26,7 @@ const typeColor: Record<string, string> = {
 };
 
 // Add this function above your component
-const API_BASE = "http://localhost:5000";
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 function resolveImageUrl(url?: string) {
   if (!url) return ""; // fallback handled later

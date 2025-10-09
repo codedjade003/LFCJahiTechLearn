@@ -17,6 +17,7 @@ interface Analytics {
 }
 
 export default function CourseAnalytics() {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [courses, setCourses] = useState<Course[]>([]);
   const [selectedCourse, setSelectedCourse] = useState("all");
   const [analytics, setAnalytics] = useState<Analytics>({
@@ -44,7 +45,7 @@ export default function CourseAnalytics() {
 
   const fetchCourses = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/courses', {
+      const response = await fetch('${API_BASE}/api/courses', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -65,8 +66,8 @@ export default function CourseAnalytics() {
       setError("");
       
       const url = selectedCourse === 'all' 
-        ? 'http://localhost:5000/api/admin/analytics'
-        : `http://localhost:5000/api/admin/analytics?courseId=${selectedCourse}`;
+        ? `${API_BASE}/api/admin/analytics`
+        : `${API_BASE}/api/admin/analytics?courseId=${selectedCourse}`;
       
       const response = await fetch(url, {
         headers: {

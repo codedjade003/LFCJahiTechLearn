@@ -47,7 +47,7 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
   const [editingSection, setEditingSection] = useState<string | null>(null);
   const [editSectionData, setEditSectionData] = useState({ title: "", description: "" });
 
-  const API_BASE = "http://localhost:5000";
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   function resolveMediaUrl(url?: string) {
     if (!url) return "";
@@ -75,7 +75,7 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
   const fetchSections = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:5000/api/courses/${courseId}/sections`);
+      const res = await fetch(`${API_BASE}/api/courses/${courseId}/sections`);
       if (res.ok) {
         const data = await res.json();
         setSections(data);
@@ -117,7 +117,7 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/courses/${courseId}/sections/${sectionId}`, {
+      const res = await fetch(`${API_BASE}/api/courses/${courseId}/sections/${sectionId}`, {
         method: "PUT",
         headers: { 
           "Content-Type": "application/json",
@@ -166,7 +166,7 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
     if (!newSection.title.trim()) return;
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/courses/${courseId}/sections`, {
+      const res = await fetch(`${API_BASE}/api/courses/${courseId}/sections`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -206,7 +206,7 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
         const formData = new FormData();
         formData.append("file", newModule.file);
         
-        const uploadRes = await fetch(`http://localhost:5000/api/courses/upload/${newModule.type}`, {
+        const uploadRes = await fetch(`${API_BASE}/api/courses/upload/${newModule.type}`, {
           method: "POST",
           headers: { "Authorization": `Bearer ${token}` },
           body: formData,
@@ -242,8 +242,8 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
       const method = editingModule ? "PUT" : "POST";
       
       const url = editingModule 
-        ? `http://localhost:5000/api/courses/${courseId}/sections/${sectionId}/modules/${editingModule.moduleId}`
-        : `http://localhost:5000/api/courses/${courseId}/sections/${sectionId}/modules`;
+        ? `${API_BASE}/api/courses/${courseId}/sections/${sectionId}/modules/${editingModule.moduleId}`
+        : `${API_BASE}/api/courses/${courseId}/sections/${sectionId}/modules`;
 
       console.log('Making API call to:', url, 'with method:', method);
 
@@ -327,7 +327,7 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
     
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/courses/${courseId}/sections/${sectionId}`, {
+      const res = await fetch(`${API_BASE}/api/courses/${courseId}/sections/${sectionId}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -353,7 +353,7 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
     
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/courses/${courseId}/sections/${sectionId}/modules/${moduleId}`, {
+      const res = await fetch(`${API_BASE}/api/courses/${courseId}/sections/${sectionId}/modules/${moduleId}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`,

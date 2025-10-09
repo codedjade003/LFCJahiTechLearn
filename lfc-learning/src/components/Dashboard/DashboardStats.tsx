@@ -12,6 +12,7 @@ type StatsShape = {
 };
 
 const DashboardStats: React.FC = () => {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [stats, setStats] = useState<StatsShape>({
     streak: 0,
     totalCourses: 0,
@@ -33,7 +34,7 @@ const DashboardStats: React.FC = () => {
           headers["Authorization"] = `Bearer ${token}`;
         }
 
-        const res = await fetch("http://localhost:5000/api/stats/me", { headers });
+        const res = await fetch(`${API_BASE}/api/stats/me`, { headers });
         
         if (res.ok) {
           const data = await res.json();

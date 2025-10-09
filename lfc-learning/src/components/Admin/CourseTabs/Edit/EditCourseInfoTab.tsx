@@ -9,7 +9,7 @@ interface EditCourseInfoTabProps {
 }
 
 export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: EditCourseInfoTabProps) {
-  const API_BASE = "http://localhost:5000";
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   // Update the resolveImageUrl function to handle video files
   function resolveImageUrl(url?: string) {

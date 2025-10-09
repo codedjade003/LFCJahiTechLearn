@@ -15,6 +15,7 @@ interface Project {
 }
 
 export default function CourseProjectsTab({ courseId }: { courseId: string }) {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -33,7 +34,7 @@ export default function CourseProjectsTab({ courseId }: { courseId: string }) {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `http://localhost:5000/api/courses/${courseId}`,
+        `${API_BASE}/api/courses/${courseId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (!res.ok) throw new Error("Failed to fetch course");
@@ -87,7 +88,7 @@ export default function CourseProjectsTab({ courseId }: { courseId: string }) {
     try {
       // First get the course to update
       const courseRes = await fetch(
-        `http://localhost:5000/api/courses/${courseId}`,
+        `${API_BASE}/api/courses/${courseId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
@@ -96,7 +97,7 @@ export default function CourseProjectsTab({ courseId }: { courseId: string }) {
 
       // Update course with project data
       const updateRes = await fetch(
-        `http://localhost:5000/api/courses/${courseId}`,
+        `${API_BASE}/api/courses/${courseId}`,
         {
           method: "PUT",
           headers: {
@@ -130,7 +131,7 @@ export default function CourseProjectsTab({ courseId }: { courseId: string }) {
 
       // Get course first
       const courseRes = await fetch(
-        `http://localhost:5000/api/courses/${courseId}`,
+        `${API_BASE}/api/courses/${courseId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
@@ -139,7 +140,7 @@ export default function CourseProjectsTab({ courseId }: { courseId: string }) {
 
       // Update course without project
       const updateRes = await fetch(
-        `http://localhost:5000/api/courses/${courseId}`,
+        `${API_BASE}/api/courses/${courseId}`,
         {
           method: "PUT",
           headers: {

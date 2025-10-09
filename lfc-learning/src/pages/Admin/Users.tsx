@@ -1,6 +1,7 @@
 // src/pages/Admin/Users.tsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaUsers, FaUserPlus, FaShieldAlt, FaClipboardList, FaChevronRight, FaBars } from "react-icons/fa";
+import { useLocation } from "react-router-dom";
 import AllUsersTab from "../../components/Admin/UsersTabs/AllUsersTab.tsx";
 import AddUsersTab from "../../components/Admin/UsersTabs/AddUsersTab.tsx";
 import AccessSettingsTab from "../../components/Admin/UsersTabs/AccessSettingsTab.tsx";
@@ -9,6 +10,14 @@ import LogsTab from "../../components/Admin/UsersTabs/LogsTab.tsx";
 export default function Users() {
   const [activeTab, setActiveTab] = useState("all");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const location = useLocation();
+
+  // Check for tab state from navigation
+  useEffect(() => {
+    if (location.state?.activeTab) {
+      setActiveTab(location.state.activeTab);
+    }
+  }, [location.state]);
 
   const tabs = [
     { key: "all", label: "All Users", icon: <FaUsers /> },

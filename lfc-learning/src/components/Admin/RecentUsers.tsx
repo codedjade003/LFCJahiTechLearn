@@ -20,6 +20,7 @@ interface ApiResponse {
 }
 
 export default function RecentUsers() {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -33,7 +34,7 @@ export default function RecentUsers() {
 
   const fetchRecentUsers = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/admin/recent-users?page=${currentPage}&limit=${limit}`, {
+      const response = await fetch(`${API_BASE}/api/admin/recent-users?page=${currentPage}&limit=${limit}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -87,7 +88,7 @@ export default function RecentUsers() {
     if (!confirm('Are you sure you want to delete this user?')) return;
     
     try {
-      const response = await fetch(`http://localhost:5000/api/admin/users/${userId}`, {
+      const response = await fetch(`${API_BASE}/api/admin/users/${userId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`

@@ -9,6 +9,7 @@ interface TopbarProps {
 }
 
 const Topbar = ({ onMenuClick }: TopbarProps) => {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const { user, logout } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -26,7 +27,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
   useEffect(() => {
     const fetchNotificationCount = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/notifications/my?read=false', {
+        const response = await fetch(`${API_BASE}/api/notifications/my?read=false`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
@@ -51,7 +52,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
   // Mark as read function
   const markAsRead = async (notificationId: string) => {
     try {
-      await fetch(`http://localhost:5000/api/notifications/my/${notificationId}/read`, {
+      await fetch(`${API_BASE}/api/notifications/my/${notificationId}/read`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`

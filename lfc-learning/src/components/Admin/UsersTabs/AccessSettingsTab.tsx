@@ -30,6 +30,7 @@ interface Course {
 }
 
 const AccessSettingsTab = () => {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [users, setUsers] = useState<User[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,7 +50,7 @@ const AccessSettingsTab = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/auth/users', {
+      const response = await fetch(`${API_BASE}/api/auth/users`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -79,7 +80,7 @@ const AccessSettingsTab = () => {
   const fetchCourses = async () => {
     try {
       setCoursesLoading(true);
-      const response = await fetch('http://localhost:5000/api/courses', {
+      const response = await fetch(`${API_BASE}/api/courses`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -166,7 +167,7 @@ const AccessSettingsTab = () => {
     setSaving(true);
     try {
       const promises = changes.map(([userId, newRole]) =>
-        fetch(`http://localhost:5000/api/users/${userId}/role`, {
+        fetch(`${API_BASE}/api/users/${userId}/role`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -214,7 +215,7 @@ const AccessSettingsTab = () => {
     try {
       const promises = assignments.map((assignment) => { // Remove destructuring here
         const user = users.find(u => u.id === assignment.userId); // Use assignment.userId
-        return fetch(`http://localhost:5000/api/courses/${assignment.courseId}/instructors`, { // Use assignment.courseId
+        return fetch(`${API_BASE}/api/courses/${assignment.courseId}/instructors`, { // Use assignment.courseId
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

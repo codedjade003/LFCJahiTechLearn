@@ -63,7 +63,7 @@ const AllUsersTab: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('all');
   const [filterVerified, setFilterVerified] = useState('all');
-  const API_BASE = "http://localhost:5000";
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [visibleFields, setVisibleFields] = useState({
     name: true,
     email: true,

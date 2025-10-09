@@ -7,6 +7,7 @@ interface CourseInfoTabProps {
 }
 
 export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoTabProps) {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [types, setTypes] = useState<string[]>([]);
@@ -34,7 +35,7 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
       async function fetchCourseData() {
         try {
           const token = localStorage.getItem("token");
-          const res = await fetch(`http://localhost:5000/api/courses/${courseId}`, {
+          const res = await fetch(`${API_BASE}/api/courses/${courseId}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           
@@ -66,7 +67,7 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
   useEffect(() => {
     async function fetchEnums() {
       try {
-        const res = await fetch("http://localhost:5000/api/courses/enums");
+        const res = await fetch("${API_BASE}/api/courses/enums");
         if (res.ok) {
           const data = await res.json();
           console.log("Enums API response:", data); // 👈 check this
@@ -93,7 +94,7 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
     formData.append("file", file);
     
     try {
-      const res = await fetch(`http://localhost:5000/api/courses/upload/${fileType}`, {
+      const res = await fetch(`${API_BASE}/api/courses/upload/${fileType}`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -160,8 +161,8 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
 
       // Determine if we're creating or updating
       const url = courseId 
-        ? `http://localhost:5000/api/courses/${courseId}` // UPDATE
-        : "http://localhost:5000/api/courses"; // CREATE
+        ? `${API_BASE}/api/courses/${courseId}` // UPDATE
+        : `${API_BASE}/api/courses`; // CREATE
       
       const method = courseId ? "PUT" : "POST";
 

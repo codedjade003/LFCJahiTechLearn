@@ -18,6 +18,7 @@ interface Notification {
 }
 
 const Notifications = () => {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -38,7 +39,7 @@ const Notifications = () => {
       if (filters.read !== 'all') params.append('read', filters.read);
       if (filters.source !== 'all') params.append('source', filters.source);
 
-      const response = await fetch(`http://localhost:5000/api/notifications/my?${params}`, {
+      const response = await fetch(`${API_BASE}/api/notifications/my?${params}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -58,7 +59,7 @@ const Notifications = () => {
 
   const markAllAsRead = async () => {
     try {
-      await fetch('http://localhost:5000/api/notifications/my/read-all', {
+      await fetch(`${API_BASE}/api/notifications/my/read-all`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`

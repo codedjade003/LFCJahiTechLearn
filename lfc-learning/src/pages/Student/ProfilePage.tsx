@@ -21,6 +21,7 @@ interface Education {
 }
 
 const ProfilePage = () => {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const { user, setUser, fetchUser } = useAuth();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
@@ -135,7 +136,7 @@ const ProfilePage = () => {
       if (profilePictureFile) {
         const pictureFormData = new FormData();
         pictureFormData.append("profilePicture", profilePictureFile);
-        await fetch("http://localhost:5000/api/auth/upload-profile-picture", {
+        await fetch(`${API_BASE}/api/auth/upload-profile-picture`, {
           method: "PUT",
           headers: { Authorization: `Bearer ${token}` },
           body: pictureFormData,
@@ -148,7 +149,7 @@ const ProfilePage = () => {
         coverFormData.append("coverPhoto", coverPhotoFile);
         coverFormData.append("coverPosition", JSON.stringify(coverPosition));
         
-        await fetch("http://localhost:5000/api/auth/upload-cover-photo", {
+        await fetch(`${API_BASE}/api/auth/upload-cover-photo`, {
           method: "PUT",
           headers: { Authorization: `Bearer ${token}` },
           body: coverFormData,
@@ -156,7 +157,7 @@ const ProfilePage = () => {
       }
 
       // Update profile (rest of your existing code remains the same)
-      const res = await fetch("http://localhost:5000/api/auth/update-profile", {
+      const res = await fetch(`${API_BASE}/api/auth/update-profile`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -227,7 +228,7 @@ const validateUsername = (username: string) => {
       try {
         setIsCheckingUsername(true);
         const token = localStorage.getItem("token");
-        const res = await fetch(`http://localhost:5000/api/auth/check-username?username=${encodeURIComponent(username)}`, {
+        const res = await fetch(`${API_BASE}/api/auth/check-username?username=${encodeURIComponent(username)}`, {
           headers: {
             "Authorization": `Bearer ${token}`,
           },

@@ -15,6 +15,7 @@ interface CourseProgress {
 }
 
 export default function UserProgress() {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [progressData, setProgressData] = useState<CourseProgress[]>([]);
   const [stats, setStats] = useState({
     atRisk: 0,
@@ -30,7 +31,7 @@ export default function UserProgress() {
 
   const fetchUserProgress = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/enrollments/progress/overview', {
+      const response = await fetch(`${API_BASE}/api/enrollments/progress/overview`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }

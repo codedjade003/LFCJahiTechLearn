@@ -14,6 +14,7 @@ interface MaterialsUploaderProps {
 }
 
 export default function MaterialsUploader({ materials, setMaterials }: MaterialsUploaderProps) {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [uploading, setUploading] = useState(false);
 
   const onDrop = async (acceptedFiles: File[]) => {
@@ -25,7 +26,7 @@ export default function MaterialsUploader({ materials, setMaterials }: Materials
       formData.append("file", file);
 
       try {
-        const res = await fetch("http://localhost:5000/api/uploads/material", {
+        const res = await fetch(`${API_BASE}/api/uploads/material`, {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },
           body: formData,

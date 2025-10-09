@@ -40,6 +40,7 @@ interface UserProgress {
 }
 
 const UserProgressTab = () => {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [progressData, setProgressData] = useState<UserProgress[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -62,7 +63,7 @@ const UserProgressTab = () => {
 
   const fetchProgressData = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/enrollments/all', {
+      const response = await fetch(`${API_BASE}/api/enrollments/all`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }

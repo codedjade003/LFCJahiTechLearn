@@ -12,6 +12,7 @@ interface Assessment {
 }
 
 export default function PendingAssessments() {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [assessments, setAssessments] = useState<Assessment[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -21,7 +22,7 @@ export default function PendingAssessments() {
 
   const fetchPendingAssessments = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/admin/pending-assessments', {
+      const response = await fetch(`${API_BASE}/api/admin/pending-assessments`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }

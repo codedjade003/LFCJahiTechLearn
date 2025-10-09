@@ -29,6 +29,7 @@ interface User {
 }
 
 export default function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps) {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [collapsed, setCollapsed] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
@@ -56,7 +57,7 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps)
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        const res = await fetch("http://localhost:5000/api/auth/me", {
+        const res = await fetch(`${API_BASE}/api/auth/me`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,

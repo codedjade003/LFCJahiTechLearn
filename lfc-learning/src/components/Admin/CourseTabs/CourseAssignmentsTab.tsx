@@ -16,6 +16,7 @@ interface Assignment {
 }
 
 export default function CourseAssignmentsTab({ courseId }: { courseId: string | null }) {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -32,7 +33,7 @@ export default function CourseAssignmentsTab({ courseId }: { courseId: string | 
   async function fetchAssignments() {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/courses/${courseId}/assignments`, {
+      const res = await fetch(`${API_BASE}/api/courses/${courseId}/assignments`, {
         headers: { "Authorization": `Bearer ${token}` },
       });
       
@@ -83,7 +84,7 @@ export default function CourseAssignmentsTab({ courseId }: { courseId: string | 
       let res: Response;
       
       if (editingId) {
-        res = await fetch(`http://localhost:5000/api/courses/${courseId}/assignments/${editingId}`, {
+        res = await fetch(`${API_BASE}/api/courses/${courseId}/assignments/${editingId}`, {
           method: "PUT",
           headers: { 
             "Content-Type": "application/json",
@@ -92,7 +93,7 @@ export default function CourseAssignmentsTab({ courseId }: { courseId: string | 
           body: JSON.stringify(assignmentData),
         });
       } else {
-        res = await fetch(`http://localhost:5000/api/courses/${courseId}/assignments`, {
+        res = await fetch(`${API_BASE}/api/courses/${courseId}/assignments`, {
           method: "POST",
           headers: { 
             "Content-Type": "application/json",
@@ -139,7 +140,7 @@ export default function CourseAssignmentsTab({ courseId }: { courseId: string | 
         return;
       }
 
-      const res = await fetch(`http://localhost:5000/api/courses/${courseId}/assignments/${id}`, {
+      const res = await fetch(`${API_BASE}/api/courses/${courseId}/assignments/${id}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` },
       });

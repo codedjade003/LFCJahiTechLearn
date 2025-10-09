@@ -11,6 +11,7 @@ interface UserFormData {
 }
 
 const AddUsersTab = () => {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [userForms, setUserForms] = useState<UserFormData[]>([
     { name: '', email: '', password: '', username: '', role: 'student', phoneNumber: '' }
   ]);
@@ -56,7 +57,7 @@ const AddUsersTab = () => {
     formData.append('file', file);
 
     try {
-      const response = await fetch('http://localhost:5000/api/users/bulk', {
+      const response = await fetch(`${API_BASE}/api/users/bulk`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -88,7 +89,7 @@ const AddUsersTab = () => {
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/auth/register-admin', {
+      const response = await fetch(`${API_BASE}/api/auth/register-admin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -129,7 +130,7 @@ const AddUsersTab = () => {
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/users/bulk', {
+      const response = await fetch(`${API_BASE}/api/users/bulk`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

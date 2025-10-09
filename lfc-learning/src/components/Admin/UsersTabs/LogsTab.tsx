@@ -19,6 +19,7 @@ interface LogEntry {
 }
 
 const LogsTab = () => {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -36,7 +37,7 @@ const LogsTab = () => {
 
   const fetchLogs = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/logs', {
+      const response = await fetch(`${API_BASE}/api/logs`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }

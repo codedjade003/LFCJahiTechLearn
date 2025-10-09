@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function VerifyEmailPage() {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [code, setCode] = useState(Array(6).fill("")); // 6 separate digits
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -37,7 +38,7 @@ export default function VerifyEmailPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("http://localhost:5000/api/auth/verify-email", {
+      const res = await fetch(`${API_BASE}/api/auth/verify-email`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, code: codeStr }),
@@ -61,7 +62,7 @@ export default function VerifyEmailPage() {
   const handleResend = async (silent = false) => {
     if (!silent) setResendMsg(null);
     try {
-      const res = await fetch("http://localhost:5000/api/auth/resend-verification", {
+      const res = await fetch(`${API_BASE}/api/auth/resend-verification`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),

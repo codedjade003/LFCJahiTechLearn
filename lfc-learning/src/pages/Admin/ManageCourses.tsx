@@ -31,7 +31,7 @@ export default function ManageCourses() {
   };
 
     // put this above your component
-  const API_BASE = "http://localhost:5000";
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   function resolveImageUrl(url?: string) {
     if (!url) return ""; // fallback handled later
@@ -45,7 +45,7 @@ export default function ManageCourses() {
   const fetchCourses = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/courses", {
+      const res = await fetch(`${API_BASE}/api/courses`, {
         headers: {
           "Authorization": `Bearer ${token}`,
         },
@@ -96,7 +96,7 @@ export default function ManageCourses() {
           return;
         }
 
-        const res = await fetch("http://localhost:5000/api/courses/visibility", {
+        const res = await fetch(`${API_BASE}/api/courses/visibility`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -134,7 +134,7 @@ export default function ManageCourses() {
     
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/courses/${courseId}`, {
+      const res = await fetch(`${API_BASE}/api/courses/${courseId}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`,

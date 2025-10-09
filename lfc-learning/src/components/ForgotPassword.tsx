@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 
 export default function ForgotPassword() {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [step, setStep] = useState<"request" | "code" | "reset">("request");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState(Array(6).fill("")); // 6-digit code
@@ -28,7 +29,7 @@ export default function ForgotPassword() {
         setMessage(null);
         setError(null);
       }
-      const res = await axios.post("http://localhost:5000/api/auth/forgot-password", { email });
+      const res = await axios.post(`${API_BASE}/api/auth/forgot-password`, { email });
       setMessage(res.data.message);
       setStep("code");
       if (!silent) setCooldown(60); // start cooldown only if user clicked
@@ -63,7 +64,7 @@ export default function ForgotPassword() {
       setLoading(true);
       setMessage(null);
       setError(null);
-      const res = await axios.post("http://localhost:5000/api/auth/reset-password", {
+      const res = await axios.post(`${API_BASE}/api/auth/reset-password`, {
         email,
         code: codeStr,
         newPassword,

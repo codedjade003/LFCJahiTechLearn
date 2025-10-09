@@ -20,6 +20,7 @@ interface UserProfile {
 }
 
 const StudentDashboard = () => {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   useAuthGuard();
 
   const [courses, setCourses] = useState<Course[]>([]);
@@ -72,8 +73,8 @@ const StudentDashboard = () => {
         
         // Fetch courses and user's enrollments in parallel
         const [coursesRes, enrollmentsRes] = await Promise.allSettled([
-          fetch("http://localhost:5000/api/courses"),
-          fetch("http://localhost:5000/api/enrollments/my", {
+          fetch(`${API_BASE}/api/courses`),
+          fetch(`${API_BASE}/api/enrollments/my`, {
             headers: { Authorization: `Bearer ${token}` },
           })
         ]);
@@ -131,7 +132,7 @@ const StudentDashboard = () => {
         setCourses(transformedCourses);
 
         // Load user profile data
-        const userRes = await fetch("http://localhost:5000/api/auth/me", {
+        const userRes = await fetch(`${API_BASE}/api/auth/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -172,7 +173,7 @@ const StudentDashboard = () => {
         const pictureFormData = new FormData();
         pictureFormData.append("profilePicture", file);
 
-        await fetch("http://localhost:5000/api/auth/upload-profile-picture", {
+        await fetch(`${API_BASE}/api/auth/upload-profile-picture`, {
           method: "PUT",
           headers: { Authorization: `Bearer ${token}` },
           body: pictureFormData,
@@ -181,7 +182,7 @@ const StudentDashboard = () => {
 
       const { profilePicturePreview, ...safeProfile } = profile;
 
-      await fetch("http://localhost:5000/api/auth/update-profile", {
+      await fetch(`${API_BASE}/api/auth/update-profile`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -190,7 +191,7 @@ const StudentDashboard = () => {
         body: JSON.stringify(safeProfile),
       });
 
-      await fetch("http://localhost:5000/api/auth/seen-onboarding", {
+      await fetch("${API_BASE}/api/auth/seen-onboarding", {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
       });

@@ -9,11 +9,12 @@ interface CourseGridProps {
 }
 
 const CourseGrid = ({ courses, searchQuery = "", onEnrollmentUpdate }: CourseGridProps) => {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const handleEnroll = async (courseId: string): Promise<void> => {
     const token = localStorage.getItem("token");
     if (!token) throw new Error("Authentication required");
 
-    const response = await fetch(`http://localhost:5000/api/enrollments/${courseId}`, {
+    const response = await fetch(`${API_BASE}/api/enrollments/${courseId}`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,

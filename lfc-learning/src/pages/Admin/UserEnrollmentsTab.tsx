@@ -26,6 +26,7 @@ interface SelectedItem {
 }
 
 const UserEnrollmentsTab = () => {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -51,7 +52,7 @@ const UserEnrollmentsTab = () => {
 
   const fetchEnrollments = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/enrollments/all", {
+      const res = await fetch(`${API_BASE}/api/enrollments/all`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -71,7 +72,7 @@ const UserEnrollmentsTab = () => {
       if (userQuery.trim()) {
         try {
           const res = await fetch(
-            `http://localhost:5000/api/users?search=${encodeURIComponent(userQuery)}`,
+            `${API_BASE}/api/users?search=${encodeURIComponent(userQuery)}`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -99,7 +100,7 @@ const UserEnrollmentsTab = () => {
       if (courseQuery.trim()) {
         try {
           const res = await fetch(
-            `http://localhost:5000/api/courses?search=${encodeURIComponent(courseQuery)}`,
+            `${API_BASE}/api/courses?search=${encodeURIComponent(courseQuery)}`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -161,7 +162,7 @@ const UserEnrollmentsTab = () => {
     try {
       for (const user of selectedUsers) {
         for (const course of selectedCourses) {
-          await fetch("http://localhost:5000/api/enrollments/enroll", {
+          await fetch(`${API_BASE}/api/enrollments/enroll`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -188,7 +189,7 @@ const UserEnrollmentsTab = () => {
     try {
       for (const course of selectedCourses) {
         await fetch(
-          `http://localhost:5000/api/enrollments/enroll-all/${course._id}`,
+          `${API_BASE}/api/enrollments/enroll-all/${course._id}`,
           {
             method: "POST",
             headers: {
@@ -212,7 +213,7 @@ const UserEnrollmentsTab = () => {
       for (const user of selectedUsers) {
         for (const course of selectedCourses) {
           await fetch(
-            `http://localhost:5000/api/enrollments/unenroll/${course._id}/${user._id}`,
+            `${API_BASE}/api/enrollments/unenroll/${course._id}/${user._id}`,
             {
               method: "DELETE",
               headers: {
@@ -236,7 +237,7 @@ const UserEnrollmentsTab = () => {
     try {
       for (const course of selectedCourses) {
         await fetch(
-          `http://localhost:5000/api/enrollments/unenroll-all/${course._id}`,
+          `${API_BASE}/api/enrollments/unenroll-all/${course._id}`,
           {
             method: "DELETE",
             headers: {

@@ -63,7 +63,7 @@ type Course = {
 };
 
 export default function CoursePublishTab({ courseId }: { courseId: string }) {
-  const API_BASE = "http://localhost:5000";
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");

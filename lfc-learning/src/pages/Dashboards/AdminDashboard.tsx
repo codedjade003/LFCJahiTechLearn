@@ -27,6 +27,7 @@ interface DashboardStats {
 }
 
 export default function AdminDashboard(): JSX.Element {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [stats, setStats] = useState<DashboardStats>({
     totalCourses: 0,
     activeUsers: 0,
@@ -42,7 +43,7 @@ export default function AdminDashboard(): JSX.Element {
 
   const fetchDashboardData = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/admin/dashboard', {
+      const response = await fetch(`${API_BASE}/api/admin/dashboard`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
