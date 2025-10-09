@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { FaEdit, FaTrash, FaSearch, FaSave, FaTimes, FaFilter } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaSearch, FaSave, FaTimes, FaFileExcel, FaFileCsv, FaFilter } from 'react-icons/fa';
 
 interface User {
   id: string;
@@ -147,6 +147,105 @@ const AllUsersTab: React.FC = () => {
       return matchesSearch && matchesRole && matchesVerified;
     });
   }, [users, searchTerm, filterRole, filterVerified]);
+
+  // Add this function to handle data export
+  const exportToExcel = (format: 'xlsx' | 'csv') => {
+    // Get only visible fields
+    const visibleFieldKeys = Object.entries(visibleFields)
+      .filter(([key, isVisible]) => isVisible && key !== 'showFieldPicker')
+      .map(([key]) => key);
+
+    // Prepare data for export
+    const exportData = filteredUsers.map(user => {
+      const row: any = {};
+      
+      visibleFieldKeys.forEach(field => {
+        switch (field) {
+          case 'address':
+            row[field] = user.address ? 
+              `${user.address.street || ''}, ${user.address.city || ''}, ${user.address.state || ''}`.replace(/, ,/g, ',').replace(/,$/, '') 
+              : 'N/A';
+            break;
+          case 'skills':
+            row[field] = user.skills?.join(', ') || 'N/A';
+            break;
+          case 'socialLinks':
+            row[field] = user.socialLinks ? 
+              Object.entries(user.socialLinks)
+                .filter(([_, url]) => url)
+                .map(([platform, url]) => `${platform}: ${url}`)
+                .join('; ') 
+              : 'N/A';
+            break;
+          case 'preferences':
+            row[field] = user.preferences ? 
+              `Email: ${user.preferences.emailNotifications ? 'Yes' : 'No'}, Push: ${user.preferences.pushNotifications ? 'Yes' : 'No'}, Theme: ${user.preferences.theme || 'Default'}`
+              : 'N/A';
+            break;
+          case 'streak':
+            row[field] = user.streak ? 
+              `Current: ${user.streak.current}, Longest: ${user.streak.longest}` 
+              : 'N/A';
+            break;
+          case 'dateOfBirth':
+          case 'lastLogin':
+          case 'createdAt':
+          case 'updatedAt':
+            row[field] = user[field as keyof User] ? 
+              new Date(user[field as keyof User] as string).toLocaleDateString() 
+              : 'N/A';
+            break;
+          default:
+            row[field] = user[field as keyof User] || 'N/A';
+        }
+      });
+      
+      return row;
+    });
+
+    if (format === 'csv') {
+      exportToCSV(exportData, visibleFieldKeys);
+    } else {
+      exportToXLSX(exportData, visibleFieldKeys);
+    }
+  };
+
+  const exportToCSV = (data: any[], headers: string[]) => {
+    const csvHeaders = headers.map(header => `"${header}"`).join(',');
+    const csvRows = data.map(row => 
+      headers.map(header => `"${String(row[header] || '').replace(/"/g, '""')}"`).join(',')
+    );
+    
+    const csvContent = [csvHeaders, ...csvRows].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    downloadFile(blob, `users_${new Date().toISOString().split('T')[0]}.csv`);
+  };
+
+  const exportToXLSX = async (data: any[], headers: string[]) => {
+    try {
+      const XLSX = await import('xlsx');
+      
+      // Use headers to ensure proper column order
+      const worksheet = XLSX.utils.json_to_sheet(data, { header: headers });
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Users');
+      XLSX.writeFile(workbook, `users_${new Date().toISOString().split('T')[0]}.xlsx`);
+    } catch (error) {
+      console.error('Error exporting to Excel:', error);
+      alert('Error exporting to Excel. Please try again.');
+    }
+  };
+
+  const downloadFile = (blob: Blob, filename: string) => {
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const handleEdit = (id: string) => {
     setUsers(users.map(user => 
@@ -306,6 +405,28 @@ const AllUsersTab: React.FC = () => {
           >
             <FaFilter />
           </button>
+
+          {/* Export buttons */}
+          <div className="flex gap-2">
+            <button
+              onClick={() => exportToExcel('xlsx')}
+              disabled={filteredUsers.length === 0}
+              className="flex items-center gap-2 bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              title="Export to Excel"
+            >
+              <FaFileExcel className="w-4 h-4" />
+              Excel
+            </button>
+            <button
+              onClick={() => exportToExcel('csv')}
+              disabled={filteredUsers.length === 0}
+              className="flex items-center gap-2 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              title="Export to CSV"
+            >
+              <FaFileCsv className="w-4 h-4" />
+              CSV
+            </button>
+          </div>
         </div>
       </div>
 
@@ -335,11 +456,13 @@ const AllUsersTab: React.FC = () => {
       )}
 
       {/* Users Table */}
-      <div className="overflow-x-auto bg-white rounded-lg border border-gray-200">
+    <div className="overflow-x-auto bg-white rounded-lg border border-gray-200">
+      <div className="relative">
         <div className="overflow-x-auto" style={{ maxWidth: '100vw', maxHeight: '70vh' }}>
           <table className="w-full">
-            <thead className="bg-gray-50 sticky top-0">
+            <thead className="bg-gray-50 sticky top-0 z-30">
               <tr>
+                {/* All your existing th elements for fields */}
                 {visibleFields.name && (
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[120px]">
                     Name
@@ -466,14 +589,16 @@ const AllUsersTab: React.FC = () => {
                   </th>
                 )}
 
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">
-                  Actions
+                {/* Locked Actions column */}
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px] sticky top-0 right-0 bg-gray-50 z-30 border-l border-gray-200">
+                    Actions
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {filteredUsers.map((user) => (
                 <tr key={user.id} className="hover:bg-gray-50">
+                  {/* All your existing td elements for fields */}
                   {visibleFields.name && (
                     <td className="px-4 py-3">
                       {user.isEditing ? (
@@ -691,51 +816,52 @@ const AllUsersTab: React.FC = () => {
                       {user.company || 'N/A'}
                     </td>
                   )}
-
-                  <td className="px-4 py-3">
-                    <div className="flex space-x-2">
-                      {user.isEditing ? (
-                        <>
-                          <button
-                            onClick={() => handleSave(user.id)}
-                            className="p-1 text-green-600 hover:text-green-800"
-                            title="Save"
-                          >
-                            <FaSave />
-                          </button>
-                          <button
-                            onClick={() => handleCancel(user.id)}
-                            className="p-1 text-red-600 hover:text-red-800"
-                            title="Cancel"
-                          >
-                            <FaTimes />
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <button
-                            onClick={() => handleEdit(user.id)}
-                            className="p-1 text-blue-600 hover:text-blue-800"
-                            title="Edit"
-                          >
-                            <FaEdit />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(user.id)}
-                            className="p-1 text-red-600 hover:text-red-800"
-                            title="Delete"
-                            disabled={user.email === 'codedjade003@gmail.com'}
-                          >
-                            <FaTrash />
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    {/* Locked Actions column */}
+                    <td className="px-4 py-3 sticky right-0 bg-white border-l border-gray-200">
+                      <div className="flex space-x-2">
+                        {user.isEditing ? (
+                          <>
+                            <button
+                              onClick={() => handleSave(user.id)}
+                              className="p-1 text-green-600 hover:text-green-800"
+                              title="Save"
+                            >
+                              <FaSave />
+                            </button>
+                            <button
+                              onClick={() => handleCancel(user.id)}
+                              className="p-1 text-red-600 hover:text-red-800"
+                              title="Cancel"
+                            >
+                              <FaTimes />
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              onClick={() => handleEdit(user.id)}
+                              className="p-1 text-blue-600 hover:text-blue-800"
+                              title="Edit"
+                            >
+                              <FaEdit />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(user.id)}
+                              className="p-1 text-red-600 hover:text-red-800"
+                              title="Delete"
+                              disabled={user.email === 'codedjade003@gmail.com'}
+                            >
+                              <FaTrash />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
         
         {filteredUsers.length === 0 && (

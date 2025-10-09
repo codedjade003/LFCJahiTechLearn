@@ -1,6 +1,6 @@
 export const isAdminOnly = (req, res, next) => {
   const isOriginalAdmin = req.user.id.toString() === process.env.ADMIN_ID;
-  const isAdminOnly = req.user.role === "admin-only";
+  const isAdminOnly = req.user.role === "admin-only" || "admin";
 
   if (isOriginalAdmin || isAdminOnly) {
     return next();

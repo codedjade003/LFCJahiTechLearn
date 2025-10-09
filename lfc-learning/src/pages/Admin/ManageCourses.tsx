@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { FaEdit, FaTrash, FaEye, FaEyeSlash, FaSave } from "react-icons/fa";
 import CourseEditor from "../../components/Admin/CourseEditor";
+import { useNavigate } from "react-router-dom";
 
 interface Course {
   _id: string;
@@ -23,14 +24,19 @@ export default function ManageCourses() {
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [visibilityUpdates, setVisibilityUpdates] = useState<Record<string, boolean>>({});
+  const navigate = useNavigate();
 
-  // put this above your component
-const API_BASE = "http://localhost:5000";
+  const handleCreate = () => {
+    navigate('/admin/dashboard/courses/new');
+  };
 
-function resolveImageUrl(url?: string) {
-  if (!url) return ""; // fallback handled later
-  return url.startsWith("http") ? url : `${API_BASE}${url}`;
-}
+    // put this above your component
+  const API_BASE = "http://localhost:5000";
+
+  function resolveImageUrl(url?: string) {
+    if (!url) return ""; // fallback handled later
+    return url.startsWith("http") ? url : `${API_BASE}${url}`;
+  }
 
   useEffect(() => {
     fetchCourses();
@@ -189,7 +195,9 @@ function resolveImageUrl(url?: string) {
       {courses.length === 0 ? (
         <div className="bg-white p-8 rounded-lg text-center border border-yt-light-border">
           <p className="text-yt-text-gray mb-4">No courses found.</p>
-          <button className="px-4 py-2 bg-lfc-red text-white rounded-md hover:bg-lfc-gold-dark">
+          <button 
+          onClick={handleCreate}
+          className="px-4 py-2 bg-lfc-red text-white rounded-md hover:bg-lfc-gold-dark">
             Create Your First Course
           </button>
         </div>

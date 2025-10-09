@@ -291,7 +291,7 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps)
 
             {/* Simple Links */}
             <Link
-              to="/admin/reports"
+              to="/admin/dashboard/reports"
               className="flex items-center p-2 rounded hover:bg-lfc-gold text-sm md:text-base"
             >
               <FaChartBar />
@@ -299,7 +299,7 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps)
             </Link>
 
             <Link
-              to="/admin/settings"
+              to="/admin/dashboard/settings"
               className="flex items-center p-2 rounded hover:bg-lfc-gold text-sm md:text-base"
             >
               <FaCog />

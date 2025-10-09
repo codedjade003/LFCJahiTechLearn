@@ -69,7 +69,6 @@ const enrollmentSchema = new mongoose.Schema(
       feedback: String,
     }],
 
-  lastAccessed: { type: Date, default: Date.now },
   status: {
       type: String,
       enum: ['active', 'completed', 'cancelled', 'expired'],

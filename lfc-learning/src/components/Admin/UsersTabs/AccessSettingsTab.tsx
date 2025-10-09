@@ -301,6 +301,50 @@ const AccessSettingsTab = () => {
         </div>
       </div>
 
+      
+      {/* Quick Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
+          <FaUser className="text-3xl text-green-600 mx-auto mb-2" />
+          <h4 className="font-semibold">Student Access</h4>
+          <p className="text-sm text-gray-600">Basic learning platform access</p>
+          <div className="text-2xl font-bold text-green-600 mt-2">
+            {users.filter(u => u.role === 'student').length}
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
+          <FaUserTie className="text-3xl text-purple-600 mx-auto mb-2" />
+          <h4 className="font-semibold">Admin Access</h4>
+          <p className="text-sm text-gray-600">Full administrative privileges</p>
+          <div className="text-2xl font-bold text-purple-600 mt-2">
+            {users.filter(u => u.role === 'admin').length}
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
+          <FaUserShield className="text-3xl text-blue-600 mx-auto mb-2" />
+          <h4 className="font-semibold">Admin-Only</h4>
+          <p className="text-sm text-gray-600">Restricted admin capabilities</p>
+          <div className="text-2xl font-bold text-blue-600 mt-2">
+            {users.filter(u => u.role === 'admin-only').length}
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
+          <FaChalkboardTeacher className="text-3xl text-orange-600 mx-auto mb-2" />
+          <h4 className="font-semibold">Course Instructors</h4>
+          <p className="text-sm text-gray-600">Assigned to courses</p>
+          <div className="text-2xl font-bold text-orange-600 mt-2">
+            {adminUsers.filter(user => 
+              courses.some(course => 
+                course.instructors.some(instructor => instructor.userId === user.id)
+              )
+            ).length}
+          </div>
+        </div>
+      </div>
+
       {/* Tab Navigation */}
       <div className="bg-white rounded-lg border border-gray-200 p-4">
         <div className="flex space-x-4 mb-4">
@@ -564,49 +608,6 @@ const AccessSettingsTab = () => {
             </p>
           </div>
         )}
-      </div>
-
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
-          <FaUser className="text-3xl text-green-600 mx-auto mb-2" />
-          <h4 className="font-semibold">Student Access</h4>
-          <p className="text-sm text-gray-600">Basic learning platform access</p>
-          <div className="text-2xl font-bold text-green-600 mt-2">
-            {users.filter(u => u.role === 'student').length}
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
-          <FaUserTie className="text-3xl text-purple-600 mx-auto mb-2" />
-          <h4 className="font-semibold">Admin Access</h4>
-          <p className="text-sm text-gray-600">Full administrative privileges</p>
-          <div className="text-2xl font-bold text-purple-600 mt-2">
-            {users.filter(u => u.role === 'admin').length}
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
-          <FaUserShield className="text-3xl text-blue-600 mx-auto mb-2" />
-          <h4 className="font-semibold">Admin-Only</h4>
-          <p className="text-sm text-gray-600">Restricted admin capabilities</p>
-          <div className="text-2xl font-bold text-blue-600 mt-2">
-            {users.filter(u => u.role === 'admin-only').length}
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
-          <FaChalkboardTeacher className="text-3xl text-orange-600 mx-auto mb-2" />
-          <h4 className="font-semibold">Course Instructors</h4>
-          <p className="text-sm text-gray-600">Assigned to courses</p>
-          <div className="text-2xl font-bold text-orange-600 mt-2">
-            {adminUsers.filter(user => 
-              courses.some(course => 
-                course.instructors.some(instructor => instructor.userId === user.id)
-              )
-            ).length}
-          </div>
-        </div>
       </div>
     </div>
   );

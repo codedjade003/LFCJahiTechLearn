@@ -318,3 +318,81 @@ export const enrollUsersInCourse = async (req, res) => {
     res.status(500).json({ message: "Failed to enroll users", error: err.message });
   }
 };
+
+// Unenroll a single user from a course
+export const unenrollUserFromCourse = async (req, res) => {
+  try {
+    const { courseId, userId } = req.params;
+
+    const enrollment = await Enrollment.findOneAndDelete({
+      course: courseId,
+      user: userId
+    });
+
+    if (!enrollment) {
+      return res.status(404).json({ message: "Enrollment not found" });
+    }
+
+    // Optional: send notification
+    await callCreateNotification(
+      userId,
+      "You have been unenrolled from a course",
+      `You are no longer enrolled in course ID: ${courseId}`,
+      "enrollment"
+    );
+
+    res.status(200).json({ message: "User unenrolled successfully" });
+  } catch (error) {
+    console.error("Error unenrolling user:", error);
+    res.status(500).json({ message: "Error unenrolling user", error: error.message });
+  }
+};
+
+// Bulk unenroll all users from a course
+export const unenrollAllUsersFromCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+
+    const result = await Enrollment.deleteMany({ course: courseId });
+
+    // Optional: create a broadcast notification to affected users
+    // (This will require fetching users first if you want individual notifications)
+
+    res.status(200).json({
+      message: `All users unenrolled from course ${courseId}`,
+      count: result.deletedCount
+    });
+  } catch (error) {
+    console.error("Error bulk unenrolling users:", error);
+    res.status(500).json({ message: "Error bulk unenrolling users", error: error.message });
+  }
+};
+
+// Self-unenroll (student drops their own course)
+export const selfUnenrollFromCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+
+    const enrollment = await Enrollment.findOneAndDelete({
+      course: courseId,
+      user: req.user._id
+    });
+
+    if (!enrollment) {
+      return res.status(404).json({ message: "You are not enrolled in this course" });
+    }
+
+    // Optional: send confirmation notification
+    await callCreateNotification(
+      req.user._id,
+      "You have unenrolled from a course",
+      `You have successfully unenrolled from course ID: ${courseId}`,
+      "enrollment"
+    );
+
+    res.status(200).json({ message: "Unenrolled successfully" });
+  } catch (error) {
+    console.error("Error self-unenrolling:", error);
+    res.status(500).json({ message: "Error self-unenrolling", error: error.message });
+  }
+};

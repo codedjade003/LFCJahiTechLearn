@@ -431,7 +431,6 @@ export const getUserProgressOverview = async (userId) => {
         name: enrollment.course.title,
         percentage: enrollment.progress || 0,
         color: getProgressColor(enrollment.progress),
-        icon: getCourseIcon(enrollment.course.type),
         riskLevel,
         timeSpent: timeSpentHours,
         enrolledAt: enrollment.enrolledAt,
@@ -458,9 +457,4 @@ const getProgressColor = (progress) => {
   if (progress >= 50) return 'bg-yellow-500';
   if (progress >= 25) return 'bg-blue-600';
   return 'bg-red-500';
-};
-
-const getCourseIcon = (courseType) => {
-  // You can replace these with actual React icons
-  return '📚'; // Placeholder
 };

@@ -1,5 +1,6 @@
 // routes/enrollmentRoutes.js
 import express from "express";
+import User from "../models/User.js";
 import { protect } from "../middleware/authMiddleware.js";
 import { isAdminOnly } from "../middleware/isAdminOnly.js";
 import {
@@ -10,7 +11,10 @@ import {
   getAllEnrollments,
   enrollAllUsersInCourse, // Add the new function
   enrollUsersInCourse,
-  getCourseEnrollmentStats
+  getCourseEnrollmentStats,
+  unenrollUserFromCourse,
+  unenrollAllUsersFromCourse,
+  selfUnenrollFromCourse
 } from "../controllers/enrollmentController.js";
 import { logAction } from "../middleware/logAction.js";
 import Enrollment from '../models/Enrollment.js';
@@ -22,58 +26,52 @@ router.post("/:courseId", protect, logAction('enroll', 'course'), enrollInCourse
 router.get("/my", protect, getMyEnrollments); // No logging
 router.get("/course/:courseId", protect, getCourseEnrollments); // No logging
 router.put("/:courseId/progress", protect, logAction('update', 'progress'), updateProgress);
+router.delete("/unenroll/:courseId/:userId", protect, logAction('unenroll', 'course'), isAdminOnly, unenrollUserFromCourse);
+router.delete("/self-unenroll/:courseId", protect, logAction('unenroll', 'course'), selfUnenrollFromCourse);
+router.delete("/unenroll-all/:courseId", protect, logAction('unenroll all', 'course'), isAdminOnly, unenrollAllUsersFromCourse);
 
 // Get progress overview for admin dashboard
-// FIXED enrollmentRoutes.js - Better filtering
 // In enrollmentRoutes.js - UPDATE the progress overview route
 router.get('/progress/overview', protect, isAdminOnly, async (req, res) => {
   try {
-    // SIMPLIFIED: No need to filter deleted courses since they're hard deleted
     const enrollments = await Enrollment.find({ status: 'active' })
       .populate('user', 'name email')
       .populate('course', 'title duration type');
 
-    // No need for aggressive filtering since deleted courses are gone
-    const validEnrollments = enrollments.filter(enrollment => enrollment.course);
+    const validEnrollments = enrollments.filter(e => e.course);
 
-    console.log(`Total enrollments: ${enrollments.length}, Valid: ${validEnrollments.length}`);
-
-    // Calculate risk levels and stats
-    const coursesWithRisk = validEnrollments.map(enrollment => {
-      const riskLevel = calculateStudentRisk(enrollment, enrollment.course);
-      
-      const timeSpentHours = Math.round((enrollment.timeSpent || 0) / 60);
-      const progress = enrollment.progress || 0;
-      
+    const coursesWithRisk = validEnrollments.map(e => {
+      const riskLevel = calculateStudentRisk(e, e.course);
+      const timeSpentHours = Math.round((e.timeSpent || 0) / 60);
       return {
-        _id: enrollment.course._id,
-        name: enrollment.course.title,
-        percentage: enrollment.progress || 0,
-        color: getProgressColor(enrollment.progress),
-        icon: getCourseIcon(enrollment.course.type),
+        _id: e.course._id,
+        name: e.course.title,
+        percentage: e.progress || 0,
+        color: getProgressColor(e.progress),
+        icon: getCourseIcon(e.course.type),
         riskLevel,
         timeSpent: timeSpentHours,
-        enrolledAt: enrollment.enrolledAt,
-        estimatedDuration: enrollment.course.duration || '1 month'
+        enrolledAt: e.enrolledAt,
+        estimatedDuration: e.course.duration || '1 month'
       };
     });
 
+    const totalUsers = await User.countDocuments();
+
     const stats = {
-      atRisk: coursesWithRisk.filter(course => course.riskLevel !== 'none').length,
-      onTrack: coursesWithRisk.filter(course => course.riskLevel === 'none' && course.percentage < 100).length,
-      completed: coursesWithRisk.filter(course => course.percentage === 100).length,
-      total: coursesWithRisk.length
+      atRisk: coursesWithRisk.filter(c => c.riskLevel !== 'none').length,
+      onTrack: coursesWithRisk.filter(c => c.riskLevel === 'none' && c.percentage < 100).length,
+      completed: coursesWithRisk.filter(c => c.percentage === 100).length,
+      totalEnrollments: coursesWithRisk.length,
+      totalUsers // 👈 new field
     };
 
-    res.json({
-      courses: coursesWithRisk,
-      stats
-    });
-  } catch (error) {
-    console.error('Error fetching progress overview:', error);
-    res.status(500).json({ message: 'Error fetching progress overview', error: error.message });
+    res.json({ courses: coursesWithRisk, stats });
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching progress overview', error: err.message });
   }
 });
+
 // Helper functions
 const getProgressColor = (progress) => {
   if (progress >= 80) return 'bg-green-600';
