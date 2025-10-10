@@ -1,5 +1,6 @@
 import multer from "multer";
 import path from "path";
+import { uploadToCloudinary } from "../utils/fileUploader";
 
 // Configure multer for file storage
 const storage = multer.diskStorage({
@@ -12,24 +13,29 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage });
-
-export const uploadFile = (req, res) => {
-  const uploadHandler = upload.single("file");
-  
-  uploadHandler(req, res, (err) => {
-    if (err) {
-      return res.status(400).json({ message: "File upload failed", error: err.message });
-    }
-    
+export const uploadFile = async (req, res) => {
+  try {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
     }
-    
-    // Return the file path/URL
+
+    // Use Cloudinary upload instead of local storage
+    const uploadResult = await uploadToCloudinary(
+      req.file.buffer,
+      req.file.originalname,
+      req.user._id
+    );
+
     res.json({ 
-      url: `/uploads/${req.file.filename}`,
-      message: "File uploaded successfully" 
+      url: uploadResult.secure_url,
+      public_id: uploadResult.public_id,
+      message: "File uploaded successfully to cloud storage" 
     });
-  });
+  } catch (error) {
+    console.error('File upload error:', error);
+    res.status(500).json({ 
+      message: "File upload failed", 
+      error: error.message 
+    });
+  }
 };

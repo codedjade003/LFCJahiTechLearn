@@ -1,7 +1,7 @@
 // controllers/enrollmentController.js
 import Enrollment from "../models/Enrollment.js";
 import { Course } from '../models/Course.js';
-import { Submission } from '../models/Submission.js';import User from "../models/User.js";
+import User from "../models/User.js";
 import { callCreateNotification} from "../controllers/notificationController.js";
 
 // POST /api/enrollments/:courseId

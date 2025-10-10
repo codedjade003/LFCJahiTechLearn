@@ -20,123 +20,143 @@ import statsRoutes from "./routes/statsRoutes.js";
 import userManagementRoutes from './routes/userManagementRoutes.js';
 import logsRoutes from './routes/logsRoutes.js';
 import progressRoutes from './routes/progressRoutes.js';
-import submissionRoutes from './routes/submissionRoutes.js'; // probably missing
+import submissionRoutes from './routes/submissionRoutes.js';
 import uploadRoutes from "./routes/uploadRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js"
 
-
-import "./jobs/dueDateNotifier.js"; // 👈 just import, it runs automatically
+// Import dueDateNotifier only if it exists and is needed
+try {
+  await import("./jobs/dueDateNotifier.js");
+  console.log('✅ Due date notifier loaded');
+} catch (error) {
+  console.log('⚠️ Due date notifier not found, continuing without it');
+}
 
 dotenv.config();
 
 const app = express();
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+// CORS configuration for production
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? [process.env.CLIENT_URL]  // Use environment variable
+    : ['http://localhost:3000', 'http://localhost:5173'],
+  credentials: true
+}));
 
-// 🔎 Global request logger (must come before routes)
-app.use((req, res, next) => {
-  console.log(`➡️ ${req.method} ${req.originalUrl}`);
-  next();
-});
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// 🚨 ADD THIS DEBUG MIDDLEWARE:
-app.use((req, res, next) => {
-  console.log('✅ Reached after global logger');
-  next();
-});
+// 🔎 Global request logger (development only)
+if (process.env.NODE_ENV !== 'production') {
+  app.use((req, res, next) => {
+    console.log(`➡️ ${req.method} ${req.originalUrl}`);
+    next();
+  });
+}
 
 // Base route
 app.get("/", (req, res) => {
-  res.send("API is running...");
+  res.json({ 
+    message: "TechLearn API is running...",
+    environment: process.env.NODE_ENV || 'development'
+  });
 });
 
-// 👇 Stats routes
-app.use("/api/stats", (req, res, next) => {
-  console.log('📊 Checking stats routes...');
-  next();
-}, statsRoutes);
+// Health check endpoint
+app.get("/health", (req, res) => {
+  res.status(200).json({ 
+    status: "OK", 
+    database: mongoose.connection.readyState === 1 ? "Connected" : "Disconnected",
+    timestamp: new Date().toISOString()
+  });
+});
 
-// 👇 Auth routes
-app.use("/api/auth", (req, res, next) => {
-  console.log('🔐 Checking auth routes...');
-  next();
-}, authRoutes);
-
+// API Routes - with error handling
+app.use("/api/stats", statsRoutes);
+app.use("/api/auth", authRoutes);
 app.use('/api/admin', adminRoutes);
-
-// 👇 Logs routes
-app.use("/api/logs", (req, res, next) => {
-  console.log('📝 Checking logs routes...');
-  next();
-}, logsRoutes);
-
-// 👇 Course routes - THIS IS WHERE IT FREEZES
-app.use("/api/courses", (req, res, next) => {
-  console.log('🎓 Reached course routes middleware');
-  next();
-}, courseRoutes);
-
-// 👇 Enrollment routes
-app.use("/api/enrollments", (req, res, next) => {
-  console.log('👥 Checking enrollment routes...');
-  next();
-}, enrollmentRoutes);
-
-// 👇 Notification routes
-app.use("/api/notifications", (req, res, next) => {
-  console.log('🔔 Checking notification routes...');
-  next();
-}, notificationRoutes);
-
-// 👇 file upload routes
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
+app.use("/api/logs", logsRoutes);
+app.use("/api/courses", courseRoutes);
+app.use("/api/enrollments", enrollmentRoutes);
+app.use("/api/notifications", notificationRoutes);
 app.use("/api/uploads", uploadRoutes);
+app.use('/api/users', userManagementRoutes);
+app.use('/api/progress', progressRoutes);
+app.use('/api/submissions', submissionRoutes);
 
-// In server.js, add this with your other static file serving
+// Static file serving
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use('/uploads/submissions', express.static(path.join(__dirname, 'uploads/submissions')));
 
-// Add after other route imports
-app.use('/api/users', (req, res, next) => {
-  console.log('👤 Checking user management routes...');
-  next();
-}, userManagementRoutes);
+// Serve static files in production (for Vite build)
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../client/dist')));
+  
+  // Handle SPA routing - serve index.html for all unknown routes
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+  });
+}
 
-// 👇 Progress routes
-app.use('/api/progress', (req, res, next) => {
-  console.log('📈 Checking progress routes...');
-  next();
-}, progressRoutes);
-
-// Add this with your other route middleware (after progressRoutes)
-app.use('/api/submissions', (req, res, next) => {
-  console.log('📝 Checking submission routes...');
-  next();
-}, submissionRoutes);
+// 404 handler for API routes
+app.use('/api/*', (req, res) => {
+  res.status(404).json({ 
+    message: `API endpoint ${req.method} ${req.originalUrl} not found` 
+  });
+});
 
 // Global error handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: err.message });
+  console.error('🚨 Error:', err.stack);
+  res.status(500).json({ 
+    message: process.env.NODE_ENV === 'production' 
+      ? 'Something went wrong!' 
+      : err.message 
+  });
 });
 
-// MongoDB connection
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    dbName: "techlearn", // name your DB here
-  })
-  .then(() => {
-    console.log("MongoDB connected");
-    const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () =>
-      console.log(`Server running on http://localhost:${PORT}`)
-    );
-  })
-  .catch((err) => {
-    console.error("MongoDB connection error:", err.message);
+// MongoDB connection with better error handling
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      dbName: process.env.DB_NAME || "techlearn",
+    });
+    console.log("✅ MongoDB connected successfully");
+  } catch (error) {
+    console.error("❌ MongoDB connection error:", error.message);
+    process.exit(1);
+  }
+};
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  console.log('🛑 Shutting down gracefully...');
+  await mongoose.connection.close();
+  process.exit(0);
+});
+
+// Start server
+const startServer = async () => {
+  await connectDB();
+  
+  const PORT = process.env.PORT || 5000;
+  const server = app.listen(PORT, () => {
+    console.log(`🚀 Server running in ${process.env.NODE_ENV || 'development'} mode`);
+    console.log(`📍 http://localhost:${PORT}`);
+  });
+
+  // Handle server errors
+  server.on('error', (error) => {
+    if (error.code === 'EADDRINUSE') {
+      console.error(`❌ Port ${PORT} is already in use`);
+    } else {
+      console.error('❌ Server error:', error);
+    }
     process.exit(1);
   });
+};
+
+startServer();
