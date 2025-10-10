@@ -1,42 +1,25 @@
 // models/Log.js
 import mongoose from "mongoose";
 
-const logSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+const logSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: false, // ✅ Allow null for system logs
+    },
+    userName: { type: String, required: true },
+    userEmail: { type: String, required: true },
+    action: { type: String, required: true },
+    resource: { type: String, required: true },
+    details: String,
+    resourceId: String,
+    ipAddress: String,
+    userAgent: String,
+    status: { type: String, default: "success" },
+    timestamp: { type: Date, default: Date.now },
   },
-  userName: {
-    type: String,
-    required: true
-  },
-  userEmail: {
-    type: String,
-    required: true
-  },
-  action: {
-    type: String,
-    required: true
-  },
-  resource: {
-    type: String,
-    required: true
-  },
-  details: String,
-  resourceId: String,
-  ipAddress: String,
-  userAgent: String,
-  status: {
-    type: String,
-    default: 'success'
-  },
-  timestamp: {
-    type: Date,
-    default: Date.now
-  }
-}, {
-  timestamps: true
-});
+  { timestamps: true }
+);
 
-export default mongoose.model('Log', logSchema);
+export default mongoose.model("Log", logSchema);
