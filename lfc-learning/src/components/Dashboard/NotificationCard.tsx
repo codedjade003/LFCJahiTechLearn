@@ -15,7 +15,6 @@ const NotificationCard = ({
   message, 
   time, 
   highlight = false, 
-  type,
   isManual 
 }: NotificationCardProps) => {
   return (
