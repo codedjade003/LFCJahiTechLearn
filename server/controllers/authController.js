@@ -716,31 +716,49 @@ export const resendVerification = async (req, res) => {
 
 // Request password reset (send code)
 export const forgotPassword = async (req, res) => {
-  const { email } = req.body;
-  if (!email) return res.status(400).json({ message: "Email is required" });
-
   try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "Email is required" });
+
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // generate 6-digit code
+    // Check helper existence
+    if (typeof hashCode !== "function") {
+      console.error("❌ hashCode() not defined!");
+      return res.status(500).json({ message: "Server configuration error." });
+    }
+
+    // Generate 6-digit code
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     const hashedCode = hashCode(code);
 
     user.verificationCode = hashedCode;
-    user.passwordResetExpires = Date.now() + 15 * 60 * 1000; // expires in 15 min
+    user.passwordResetExpires = Date.now() + 15 * 60 * 1000;
     await user.save();
 
-    // send email with code
-    await sendEmail(
-      user.email,
-      "Password Reset Request",
-      `Hi ${user.name || "User"},\n\nUse this code to reset your password: ${code}\n\nIt will expire in 15 minutes.\n\nIf you didn't request this, ignore this email.`
-    );
+    try {
+      await sendEmail(
+        user.email,
+        "Password Reset Request",
+        `Hi ${user.name || "User"},\n\nUse this code to reset your password: ${code}\n\nIt will expire in 15 minutes.\n\nIf you didn't request this, ignore this email.`
+      );
 
-    res.status(200).json({ message: "Password reset code sent to your email" });
+      return res
+        .status(200)
+        .json({ message: "Password reset code sent to your email" });
+    } catch (mailError) {
+      console.error("📧 Email send failed:", mailError.message);
+      return res.status(500).json({
+        message: "Error sending password reset email. Please try again later.",
+      });
+    }
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("💥 Forgot-password crashed:", err);
+    return res.status(500).json({
+      message: "Internal server error in password reset",
+      error: process.env.NODE_ENV !== "production" ? err.message : undefined,
+    });
   }
 };
 
