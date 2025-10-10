@@ -43,7 +43,7 @@ router.post("/register", logAction('register', 'user'), registerUser);
 router.post("/login", loginUser); // No logging for login
 router.post("/verify-email", logAction('verify', 'email'), verifyEmail);
 router.post("/resend-verification", logAction('resend', 'verification'), resendVerification);
-router.post("/forgot-password", logAction('request', 'password_reset'), forgotPassword);
+router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", logAction('reset', 'password'), resetPassword);
 //
 // 🔹 Protected user routes
