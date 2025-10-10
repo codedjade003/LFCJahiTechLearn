@@ -1,6 +1,6 @@
 import multer from "multer";
 import path from "path";
-import { uploadToCloudinary } from "../utils/fileUploader";
+import { uploadToCloudinary } from "../utils/fileUploader.js";
 
 // Configure multer for file storage
 const storage = multer.diskStorage({

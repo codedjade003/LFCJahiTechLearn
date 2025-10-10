@@ -94,17 +94,20 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../client/dist')));
   
   // Handle SPA routing - serve index.html for all unknown routes
-  app.get('*', (req, res) => {
+  // ✅ Express 5-safe wildcard
+  app.get(/.*/, (req, res) => {
     res.sendFile(path.join(__dirname, '../client/dist/index.html'));
   });
 }
 
 // 404 handler for API routes
-app.use('/api/*', (req, res) => {
+// ✅ Compatible with Express 5
+app.use(/^\/api(\/|$)/, (req, res) => {
   res.status(404).json({ 
     message: `API endpoint ${req.method} ${req.originalUrl} not found` 
   });
 });
+
 
 // Global error handler
 app.use((err, req, res, next) => {
