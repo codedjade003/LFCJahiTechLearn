@@ -36,13 +36,38 @@ dotenv.config();
 
 const app = express();
 
-// CORS configuration for production
-app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? [process.env.CLIENT_URL]  // Use environment variable
-    : ['http://localhost:3000', 'http://localhost:5173'],
-  credentials: true
-}));
+// ✅ Robust CORS configuration for production + dev
+const allowedOrigins = [
+  process.env.CLIENT_URL,          // your Vercel frontend
+  "http://localhost:5173",
+  "http://localhost:3000",
+].filter(Boolean); // remove undefined/null values
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.warn(`🚫 Blocked by CORS: ${origin}`);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "X-Requested-With",
+      "Accept",
+      "Origin",
+    ],
+  })
+);
+
+// ✅ Explicitly handle preflight
+app.options("*", cors());
+
 
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
