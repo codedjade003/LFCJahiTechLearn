@@ -56,9 +56,9 @@ function App() {
           <Route index element={<StudentDashboard />} />
           <Route path="profile" element={<ProfilePage />} />
           <Route path="courses" element={<MyCourses />} />
-          <Route path="/courses/:courseId" element= {<CourseDetails/>} />
+          <Route path="/dashboard/courses/:courseId" element= {<CourseDetails/>} />
           <Route path="assignments" element={<MyAssignments />} />
-          <Route path="/assignments/:assignmentId" element= {<AssignmentDetail/>} />
+          <Route path="/dashboard/assignments/:assignmentId" element= {<AssignmentDetail/>} />
           {/* FIXED: Use consistent "project" routes */}
           <Route path="project" element={<MyProject />} /> {/* List page */}
           <Route path="project/:courseId" element={<ProjectDetail />} /> {/* Detail page */}
