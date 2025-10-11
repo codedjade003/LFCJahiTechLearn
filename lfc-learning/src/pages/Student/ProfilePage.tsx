@@ -34,6 +34,13 @@ const ProfilePage = () => {
   const [coverPhotoFile, setCoverPhotoFile] = useState<File | null>(null);
   const [activeTab, setActiveTab] = useState("basic");
   const [isEditing, setIsEditing] = useState(false);
+  // Password management state
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordMessage, setPasswordMessage] = useState("");
+
 
   if (!user) return <div className="flex justify-center items-center min-h-screen">
     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-redCustom"></div>
@@ -64,12 +71,45 @@ const ProfilePage = () => {
     });
   };
 
-  const handlePreferenceChange = (field: string, value: any) => {
-    setUser((prev) => prev && { 
-      ...prev, 
-      preferences: { ...prev.preferences, [field]: value } 
-    });
+  const handlePasswordChange = async () => {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setPasswordMessage("Please fill in all fields");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordMessage("New passwords do not match");
+      return;
+    }
+
+    setPasswordLoading(true);
+    setPasswordMessage("");
+
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_BASE}/api/auth/change-password`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ oldPassword: currentPassword, newPassword }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.message || "Password change failed");
+
+      setPasswordMessage("Password updated successfully!");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err: any) {
+      setPasswordMessage(err.message);
+    } finally {
+      setPasswordLoading(false);
+    }
   };
+
 
 // Then update the education state with proper typing
   const [education, setEducation] = useState<Education[]>(user.education || []);
@@ -929,62 +969,71 @@ const validateUsername = (username: string) => {
 
           {/* Preferences Tab */}
           {activeTab === "preferences" && (
-            <div className="space-y-6">
-              <h3 className="text-lg font-semibold">Notification Preferences</h3>
-              
+            <div className="space-y-6 max-w-md mx-auto">
+              <h3 className="text-lg font-semibold text-gray-900">
+                Change Password
+              </h3>
+
               <div className="space-y-4">
-                <label className="flex items-center gap-3">
-                  <input
-                    type="checkbox"
-                    checked={user.preferences?.emailNotifications ?? true}
-                    onChange={(e) => handlePreferenceChange('emailNotifications', e.target.checked)}
-                    disabled={!isEditing}
-                    className="rounded border-gray-300 text-redCustom focus:ring-redCustom"
-                  />
-                  <span>Email Notifications</span>
-                </label>
-
-                <label className="flex items-center gap-3">
-                  <input
-                    type="checkbox"
-                    checked={user.preferences?.pushNotifications ?? true}
-                    onChange={(e) => handlePreferenceChange('pushNotifications', e.target.checked)}
-                    disabled={!isEditing}
-                    className="rounded border-gray-300 text-redCustom focus:ring-redCustom"
-                  />
-                  <span>Push Notifications</span>
-                </label>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Theme Preference</label>
-                  <select
-                    value={user.preferences?.theme || "auto"}
-                    onChange={(e) => handlePreferenceChange('theme', e.target.value)}
-                    disabled={!isEditing}
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Current Password
+                  </label>
+                  <input
+                    type="password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                  >
-                    <option value="auto">Auto (System)</option>
-                    <option value="light">Light</option>
-                    <option value="dark">Dark</option>
-                  </select>
+                    placeholder="Enter your current password"
+                  />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Language</label>
-                  <select
-                    value={user.preferences?.language || "en"}
-                    onChange={(e) => handlePreferenceChange('language', e.target.value)}
-                    disabled={!isEditing}
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    New Password
+                  </label>
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                  >
-                    <option value="en">English</option>
-                    <option value="es">Spanish</option>
-                    <option value="fr">French</option>
-                    <option value="de">German</option>
-                  </select>
+                    placeholder="Enter new password"
+                  />
                 </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Confirm New Password
+                  </label>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                    placeholder="Confirm new password"
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handlePasswordChange}
+                  disabled={passwordLoading}
+                  className="w-full bg-redCustom text-white py-2 rounded-lg hover:bg-red-700 disabled:opacity-50"
+                >
+                  {passwordLoading ? "Updating..." : "Update Password"}
+                </button>
+
+                {passwordMessage && (
+                  <p
+                    className={`text-sm mt-2 ${
+                      passwordMessage.includes("success")
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  >
+                    {passwordMessage}
+                  </p>
+                )}
               </div>
             </div>
           )}

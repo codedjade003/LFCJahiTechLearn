@@ -6,7 +6,7 @@ export default function Footer() {
           <div className="mb-4 md:mb-0">
             <div className="flex items-center space-x-2">
               <i className="fas fa-church text-2xl text-goldCustom"></i>
-              <h2 className="text-xl font-bold">LFC Jahi Abuja</h2>
+              <h2 className="text-xl px-5 md:px-0 font-bold">LFC Jahi Abuja</h2>
             </div>
             <p className="text-sm mt-2">Technical Unit Training Platform</p>
           </div>

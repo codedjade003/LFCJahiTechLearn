@@ -32,6 +32,7 @@ import Quizzes from "./components/Admin/AssessmentTabs/Quizzes";
 import ForgotPassword from "./components/ForgotPassword";
 import UserEnrollmentsTab from "./pages/Admin/UserEnrollmentsTab";
 import PlaceholderPage from "./components/shared/PlaceholderPage";
+import ErrorPage from "./components/shared/ErrorPage";
 
 function App() {
   return (
@@ -99,11 +100,8 @@ function App() {
         <Route path="/403" element={<ForbiddenPage />} />
 
         {/* Catch-all 404 route */}
-        <Route path="*" element={<PlaceholderPage 
-          title="Page Not Found"
-          message="The page you're looking for doesn't exist or has been moved."
-          showHomeButton={true}
-        />} />
+        <Route path="*" element={<ErrorPage />} />
+
       </Routes>
       
       {/* Toast Container */}

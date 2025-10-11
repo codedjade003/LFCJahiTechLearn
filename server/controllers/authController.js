@@ -309,15 +309,14 @@ export const createAdminOnlyAccount = async (req, res) => {
 };
 
 
-// Change password (only for the original admin)
+// Change password (for any authenticated user)
 export const changePassword = async (req, res) => {
   const { oldPassword, newPassword } = req.body;
 
   try {
-    const user = await User.findById(req.user.id);
-
-    if (!user || user.role !== "admin") {
-      return res.status(403).json({ message: "Only the original admin can change their password" });
+    const user = await User.findById(req.user.id).select("+password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
 
     const isMatch = await user.matchPassword(oldPassword);
@@ -326,8 +325,10 @@ export const changePassword = async (req, res) => {
     }
 
     if (!passwordRegex.test(newPassword)) {
-  return res.status(400).json({ message: "New password does not meet requirements" });
-}
+      return res
+        .status(400)
+        .json({ message: "New password does not meet requirements" });
+    }
 
     user.password = newPassword;
     await user.save();
@@ -337,6 +338,7 @@ export const changePassword = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 export const getMe = async (req, res) => {
   try {
