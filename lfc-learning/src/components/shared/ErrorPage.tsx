@@ -1,35 +1,34 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useRouteError } from "react-router-dom";
-import { FaHome, FaArrowLeft, FaExclamationTriangle, FaTools } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate, useRouteError, isRouteErrorResponse } from "react-router-dom";
+import { FaHome, FaExclamationTriangle, FaTools } from "react-icons/fa";
 
 export default function ErrorPage() {
   const navigate = useNavigate();
-  const error = useRouteError() as { status?: number; message?: string };
-  const [isSleeping, setIsSleeping] = useState(false);
+  const error = useRouteError();
 
   useEffect(() => {
-    // detect backend-sleep-like behavior
-    if (!error?.status || error?.message?.includes("NetworkError")) {
-      setIsSleeping(true);
-    }
-
+    // Always redirect to home after 5 seconds
     const timer = setTimeout(() => navigate("/"), 5000);
     return () => clearTimeout(timer);
-  }, [error, navigate]);
+  }, [navigate]);
 
-  if (isSleeping) {
+  // Handle backend asleep or network failure
+    const isServerDown =
+    !error ||
+    (typeof error === "object" &&
+        error !== null &&
+        "message" in error &&
+        typeof (error as any).message === "string" &&
+        (error as any).message.includes("NetworkError"));
+
+  if (isServerDown) {
     return (
-      <div className="min-h-screen bg-yt-light-gray flex flex-col items-center justify-center p-4 text-center">
-        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-lfc-gold bg-opacity-10 flex items-center justify-center">
-          <FaTools className="w-10 h-10 text-lfc-gold animate-spin" />
-        </div>
-        <h1 className="text-2xl font-bold text-yt-text-dark mb-2">
-          Waking up the Server...
-        </h1>
-        <p className="text-yt-text-gray mb-6 max-w-md">
-          Our backend may be asleep right now. It usually takes 30–60 seconds to wake up.  
-          Please be patient — the page will refresh automatically.
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 text-center px-4">
+        <FaTools className="text-lfc-gold text-6xl mb-4 animate-spin" />
+        <h1 className="text-3xl font-semibold mb-2">Waking Up the Server...</h1>
+        <p className="text-gray-600 mb-6 max-w-sm">
+          Our backend might be asleep or restarting.  
+          Please wait a few moments while we reconnect.
         </p>
         <button
           onClick={() => window.location.reload()}
@@ -41,43 +40,31 @@ export default function ErrorPage() {
     );
   }
 
-  const status = error?.status || 500;
-  const is404 = status === 404;
+  // Handle real route errors
+  let status = 500;
+  let message = "Oops! Something went wrong.";
+
+  if (isRouteErrorResponse(error)) {
+    status = error.status;
+    message =
+      status === 404
+        ? "The page you're looking for doesn't exist or has been moved."
+        : error.statusText || message;
+  }
 
   return (
-    <div className="min-h-screen bg-yt-light-gray flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-xl border border-yt-light-border p-8 text-center shadow-sm">
-        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-lfc-gold bg-opacity-10 flex items-center justify-center">
-          <FaExclamationTriangle className="w-10 h-10 text-lfc-gold" />
-        </div>
-
-        <h1 className="text-2xl font-bold text-yt-text-dark mb-4">
-          {is404 ? "Page Not Found" : "Something Went Wrong"}
-        </h1>
-
-        <p className="text-yt-text-gray mb-8 leading-relaxed">
-          {is404
-            ? "The page you're looking for doesn't exist or has been moved."
-            : "Oops! The server ran into a problem. You’ll be redirected shortly."}
-        </p>
-
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <button
-            onClick={() => window.history.back()}
-            className="flex items-center justify-center gap-2 px-6 py-3 border border-yt-light-border rounded-lg text-yt-text-dark hover:bg-yt-light-hover transition-colors"
-          >
-            <FaArrowLeft className="w-4 h-4" />
-            Go Back
-          </button>
-          <Link
-            to="/"
-            className="flex items-center justify-center gap-2 px-6 py-3 bg-lfc-gold text-white rounded-lg hover:bg-lfc-gold-dark transition-colors"
-          >
-            <FaHome className="w-4 h-4" />
-            Go Home
-          </Link>
-        </div>
-      </div>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 text-center px-4">
+      <FaExclamationTriangle className="text-redCustom text-6xl mb-4" />
+      <h1 className="text-4xl font-bold text-gray-800 mb-2">
+        {status === 404 ? "404 - Page Not Found" : "500 - Server Error"}
+      </h1>
+      <p className="text-gray-600 mb-6 max-w-md">{message}</p>
+      <button
+        onClick={() => navigate("/")}
+        className="bg-redCustom text-white px-6 py-3 rounded-lg hover:bg-goldCustom transition"
+      >
+        <FaHome className="inline mr-2" /> Go to Homepage
+      </button>
     </div>
   );
 }
