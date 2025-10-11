@@ -78,8 +78,11 @@ const courseSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     description: { type: String, required: true },
-    categories: { type: [String], default: [] },
-    level: {
+    categories: {
+      type: String,
+      enum: ["Video", "Audio", "Graphics", "Required", "Content Creation", "Utility", "Secretariat"],
+      default: "Video"
+    },    level: {
       type: String,
       enum: ["Beginner", "Intermediate", "Advanced"],
       default: "Beginner",
