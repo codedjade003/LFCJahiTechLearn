@@ -67,7 +67,7 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
   useEffect(() => {
     async function fetchEnums() {
       try {
-        const res = await fetch("${API_BASE}/api/courses/enums");
+        const res = await fetch(`${API_BASE}/api/courses/enum`);
         if (res.ok) {
           const data = await res.json();
           console.log("Enums API response:", data); // 👈 check this

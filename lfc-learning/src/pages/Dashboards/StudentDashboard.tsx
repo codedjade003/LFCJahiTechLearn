@@ -191,7 +191,7 @@ const StudentDashboard = () => {
         body: JSON.stringify(safeProfile),
       });
 
-      await fetch("${API_BASE}/api/auth/seen-onboarding", {
+      await fetch(`${API_BASE}/api/auth/seen-onboarding`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
       });
