@@ -70,18 +70,31 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
         const res = await fetch(`${API_BASE}/api/courses/enum`);
         if (res.ok) {
           const data = await res.json();
-          console.log("Enums API response:", data); // 👈 check this
-          setLevelOptions(data.levels || []);
-          setTypes(data.types || []); // fetch from enum, not categories API
+          console.log("Enums API response:", data);
+          setLevelOptions(data.levels || ["Beginner", "Intermediate", "Advanced"]);
+
+          // Fallback to hardcoded list if no valid types
+          setTypes(
+            data.types && data.types.length > 0
+              ? data.types
+              : ["Video", "Audio", "Graphics", "Required", "Content Creation", "Utility", "Secretariat"]
+          );
+        } else {
+          // fallback if endpoint fails
+          setTypes(["Video", "Audio", "Graphics", "Required", "Content Creation", "Utility", "Secretariat"]);
+          setLevelOptions(["Beginner", "Intermediate", "Advanced"]);
         }
       } catch (err) {
         console.error("Failed to fetch enums", err);
+        setTypes(["Video", "Audio", "Graphics", "Required", "Content Creation", "Utility", "Secretariat"]);
+        setLevelOptions(["Beginner", "Intermediate", "Advanced"]);
       } finally {
         setLoading(false);
       }
     }
     fetchEnums();
   }, []);
+
 
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setType(e.target.value);
