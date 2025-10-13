@@ -46,7 +46,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
     category: "",
   });
 
-// Replace your categories state with a fixed array
+  // Replace your categories state with a fixed array
   const categories = [
     "Video",
     "Audio",
@@ -160,26 +160,45 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
     }
   };
 
+  // ✅ FIXED: Unified upload function for ALL file types
   const uploadFile = async (file: File, fileType: string): Promise<string> => {
     const token = localStorage.getItem("token");
     if (!token) throw new Error("No authentication token found");
 
+    // Validate file exists
+    if (!file) {
+      throw new Error("No file provided for upload");
+    }
+
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await fetch(`${API_BASE}/api/courses/upload/${fileType}`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData,
-    });
+    console.log(`Uploading ${fileType} file:`, file.name, file.size, file.type);
 
-    if (!res.ok) {
-      const errorText = await res.text();
-      throw new Error(`Upload failed: ${res.status} ${errorText}`);
+    try {
+      // ✅ CHANGED: Use the new unified endpoint
+      const res = await fetch(`${API_BASE}/api/uploads/${fileType}`, {
+        method: "POST",
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          // Let browser set Content-Type with boundary automatically
+        },
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        console.error(`Upload failed with status ${res.status}:`, errorData);
+        throw new Error(errorData.message || `Upload failed: ${res.status}`);
+      }
+      
+      const data = await res.json();
+      console.log(`Upload successful:`, data.url);
+      return data.url;
+    } catch (error) {
+      console.error("Upload error:", error);
+      throw error;
     }
-    
-    const data = await res.json();
-    return data.url;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -198,23 +217,29 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
       let uploadedVideo = formData.promoVideo;
       let uploadedAvatar = formData.instructorAvatar;
 
-      // Upload thumbnail if file is selected
+      // Upload thumbnail if file is selected AND exists
       if (activeThumbnailTab === "file" && formData.thumbnailFile) {
-        uploadedThumb = await uploadFile(formData.thumbnailFile, "image");
+        console.log("Uploading thumbnail file:", formData.thumbnailFile);
+        // ✅ CHANGED: Use appropriate file type for unified endpoint
+        uploadedThumb = await uploadFile(formData.thumbnailFile, "thumbnail");
       } else if (activeThumbnailTab === "url" && thumbnailUrlInput) {
         uploadedThumb = thumbnailUrlInput;
       }
 
-      // Upload video if file is selected
+      // Upload video if file is selected AND exists
       if (activeVideoTab === "file" && formData.promoVideoFile) {
-        uploadedVideo = await uploadFile(formData.promoVideoFile, "video");
+        console.log("Uploading video file:", formData.promoVideoFile);
+        // ✅ CHANGED: Use appropriate file type for unified endpoint
+        uploadedVideo = await uploadFile(formData.promoVideoFile, "promo");
       } else if (activeVideoTab === "url" && promoVideoUrlInput) {
         uploadedVideo = promoVideoUrlInput;
       }
 
-      // Upload avatar if file is selected
+      // Upload avatar if file is selected AND exists
       if (activeAvatarTab === "file" && formData.instructorAvatarFile) {
-        uploadedAvatar = await uploadFile(formData.instructorAvatarFile, "image");
+        console.log("Uploading avatar file:", formData.instructorAvatarFile);
+        // ✅ CHANGED: Use appropriate file type for unified endpoint
+        uploadedAvatar = await uploadFile(formData.instructorAvatarFile, "avatar");
       } else if (activeAvatarTab === "url" && avatarUrlInput) {
         uploadedAvatar = avatarUrlInput;
       }
@@ -245,8 +270,8 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
       });
 
       if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(`Failed to update course: ${res.status} ${errorText}`);
+        const errorData = await res.json();
+        throw new Error(`Failed to update course: ${errorData.message || res.status}`);
       }
       
       const data = await res.json();

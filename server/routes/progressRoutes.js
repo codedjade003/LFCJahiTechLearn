@@ -11,6 +11,7 @@ import {
   calculateStudentRisk,
   getUserProgressOverview
 } from '../controllers/progressController.js';
+import Enrollment from '../models/Enrollment.js';
 
 const router = express.Router();
 
@@ -25,11 +26,12 @@ router.get('/overview', protect, async (req, res) => {
 });
 
 // Mark module as completed
+// ✅ CORRECT - find enrollment by user and course
 router.put('/:courseId/modules/:moduleId/complete', protect, async (req, res) => {
   try {
     const enrollment = await markModuleComplete(
       req.user._id, 
-      req.params.courseId, 
+      req.params.courseId,  // Use course ID from URL
       req.params.moduleId
     );
     res.json({ progress: enrollment.progress, enrollment });

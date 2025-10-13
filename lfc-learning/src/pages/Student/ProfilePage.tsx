@@ -172,28 +172,49 @@ const ProfilePage = () => {
         setError(null);
         setSuccess(null);
 
-      // Upload profile picture if changed
+      // Upload profile picture if changed - USE AUTH ROUTES
       if (profilePictureFile) {
         const pictureFormData = new FormData();
-        pictureFormData.append("profilePicture", profilePictureFile);
-        await fetch(`${API_BASE}/api/auth/upload-profile-picture`, {
-          method: "PUT",
-          headers: { Authorization: `Bearer ${token}` },
+        pictureFormData.append("image", profilePictureFile); // Note: field name is 'image' not 'file'
+        
+        const pictureRes = await fetch(`${API_BASE}/api/auth/profile-picture`, {
+          method: "PUT", // Note: PUT method, not POST
+          headers: { 
+            "Authorization": `Bearer ${token}`,
+            // Don't set Content-Type for FormData
+          },
           body: pictureFormData,
         });
+        
+        if (!pictureRes.ok) throw new Error("Profile picture upload failed");
+        const pictureData = await pictureRes.json();
+        
+        // The response should contain the updated user with profilePicture
+        if (pictureData.user) {
+          setUser(pictureData.user);
+        }
       }
 
-      // Upload cover photo if changed (with position data)
+      // Upload cover photo if changed - SEND POSITION DATA
       if (coverPhotoFile) {
         const coverFormData = new FormData();
-        coverFormData.append("coverPhoto", coverPhotoFile);
-        coverFormData.append("coverPosition", JSON.stringify(coverPosition));
+        coverFormData.append("image", coverPhotoFile);
+        coverFormData.append("coverPosition", JSON.stringify(coverPosition)); // Add position data
         
-        await fetch(`${API_BASE}/api/auth/upload-cover-photo`, {
+        const coverRes = await fetch(`${API_BASE}/api/auth/cover-photo`, {
           method: "PUT",
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { 
+            "Authorization": `Bearer ${token}`,
+          },
           body: coverFormData,
         });
+        
+        if (!coverRes.ok) throw new Error("Cover photo upload failed");
+        const coverData = await coverRes.json();
+        
+        if (coverData.user) {
+          setUser(coverData.user);
+        }
       }
 
       // Update profile (rest of your existing code remains the same)

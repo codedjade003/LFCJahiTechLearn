@@ -29,6 +29,7 @@ export default function CourseAssignmentsTab({ courseId }: { courseId: string | 
   const [editingId, setEditingId] = useState<string | null>(null);
   // Add this state for materials
   const [materials, setMaterials] = useState<Array<{ name: string; url: string; type: string }>>([]);
+  // Add this unified upload function at the top of your component, after the state declarations
 
   async function fetchAssignments() {
     try {
@@ -69,10 +70,18 @@ export default function CourseAssignmentsTab({ courseId }: { courseId: string | 
     setEditingId(null);
   };
 
+  // Update the handleSubmit function to properly handle materials:
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     
-    const assignmentData = { title, instructions, submissionTypes, dueDate, materials };
+    const assignmentData = { 
+      title, 
+      instructions, 
+      submissionTypes, 
+      dueDate, 
+      materials // Just pass the materials array directly
+    };
+    
     const token = localStorage.getItem("token");
     
     if (!token) {
@@ -81,10 +90,10 @@ export default function CourseAssignmentsTab({ courseId }: { courseId: string | 
     }
 
     try {
-      let res: Response;
+      let response: Response;
       
       if (editingId) {
-        res = await fetch(`${API_BASE}/api/courses/${courseId}/assignments/${editingId}`, {
+        response = await fetch(`${API_BASE}/api/courses/${courseId}/assignments/${editingId}`, {
           method: "PUT",
           headers: { 
             "Content-Type": "application/json",
@@ -93,7 +102,7 @@ export default function CourseAssignmentsTab({ courseId }: { courseId: string | 
           body: JSON.stringify(assignmentData),
         });
       } else {
-        res = await fetch(`${API_BASE}/api/courses/${courseId}/assignments`, {
+        response = await fetch(`${API_BASE}/api/courses/${courseId}/assignments`, {
           method: "POST",
           headers: { 
             "Content-Type": "application/json",
@@ -103,8 +112,8 @@ export default function CourseAssignmentsTab({ courseId }: { courseId: string | 
         });
       }
 
-      if (!res.ok) {
-        const errorData = await res.json();
+      if (!response.ok) {
+        const errorData = await response.json();
         throw new Error(errorData.message || "Failed to save assignment");
       }
 
@@ -116,7 +125,6 @@ export default function CourseAssignmentsTab({ courseId }: { courseId: string | 
       setError(err.message || "Error saving assignment");
     }
   }
-
   function handleEdit(assignment: Assignment) {
     if (!assignment._id) return;
     

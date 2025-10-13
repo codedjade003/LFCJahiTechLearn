@@ -27,7 +27,8 @@ const moduleSchema = new mongoose.Schema({
         correctAnswer: String,
       },
     ],
-    dueDate: Date
+    dueDate: Date,
+    timeLimit: { type: Number, default: 1800 } // 30 minutes default
   },
 }, { _id: true }); // Ensure _id is preserved
 

@@ -1,6 +1,6 @@
-// src/components/Notifications.tsx - ENHANCED
+// src/components/Notifications.tsx - FIXED
 import { useState, useEffect } from "react";
-import { FaBookmark, FaVideo, FaUsers, FaBell } from "react-icons/fa";
+import { FaBookmark, FaVideo, FaUsers, FaBell, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import NotificationCard from "./NotificationCard";
 
 interface Notification {
@@ -27,6 +27,7 @@ const Notifications = () => {
     read: 'all',
     source: 'all'
   });
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     fetchNotifications();
@@ -38,20 +39,31 @@ const Notifications = () => {
       if (filters.type !== 'all') params.append('type', filters.type);
       if (filters.read !== 'all') params.append('read', filters.read);
       if (filters.source !== 'all') params.append('source', filters.source);
+      params.append('limit', '20');
 
       const response = await fetch(`${API_BASE}/api/notifications/my?${params}`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
         }
       });
       
       if (response.ok) {
         const data = await response.json();
-        setNotifications(data.notifications);
-        setUnreadCount(data.unreadCount);
+        const notificationsArray = data.notifications || data || [];
+        setNotifications(notificationsArray);
+        
+        const unread = notificationsArray.filter((n: { read: any; }) => !n.read).length;
+        setUnreadCount(unread);
+      } else {
+        console.error('Failed to fetch notifications:', response.status);
+        setNotifications([]);
+        setUnreadCount(0);
       }
     } catch (error) {
       console.error('Error fetching notifications:', error);
+      setNotifications([]);
+      setUnreadCount(0);
     } finally {
       setLoading(false);
     }
@@ -59,13 +71,19 @@ const Notifications = () => {
 
   const markAllAsRead = async () => {
     try {
-      await fetch(`${API_BASE}/api/notifications/my/read-all`, {
+      const response = await fetch(`${API_BASE}/api/notifications/my/read-all`, {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
         }
       });
-      fetchNotifications(); // Refresh list
+      
+      if (response.ok) {
+        fetchNotifications();
+      } else {
+        console.error('Failed to mark all as read:', response.status);
+      }
     } catch (error) {
       console.error('Error marking all as read:', error);
     }
@@ -97,6 +115,9 @@ const Notifications = () => {
     if (diffDays < 7) return `${diffDays}d ago`;
     return date.toLocaleDateString();
   };
+
+  // Get notifications to display (3 when collapsed, all when expanded)
+  const displayNotifications = expanded ? notifications : notifications.slice(0, 3);
 
   if (loading) {
     return (
@@ -153,18 +174,40 @@ const Notifications = () => {
             No notifications found
           </div>
         ) : (
-          notifications.map((notification) => (
-            <NotificationCard
-              key={notification._id}
-              icon={getNotificationIcon(notification.type)}
-              title={notification.title}
-              message={notification.message}
-              time={formatTime(notification.createdAt)}
-              highlight={!notification.read}
-              type={notification.type}
-              isManual={notification.manual}
-            />
-          ))
+          <>
+            {displayNotifications.map((notification) => (
+              <NotificationCard
+                key={notification._id}
+                icon={getNotificationIcon(notification.type)}
+                title={notification.title}
+                message={notification.message}
+                time={formatTime(notification.createdAt)}
+                highlight={!notification.read}
+                type={notification.type}
+                isManual={notification.manual}
+              />
+            ))}
+            
+            {/* Expand/Collapse button */}
+            {notifications.length > 3 && (
+              <button
+                onClick={() => setExpanded(!expanded)}
+                className="w-full text-center py-2 text-sm text-lfc-red hover:text-lfc-gold hover:bg-gray-50 rounded-lg transition-colors flex items-center justify-center gap-2"
+              >
+                {expanded ? (
+                  <>
+                    <FaChevronUp className="text-xs" />
+                    Show Less
+                  </>
+                ) : (
+                  <>
+                    <FaChevronDown className="text-xs" />
+                    Show All ({notifications.length - 3} more)
+                  </>
+                )}
+              </button>
+            )}
+          </>
         )}
       </div>
     </div>

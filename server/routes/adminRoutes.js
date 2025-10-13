@@ -159,7 +159,7 @@ router.get('/pending-assessments', protect, isAdminOnly, async (req, res) => {
   }
 });
 
-// GET /api/admin/analytics - FIXED VERSION (NO STATIC DATA)
+// GET /api/admin/analytics - FIXED VERSION (PROPER SCORE CALCULATION)
 router.get('/analytics', protect, isAdminOnly, async (req, res) => {
   try {
     const { courseId } = req.query;
@@ -194,13 +194,31 @@ router.get('/analytics', protect, isAdminOnly, async (req, res) => {
     const averageTimeWeeks = (totalTimeMinutes / total) / (60 * 24 * 7); // Convert minutes to weeks
     const averageTime = averageTimeWeeks > 0 ? `${averageTimeWeeks.toFixed(1)} weeks` : "0 weeks";
 
-    // Calculate average score from submissions
-    const submissions = await Submission.find({ 
-      grade: { $exists: true },
+    // FIXED: Calculate average score properly from quiz submissions
+    const quizSubmissions = await Submission.find({ 
+      submissionType: 'quiz',
       ...(courseId && { courseId })
+    }).populate('moduleId'); // Populate to get quiz details if needed
+
+    let totalPercentageScore = 0;
+    let scoredSubmissionsCount = 0;
+
+    quizSubmissions.forEach(submission => {
+      if (submission.submission && submission.submission.answers && submission.submission.score !== undefined) {
+        const totalQuestions = submission.submission.answers.length;
+        const rawScore = submission.submission.score;
+        
+        if (totalQuestions > 0) {
+          const percentageScore = (rawScore / totalQuestions) * 100;
+          totalPercentageScore += percentageScore;
+          scoredSubmissionsCount++;
+        }
+      }
     });
-    const totalScore = submissions.reduce((acc, curr) => acc + (curr.grade || 0), 0);
-    const averageScore = submissions.length > 0 ? Math.round(totalScore / submissions.length) : 0;
+
+    const averageScore = scoredSubmissionsCount > 0 
+      ? Math.round(totalPercentageScore / scoredSubmissionsCount) 
+      : 0;
 
     // Calculate dropout rate (enrollments with no activity in 30 days and low progress)
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
@@ -209,6 +227,14 @@ router.get('/analytics', protect, isAdminOnly, async (req, res) => {
       (!e.lastActivity || new Date(e.lastActivity) < thirtyDaysAgo)
     ).length;
     const dropoutRate = Math.round((dropouts / total) * 100);
+
+    console.log('Analytics Calculation:', {
+      totalEnrollments: total,
+      quizSubmissionsCount: quizSubmissions.length,
+      scoredSubmissionsCount,
+      totalPercentageScore,
+      calculatedAverageScore: averageScore
+    });
 
     res.json({
       completionRate,

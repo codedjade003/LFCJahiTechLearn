@@ -6,7 +6,7 @@ import RecentActivity, { type ActivityItem } from "../../components/Admin/Recent
 import CourseManagement from "../../components/Admin/CourseManagement";
 
 // NEW COMPONENTS
-import UserProgress from "../../components/Admin/UsersTabs/UserProgress";
+import UserProgress from "../../components/Admin/UserProgress";
 import CourseAnalytics from "../../components/Admin/CourseAnalytics";
 import RecentUsers from "../../components/Admin/RecentUsers";
 import PendingAssessments from "../../components/Admin/PendingAssessments";

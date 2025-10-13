@@ -10,16 +10,13 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [types, setTypes] = useState<string[]>([]);
-  const [type, setType] = useState("Video");
+  const [categories, setCategories] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [instructorName, setInstructorName] = useState("");
   const [instructorAvatar, setInstructorAvatar] = useState<File | null>(null);
   const [instructorAvatarUrl, ] = useState(""); 
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);  
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const [promoVideo, setPromoVideo] = useState<File | null>(null);
-  const [thumbnailUrl, ] = useState("");
-  const [promoVideoUrl, ] = useState("");
   const [isPreviewExpanded, setIsPreviewExpanded] = useState(false);
   const [, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -44,13 +41,12 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
             // Populate form fields with existing course data
             setTitle(courseData.title || "");
             setDescription(courseData.description || "");
-            setType(courseData.type || "Video");
             setLevel(courseData.level || "Beginner");
             setInstructorName(courseData.instructor?.name || "");
             setAvatarUrl(courseData.instructor?.avatar || "");
             setThumbnailUrlInput(courseData.thumbnail || "");
             setPromoVideoUrlInput(courseData.promoVideo || "");
-            setSelectedCategories(courseData.categories || []);
+            setSelectedCategory(courseData.category || []);
           }
         } catch (err) {
           console.error("Failed to fetch course data", err);
@@ -73,20 +69,20 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
           console.log("Enums API response:", data);
           setLevelOptions(data.levels || ["Beginner", "Intermediate", "Advanced"]);
 
-          // Fallback to hardcoded list if no valid types
-          setTypes(
-            data.types && data.types.length > 0
-              ? data.types
+          // ✅ FIXED: Use categories from API or fallback
+          setCategories(
+            data.categories && data.categories.length > 0
+              ? data.categories
               : ["Video", "Audio", "Graphics", "Required", "Content Creation", "Utility", "Secretariat"]
           );
         } else {
           // fallback if endpoint fails
-          setTypes(["Video", "Audio", "Graphics", "Required", "Content Creation", "Utility", "Secretariat"]);
+          setCategories(["Video", "Audio", "Graphics", "Required", "Content Creation", "Utility", "Secretariat"]);
           setLevelOptions(["Beginner", "Intermediate", "Advanced"]);
         }
       } catch (err) {
         console.error("Failed to fetch enums", err);
-        setTypes(["Video", "Audio", "Graphics", "Required", "Content Creation", "Utility", "Secretariat"]);
+        setCategories(["Video", "Audio", "Graphics", "Required", "Content Creation", "Utility", "Secretariat"]);
         setLevelOptions(["Beginner", "Intermediate", "Advanced"]);
       } finally {
         setLoading(false);
@@ -95,19 +91,20 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
     fetchEnums();
   }, []);
 
-
-  const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setType(e.target.value);
-    setSelectedCategories([e.target.value]); // Reset selected categories when type changes
+  // In your handleTypeChange function - UPDATE:
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedCategory(e.target.value);
   };
-
+  
+  // ✅ CORRECT - New unified endpoint
   const uploadFile = async (file: File, fileType: string): Promise<string> => {
     const token = localStorage.getItem("token");
     const formData = new FormData();
     formData.append("file", file);
     
     try {
-      const res = await fetch(`${API_BASE}/api/courses/upload/${fileType}`, {
+      // Remove "courses/upload/" from the URL
+      const res = await fetch(`${API_BASE}/api/uploads/${fileType}`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -117,9 +114,10 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
       
       if (res.ok) {
         const data = await res.json();
-        return data.url;
+        return data.secure_url || data.url;
       } else {
-        throw new Error("File upload failed");
+        const errorText = await res.text();
+        throw new Error(`Upload failed: ${res.status} ${errorText}`);
       }
     } catch (error) {
       console.error("Error uploading file:", error);
@@ -140,11 +138,12 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
     }
 
     try {
-      // Handle file uploads or URLs (same as before)
-      let uploadedThumb = thumbnailUrl;
-      let uploadedVideo = promoVideoUrl;
-      let uploadedAvatar = instructorAvatarUrl;
+      // Handle file uploads or URLs (FIXED: Use the correct state variables)
+      let uploadedThumb = thumbnailUrlInput; // Use the URL input state
+      let uploadedVideo = promoVideoUrlInput; // Use the URL input state
+      let uploadedAvatar = avatarUrl; // Use the URL input state
 
+      // Only upload files if they exist and we're in file mode
       if (activeThumbnailTab === 'file' && thumbnail) {
         uploadedThumb = await uploadFile(thumbnail, "image");
       }
@@ -157,20 +156,19 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
         uploadedAvatar = await uploadFile(instructorAvatar, "image");
       }
 
-      // Create course data object
-      const courseData = {
-        title,
-        description,
-        categories: selectedCategories,
-        level,
-        type,
-        thumbnail: uploadedThumb,
-        promoVideo: uploadedVideo,
-        instructor: {
-          name: instructorName,
-          avatar: uploadedAvatar
-        },
-      };
+    const courseData = {
+      title,
+      description,
+      categories: selectedCategory ? [selectedCategory] : [], // ✅ Convert to array like EditCourseInfoTab
+      level,
+      type: selectedCategory, // Or keep separate type field if needed
+      thumbnail: uploadedThumb,
+      promoVideo: uploadedVideo,
+      instructor: {
+        name: instructorName,
+        avatar: uploadedAvatar
+      },
+    };
 
       // Determine if we're creating or updating
       const url = courseId 
@@ -355,18 +353,18 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
             <label className="block text-sm font-medium">Category</label>
             <select
               className="w-full border rounded-md px-3 py-2 focus:ring-lfc-red focus:border-lfc-red text-sm md:text-base"
-              value={type}
-              onChange={handleTypeChange}
+              value={selectedCategory}
+              onChange={handleCategoryChange}
               required
             >
-              {types.map((t) => (
-                <option key={t} value={t}>
-                  {t}
+              <option value="">-- Select Category --</option>
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
                 </option>
               ))}
             </select>
           </div>
-
 
           {/* Level */}
           <div className="mt-4">
@@ -563,7 +561,7 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
               <span className="flex items-center justify-center">
                 <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 4 12z"/>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
                 {courseId ? "Updating..." : "Saving..."}
               </span>
@@ -693,7 +691,7 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
           <h4 className="text-sm font-medium text-yt-text-dark mb-2">Course Info Preview</h4>
           <div className="space-y-2">
             <p className="text-xs md:text-sm"><span className="font-medium">Title:</span> {title || "No title set"}</p>
-            <p className="text-xs md:text-sm"><span className="font-medium">Category:</span> {type || "No type selected"}</p>
+            <p className="text-xs md:text-sm"><span className="font-medium">Category:</span> {categories || "No Category selected"}</p>
             <p className="text-xs md:text-sm"><span className="font-medium">Level:</span> {level.charAt(0).toUpperCase() + level.slice(1) || "Not set"}</p>
             <p className="text-xs md:text-sm"><span className="font-medium">Description:</span> {description ? `${description.substring(0, 80)}${description.length > 80 ? '...' : ''}` : "No description provided"}</p>
           </div>

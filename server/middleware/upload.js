@@ -1,6 +1,6 @@
 // middleware/upload.js
 import multer from 'multer';
-import { profilePictureStorage, coverPhotoStorage } from '../config/cloudinary.js';
+import { unifiedStorage } from '../config/cloudinary.js';
 
 // File filter for images
 const imageFilter = (req, file, cb) => {
@@ -11,21 +11,21 @@ const imageFilter = (req, file, cb) => {
   }
 };
 
-// Upload middleware for profile pictures
+// Upload middleware for profile pictures - UPDATED
 const uploadProfilePicture = multer({
-  storage: profilePictureStorage,
+  storage: unifiedStorage, // Use unified storage instead of profilePictureStorage
   fileFilter: imageFilter,
   limits: {
     fileSize: 5 * 1024 * 1024 // 5MB limit
   }
 });
 
-// Upload middleware for cover photos
+// Upload middleware for cover photos - UPDATED
 const uploadCoverPhoto = multer({
-  storage: coverPhotoStorage,
+  storage: unifiedStorage, // Use unified storage instead of coverPhotoStorage
   fileFilter: imageFilter,
   limits: {
-    fileSize: 100 * 1024 * 1024 // 10MB limit
+    fileSize: 10 * 1024 * 1024 // 10MB limit (fixed from 100MB to 10MB)
   }
 });
 

@@ -1,6 +1,5 @@
 // src/pages/Admin/Projects.tsx
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { 
   FaSearch, 
   FaFilter, 
@@ -13,6 +12,7 @@ import {
   FaExclamationTriangle,
   FaFileAlt
 } from "react-icons/fa";
+import ProjectSubmissionModal from "./ProjectSubmissionModal";
 
 interface ProjectSubmission {
   _id: string;
@@ -29,7 +29,7 @@ interface ProjectSubmission {
   };
   grade?: number;
   feedback?: string;
-  submittedAt: string;
+  createdAt: string;
   studentId: {
     _id: string;
     name: string;
@@ -53,8 +53,19 @@ export default function Projects() {
     course: 'all',
     search: ''
   });
+  const [selectedSubmission, setSelectedSubmission] = useState<ProjectSubmission | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const [selectedSubmissions, setSelectedSubmissions] = useState<string[]>([]);
+
+  const toggleSubmissionSelection = (submissionId: string) => {
+    setSelectedSubmissions(prev =>
+      prev.includes(submissionId)
+        ? prev.filter(id => id !== submissionId)
+        : [...prev, submissionId]
+    );
+  };
 
   useEffect(() => {
     fetchProjectSubmissions();
@@ -63,21 +74,143 @@ export default function Projects() {
   const fetchProjectSubmissions = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE}/api/submissions/admin/submissions?type=file_upload`, {
+      
+      // First, get all courses to find which ones have projects
+      const coursesRes = await fetch(`${API_BASE}/api/courses`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       
-      if (res.ok) {
-        const data = await res.json();
-        // Filter for project submissions (those with projectId)
-        const projectSubmissions = data.submissions?.filter((s: any) => s.projectId) || [];
-        setSubmissions(projectSubmissions);
+      if (!coursesRes.ok) {
+        console.error("Failed to fetch courses");
+        setSubmissions([]);
+        return;
       }
+
+      const courses = await coursesRes.json();
+      
+      // Filter courses that have projects
+      const coursesWithProjects = courses.filter((course: any) => course.project);
+      
+      console.log(`📊 Found ${coursesWithProjects.length} courses with projects`);
+      
+      // Fetch project submissions for each course
+      const allProjectSubmissions: ProjectSubmission[] = [];
+      
+      for (const course of coursesWithProjects) {
+        try {
+          const submissionRes = await fetch(
+            `${API_BASE}/api/submissions/admin/courses/${course._id}/submissions?projectOnly=true`,
+            {
+              headers: { "Authorization": `Bearer ${token}` }
+            }
+          );
+          
+          if (submissionRes.ok) {
+            const data = await submissionRes.json();
+            // Add course project info to each submission
+            const courseSubmissions = data.submissions?.map((submission: any) => ({
+              ...submission,
+              courseId: {
+                _id: course._id,
+                title: course.title,
+                project: course.project
+              }
+            })) || [];
+            
+            allProjectSubmissions.push(...courseSubmissions);
+          }
+        } catch (err) {
+          console.error(`Error fetching submissions for course ${course._id}:`, err);
+        }
+      }
+      
+      console.log(`✅ Loaded ${allProjectSubmissions.length} project submissions`);
+      setSubmissions(allProjectSubmissions);
+      
     } catch (err) {
       console.error("Error fetching project submissions", err);
+      setSubmissions([]);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleBulkGrade = async (grade: number) => {
+    if (!selectedSubmissions.length) return;
+
+    if (!confirm(`Give ${grade}% to ${selectedSubmissions.length} submissions?`)) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      await Promise.all(
+        selectedSubmissions.map(submissionId =>
+          fetch(`${API_BASE}/api/submissions/${submissionId}/grade`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`,
+            },
+            body: JSON.stringify({ grade, feedback: "Bulk graded" }),
+          })
+        )
+      );
+
+      // Refresh submissions
+      await fetchProjectSubmissions();
+      setSelectedSubmissions([]);
+      alert(`Successfully graded ${selectedSubmissions.length} submissions`);
+    } catch (error) {
+      console.error("Error in bulk grading:", error);
+      alert("Error in bulk grading");
+    }
+  };
+
+  const handleGradeSubmission = async (submissionId: string, grade: number, feedback: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${API_BASE}/api/submissions/${submissionId}/grade`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          grade,
+          feedback
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to grade submission");
+      }
+
+      // Update local state
+      setSubmissions(prev => 
+        prev.map(sub => 
+          sub._id === submissionId 
+            ? { ...sub, grade, feedback }
+            : sub
+        )
+      );
+
+      // Show success message
+      alert("Submission graded successfully!");
+    } catch (error) {
+      console.error("Error grading submission:", error);
+      throw error;
+    }
+  };
+
+  // Open submission for viewing/grading
+  const openSubmission = (submission: ProjectSubmission) => {
+    setSelectedSubmission(submission);
+    setIsModalOpen(true);
+  };
+
+  // Close modal
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedSubmission(null);
   };
 
   const getStatusBadge = (submission: ProjectSubmission) => {
@@ -85,7 +218,7 @@ export default function Projects() {
       return { color: 'bg-green-100 text-green-800', text: 'Reviewed', icon: FaCheckCircle };
     }
     
-    const submittedDate = new Date(submission.submittedAt);
+    const submittedDate = new Date(submission.createdAt);
     const dueDate = submission.courseId.project?.dueDate ? new Date(submission.courseId.project.dueDate) : null;
     
     if (dueDate && submittedDate > dueDate) {
@@ -108,6 +241,11 @@ export default function Projects() {
   const filteredSubmissions = submissions.filter(submission => {
     if (filters.status === 'reviewed' && submission.grade === undefined) return false;
     if (filters.status === 'pending' && submission.grade !== undefined) return false;
+    if (filters.status === 'late') {
+      const submittedDate = new Date(submission.createdAt);
+      const dueDate = submission.courseId.project?.dueDate ? new Date(submission.courseId.project.dueDate) : null;
+      if (!dueDate || submittedDate <= dueDate) return false;
+    }
     
     if (filters.search && !submission.studentId.name.toLowerCase().includes(filters.search.toLowerCase()) &&
         !submission.courseId.title.toLowerCase().includes(filters.search.toLowerCase())) {
@@ -116,6 +254,42 @@ export default function Projects() {
     
     return true;
   });
+
+  // Bulk action handlers
+  const handleBulkSelectAll = () => {
+    if (selectedSubmissions.length === filteredSubmissions.length) {
+      setSelectedSubmissions([]);
+    } else {
+      setSelectedSubmissions(filteredSubmissions.map(sub => sub._id));
+    }
+  };
+
+  const handleExportSubmissions = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${API_BASE}/api/submissions/export?type=projects`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'project-submissions.csv';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        alert('Export started successfully!');
+      } else {
+        alert('Export failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Export error:', error);
+      alert('Error exporting submissions');
+    }
+  };
 
   if (loading) {
     return (
@@ -141,12 +315,60 @@ export default function Projects() {
           <span className="text-yt-text-gray">
             {filteredSubmissions.length} projects
           </span>
-          <button className="px-4 py-2 bg-lfc-red text-white rounded-lg hover:bg-lfc-gold-dark flex items-center">
+          <button 
+            onClick={handleExportSubmissions}
+            className="px-4 py-2 bg-lfc-red text-white rounded-lg hover:bg-lfc-gold-dark flex items-center"
+          >
             <FaDownload className="mr-2" />
             Export
           </button>
         </div>
       </div>
+
+      {/* Bulk Actions */}
+      {selectedSubmissions.length > 0 && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <span className="text-blue-800 font-medium">
+                {selectedSubmissions.length} submissions selected
+              </span>
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => handleBulkGrade(100)}
+                  className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700"
+                >
+                  Grade 100%
+                </button>
+                <button
+                  onClick={() => handleBulkGrade(85)}
+                  className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                >
+                  Grade 85%
+                </button>
+                <button
+                  onClick={() => handleBulkGrade(70)}
+                  className="px-3 py-1 bg-yellow-600 text-white text-sm rounded hover:bg-yellow-700"
+                >
+                  Grade 70%
+                </button>
+                <button
+                  onClick={() => handleBulkGrade(0)}
+                  className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
+                >
+                  Grade 0%
+                </button>
+              </div>
+            </div>
+            <button
+              onClick={() => setSelectedSubmissions([])}
+              className="text-blue-800 hover:text-blue-900 text-sm"
+            >
+              Clear selection
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="bg-white rounded-lg border border-yt-light-border p-4 mb-6">
@@ -179,6 +401,9 @@ export default function Projects() {
             onChange={(e) => setFilters({...filters, course: e.target.value})}
           >
             <option value="all">All Courses</option>
+            {Array.from(new Set(submissions.map(s => s.courseId.title))).map(title => (
+              <option key={title} value={title}>{title}</option>
+            ))}
           </select>
 
           <button className="px-4 py-2 border border-yt-light-border rounded-lg hover:bg-yt-light-hover flex items-center justify-center">
@@ -242,18 +467,29 @@ export default function Projects() {
       {/* Projects List */}
       <div className="bg-white rounded-lg border border-yt-light-border">
         <div className="p-4 border-b border-yt-light-border">
-          <h3 className="font-semibold text-yt-text-dark">Project Submissions</h3>
-        </div>
-        
-        {filteredSubmissions.length === 0 ? (
-          <div className="p-8 text-center">
-            <FaFileAlt className="text-4xl text-yt-text-gray mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No project submissions found</h3>
-            <p className="text-yt-text-gray">Adjust your filters to see more results</p>
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-yt-text-dark">Project Submissions</h3>
+            <div className="flex items-center space-x-4">
+              <label className="flex items-center space-x-2 text-sm text-yt-text-gray">
+                <input
+                  type="checkbox"
+                  checked={selectedSubmissions.length === filteredSubmissions.length && filteredSubmissions.length > 0}
+                  onChange={handleBulkSelectAll}
+                  className="rounded border-yt-light-border"
+                />
+                <span>Select all</span>
+              </label>
+            </div>
           </div>
-        ) : (
-          <div className="divide-y divide-yt-light-border">
-            {filteredSubmissions.map((submission) => {
+        </div>
+
+        <div className="divide-y divide-yt-light-border">
+          {filteredSubmissions.length === 0 ? (
+            <div className="p-8 text-center text-yt-text-gray">
+              No project submissions found matching your filters.
+            </div>
+          ) : (
+            filteredSubmissions.map((submission) => {
               const status = getStatusBadge(submission);
               const StatusIcon = status.icon;
               const FileTypeIcon = getFileTypeIcon(submission);
@@ -262,6 +498,13 @@ export default function Projects() {
                 <div key={submission._id} className="p-4 hover:bg-yt-light-hover transition-colors">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4 flex-1">
+                      <input
+                        type="checkbox"
+                        checked={selectedSubmissions.includes(submission._id)}
+                        onChange={() => toggleSubmissionSelection(submission._id)}
+                        className="rounded border-yt-light-border"
+                      />
+                      
                       <div className="w-10 h-10 bg-lfc-red rounded-full flex items-center justify-center text-white">
                         <FileTypeIcon />
                       </div>
@@ -287,7 +530,7 @@ export default function Projects() {
                         </p>
                         
                         <div className="flex items-center space-x-4 text-xs text-yt-text-gray mt-1">
-                          <span>Submitted: {new Date(submission.submittedAt).toLocaleDateString()}</span>
+                          <span>Submitted: {new Date(submission.createdAt).toLocaleDateString()}</span>
                           {submission.courseId.project?.dueDate && (
                             <span>Due: {new Date(submission.courseId.project.dueDate).toLocaleDateString()}</span>
                           )}
@@ -299,17 +542,10 @@ export default function Projects() {
                     </div>
                     
                     <div className="flex items-center space-x-2">
-                      <Link
-                        to={`/admin/submissions/${submission._id}`}
-                        className="p-2 text-yt-text-gray hover:text-lfc-red hover:bg-red-50 rounded-lg transition-colors"
-                        title="View Project"
-                      >
-                        <FaEye />
-                      </Link>
-                      
                       <button
+                        onClick={() => openSubmission(submission)}
                         className="p-2 text-yt-text-gray hover:text-lfc-red hover:bg-red-50 rounded-lg transition-colors"
-                        title="Review Project"
+                        title="Grade Project"
                       >
                         <FaEdit />
                       </button>
@@ -317,10 +553,18 @@ export default function Projects() {
                   </div>
                 </div>
               );
-            })}
-          </div>
-        )}
+            })
+          )}
+        </div>
       </div>
+
+      {/* Add the modal */}
+      <ProjectSubmissionModal
+        submission={selectedSubmission}
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onGrade={handleGradeSubmission}
+      />
     </div>
   );
 }

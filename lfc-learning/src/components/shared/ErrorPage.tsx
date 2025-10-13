@@ -1,30 +1,21 @@
 import { useEffect } from "react";
-import {
-  useNavigate,
-  useRouteError,
-  isRouteErrorResponse,
-} from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { FaHome, FaExclamationTriangle, FaTools } from "react-icons/fa";
 
 export default function ErrorPage() {
   const navigate = useNavigate();
-  const error = useRouteError() as unknown;
+  const location = useLocation();
 
   useEffect(() => {
-    // Redirect home after 5 seconds
+    // Always redirect to home after 5 seconds
     const timer = setTimeout(() => navigate("/"), 5000);
     return () => clearTimeout(timer);
   }, [navigate]);
 
-  // Detect backend asleep / network error
+  // Detect if backend/server might be down
+  const lastError = (window as any).__lastErrorMessage || "";
   const isServerDown =
-    !error ||
-    (typeof error === "object" &&
-      error !== null &&
-      "message" in error &&
-      typeof (error as { message?: string }).message === "string" &&
-      ((error as { message?: string }).message?.includes("NetworkError") ||
-        (error as { message?: string }).message?.includes("Failed to fetch")));
+    lastError.includes("NetworkError") || lastError.includes("Failed to fetch");
 
   if (isServerDown) {
     return (
@@ -32,7 +23,8 @@ export default function ErrorPage() {
         <FaTools className="text-lfc-gold text-6xl mb-4 animate-spin" />
         <h1 className="text-3xl font-semibold mb-2">Waking Up the Server...</h1>
         <p className="text-gray-600 mb-6 max-w-sm">
-          Our backend might be asleep or restarting. Please wait a few moments while we reconnect.
+          Our backend might be asleep or restarting. Please wait a few moments
+          while we reconnect.
         </p>
         <button
           onClick={() => window.location.reload()}
@@ -44,25 +36,21 @@ export default function ErrorPage() {
     );
   }
 
-  // Default values for all other errors (404s, etc.)
-  let status = 500;
-  let message = "Oops! Something went wrong.";
-
-  if (isRouteErrorResponse(error)) {
-    status = error.status;
-    message =
-      status === 404
-        ? "The page you're looking for doesn't exist or has been moved."
-        : error.statusText || message;
-  }
+  // Default fallback for client-side 404 or route errors
+  const path = location.pathname;
+  const isNotFound = !path || path === "/404" || path === "*" || path === "";
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 text-center px-4">
       <FaExclamationTriangle className="text-redCustom text-6xl mb-4" />
       <h1 className="text-4xl font-bold text-gray-800 mb-2">
-        {status === 404 ? "404 - Page Not Found" : "500 - Server Error"}
+        {isNotFound ? "404 - Page Not Found" : "500 - Unexpected Error"}
       </h1>
-      <p className="text-gray-600 mb-6 max-w-md">{message}</p>
+      <p className="text-gray-600 mb-6 max-w-md">
+        {isNotFound
+          ? "The page you're looking for doesn't exist or has been moved."
+          : "Oops! Something went wrong on our end. Please try again."}
+      </p>
       <button
         onClick={() => navigate("/")}
         className="bg-redCustom text-white px-6 py-3 rounded-lg hover:bg-goldCustom transition"

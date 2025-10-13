@@ -18,6 +18,7 @@ import {
   FaTrophy,
   FaGraduationCap
 } from "react-icons/fa";
+import { FaLinkedin, FaWhatsapp, FaFacebook, FaXTwitter } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Module {
@@ -38,6 +39,7 @@ interface Module {
       correctAnswer: string;
     }>;
     dueDate?: string;
+    timeLimit?: number; // Add this line
   };
 }
 
@@ -86,12 +88,27 @@ interface Enrollment {
 type Page = 'overview' | 'modules' | 'completion';
 
 // Add this component above CourseDetails
+// Enhanced QuizComponent with Advanced Proctoring
 const QuizComponent = ({ module, onComplete }: { module: Module; onComplete: () => void }) => {
+  const { courseId } = useParams();
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  
   const [quizState, setQuizState] = useState({
     currentQuestion: 0,
     selectedAnswer: null as string | null,
     score: 0,
-    showResults: false
+    showResults: false,
+    userAnswers: [] as string[],
+    submitted: false
+  });
+
+  const [proctoring, setProctoring] = useState({
+    fullscreenAttempted: false,
+    tabSwitches: 0,
+    visibilityChanges: 0,
+    startTime: Date.now(),
+    violations: 0,
+    timeLeft: module.quiz?.timeLimit || 1800 // 30 minutes default
   });
 
   const handleAnswerSelect = (answer: string) => {
@@ -99,6 +116,8 @@ const QuizComponent = ({ module, onComplete }: { module: Module; onComplete: () 
   };
 
   const handleNextQuestion = () => {
+    if (!quizState.selectedAnswer) return;
+
     const question = module.quiz?.questions[quizState.currentQuestion];
     let newScore = quizState.score;
     
@@ -114,27 +133,348 @@ const QuizComponent = ({ module, onComplete }: { module: Module; onComplete: () 
         currentQuestion: nextQuestion,
         selectedAnswer: null,
         score: newScore,
-        showResults: false
+        showResults: false,
+        userAnswers: [...quizState.userAnswers, quizState.selectedAnswer],
+        submitted: false
       });
     } else {
-      setQuizState(prev => ({ ...prev, showResults: true }));
-      // Auto-mark complete if passed
-      const finalScore = newScore / totalQuestions;
-      if (finalScore >= 0.7) {
-        setTimeout(onComplete, 500);
-      }
+      const finalAnswers = [...quizState.userAnswers, quizState.selectedAnswer];
+      const finalScore = newScore;
+      
+      setQuizState(prev => ({ 
+        ...prev, 
+        showResults: true,
+        score: finalScore,
+        userAnswers: finalAnswers,
+        submitted: false
+      }));
     }
   };
 
+  const handleQuizCompletion = async () => {
+    if (quizState.submitted) return;
+    
+    const totalQuestions = module.quiz?.questions.length || 0;
+    const percentage = (quizState.score / totalQuestions) * 100;
+    const passed = percentage >= 70;
+
+    setQuizState(prev => ({ ...prev, submitted: true }));
+
+    try {
+      await submitQuizResults(quizState.userAnswers, quizState.score, passed);
+      
+      if (passed) {
+        // Only complete if not requiring review
+        onComplete();
+      } else {
+        toast.error(`Quiz failed. You scored ${percentage.toFixed(1)}%, but need 70% to pass.`);
+      }
+    } catch (error) {
+      console.error('Error submitting quiz:', error);
+      toast.error("Failed to submit quiz results");
+      setQuizState(prev => ({ ...prev, submitted: false }));
+    }
+  };
+
+  const submitQuizResults = async (answers: string[], score: number, passed: boolean) => {
+    try {
+      const token = localStorage.getItem("token");
+      const totalQuestions = module.quiz?.questions.length || 1;
+      const percentage = (score / totalQuestions) * 100;
+      const timeSpent = Date.now() - proctoring.startTime;
+      
+      // ✅ USE PROCTORING ROUTE INSTEAD OF OLD ROUTE
+      const res = await fetch(`${API_BASE}/api/proctoring/${courseId}/quizzes/${module._id}/submit`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          answers,
+          score,
+          percentage: percentage,
+          passed: passed,
+          proctoringData: {
+            timeSpent,
+            tabSwitches: proctoring.tabSwitches,
+            violations: proctoring.violations,
+            fullscreenAttempted: proctoring.fullscreenAttempted,
+            timeLeft: proctoring.timeLeft
+          }
+        })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        console.log('✅ Quiz submitted with proctoring:', data);
+        
+        // Show appropriate message based on review status
+        if (data.requiresReview) {
+          toast.warning("Quiz submitted but requires manual review");
+        } else {
+          toast.success("Quiz submitted successfully!");
+        }
+        
+        return true;
+      } else {
+        const error = await res.json();
+        console.error('Failed to submit quiz results:', error);
+        throw new Error(error.message || 'Failed to submit quiz');
+      }
+    } catch (error) {
+      console.error('Error submitting quiz:', error);
+      throw error;
+    }
+  };
+
+  const recordViolation = (type: string) => {
+    setProctoring(prev => ({
+      ...prev,
+      violations: prev.violations + 1
+    }));
+    
+    logViolation(type);
+  };
+
+  const logViolation = async (type: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      
+      // ✅ USE PROCTORING ROUTE FOR VIOLATIONS
+      await fetch(`${API_BASE}/api/proctoring/${courseId}/quizzes/${module._id}/violation`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          type,
+          timestamp: new Date().toISOString(),
+          tabSwitches: proctoring.tabSwitches,
+          violations: proctoring.violations + 1
+        })
+      });
+    } catch (error) {
+      console.error('Failed to log violation:', error);
+    }
+  };
+
+  // Enhanced Proctoring System
+  const enableAdvancedProctoring = () => {
+    // 1. Force fullscreen
+    const requestFullscreen = async () => {
+      try {
+        const element = document.documentElement;
+        if (element.requestFullscreen) {
+          await element.requestFullscreen();
+          setProctoring(prev => ({ ...prev, fullscreenAttempted: true }));
+        }
+      } catch (err) {
+        console.log('Fullscreen failed:', err);
+        recordViolation('fullscreen_denied');
+      }
+    };
+
+    // 2. Detect tab/window switches
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        setProctoring(prev => ({
+          ...prev,
+          tabSwitches: prev.tabSwitches + 1,
+          visibilityChanges: prev.visibilityChanges + 1
+        }));
+        recordViolation('tab_switch');
+        toast.warning("⚠️ Please return to the quiz tab immediately!");
+      }
+    };
+
+    // 3. Prevent right-click, copy, paste
+    const preventDefaultActions = (e: Event) => {
+      e.preventDefault();
+      recordViolation('restricted_action');
+      return false;
+    };
+
+    // 4. Detect developer tools
+    const detectDevTools = () => {
+      const threshold = 160;
+      const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+      const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+      
+      if (widthThreshold || heightThreshold) {
+        recordViolation('dev_tools_detected');
+        toast.error("Developer tools detected! Please close them to continue.");
+      }
+    };
+
+    // 5. Keyboard restrictions
+    const blockShortcuts = (e: KeyboardEvent) => {
+      const blockedKeys = [
+        'F12', 'F11', 'PrintScreen', 'Escape',
+        'Control', 'Alt', 'Meta', 'ContextMenu'
+      ];
+      
+      if (e.ctrlKey || e.metaKey) {
+        if (['c', 'v', 'u', 'i', 'j', 'a'].includes(e.key.toLowerCase())) {
+          e.preventDefault();
+          recordViolation(`keyboard_shortcut_${e.key}`);
+          toast.warning("Keyboard shortcuts are disabled during quiz");
+        }
+      }
+      
+      if (blockedKeys.includes(e.key)) {
+        e.preventDefault();
+        recordViolation(`function_key_${e.key}`);
+      }
+    };
+
+    // 6. Prevent dragging and text selection
+    const preventDragAndSelect = (e: Event) => {
+      e.preventDefault();
+    };
+
+    // Set up all event listeners
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    document.addEventListener('contextmenu', preventDefaultActions);
+    document.addEventListener('copy', preventDefaultActions);
+    document.addEventListener('cut', preventDefaultActions);
+    document.addEventListener('paste', preventDefaultActions);
+    document.addEventListener('keydown', blockShortcuts);
+    document.addEventListener('dragstart', preventDragAndSelect);
+    document.addEventListener('selectstart', preventDragAndSelect);
+
+    // Start monitoring
+    requestFullscreen();
+    const devToolsInterval = setInterval(detectDevTools, 1000);
+
+    return () => {
+      // Cleanup
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      document.removeEventListener('contextmenu', preventDefaultActions);
+      document.removeEventListener('copy', preventDefaultActions);
+      document.removeEventListener('cut', preventDefaultActions);
+      document.removeEventListener('paste', preventDefaultActions);
+      document.removeEventListener('keydown', blockShortcuts);
+      document.removeEventListener('dragstart', preventDragAndSelect);
+      document.removeEventListener('selectstart', preventDragAndSelect);
+      clearInterval(devToolsInterval);
+      
+      // Exit fullscreen
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      }
+    };
+  };
+
+  // Timer effect
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setProctoring(prev => {
+        if (prev.timeLeft <= 0) {
+          clearInterval(timer);
+          handleAutoSubmit();
+          return prev;
+        }
+        return { ...prev, timeLeft: prev.timeLeft - 1 };
+      });
+    }, 1000);
+    
+    return () => clearInterval(timer);
+  }, []);
+
+  const handleAutoSubmit = async () => {
+    if (quizState.submitted) return;
+    
+    const totalQuestions = module.quiz?.questions.length || 0;
+    const percentage = (quizState.score / totalQuestions) * 100;
+    const passed = percentage >= 70;
+
+    setQuizState(prev => ({ ...prev, submitted: true }));
+
+    try {
+      await submitQuizResults(quizState.userAnswers, quizState.score, passed);
+      toast.info("Time's up! Quiz automatically submitted.");
+      
+      if (passed) {
+        onComplete();
+      }
+    } catch (error) {
+      console.error('Error auto-submitting quiz:', error);
+      toast.error("Failed to auto-submit quiz");
+    }
+  };
+
+  useEffect(() => {
+    const cleanup = enableAdvancedProctoring();
+    return cleanup;
+  }, []);
+
+  // Format time display
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
   if (quizState.showResults) {
+    const totalQuestions = module.quiz?.questions.length || 0;
+    const percentage = (quizState.score / totalQuestions) * 100;
+    const passed = percentage >= 70;
+
     return (
-      <div className="text-center p-8">
-        <FaTrophy className="text-4xl text-yellow-500 mx-auto mb-4" />
-        <h3 className="text-xl font-bold mb-2">Quiz Completed!</h3>
-        <p className="text-lg mb-4">Score: {quizState.score}/{module.quiz?.questions.length}</p>
-        <button onClick={onComplete} className="px-6 py-2 bg-lfc-red text-white rounded-md">
-          Continue
+      <div className="text-center p-8 bg-white rounded-lg border border-gray-200">
+        <div className={`mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4 ${
+          passed ? 'bg-green-100' : 'bg-red-100'
+        }`}>
+          {passed ? (
+            <FaTrophy className="text-3xl text-green-600" />
+          ) : (
+            <FaClock className="text-3xl text-red-600" />
+          )}
+        </div>
+        <h3 className="text-2xl font-bold mb-2">
+          {passed ? 'Quiz Completed! 🎉' : 'Quiz Failed 😔'}
+        </h3>
+        <p className="text-lg mb-2">Score: {quizState.score}/{totalQuestions}</p>
+        <p className="text-lg mb-2">Percentage: {percentage.toFixed(1)}%</p>
+        <p className="text-lg mb-6">
+          {passed ? 'Congratulations! You passed the quiz.' : `You need 70% or higher to pass. ${percentage >= 60 ? 'You were close!' : 'Keep studying!'}`}
+        </p>
+        
+        {/* Proctoring Summary */}
+        {proctoring.violations > 0 && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+            <p className="text-yellow-800 text-sm">
+              Note: {proctoring.violations} proctoring violation(s) were recorded during this attempt.
+            </p>
+          </div>
+        )}
+        
+        {!passed && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+            <p className="text-yellow-800">
+              You can retake the quiz after reviewing the course material.
+            </p>
+          </div>
+        )}
+        
+        <button 
+          onClick={handleQuizCompletion}
+          disabled={quizState.submitted}
+          className="px-8 py-3 bg-lfc-red text-white rounded-lg hover:bg-lfc-gold-dark disabled:opacity-50 text-lg font-semibold"
+        >
+          {quizState.submitted ? 'Submitting...' : 'Continue'}
         </button>
+        
+        {!passed && (
+          <button 
+            onClick={() => window.location.reload()}
+            className="ml-4 px-8 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 text-lg font-semibold"
+          >
+            Retry Quiz
+          </button>
+        )}
       </div>
     );
   }
@@ -143,29 +483,92 @@ const QuizComponent = ({ module, onComplete }: { module: Module; onComplete: () 
   if (!question) return null;
 
   return (
-    <div className="p-6">
-      <h3 className="text-lg font-semibold mb-4">Question {quizState.currentQuestion + 1}</h3>
-      <p className="text-lg mb-6">{question.question}</p>
+    <div className="p-6 bg-white rounded-lg border border-gray-200">
+      {/* Enhanced Quiz Header with Proctoring Info */}
+      <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <FaClock className="text-red-500 mr-2" />
+            <span className="text-red-700 font-semibold">Secure Quiz Mode Active</span>
+          </div>
+          <div className="text-red-600 font-bold">
+            Time: {formatTime(proctoring.timeLeft)}
+          </div>
+        </div>
+        <p className="text-red-600 text-sm mt-1">
+          Fullscreen mode • Tab switching monitored • Right-click disabled • Keyboard shortcuts blocked
+        </p>
+        {proctoring.tabSwitches > 0 && (
+          <p className="text-red-500 text-xs mt-1 font-semibold">
+            ⚠️ Tab switches detected: {proctoring.tabSwitches}
+          </p>
+        )}
+      </div>
+
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h3 className="text-xl font-semibold">Question {quizState.currentQuestion + 1} of {module.quiz?.questions.length}</h3>
+        </div>
+        <div className="flex items-center space-x-4">
+          <div className="bg-gray-100 px-3 py-1 rounded-full text-sm">
+            Score: {quizState.score}
+          </div>
+          <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
+            proctoring.violations === 0 ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+          }`}>
+            Violations: {proctoring.violations}
+          </div>
+        </div>
+      </div>
+      
+      <p className="text-lg mb-6 bg-gray-50 p-4 rounded-lg border">{question.question}</p>
+      
       <div className="space-y-3">
         {question.options.map((option, index) => (
           <button
             key={index}
             onClick={() => handleAnswerSelect(option)}
-            className={`w-full text-left p-4 rounded-lg border transition-colors ${
-              quizState.selectedAnswer === option ? 'border-lfc-red bg-red-50' : 'border-gray-300'
+            className={`w-full text-left p-4 rounded-lg border transition-all ${
+              quizState.selectedAnswer === option 
+                ? 'border-lfc-red bg-red-50 transform scale-105' 
+                : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
             }`}
           >
-            {option}
+            <div className="flex items-center">
+              <div className={`w-6 h-6 rounded-full border mr-3 flex items-center justify-center ${
+                quizState.selectedAnswer === option 
+                  ? 'border-lfc-red bg-lfc-red text-white' 
+                  : 'border-gray-400'
+              }`}>
+                {quizState.selectedAnswer === option && '✓'}
+              </div>
+              <span>{option}</span>
+            </div>
           </button>
         ))}
       </div>
-      <button
-        onClick={handleNextQuestion}
-        disabled={!quizState.selectedAnswer}
-        className="mt-6 px-6 py-2 bg-lfc-red text-white rounded-md disabled:opacity-50"
-      >
-        {quizState.currentQuestion + 1 === module.quiz?.questions.length ? 'Finish' : 'Next'}
-      </button>
+      
+      <div className="flex justify-between items-center mt-8">
+        <div className="text-sm text-gray-500">
+          Question {quizState.currentQuestion + 1} of {module.quiz?.questions.length}
+        </div>
+        <button
+          onClick={handleNextQuestion}
+          disabled={!quizState.selectedAnswer}
+          className="px-8 py-3 bg-lfc-red text-white rounded-lg hover:bg-lfc-gold-dark disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+        >
+          {quizState.currentQuestion + 1 === module.quiz?.questions.length ? 'Finish Quiz' : 'Next Question'}
+        </button>
+      </div>
+
+      {/* Time warning */}
+      {proctoring.timeLeft < 300 && ( // 5 minutes warning
+        <div className="mt-4 bg-orange-50 border border-orange-200 rounded-lg p-3">
+          <p className="text-orange-700 text-sm font-semibold">
+            ⏰ Time warning: {formatTime(proctoring.timeLeft)} remaining
+          </p>
+        </div>
+      )}
     </div>
   );
 };
@@ -281,28 +684,43 @@ export default function CourseDetails() {
       const token = localStorage.getItem("token");
       if (!token) throw new Error('No auth token');
 
+      console.log('Marking module complete:', { courseId, moduleId });
+
+      // ✅ CORRECT ENDPOINT - matches your backend route
       const res = await fetch(`${API_BASE}/api/progress/${courseId}/modules/${moduleId}/complete`, {
-        method: "PUT",
+        method: "PUT", // ✅ Use PUT method, not POST
         headers: {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json",
         }
       });
 
+      console.log('Response status:', res.status);
+
       if (res.ok) {
+        const data = await res.json();
+        console.log('Module marked complete:', data);
         await fetchEnrollmentProgress();
+        toast.success("Module marked as complete!");
       } else {
-        const error = await res.json();
-        console.error("Mark complete failed:", error);
-        // show user-friendly error (toast)
-        toast.error(error.message || "Failed to mark module complete");
+        const errorText = await res.text();
+        console.log("Mark complete failed:", errorText);
+        
+        try {
+          const errorData = JSON.parse(errorText);
+          if (errorData.message === "Module already completed") {
+            await fetchEnrollmentProgress();
+            toast.info("Module already completed");
+          } else {
+            toast.error(errorData.message || "Failed to mark module complete");
+          }
+        } catch (parseError) {
+          toast.error("Failed to mark module complete");
+        }
       }
     } catch (err) {
-      if (err instanceof Error) {
-        toast.error(`Error marking module complete: ${err.message}`);
-      } else {
-        toast.error("Unknown error occurred");
-      }
+      console.error("Error marking module complete:", err);
+      toast.error("Network error while marking module complete");
     }
   };
 
@@ -319,6 +737,66 @@ export default function CourseDetails() {
       case 'quiz': return <FaFileAlt className="text-red-500" />;
       default: return <FaPlay className="text-red-500" />;
     }
+  };
+
+  // ShareButton Component
+  const ShareButton = ({ 
+    platform, 
+    courseTitle, 
+    progress,
+    passed
+  }: { 
+    platform: 'linkedin' | 'x' | 'whatsapp' | 'facebook';
+    courseTitle: string;
+    progress: number;
+    passed: boolean;
+  }) => {
+    const shareMessage = passed 
+      ? `🎓 I successfully completed "${courseTitle}" with ${progress}% mastery! So proud of this achievement!`
+      : `📚 I'm making great progress in "${courseTitle}" - currently at ${progress}% completion!`;
+
+    const shareUrls = {
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.origin)}&summary=${encodeURIComponent(shareMessage)}`,
+      x: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareMessage)}&url=${encodeURIComponent(window.location.origin)}`,
+      whatsapp: `https://wa.me/?text=${encodeURIComponent(`${shareMessage} ${window.location.origin}`)}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.origin)}&quote=${encodeURIComponent(shareMessage)}`
+    };
+
+    const platformIcons = {
+      linkedin: <FaLinkedin className="text-xl" />,
+      x: <FaXTwitter className="text-xl" />, // Using X/Twitter icon
+      whatsapp: <FaWhatsapp className="text-xl" />,
+      facebook: <FaFacebook className="text-xl" />
+    };
+
+    const platformColors = {
+      linkedin: 'bg-blue-600 hover:bg-blue-700',
+      x: 'bg-black hover:bg-gray-800',
+      whatsapp: 'bg-green-500 hover:bg-green-600',
+      facebook: 'bg-blue-800 hover:bg-blue-900'
+    };
+
+    const platformNames = {
+      linkedin: 'LinkedIn',
+      x: 'X',
+      whatsapp: 'WhatsApp',
+      facebook: 'Facebook'
+    };
+
+    const handleShare = () => {
+      const url = shareUrls[platform];
+      window.open(url, '_blank', 'width=600,height=400');
+    };
+
+    return (
+      <button
+        onClick={handleShare}
+        className={`p-3 rounded-full text-white ${platformColors[platform]} transition-colors transform hover:scale-110`}
+        title={`Share on ${platformNames[platform]}`}
+      >
+        <span className="text-xl font-bold">{platformIcons[platform]}</span>
+      </button>
+    );
   };
 
   if (loading) {
@@ -386,7 +864,7 @@ export default function CourseDetails() {
 
           {/* Navigation Tabs */}
           <nav className="flex space-x-8 mt-4 border-b">
-            {(['overview', 'modules', 'completion'] as Page[]).map((page) => (
+            {(['overview', 'modules'] as Page[]).map((page) => (
               <button
                 key={page}
                 onClick={() => setActivePage(page)}
@@ -398,9 +876,21 @@ export default function CourseDetails() {
               >
                 {page === 'overview' && 'Overview'}
                 {page === 'modules' && 'Course Content'}
-                {page === 'completion' && 'Completion'}
               </button>
             ))}
+            {/* Only show completion tab when course is fully completed */}
+            {enrollment?.completed && (
+              <button
+                onClick={() => setActivePage('completion')}
+                className={`pb-3 px-1 font-medium transition-colors ${
+                  activePage === 'completion'
+                    ? 'text-lfc-red border-b-2 border-lfc-red'
+                    : 'text-yt-text-gray hover:text-yt-text-dark'
+                }`}
+              >
+                Completion
+              </button>
+            )}
           </nav>
         </div>
       </header>
@@ -685,80 +1175,192 @@ export default function CourseDetails() {
                 exit={{ opacity: 0, scale: 1.1 }}
                 className="max-w-2xl mx-auto text-center"
               >
-                <div className="bg-gradient-to-br from-lfc-red to-lfc-gold p-1 rounded-full w-32 h-32 mx-auto mb-6">
-                  <div className="bg-white rounded-full w-full h-full flex items-center justify-center">
-                    <FaTrophy className="text-4xl text-yellow-500" />
-                  </div>
-                </div>
-                
-                <h2 className="text-3xl font-bold mb-4">Congratulations! 🎉</h2>
-                <p className="text-xl text-yt-text-gray mb-8">
-                  You've successfully completed <strong>{course.title}</strong>
-                </p>
+                {/* Calculate completion status */}
+                {(() => {
+                  const totalModules = course.sections.flatMap(s => s.modules).length;
+                  const completedModules = enrollment?.moduleProgress?.filter(m => m.completed).length || 0;
+                  const allModulesCompleted = completedModules === totalModules && totalModules > 0;
+                  const progressPercentage = enrollment?.progress || 0;
+                  const passed = allModulesCompleted && progressPercentage >= 70; // Use the 70% threshold
 
-                <div className="bg-gray-50 rounded-lg p-6 mb-8">
-                  <h3 className="font-semibold mb-4">Course Completion Details</h3>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-yt-text-gray">Progress</span>
-                      <div className="font-semibold">{enrollment?.progress}%</div>
-                    </div>
-                    <div>
-                      <span className="text-yt-text-gray">Modules Completed</span>
-                      <div className="font-semibold">
-                        {enrollment?.moduleProgress?.filter(m => m.completed).length}/
-                        {course.sections.flatMap(s => s.modules).length}
+                  // Only show full celebration if all modules are completed AND passed
+                  if (passed) {
+                    return (
+                      <div>
+                        <div className="bg-gradient-to-br from-lfc-red to-lfc-gold p-1 rounded-full w-32 h-32 mx-auto mb-6">
+                          <div className="bg-white rounded-full w-full h-full flex items-center justify-center">
+                            <FaTrophy className="text-4xl text-yellow-500" />
+                          </div>
+                        </div>
+                        
+                        <h2 className="text-3xl font-bold mb-4">Congratulations! 🎉</h2>
+                        <p className="text-xl text-yt-text-gray mb-8">
+                          You've successfully completed <strong>{course.title}</strong> with flying colors!
+                        </p>
+
+                        <div className="bg-gray-50 rounded-lg p-6 mb-8">
+                          <h3 className="font-semibold mb-4">Course Completion Details</h3>
+                          <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                              <span className="text-yt-text-gray">Final Score</span>
+                              <div className="font-semibold text-2xl text-green-600">{progressPercentage}%</div>
+                            </div>
+                            <div>
+                              <span className="text-yt-text-gray">Modules Completed</span>
+                              <div className="font-semibold text-2xl">
+                                {completedModules}/{totalModules}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="mt-4 text-sm text-green-600 font-semibold">
+                            ✅ Passed with excellence!
+                          </div>
+                        </div>
+
+                        {/* Share Section */}
+                        <div className="mb-8 p-6 bg-blue-50 rounded-lg border border-blue-200">
+                          <h3 className="font-semibold mb-4 text-blue-800">
+                            {passed ? 'Share Your Achievement!' : 'Share Your Progress!'}
+                          </h3>
+                          <p className="text-blue-700 mb-4">
+                            {passed 
+                              ? 'Celebrate your success and inspire others!'
+                              : 'Let people know about your learning journey!'
+                            }
+                          </p>
+                          <div className="flex justify-center space-x-4">
+                            <ShareButton 
+                              platform="linkedin"
+                              courseTitle={course.title}
+                              progress={progressPercentage}
+                              passed={passed}
+                            />
+                            <ShareButton 
+                              platform="x"
+                              courseTitle={course.title}
+                              progress={progressPercentage}
+                              passed={passed}
+                            />
+                            <ShareButton 
+                              platform="whatsapp"
+                              courseTitle={course.title}
+                              progress={progressPercentage}
+                              passed={passed}
+                            />
+                            <ShareButton 
+                              platform="facebook"
+                              courseTitle={course.title}
+                              progress={progressPercentage}
+                              passed={passed}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="mb-8">
+                          <h3 className="font-semibold mb-4">Share Your Feedback</h3>
+                          <textarea
+                            value={feedback}
+                            onChange={(e) => setFeedback(e.target.value)}
+                            placeholder="What did you think of this course? Share your experience..."
+                            className="w-full h-32 p-3 border border-yt-light-border rounded-lg resize-none focus:outline-none focus:border-lfc-red"
+                          />
+                          <div className="mb-4">
+                            <label className="block text-sm font-medium mb-2">Rating</label>
+                            <div className="flex space-x-1 justify-center">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <button
+                                  key={star}
+                                  type="button"
+                                  onClick={() => setRating(star)}
+                                  className="text-2xl focus:outline-none"
+                                >
+                                  {star <= rating ? '⭐' : '☆'}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                          <button
+                            onClick={submitFeedback}
+                            disabled={submittingFeedback || !feedback.trim()}
+                            className="mt-3 px-6 py-2 bg-lfc-red text-white rounded-md hover:bg-lfc-gold-dark disabled:opacity-50"
+                          >
+                            {submittingFeedback ? 'Submitting...' : 'Submit Feedback'}
+                          </button>
+                        </div>
+
+                        <div className="flex justify-center space-x-4">
+                          <button
+                            onClick={() => navigate('/dashboard/courses')}
+                            className="px-6 py-2 border border-yt-light-border rounded-md hover:bg-yt-light-hover"
+                          >
+                            Back to Courses
+                          </button>
+                          <button
+                            onClick={() => setActivePage('overview')}
+                            className="px-6 py-2 bg-lfc-red text-white rounded-md hover:bg-lfc-gold-dark"
+                          >
+                            Review Course
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                </div>
+                    );
+                  } else {
+                    // Show progress instead of completion
+                    return (
+                      <div>
+                        <div className="bg-gradient-to-br from-blue-500 to-purple-600 p-1 rounded-full w-32 h-32 mx-auto mb-6">
+                          <div className="bg-white rounded-full w-full h-full flex items-center justify-center">
+                            <FaClock className="text-4xl text-blue-500" />
+                          </div>
+                        </div>
+                        
+                        <h2 className="text-3xl font-bold mb-4">Keep Going! 💪</h2>
+                        <p className="text-xl text-yt-text-gray mb-8">
+                          You're making great progress in <strong>{course.title}</strong>
+                        </p>
 
-                <div className="mb-8">
-                  <h3 className="font-semibold mb-4">Share Your Feedback</h3>
-                  <textarea
-                    value={feedback}
-                    onChange={(e) => setFeedback(e.target.value)}
-                    placeholder="What did you think of this course? Share your experience..."
-                    className="w-full h-32 p-3 border border-yt-light-border rounded-lg resize-none focus:outline-none focus:border-lfc-red"
-                  />
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium mb-2">Rating</label>
-                    <div className="flex space-x-1">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <button
-                          key={star}
-                          type="button"
-                          onClick={() => setRating(star)}
-                          className="text-2xl focus:outline-none"
-                        >
-                          {star <= rating ? '⭐' : '☆'}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <button
-                    onClick={submitFeedback}
-                    disabled={submittingFeedback || !feedback.trim()}
-                    className="mt-3 px-6 py-2 bg-lfc-red text-white rounded-md hover:bg-lfc-gold-dark disabled:opacity-50"
-                  >
-                    {submittingFeedback ? 'Submitting...' : 'Submit Feedback'}
-                  </button>
-                </div>
+                        <div className="bg-gray-50 rounded-lg p-6 mb-8">
+                          <h3 className="font-semibold mb-4">Your Progress</h3>
+                          <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                              <span className="text-yt-text-gray">Overall Progress</span>
+                              <div className="font-semibold text-2xl">{progressPercentage}%</div>
+                            </div>
+                            <div>
+                              <span className="text-yt-text-gray">Modules Completed</span>
+                              <div className="font-semibold text-2xl">
+                                {completedModules}/{totalModules}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="mt-4">
+                            <div className="w-full bg-gray-200 rounded-full h-4">
+                              <div 
+                                className="bg-lfc-red h-4 rounded-full transition-all duration-500"
+                                style={{ width: `${progressPercentage}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                        </div>
 
-                <div className="flex justify-center space-x-4">
-                  <button
-                    onClick={() => navigate('/dashboard/courses')}
-                    className="px-6 py-2 border border-yt-light-border rounded-md hover:bg-yt-light-hover"
-                  >
-                    Back to Courses
-                  </button>
-                  <button
-                    onClick={() => setActivePage('overview')}
-                    className="px-6 py-2 bg-lfc-red text-white rounded-md hover:bg-lfc-gold-dark"
-                  >
-                    Review Course
-                  </button>
-                </div>
+                        <div className="flex justify-center space-x-4">
+                          <button
+                            onClick={() => setActivePage('modules')}
+                            className="px-6 py-2 bg-lfc-red text-white rounded-md hover:bg-lfc-gold-dark"
+                          >
+                            Continue Learning
+                          </button>
+                          <button
+                            onClick={() => navigate('/dashboard/courses')}
+                            className="px-6 py-2 border border-yt-light-border rounded-md hover:bg-yt-light-hover"
+                          >
+                            Back to Courses
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  }
+                })()}
               </motion.div>
             )}
           </AnimatePresence>

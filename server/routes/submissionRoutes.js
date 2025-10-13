@@ -1,4 +1,4 @@
-// routes/submissionRoutes.js - COMPLETE
+// routes/submissionRoutes.js - CORRECTED
 import express from 'express';
 import { protect } from '../middleware/authMiddleware.js';
 import { isAdminOnly } from '../middleware/isAdminOnly.js';
@@ -23,17 +23,23 @@ import { logAction } from '../middleware/logAction.js';
 
 const router = express.Router();
 
+// Add debug logging to see which routes are hit
+router.use((req, res, next) => {
+  console.log(`📥 SUBMISSION ROUTE: ${req.method} ${req.originalUrl}`);
+  next();
+});
+
 // Student routes
 router.get('/course/:courseId', protect, getSubmissions);
-// routes/submissionRoutes.js
-router.get(
-  '/course/:courseId/assignments/:assignmentId',
-  protect,
-  getAssignmentSubmission
-);
-router.get('/course/:courseId/project', protect, getProjectSubmission); 
 
-router.get('/course/:courseId/assignments/:assignmentId/submission', protect, getSubmission);
+// FIXED: Assignment and Project submission routes
+router.get('/course/:courseId/assignments/:assignmentId', protect, getAssignmentSubmission);
+router.get('/course/:courseId/project', protect, getProjectSubmission);
+
+// Remove the conflicting route - it's causing issues
+// router.get('/course/:courseId/assignments/:assignmentId/submission', protect, getSubmission);
+
+// Submission creation routes
 router.post('/course/:courseId/assignments/:assignmentId', upload.single('file'), logAction('upload', 'assignment'), protect, submitAssignment);
 router.post('/course/:courseId/project', upload.single('file'), logAction('upload', 'project'), protect, submitProject);
 router.post('/course/:courseId/quizzes/:quizId', protect, submitQuiz);
@@ -48,4 +54,5 @@ router.get('/admin/students/:studentId/submissions', protect, isAdminOnly, getSt
 // Enhanced grading routes
 router.put('/:submissionId/grade', protect, isAdminOnly, gradeSubmission);
 router.post('/admin/bulk-grade', protect, isAdminOnly, bulkGradeSubmissions);
+
 export default router;

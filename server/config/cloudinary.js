@@ -1,4 +1,3 @@
-// config/cloudinary.js - Add submission storage
 import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import dotenv from "dotenv";
@@ -11,50 +10,14 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// Configure storage for profile pictures
-const profilePictureStorage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: 'user-profiles',
-    format: async (req, file) => 'jpg',
-    public_id: (req, file) => {
-      const timestamp = Date.now();
-      return `profile-${req.user.id}-${timestamp}`;
-    },
-    transformation: [
-      { width: 500, height: 500, crop: 'limit' },
-      { quality: 'auto' },
-      { format: 'jpg' }
-    ]
-  }
-});
-
-// Configure storage for cover photos
-const coverPhotoStorage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: 'user-covers',
-    format: async (req, file) => 'jpg',
-    public_id: (req, file) => {
-      const timestamp = Date.now();
-      return `cover-${req.user.id}-${timestamp}`;
-    },
-    transformation: [
-      { width: 1920, height: 1080, crop: 'limit' }, // bigger than before
-      { quality: 'auto:best' }, // Cloudinary will pick highest needed
-      { format: 'jpg' }
-    ]
-  }
-});
-
-// Configure storage for project submissions - FIXED for all file types
-const submissionStorage = new CloudinaryStorage({
+// Unified storage configuration for ALL file types
+const unifiedStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: async (req, file) => {
     // Determine resource type based on file mimetype
-    let resource_type = 'auto'; // Let Cloudinary auto-detect
+    let resource_type = 'auto';
+    let folder = 'uploads';
     
-    // For specific file types, set resource_type explicitly
     if (file.mimetype.startsWith('image/')) {
       resource_type = 'image';
     } else if (file.mimetype.startsWith('video/')) {
@@ -64,33 +27,71 @@ const submissionStorage = new CloudinaryStorage({
                file.mimetype.includes('sheet') ||
                file.mimetype.includes('text') ||
                file.mimetype.includes('zip')) {
-      resource_type = 'raw'; // Use 'raw' for documents, PDFs, etc.
+      resource_type = 'raw';
     }
+
+    // Determine folder based on upload type
+    const uploadType = req.params.type || 'general';
+  switch(uploadType) {
+    case 'thumbnail':
+    case 'avatar':
+      folder = 'course-materials/images';
+      break;
+    case 'promo':
+      folder = 'course-materials/videos';
+      break;
+    case 'pdf':
+    case 'document':
+      folder = 'course-materials/documents';
+      break;
+    case 'submission':
+      folder = 'submissions';
+      break;
+    case 'assignment':
+      folder = 'assignments';
+      break;
+    case 'profile':
+      folder = 'user-profiles';
+      break;
+    case 'cover':
+      folder = 'user-covers';
+      break;
+    case 'material':  // Add this case
+      folder = 'course-materials';
+      break;
+    default:
+      folder = 'uploads/general';
+  }
 
     const timestamp = Date.now();
     const random = Math.random().toString(36).substring(2, 8);
     const userId = req.user?._id || 'anonymous';
     const originalName = file.originalname.split('.')[0].replace(/[^a-zA-Z0-9]/g, '-');
     
-    return {
-      folder: 'project-submissions',
-      resource_type: resource_type, // This is the key fix!
-      public_id: `submission-${userId}-${originalName}-${timestamp}-${random}`,
-      // Only apply transformations for images
-      ...(resource_type === 'image' && {
-        transformation: [
-          { quality: 'auto' },
-          { format: 'auto' }
-        ]
-      })
+    const params = {
+      folder: folder,
+      resource_type: resource_type,
+      public_id: `${uploadType}-${userId}-${originalName}-${timestamp}-${random}`,
     };
+
+    // Apply optimizations for images
+    if (resource_type === 'image') {
+      params.transformation = [
+        { quality: 'auto' },
+        { format: 'auto' }
+      ];
+    }
+
+    // Apply optimizations for videos
+    if (resource_type === 'video') {
+      params.chunk_size = 6000000; // 6MB chunks for large videos
+    }
+
+    return params;
   }
 });
 
-
 export { 
   cloudinary, 
-  profilePictureStorage, 
-  coverPhotoStorage,
-  submissionStorage  // Add this export
+  unifiedStorage
 };

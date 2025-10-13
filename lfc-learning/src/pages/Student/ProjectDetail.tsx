@@ -46,7 +46,7 @@ interface Submission {
       type: string;
     };
   };
-  submittedAt: string;
+  createdAt: string;
   grade?: number;
   feedback?: string;
   gradedAt?: string;
@@ -419,7 +419,7 @@ export default function ProjectDetail() {
                     </div>
                   )}                                    
                   <p className="text-sm text-yt-text-gray mt-2">
-                    Submitted on: {new Date(submission.submittedAt).toLocaleDateString()}
+                    Submitted on: {submission.createdAt ? new Date(submission.createdAt).toLocaleDateString() : 'Date not available'}
                   </p>
                 </div>
 

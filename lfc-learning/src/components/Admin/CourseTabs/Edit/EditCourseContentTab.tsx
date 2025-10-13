@@ -149,11 +149,22 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
   // Update handleEditModule to handle the nested quiz structure
   const handleEditModule = (sectionId: string, module: Module) => {
     setEditingModule({ sectionId, moduleId: module._id });
+    
+    // FIX: Properly extract quiz questions from the nested structure
+    const quizQuestions = module.quiz?.questions || [];
+    
+    console.log("Editing module quiz data:", {
+      moduleQuiz: module.quiz,
+      questions: quizQuestions,
+      hasQuiz: !!module.quiz,
+      questionsCount: quizQuestions.length
+    });
+
     setNewModule({
       title: module.title,
       type: module.type,
       file: null,
-      questions: module.quiz?.questions || [], // Extract questions from quiz
+      questions: quizQuestions, // This should now have the actual questions
     });
     
     if (module.contentUrl) {
@@ -189,63 +200,90 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
     }
   };
 
-  // Update handleAddModule to use the correct quiz structure
+  // ✅ FIXED: Use correct upload types
   const handleAddModule = async (sectionId: string) => {
+    if (!courseId) return;
+    
     try {
       let finalContentUrl = contentUrl;
       const token = localStorage.getItem("token");
-
+      
       if (!token) {
         alert("Please log in to add modules");
         return;
       }
 
-      // Handle file upload
+      // Handle file upload - Use CORRECT upload types
       if ((newModule.type === "video" || newModule.type === "pdf") && 
           activeUploadTab === 'file' && newModule.file) {
+        
+        console.log("📁 File upload details:", {
+          file: newModule.file,
+          name: newModule.file.name,
+          size: newModule.file.size,
+          type: newModule.file.type,
+          courseId,
+          sectionId
+        });
+
         const formData = new FormData();
         formData.append("file", newModule.file);
         
-        const uploadRes = await fetch(`${API_BASE}/api/courses/upload/${newModule.type}`, {
+        // ✅ FIXED: Use correct upload types
+        let uploadType = "document"; // Default for PDFs
+        if (newModule.type === "video") {
+          uploadType = "video"; // Use "video" for video files
+        } else if (newModule.type === "pdf") {
+          uploadType = "document"; // Use "document" for PDFs
+        }
+        
+        const uploadRes = await fetch(`${API_BASE}/api/uploads/${uploadType}`, {
           method: "POST",
-          headers: { "Authorization": `Bearer ${token}` },
+          headers: { 
+            "Authorization": `Bearer ${token}`,
+          },
           body: formData,
         });
         
+        console.log("📡 Upload response status:", uploadRes.status);
+        
         if (uploadRes.ok) {
           const uploadData = await uploadRes.json();
-          finalContentUrl = uploadData.url;
+          finalContentUrl = uploadData.url || uploadData.secure_url;
+          console.log("✅ Upload successful:", finalContentUrl);
         } else {
           const errorData = await uploadRes.json();
+          console.error("❌ Upload failed:", errorData);
           throw new Error(errorData.message || "File upload failed");
         }
       }
 
-      // Prepare module payload with CORRECT quiz structure
+      // Rest of your code remains the same...
       const payload: any = {
         title: newModule.title,
         type: newModule.type,
         contentUrl: finalContentUrl || undefined,
       };
 
-      // Only add quiz if it's a quiz type and questions exist
+      // Quiz handling...
       if (newModule.type === "quiz" && newModule.questions.length > 0) {
         payload.quiz = {
           questions: newModule.questions.map(q => ({
-            question: q.question, // Map question to question
+            question: q.question,
             options: q.options.filter(opt => opt.trim() !== ""),
             correctAnswer: q.correctAnswer,
           }))
         };
+      } else if (newModule.type === "quiz") {
+        payload.quiz = { questions: [] };
       }
 
       const method = editingModule ? "PUT" : "POST";
-      
       const url = editingModule 
         ? `${API_BASE}/api/courses/${courseId}/sections/${sectionId}/modules/${editingModule.moduleId}`
         : `${API_BASE}/api/courses/${courseId}/sections/${sectionId}/modules`;
 
-      console.log('Making API call to:', url, 'with method:', method);
+      console.log("📤 Saving module payload:", payload);
 
       const res = await fetch(url, {
         method,
@@ -262,11 +300,10 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
         alert(editingModule ? "Module updated successfully!" : "Module added successfully!");
       } else {
         const errorData = await res.json();
-        console.error("API Error:", errorData);
         alert(`Failed to ${editingModule ? 'update' : 'add'} module: ${errorData.message || 'Unknown error'}`);
       }
     } catch (err: any) {
-      console.error(editingModule ? "Error updating module" : "Error adding module", err);
+      console.error("Error saving module", err);
       alert(`Error: ${err.message || 'Network error'}`);
     }
   };

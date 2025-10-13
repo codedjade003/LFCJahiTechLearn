@@ -14,7 +14,9 @@ export const createCourse = async (req, res) => {
     console.log('📦 Request body received');
     const courseData = {
       ...req.body,
-      createdBy: req.user._id
+      createdBy: req.user._id,
+      // Don't create empty project - let admin add it later if needed
+      project: undefined // Remove any project data from creation
     };
     console.log('🗃️ Creating course in database...');
     const course = await Course.create(courseData);
@@ -30,22 +32,62 @@ export const createCourse = async (req, res) => {
 export const updateCourse = async (req, res) => {
   console.log('🚀 PUT /api/courses/:courseId - START');
   console.log('📝 Course ID:', req.params.courseId);
+  
   try {
+    console.log('📦 Request body received:', JSON.stringify(req.body, null, 2));
+    
+    // REMOVE all project handling from here - projects have their own endpoints now
+    let updateData = { ...req.body };
+    
+    // Don't handle project data here anymore
+    // Projects are managed through separate /project endpoints
+    
     console.log('🔄 Updating course in database...');
-    const course = await Course.findByIdAndUpdate(req.params.courseId, req.body, { new: true });
+    const course = await Course.findByIdAndUpdate(
+      req.params.courseId, 
+      updateData, 
+      { new: true, runValidators: true }
+    );
+    
     if (!course) {
       console.log('❌ Course not found');
       return res.status(404).json({ message: "Course not found" });
     }
+    
     console.log('✅ Course updated successfully');
-    console.log('🔔 Starting notifications...');
-    await notifyEnrolledUsers(course._id, `Course updated: "${course.title}"`, "course");
-    console.log('✅ Notifications sent');
+    
+    // Only send notifications for course updates, not project updates
+    if (updateData.title) {
+      console.log('🔔 Starting notifications...');
+      await notifyEnrolledUsers(course._id, `Course updated: "${course.title}"`, "course");
+      console.log('✅ Notifications sent');
+    }
+    
     res.json(course);
   } catch (err) {
     console.error('❌ updateCourse error:', err.message);
-    res.status(500).json({ message: "Failed to update course", error: err.message });
+    
+    if (err.name === 'CastError') {
+      return res.status(400).json({ 
+        message: "Invalid data format", 
+        error: `Cast error for field ${err.path}: ${err.value}`,
+        details: err.message
+      });
+    }
+    
+    if (err.name === 'ValidationError') {
+      return res.status(400).json({ 
+        message: "Validation error", 
+        error: err.message 
+      });
+    }
+    
+    res.status(500).json({ 
+      message: "Failed to update course", 
+      error: err.message 
+    });
   }
+  
   console.log('🏁 PUT /api/courses/:courseId - END');
 };
 
@@ -277,9 +319,13 @@ export const migrateInstructors = async (req, res) => {
  */
 export const getSections = async (req, res) => {
   try {
-    const course = await Course.findById(req.params.courseId);
+    const course = await Course.findById(req.params.courseId)
+      .select('sections');
+    
     if (!course) return res.status(404).json({ message: "Course not found" });
-    res.json(course.sections);
+    
+    // This ensures nested subdocuments are properly serialized
+    res.json(JSON.parse(JSON.stringify(course.sections)));
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch sections", error: err.message });
   }
@@ -291,7 +337,7 @@ export const getSectionById = async (req, res) => {
     if (!course) return res.status(404).json({ message: "Course not found" });
     const section = course.sections.id(req.params.sectionId);
     if (!section) return res.status(404).json({ message: "Section not found" });
-    res.json(section);
+    res.json(JSON.parse(JSON.stringify(section)));
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch section", error: err.message });
   }
@@ -310,7 +356,7 @@ export const addSection = async (req, res) => {
       null,
       `/courses/${course._id}/sections/${course.sections.slice(-1)[0]._id}`
     );
-    res.status(201).json(course);
+    res.status(201).json(JSON.parse(JSON.stringify(course.sections[course.sections.length - 1])));
   } catch (err) {
     res.status(500).json({ message: "Failed to add section", error: err.message });
   }
@@ -331,7 +377,7 @@ export const updateSection = async (req, res) => {
       null,
       `/courses/${course._id}/sections/${section._id}`
     );
-    res.json(section);
+    res.json(JSON.parse(JSON.stringify(section)));
   } catch (err) {
     res.status(500).json({ message: "Failed to update section", error: err.message });
   }
@@ -377,7 +423,7 @@ export const getModules = async (req, res) => {
     if (!course) return res.status(404).json({ message: "Course not found" });
     const section = course.sections.id(req.params.sectionId);
     if (!section) return res.status(404).json({ message: "Section not found" });
-    res.json(section.modules);
+    res.json(JSON.parse(JSON.stringify(section.modules)));
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch modules", error: err.message });
   }
@@ -391,7 +437,7 @@ export const getModuleById = async (req, res) => {
     if (!section) return res.status(404).json({ message: "Section not found" });
     const module = section.modules.id(req.params.moduleId);
     if (!module) return res.status(404).json({ message: "Module not found" });
-    res.json(module);
+    res.json(JSON.parse(JSON.stringify(module)));
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch module", error: err.message });
   }
@@ -400,7 +446,18 @@ export const getModuleById = async (req, res) => {
 export const addModule = async (req, res) => {
   try {
     const { courseId, sectionId } = req.params;
-    const { type, title, contentUrl, duration, questions, dueDate, estimatedDuration } = req.body;
+    
+    // ADD DEBUG LOGS
+    console.log("📥 ADD MODULE - Received data:", {
+      courseId,
+      sectionId,
+      body: req.body,
+      quiz: req.body.quiz,
+      hasQuiz: !!req.body.quiz,
+      questionsCount: req.body.quiz?.questions?.length || 0
+    });
+
+    const { type, title, contentUrl, duration, quiz, dueDate, estimatedDuration } = req.body;
 
     const course = await Course.findById(courseId);
     if (!course) return res.status(404).json({ message: "Course not found" });
@@ -408,13 +465,12 @@ export const addModule = async (req, res) => {
     const section = course.sections.id(sectionId);
     if (!section) return res.status(404).json({ message: "Section not found" });
 
-    // Explicitly include estimatedDuration with required fields
     const module = {
       type,
       title,
       contentUrl,
       duration,
-      questions,
+      quiz, // This should now work
       dueDate,
       estimatedDuration: {
         value: estimatedDuration?.value,
@@ -422,19 +478,29 @@ export const addModule = async (req, res) => {
       },
     };
 
+    console.log("📝 ADD MODULE - Creating module:", module);
+
     section.modules.push(module);
     await course.save();
+
+    // Log the saved module
+    const newModule = section.modules[section.modules.length - 1];
+    console.log("✅ ADD MODULE - Saved module:", JSON.parse(JSON.stringify(newModule)));
 
     await notifyEnrolledUsers(
       courseId,
       `New module added: "${title}"`,
       "module",
       dueDate,
-      `/courses/${courseId}/sections/${sectionId}/modules/${section.modules.slice(-1)[0]._id}`
+      `/courses/${courseId}/sections/${sectionId}/modules/${newModule._id}`
     );
 
-    res.status(201).json({ message: "Module added and notifications sent", module });
+    res.status(201).json({ 
+      message: "Module added and notifications sent", 
+      module: JSON.parse(JSON.stringify(newModule))
+    });
   } catch (err) {
+    console.error("❌ ADD MODULE - Error:", err);
     res.status(500).json({ message: "Failed to add module", error: err.message });
   }
 };
@@ -442,7 +508,19 @@ export const addModule = async (req, res) => {
 export const updateModule = async (req, res) => {
   try {
     const { courseId, sectionId, moduleId } = req.params;
-    const { estimatedDuration, ...rest } = req.body;
+    
+    // ADD DEBUG LOGS
+    console.log("📥 UPDATE MODULE - Received data:", {
+      courseId,
+      sectionId, 
+      moduleId,
+      body: req.body,
+      quiz: req.body.quiz,
+      hasQuiz: !!req.body.quiz,
+      questionsCount: req.body.quiz?.questions?.length || 0
+    });
+
+    const { estimatedDuration, quiz, ...rest } = req.body;
 
     const course = await Course.findById(courseId);
     if (!course) return res.status(404).json({ message: "Course not found" });
@@ -456,6 +534,11 @@ export const updateModule = async (req, res) => {
     // Assign other fields
     Object.assign(module, rest);
 
+    // Handle quiz separately
+    if (quiz !== undefined) {
+      module.quiz = quiz;
+    }
+
     // Ensure estimatedDuration is properly structured
     if (estimatedDuration) {
       module.estimatedDuration = {
@@ -466,6 +549,8 @@ export const updateModule = async (req, res) => {
 
     await course.save();
 
+    console.log("✅ UPDATE MODULE - Updated module:", JSON.parse(JSON.stringify(module)));
+
     await notifyEnrolledUsers(
       course._id,
       `Module updated: "${module.title}"`,
@@ -474,8 +559,9 @@ export const updateModule = async (req, res) => {
       `/courses/${course._id}/sections/${section._id}/modules/${module._id}`
     );
 
-    res.json(module);
+    res.json(JSON.parse(JSON.stringify(module)));
   } catch (err) {
+    console.error("❌ UPDATE MODULE - Error:", err);
     res.status(500).json({ message: "Failed to update module", error: err.message });
   }
 };
@@ -636,50 +722,161 @@ export const getProject = async (req, res) => {
   try {
     const course = await Course.findById(req.params.courseId);
     if (!course) return res.status(404).json({ message: "Course not found" });
-    res.json(course.project);
+    
+    if (!course.project) {
+      return res.json(null);
+    }
+    
+    // Convert string materials back to objects
+    const projectWithParsedMaterials = {
+      ...course.project.toObject(),
+      materials: course.project.materials.map(materialStr => {
+        try {
+          return JSON.parse(materialStr);
+        } catch {
+          return { name: 'Unknown', url: '', type: 'file' };
+        }
+      })
+    };
+    
+    res.json(projectWithParsedMaterials);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch project", error: err.message });
   }
 };
 
 export const createProject = async (req, res) => {
+  console.log('🚀 POST /api/courses/:courseId/project - START');
+  
   try {
     const { courseId } = req.params;
-    const { title, instructions, submissionType, dueDate } = req.body;
+    let { title, instructions, submissionTypes, dueDate, materials } = req.body;
+    
+    console.log('📦 Received create project request:', {
+      materialsType: typeof materials,
+      materialsIsArray: Array.isArray(materials),
+      materialsLength: materials ? materials.length : 0
+    });
+
+    // TEMPORARY FIX: Convert materials to strings
+    if (Array.isArray(materials)) {
+      console.log('🔄 Converting materials objects to JSON strings...');
+      materials = materials.map(material => JSON.stringify(material));
+      console.log('✅ Converted materials to strings');
+    } else {
+      materials = [];
+    }
+
     const course = await Course.findById(courseId);
-    if (!course) return res.status(404).json({ message: "Course not found" });
-    course.project = { title, instructions, submissionType, dueDate };
+    if (!course) {
+      console.log('❌ Course not found');
+      return res.status(404).json({ message: "Course not found" });
+    }
+    
+    // Create project with stringified materials
+    course.project = { 
+      title: title || '',
+      instructions: instructions || '',
+      submissionTypes: submissionTypes || ["file_upload"], 
+      dueDate: dueDate || '',
+      materials: materials
+    };
+    
+    console.log('💾 Saving new project...');
     await course.save();
-    await notifyEnrolledUsers(
-      courseId,
-      `New project: "${title}"`,
-      "project",
-      dueDate,
-      `/courses/${courseId}/project`
-    );
-    res.status(201).json({ message: "Project added and notifications sent", project: course.project });
+    
+    console.log('✅ Project created successfully');
+    
+    res.status(201).json({ 
+      message: "Project created successfully", 
+      project: {
+        ...course.project.toObject(),
+        // Convert back to objects for response
+        materials: course.project.materials.map(materialStr => {
+          try {
+            return JSON.parse(materialStr);
+          } catch {
+            return { name: 'Unknown', url: '', type: 'file' };
+          }
+        })
+      }
+    });
   } catch (err) {
-    res.status(500).json({ message: "Failed to create project", error: err.message });
+    console.error('❌ createProject error:', err);
+    res.status(500).json({ 
+      message: "Failed to create project", 
+      error: err.message 
+    });
   }
+  
+  console.log('🏁 POST /api/courses/:courseId/project - END');
 };
 
 export const updateProject = async (req, res) => {
+  console.log('🚀 PUT /api/courses/:courseId/project - START');
+  
   try {
-    const course = await Course.findById(req.params.courseId);
-    if (!course) return res.status(404).json({ message: "Course not found" });
-    Object.assign(course.project, req.body);
+    const { courseId } = req.params;
+    let { title, instructions, submissionTypes, dueDate, materials } = req.body;
+    
+    console.log('📦 Received update project request - RAW materials:', {
+      materialsType: typeof materials,
+      materialsIsArray: Array.isArray(materials),
+      materialsLength: materials ? materials.length : 0
+    });
+
+    // TEMPORARY FIX: Convert materials array to strings to match current DB schema
+    if (Array.isArray(materials)) {
+      console.log('🔄 Converting materials objects to JSON strings...');
+      materials = materials.map(material => JSON.stringify(material));
+      console.log('✅ Converted materials to strings');
+    }
+
+    // Find the course
+    const course = await Course.findById(courseId);
+    if (!course) {
+      console.log('❌ Course not found');
+      return res.status(404).json({ message: "Course not found" });
+    }
+    
+    // Check if project exists
+    if (!course.project) {
+      console.log('❌ Project not found in course');
+      return res.status(404).json({ message: "Project not found" });
+    }
+    
+    // Update project fields
+    if (title !== undefined) course.project.title = title;
+    if (instructions !== undefined) course.project.instructions = instructions;
+    if (submissionTypes !== undefined) course.project.submissionTypes = submissionTypes;
+    if (dueDate !== undefined) course.project.dueDate = dueDate;
+    if (materials !== undefined) course.project.materials = materials;
+    
+    console.log('💾 Saving updated course...');
     await course.save();
-    await notifyEnrolledUsers(
-      course._id,
-      `Project updated: "${course.project.title}"`,
-      "project",
-      course.project.dueDate,
-      `/courses/${course._id}/project`
-    );
-    res.json(course.project);
+    
+    console.log('✅ Project updated successfully');
+    
+    res.json({
+      ...course.project.toObject(),
+      // Convert string materials back to objects for response
+      materials: course.project.materials.map(materialStr => {
+        try {
+          return JSON.parse(materialStr);
+        } catch {
+          return { name: 'Unknown', url: '', type: 'file' };
+        }
+      })
+    });
   } catch (err) {
-    res.status(500).json({ message: "Failed to update project", error: err.message });
+    console.error('❌ updateProject error:', err);
+    res.status(500).json({ 
+      message: "Failed to update project", 
+      error: err.message 
+    });
   }
+  
+  console.log('🏁 PUT /api/courses/:courseId/project - END');
 };
 
 export const deleteProject = async (req, res) => {

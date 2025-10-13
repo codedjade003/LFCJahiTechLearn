@@ -1,4 +1,3 @@
-// src/pages/UserEnrollmentsTab.tsx
 import { useState, useEffect, useMemo } from "react";
 import {
   FaSearch,
@@ -9,6 +8,10 @@ import {
   FaChevronDown,
   FaChevronUp,
   FaTimes,
+  FaBook,
+  FaUser,
+  FaGraduationCap,
+  FaExclamationTriangle,
 } from "react-icons/fa";
 
 interface Enrollment {
@@ -23,31 +26,40 @@ interface SelectedItem {
   name?: string;
   email?: string;
   title?: string;
+  description?: string;
 }
 
 const UserEnrollmentsTab = () => {
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
+  const [allUsers, setAllUsers] = useState<SelectedItem[]>([]);
+  const [allCourses, setAllCourses] = useState<SelectedItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [usersLoading, setUsersLoading] = useState(false);
+  const [coursesLoading, setCoursesLoading] = useState(false);
 
-  // Search states
-  const [userQuery, setUserQuery] = useState("");
-  const [courseQuery, setCourseQuery] = useState("");
-  const [userResults, setUserResults] = useState<any[]>([]);
-  const [courseResults, setCourseResults] = useState<any[]>([]);
-  const [showUserDropdown, setShowUserDropdown] = useState(false);
-  const [showCourseDropdown, setShowCourseDropdown] = useState(false);
-
-  // Multi-select states
+  // Selection states
   const [selectedUsers, setSelectedUsers] = useState<SelectedItem[]>([]);
   const [selectedCourses, setSelectedCourses] = useState<SelectedItem[]>([]);
+  const [selectedEnrollments, setSelectedEnrollments] = useState<Set<string>>(new Set());
 
-  // Table states
+  // Search and filter states
   const [searchTerm, setSearchTerm] = useState("");
+  const [userSearch, setUserSearch] = useState("");
+  const [courseSearch, setCourseSearch] = useState("");
+  const [userResults, setUserResults] = useState<any[]>([]);
+  const [courseResults, setCourseResults] = useState<any[]>([]);
+  const [showUserSearch, setShowUserSearch] = useState(false);
+  const [showCourseSearch, setShowCourseSearch] = useState(false);
+
+  // UI states
   const [expandedCourses, setExpandedCourses] = useState<Set<string>>(new Set());
+  const [activeTab, setActiveTab] = useState<"enrollments" | "bulk-actions">("enrollments");
 
   useEffect(() => {
     fetchEnrollments();
+    fetchAllUsers();
+    fetchAllCourses();
   }, []);
 
   const fetchEnrollments = async () => {
@@ -58,70 +70,92 @@ const UserEnrollmentsTab = () => {
         },
       });
       const data = await res.json();
-      setEnrollments(data);
+      const validEnrollments = (data.enrollments || data || []).filter((e: any) => 
+        e && e.user && e.course && e.user.name && e.user.email && e.course.title
+      );
+      setEnrollments(validEnrollments);
     } catch (err) {
       console.error("Error fetching enrollments:", err);
+      setEnrollments([]);
     } finally {
       setLoading(false);
     }
   };
 
+  const fetchAllUsers = async () => {
+    try {
+      setUsersLoading(true);
+      const res = await fetch(`${API_BASE}/api/auth/users`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const usersData = data.users || data || [];
+        setAllUsers(usersData);
+        setUserResults(usersData);
+      }
+    } catch (err) {
+      console.error("Error fetching users:", err);
+    } finally {
+      setUsersLoading(false);
+    }
+  };
+
+  const fetchAllCourses = async () => {
+    try {
+      setCoursesLoading(true);
+      const res = await fetch(`${API_BASE}/api/courses`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAllCourses(data);
+        setCourseResults(data); // Initialize with all courses
+      }
+    } catch (err) {
+      console.error("Error fetching courses:", err);
+    } finally {
+      setCoursesLoading(false);
+    }
+  };
+
   // Search users with debounce
   useEffect(() => {
-    const timeout = setTimeout(async () => {
-      if (userQuery.trim()) {
-        try {
-          const res = await fetch(
-            `${API_BASE}/api/users?search=${encodeURIComponent(userQuery)}`,
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            }
-          );
-          const data = await res.json();
-          setUserResults(data);
-          setShowUserDropdown(true);
-        } catch (err) {
-          console.error("Error searching users:", err);
-        }
+    const timeout = setTimeout(() => {
+      if (userSearch.trim()) {
+        const filtered = allUsers.filter(user =>
+          user.name?.toLowerCase().includes(userSearch.toLowerCase()) ||
+          user.email?.toLowerCase().includes(userSearch.toLowerCase())
+        );
+        setUserResults(filtered);
       } else {
-        setUserResults([]);
-        setShowUserDropdown(false);
+        setUserResults(allUsers); // Show all users when search is empty
       }
     }, 300);
-
     return () => clearTimeout(timeout);
-  }, [userQuery]);
+  }, [userSearch, allUsers]);
 
   // Search courses with debounce
   useEffect(() => {
-    const timeout = setTimeout(async () => {
-      if (courseQuery.trim()) {
-        try {
-          const res = await fetch(
-            `${API_BASE}/api/courses?search=${encodeURIComponent(courseQuery)}`,
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            }
-          );
-          const data = await res.json();
-          setCourseResults(data);
-          setShowCourseDropdown(true);
-        } catch (err) {
-          console.error("Error searching courses:", err);
-        }
+    const timeout = setTimeout(() => {
+      if (courseSearch.trim()) {
+        const filtered = allCourses.filter(course =>
+          course.title?.toLowerCase().includes(courseSearch.toLowerCase()) ||
+          course.description?.toLowerCase().includes(courseSearch.toLowerCase())
+        );
+        setCourseResults(filtered);
       } else {
-        setCourseResults([]);
-        setShowCourseDropdown(false);
+        setCourseResults(allCourses); // Show all courses when search is empty
       }
     }, 300);
-
     return () => clearTimeout(timeout);
-  }, [courseQuery]);
+  }, [courseSearch, allCourses]);
 
+  // Selection handlers
   const toggleUserSelection = (user: SelectedItem) => {
     setSelectedUsers(prev => {
       const exists = prev.find(u => u._id === user._id);
@@ -131,8 +165,8 @@ const UserEnrollmentsTab = () => {
         return [...prev, user];
       }
     });
-    setUserQuery("");
-    setShowUserDropdown(false);
+    setUserSearch("");
+    setShowUserSearch(false);
   };
 
   const toggleCourseSelection = (course: SelectedItem) => {
@@ -144,18 +178,39 @@ const UserEnrollmentsTab = () => {
         return [...prev, course];
       }
     });
-    setCourseQuery("");
-    setShowCourseDropdown(false);
+    setCourseSearch("");
+    setShowCourseSearch(false);
   };
 
-  const removeSelectedUser = (userId: string) => {
-    setSelectedUsers(prev => prev.filter(u => u._id !== userId));
+  const toggleEnrollmentSelection = (enrollmentId: string) => {
+    setSelectedEnrollments(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(enrollmentId)) {
+        newSet.delete(enrollmentId);
+      } else {
+        newSet.add(enrollmentId);
+      }
+      return newSet;
+    });
   };
 
-  const removeSelectedCourse = (courseId: string) => {
-    setSelectedCourses(prev => prev.filter(c => c._id !== courseId));
+  const selectAllEnrollmentsInCourse = (enrollments: Enrollment[]) => {
+    setSelectedEnrollments(prev => {
+      const newSet = new Set(prev);
+      const allSelected = enrollments.every(e => newSet.has(e._id));
+      
+      if (allSelected) {
+        // Deselect all
+        enrollments.forEach(e => newSet.delete(e._id));
+      } else {
+        // Select all
+        enrollments.forEach(e => newSet.add(e._id));
+      }
+      return newSet;
+    });
   };
 
+  // Action handlers (keep the same as before)
   const handleEnrollUsers = async () => {
     if (selectedUsers.length === 0 || selectedCourses.length === 0) return;
     
@@ -175,11 +230,11 @@ const UserEnrollmentsTab = () => {
           });
         }
       }
-      fetchEnrollments();
+      await fetchEnrollments();
       setSelectedUsers([]);
       setSelectedCourses([]);
     } catch (err) {
-      console.error(err);
+      console.error("Error enrolling users:", err);
     }
   };
 
@@ -198,22 +253,23 @@ const UserEnrollmentsTab = () => {
           }
         );
       }
-      fetchEnrollments();
+      await fetchEnrollments();
       setSelectedCourses([]);
     } catch (err) {
-      console.error(err);
+      console.error("Error bulk enrolling:", err);
     }
   };
 
-  // Add this new function for unenrolling selected users
   const handleUnenrollSelected = async () => {
-    if (selectedUsers.length === 0 || selectedCourses.length === 0) return;
+    const enrollmentsToUnenroll = Array.from(selectedEnrollments);
+    if (enrollmentsToUnenroll.length === 0) return;
     
     try {
-      for (const user of selectedUsers) {
-        for (const course of selectedCourses) {
+      for (const enrollmentId of enrollmentsToUnenroll) {
+        const enrollment = enrollments.find(e => e._id === enrollmentId);
+        if (enrollment) {
           await fetch(
-            `${API_BASE}/api/enrollments/unenroll/${course._id}/${user._id}`,
+            `${API_BASE}/api/enrollments/unenroll/${enrollment.course._id}/${enrollment.user._id}`,
             {
               method: "DELETE",
               headers: {
@@ -223,11 +279,10 @@ const UserEnrollmentsTab = () => {
           );
         }
       }
-      fetchEnrollments();
-      setSelectedUsers([]);
-      setSelectedCourses([]);
+      await fetchEnrollments();
+      setSelectedEnrollments(new Set());
     } catch (err) {
-      console.error(err);
+      console.error("Error unenrolling:", err);
     }
   };
 
@@ -246,13 +301,14 @@ const UserEnrollmentsTab = () => {
           }
         );
       }
-      fetchEnrollments();
+      await fetchEnrollments();
       setSelectedCourses([]);
     } catch (err) {
-      console.error(err);
+      console.error("Error bulk unenrolling:", err);
     }
   };
 
+  // UI helpers
   const toggleCourseExpansion = (courseId: string) => {
     setExpandedCourses(prev => {
       const newSet = new Set(prev);
@@ -267,23 +323,26 @@ const UserEnrollmentsTab = () => {
 
   const filteredEnrollments = useMemo(() => {
     return enrollments.filter((e) => {
+      if (!e || !e.user || !e.course) return false;
+      
       const matchesSearch =
-        e.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        e.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        e.course.title.toLowerCase().includes(searchTerm.toLowerCase());
+        (e.user.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+        (e.user.email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+        (e.course.title?.toLowerCase() || '').includes(searchTerm.toLowerCase());
 
       return matchesSearch;
     });
   }, [enrollments, searchTerm]);
 
-  // Group enrollments by course for better display
   const enrollmentsByCourse = useMemo(() => {
     const grouped: { [courseId: string]: Enrollment[] } = {};
     filteredEnrollments.forEach(enrollment => {
-      if (!grouped[enrollment.course._id]) {
-        grouped[enrollment.course._id] = [];
+      if (!enrollment || !enrollment.course) return;
+      const courseId = enrollment.course._id;
+      if (!grouped[courseId]) {
+        grouped[courseId] = [];
       }
-      grouped[enrollment.course._id].push(enrollment);
+      grouped[courseId].push(enrollment);
     });
     return grouped;
   }, [filteredEnrollments]);
@@ -291,312 +350,471 @@ const UserEnrollmentsTab = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-lg text-yt-text-gray">Loading enrollments...</div>
+        <div className="text-lg text-gray-600">Loading enrollments...</div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 p-6 bg-yt-light-gray min-h-screen">
-      {/* Header Section */}
-      <div className="bg-white rounded-xl border border-yt-light-border p-6 shadow-sm">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-3 rounded-full bg-lfc-red text-white">
-            <FaUsers className="w-5 h-5" />
+    <div className="min-h-screen bg-gray-50 p-6">
+      {/* Header */}
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center gap-4 mb-8">
+          <div className="p-3 rounded-2xl bg-lfc-red text-white">
+            <FaGraduationCap className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-2xl font-semibold text-yt-text-dark">Course Enrollments</h1>
-            <p className="text-yt-text-gray text-sm">Manage user course assignments and access</p>
+            <h1 className="text-3xl font-bold text-gray-900">Course Enrollments</h1>
+            <p className="text-gray-600 mt-1">Manage user access to courses</p>
           </div>
         </div>
 
-        {/* Search and Selection Area */}
-        <div className="grid lg:grid-cols-2 gap-6 mb-6">
-          {/* User Selection */}
-          <div className="space-y-3">
-            <label className="block text-sm font-medium text-yt-text-dark">
-              Select Users
-            </label>
-            <div className="relative">
-              <div className="flex items-center gap-2 bg-yt-light-bg border border-yt-light-border rounded-lg px-3 py-2">
-                <FaSearch className="text-yt-text-gray flex-shrink-0" />
-                <input
-                  type="text"
-                  placeholder="Search users..."
-                  value={userQuery}
-                  onChange={(e) => setUserQuery(e.target.value)}
-                  onFocus={() => setShowUserDropdown(true)}
-                  className="flex-1 bg-transparent outline-none text-yt-text-dark placeholder-yt-text-gray"
-                />
-              </div>
-              
-              {showUserDropdown && userResults.length > 0 && (
-                <div className="absolute z-20 w-full mt-1 bg-white border border-yt-light-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                  {userResults.map((user) => (
-                    <div
-                      key={user._id}
-                      className="flex items-center gap-3 px-4 py-3 hover:bg-yt-light-hover cursor-pointer border-b border-yt-light-border last:border-b-0"
-                      onClick={() => toggleUserSelection(user)}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selectedUsers.some(u => u._id === user._id)}
-                        onChange={() => {}}
-                        className="rounded border-yt-light-border text-lfc-gold focus:ring-lfc-gold"
-                      />
-                      <div className="flex-1">
-                        <div className="text-sm font-medium text-yt-text-dark">{user.name}</div>
-                        <div className="text-xs text-yt-text-gray">{user.email}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+        {/* Tabs */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 mb-6">
+          <div className="flex border-b border-gray-200">
+            <button
+              onClick={() => setActiveTab("enrollments")}
+              className={`flex items-center gap-2 px-6 py-4 font-medium border-b-2 transition-colors ${
+                activeTab === "enrollments"
+                  ? "border-lfc-red text-lfc-red"
+                  : "border-transparent text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              <FaUsers className="w-4 h-4" />
+              All Enrollments
+            </button>
+            <button
+              onClick={() => setActiveTab("bulk-actions")}
+              className={`flex items-center gap-2 px-6 py-4 font-medium border-b-2 transition-colors ${
+                activeTab === "bulk-actions"
+                  ? "border-lfc-red text-lfc-red"
+                  : "border-transparent text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              <FaUserPlus className="w-4 h-4" />
+              Bulk Actions
+            </button>
+          </div>
 
-            {/* Selected Users */}
-            {selectedUsers.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {selectedUsers.map(user => (
-                  <div
-                    key={user._id}
-                    className="flex items-center gap-2 bg-lfc-gold bg-opacity-10 text-lfc-gold px-3 py-1 rounded-full text-sm"
-                  >
-                    <span>{user.name}</span>
-                    <button
-                      onClick={() => removeSelectedUser(user._id)}
-                      className="hover:text-red-600"
-                    >
-                      <FaTimes className="w-3 h-3" />
-                    </button>
+          {/* Bulk Actions Tab */}
+          {activeTab === "bulk-actions" && (
+            <div className="p-6">
+              <div className="grid lg:grid-cols-2 gap-8 mb-8">
+                {/* User Selection */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <FaUser className="text-lfc-red" />
+                    <h3 className="font-semibold text-gray-900">Select Users</h3>
+                    {usersLoading && (
+                      <span className="text-sm text-gray-500">Loading...</span>
+                    )}
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Course Selection */}
-          <div className="space-y-3">
-            <label className="block text-sm font-medium text-yt-text-dark">
-              Select Courses
-            </label>
-            <div className="relative">
-              <div className="flex items-center gap-2 bg-yt-light-bg border border-yt-light-border rounded-lg px-3 py-2">
-                <FaSearch className="text-yt-text-gray flex-shrink-0" />
-                <input
-                  type="text"
-                  placeholder="Search courses..."
-                  value={courseQuery}
-                  onChange={(e) => setCourseQuery(e.target.value)}
-                  onFocus={() => setShowCourseDropdown(true)}
-                  className="flex-1 bg-transparent outline-none text-yt-text-dark placeholder-yt-text-gray"
-                />
-              </div>
-              
-              {showCourseDropdown && courseResults.length > 0 && (
-                <div className="absolute z-20 w-full mt-1 bg-white border border-yt-light-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                  {courseResults.map((course) => (
-                    <div
-                      key={course._id}
-                      className="flex items-center gap-3 px-4 py-3 hover:bg-yt-light-hover cursor-pointer border-b border-yt-light-border last:border-b-0"
-                      onClick={() => toggleCourseSelection(course)}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selectedCourses.some(c => c._id === course._id)}
-                        onChange={() => {}}
-                        className="rounded border-yt-light-border text-lfc-gold focus:ring-lfc-gold"
-                      />
-                      <div className="flex-1">
-                        <div className="text-sm font-medium text-yt-text-dark">{course.title}</div>
-                        {course.description && (
-                          <div className="text-xs text-yt-text-gray line-clamp-1">
-                            {course.description}
-                          </div>
-                        )}
+                  
+                  <div className="space-y-3">
+                    <div className="relative">
+                      <div className="flex items-center gap-3 bg-gray-50 border border-gray-300 rounded-xl px-4 py-3">
+                        <FaSearch className="text-gray-400" />
+                        <input
+                          type="text"
+                          placeholder="Search users by name or email..."
+                          value={userSearch}
+                          onChange={(e) => {
+                            setUserSearch(e.target.value);
+                            setShowUserSearch(true);
+                          }}
+                          onFocus={() => setShowUserSearch(true)}
+                          className="flex-1 bg-transparent outline-none text-gray-900 placeholder-gray-500"
+                        />
                       </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Selected Courses */}
-            {selectedCourses.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {selectedCourses.map(course => (
-                  <div
-                    key={course._id}
-                    className="flex items-center gap-2 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
-                  >
-                    <span>{course.title}</span>
-                    <button
-                      onClick={() => removeSelectedCourse(course._id)}
-                      className="hover:text-red-600"
-                    >
-                      <FaTimes className="w-3 h-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex flex-wrap gap-3">
-          <button
-            onClick={handleEnrollUsers}
-            disabled={selectedUsers.length === 0 || selectedCourses.length === 0}
-            className="flex items-center gap-2 bg-lfc-gold text-white px-4 py-2 rounded-lg hover:bg-lfc-gold-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            <FaUserPlus className="w-4 h-4" />
-            Enroll Selected
-          </button>
-          <button
-            onClick={handleBulkEnroll}
-            disabled={selectedCourses.length === 0}
-            className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            <FaUsers className="w-4 h-4" />
-            Enroll All to Selected Courses
-          </button>
-          <button
-            onClick={handleUnenrollSelected}
-            disabled={selectedUsers.length === 0 || selectedCourses.length === 0}
-            className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            <FaUserMinus className="w-4 h-4" />
-            Unenroll Selected
-          </button>
-          <button
-            onClick={handleBulkUnenroll}
-            disabled={selectedCourses.length === 0}
-            className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            <FaTrash className="w-4 h-4" />
-            Unenroll All from Selected Courses
-          </button>
-        </div>
-      </div>
-
-      {/* Table Section */}
-      <div className="bg-white rounded-xl border border-yt-light-border shadow-sm">
-        {/* Table Header */}
-        <div className="p-6 border-b border-yt-light-border">
-          <div className="flex items-center gap-3">
-            <FaSearch className="text-yt-text-gray" />
-            <input
-              type="text"
-              placeholder="Search enrollments by user name, email, or course title..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-1 bg-transparent outline-none text-yt-text-dark placeholder-yt-text-gray"
-            />
-          </div>
-        </div>
-
-        {/* Enrollment Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-4 text-left text-xs font-medium text-yt-text-light uppercase tracking-wider">
-                  Course
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-yt-text-light uppercase tracking-wider">
-                  Enrolled Users
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-yt-text-light uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-yt-light-border">
-              {Object.entries(enrollmentsByCourse).map(([courseId, courseEnrollments]) => {
-                const course = courseEnrollments[0].course;
-                const isExpanded = expandedCourses.has(courseId);
-                const visibleUsers = isExpanded ? courseEnrollments : courseEnrollments.slice(0, 3);
-
-                return (
-                  <tr key={courseId} className="hover:bg-yt-light-hover">
-                    <td className="px-6 py-4">
-                      <div className="text-sm font-medium text-yt-text-dark">
-                        {course.title}
-                      </div>
-                      {course.description && (
-                        <div className="text-xs text-yt-text-gray mt-1">
-                          {course.description}
+                      
+                      {showUserSearch && (
+                        <div className="absolute z-10 w-full mt-2 bg-white border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                          {userResults.length > 0 ? (
+                            userResults.map((user) => (
+                              <div
+                                key={user._id}
+                                className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                                onClick={() => toggleUserSelection(user)}
+                              >
+                                <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
+                                  selectedUsers.some(u => u._id === user._id)
+                                    ? "bg-lfc-red border-lfc-red"
+                                    : "border-gray-300"
+                                }`}>
+                                  {selectedUsers.some(u => u._id === user._id) && (
+                                    <div className="w-2 h-2 bg-white rounded-sm" />
+                                  )}
+                                </div>
+                                <div className="flex-1">
+                                  <div className="font-medium text-gray-900">{user.name}</div>
+                                  <div className="text-sm text-gray-600">{user.email}</div>
+                                </div>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="px-4 py-3 text-center text-gray-500">
+                              <FaExclamationTriangle className="w-5 h-5 mx-auto mb-2" />
+                              No users found
+                            </div>
+                          )}
                         </div>
                       )}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="space-y-2">
-                        {visibleUsers.map((enrollment) => (
-                          <div key={enrollment._id} className="flex items-center justify-between">
-                            <div>
-                              <div className="text-sm font-medium text-yt-text-dark">
-                                {enrollment.user.name}
+                    </div>
+
+                    {/* Display List - All Available Users */}
+                    {!showUserSearch && allUsers.length > 0 && (
+                      <div className="border border-gray-200 rounded-xl max-h-60 overflow-y-auto">
+                        <div className="p-3 bg-gray-50 border-b border-gray-200">
+                          <h4 className="font-medium text-gray-900">Available Users ({allUsers.length})</h4>
+                        </div>
+                        <div className="divide-y divide-gray-100">
+                          {allUsers.slice(0, 10).map((user) => (
+                            <div
+                              key={user._id}
+                              className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer"
+                              onClick={() => toggleUserSelection(user)}
+                            >
+                              <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
+                                selectedUsers.some(u => u._id === user._id)
+                                  ? "bg-lfc-red border-lfc-red"
+                                  : "border-gray-300"
+                              }`}>
+                                {selectedUsers.some(u => u._id === user._id) && (
+                                  <div className="w-2 h-2 bg-white rounded-sm" />
+                                )}
                               </div>
-                              <div className="text-xs text-yt-text-gray">
-                                {enrollment.user.email}
+                              <div className="flex-1">
+                                <div className="font-medium text-gray-900">{user.name}</div>
+                                <div className="text-sm text-gray-600">{user.email}</div>
                               </div>
                             </div>
-                            <div className="text-xs text-yt-text-gray">
-                              {new Date(enrollment.enrolledAt).toLocaleDateString()}
+                          ))}
+                          {allUsers.length > 10 && (
+                            <div className="px-4 py-3 text-center text-gray-500 text-sm">
+                              ... and {allUsers.length - 10} more users
                             </div>
-                          </div>
-                        ))}
-                        {courseEnrollments.length > 3 && (
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Selected Users */}
+                    {selectedUsers.length > 0 && (
+                      <div className="mt-4">
+                        <h4 className="font-medium text-gray-900 mb-2">Selected Users ({selectedUsers.length})</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {selectedUsers.map(user => (
+                            <div
+                              key={user._id}
+                              className="flex items-center gap-2 bg-lfc-red bg-opacity-10 text-lfc-red px-3 py-2 rounded-lg text-sm"
+                            >
+                              <FaUser className="w-3 h-3" />
+                              <span>{user.name}</span>
+                              <button
+                                onClick={() => setSelectedUsers(prev => prev.filter(u => u._id !== user._id))}
+                                className="hover:text-red-700"
+                              >
+                                <FaTimes className="w-3 h-3" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Course Selection */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <FaBook className="text-lfc-gold" />
+                    <h3 className="font-semibold text-gray-900">Select Courses</h3>
+                    {coursesLoading && (
+                      <span className="text-sm text-gray-500">Loading...</span>
+                    )}
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="relative">
+                      <div className="flex items-center gap-3 bg-gray-50 border border-gray-300 rounded-xl px-4 py-3">
+                        <FaSearch className="text-gray-400" />
+                        <input
+                          type="text"
+                          placeholder="Search courses by title..."
+                          value={courseSearch}
+                          onChange={(e) => {
+                            setCourseSearch(e.target.value);
+                            setShowCourseSearch(true);
+                          }}
+                          onFocus={() => setShowCourseSearch(true)}
+                          className="flex-1 bg-transparent outline-none text-gray-900 placeholder-gray-500"
+                        />
+                      </div>
+                      
+                      {showCourseSearch && (
+                        <div className="absolute z-10 w-full mt-2 bg-white border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                          {courseResults.length > 0 ? (
+                            courseResults.map((course) => (
+                              <div
+                                key={course._id}
+                                className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                                onClick={() => toggleCourseSelection(course)}
+                              >
+                                <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
+                                  selectedCourses.some(c => c._id === course._id)
+                                    ? "bg-lfc-gold border-lfc-gold"
+                                    : "border-gray-300"
+                                }`}>
+                                  {selectedCourses.some(c => c._id === course._id) && (
+                                    <div className="w-2 h-2 bg-white rounded-sm" />
+                                  )}
+                                </div>
+                                <div className="flex-1">
+                                  <div className="font-medium text-gray-900">{course.title}</div>
+                                  {course.description && (
+                                    <div className="text-sm text-gray-600 line-clamp-1">
+                                      {course.description}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="px-4 py-3 text-center text-gray-500">
+                              <FaExclamationTriangle className="w-5 h-5 mx-auto mb-2" />
+                              No courses found
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Display List - All Available Courses */}
+                    {!showCourseSearch && allCourses.length > 0 && (
+                      <div className="border border-gray-200 rounded-xl max-h-60 overflow-y-auto">
+                        <div className="p-3 bg-gray-50 border-b border-gray-200">
+                          <h4 className="font-medium text-gray-900">Available Courses ({allCourses.length})</h4>
+                        </div>
+                        <div className="divide-y divide-gray-100">
+                          {allCourses.slice(0, 10).map((course) => (
+                            <div
+                              key={course._id}
+                              className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer"
+                              onClick={() => toggleCourseSelection(course)}
+                            >
+                              <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
+                                selectedCourses.some(c => c._id === course._id)
+                                  ? "bg-lfc-gold border-lfc-gold"
+                                  : "border-gray-300"
+                              }`}>
+                                {selectedCourses.some(c => c._id === course._id) && (
+                                  <div className="w-2 h-2 bg-white rounded-sm" />
+                                )}
+                              </div>
+                              <div className="flex-1">
+                                <div className="font-medium text-gray-900">{course.title}</div>
+                                {course.description && (
+                                  <div className="text-sm text-gray-600 line-clamp-1">
+                                    {course.description}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                          {allCourses.length > 10 && (
+                            <div className="px-4 py-3 text-center text-gray-500 text-sm">
+                              ... and {allCourses.length - 10} more courses
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Selected Courses */}
+                    {selectedCourses.length > 0 && (
+                      <div className="mt-4">
+                        <h4 className="font-medium text-gray-900 mb-2">Selected Courses ({selectedCourses.length})</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {selectedCourses.map(course => (
+                            <div
+                              key={course._id}
+                              className="flex items-center gap-2 bg-lfc-gold bg-opacity-10 text-lfc-gold px-3 py-2 rounded-lg text-sm"
+                            >
+                              <FaBook className="w-3 h-3" />
+                              <span>{course.title}</span>
+                              <button
+                                onClick={() => setSelectedCourses(prev => prev.filter(c => c._id !== course._id))}
+                                className="hover:text-yellow-700"
+                              >
+                                <FaTimes className="w-3 h-3" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap gap-4">
+                <button
+                  onClick={handleEnrollUsers}
+                  disabled={selectedUsers.length === 0 || selectedCourses.length === 0}
+                  className="flex items-center gap-3 bg-lfc-red text-white px-6 py-3 rounded-xl hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                >
+                  <FaUserPlus className="w-4 h-4" />
+                  Enroll Selected Users to Selected Courses
+                </button>
+                
+                <button
+                  onClick={handleBulkEnroll}
+                  disabled={selectedCourses.length === 0}
+                  className="flex items-center gap-3 bg-lfc-gold text-white px-6 py-3 rounded-xl hover:bg-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                >
+                  <FaUsers className="w-4 h-4" />
+                  Enroll All Users to Selected Courses
+                </button>
+                
+                <button
+                  onClick={handleBulkUnenroll}
+                  disabled={selectedCourses.length === 0}
+                  className="flex items-center gap-3 bg-gray-600 text-white px-6 py-3 rounded-xl hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                >
+                  <FaTrash className="w-4 h-4" />
+                  Unenroll All from Selected Courses
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Enrollments Tab (keep the same as before) */}
+          {activeTab === "enrollments" && (
+            <div className="p-6">
+              {/* Search Bar */}
+              <div className="flex items-center gap-4 mb-6">
+                <div className="flex-1 relative">
+                  <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search enrollments by user, email, or course..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-lfc-red focus:border-transparent outline-none transition-colors"
+                  />
+                </div>
+                
+                {selectedEnrollments.size > 0 && (
+                  <button
+                    onClick={handleUnenrollSelected}
+                    className="flex items-center gap-2 bg-red-600 text-white px-4 py-3 rounded-xl hover:bg-red-700 transition-colors font-medium"
+                  >
+                    <FaUserMinus className="w-4 h-4" />
+                    Unenroll Selected ({selectedEnrollments.size})
+                  </button>
+                )}
+              </div>
+
+              {/* Enrollments List */}
+              <div className="space-y-4">
+                {Object.entries(enrollmentsByCourse).map(([courseId, courseEnrollments]) => {
+                  const course = courseEnrollments[0]?.course;
+                  if (!course) return null;
+                  
+                  const isExpanded = expandedCourses.has(courseId);
+                  const allSelected = courseEnrollments.every(e => selectedEnrollments.has(e._id));
+
+                  return (
+                    <div key={courseId} className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                      {/* Course Header */}
+                      <div className="flex items-center gap-4 p-4 bg-gray-50 border-b border-gray-200">
+                        <div className={`w-5 h-5 rounded border-2 flex items-center justify-center cursor-pointer ${
+                          allSelected ? "bg-lfc-red border-lfc-red" : "border-gray-400"
+                        }`}
+                        onClick={() => selectAllEnrollmentsInCourse(courseEnrollments)}
+                        >
+                          {allSelected && <div className="w-2 h-2 bg-white rounded-sm" />}
+                        </div>
+                        
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-gray-900 text-lg">{course.title}</h3>
+                          {course.description && (
+                            <p className="text-gray-600 text-sm mt-1">{course.description}</p>
+                          )}
+                        </div>
+                        
+                        <div className="flex items-center gap-4">
+                          <span className="text-sm text-gray-500">
+                            {courseEnrollments.length} enrolled
+                          </span>
                           <button
                             onClick={() => toggleCourseExpansion(courseId)}
-                            className="flex items-center gap-1 text-lfc-gold text-sm hover:underline"
+                            className="flex items-center gap-2 text-lfc-red hover:text-red-700 font-medium"
                           >
-                            {isExpanded ? (
-                              <>
-                                <FaChevronUp className="w-3 h-3" />
-                                Show Less
-                              </>
-                            ) : (
-                              <>
-                                <FaChevronDown className="w-3 h-3" />
-                                Show {courseEnrollments.length - 3} more
-                              </>
-                            )}
+                            {isExpanded ? "Collapse" : "Expand"}
+                            {isExpanded ? <FaChevronUp /> : <FaChevronDown />}
                           </button>
-                        )}
+                        </div>
                       </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => {
-                            setSelectedCourses([{ _id: course._id, title: course.title }]);
-                          }}
-                          className="text-blue-600 hover:text-blue-800 text-sm"
-                        >
-                          Select Course
-                        </button>
-                        <button
-                          onClick={() => handleBulkUnenroll()}
-                          className="flex items-center gap-1 text-red-600 hover:text-red-800 text-sm"
-                        >
-                          <FaUserMinus className="w-3 h-3" />
-                          Unenroll All
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
 
-          {filteredEnrollments.length === 0 && (
-            <div className="text-center py-12">
-              <div className="text-yt-text-gray text-lg">No enrollments found</div>
-              <div className="text-yt-text-light text-sm mt-2">
-                {searchTerm ? "Try adjusting your search terms" : "Start by enrolling users in courses"}
+                      {/* Enrolled Users */}
+                      {isExpanded && (
+                        <div className="divide-y divide-gray-100">
+                          {courseEnrollments.map((enrollment) => (
+                            <div key={enrollment._id} className="flex items-center gap-4 p-4 hover:bg-gray-50">
+                              <div className={`w-5 h-5 rounded border-2 flex items-center justify-center cursor-pointer ${
+                                selectedEnrollments.has(enrollment._id) 
+                                  ? "bg-lfc-red border-lfc-red" 
+                                  : "border-gray-400"
+                              }`}
+                              onClick={() => toggleEnrollmentSelection(enrollment._id)}
+                              >
+                                {selectedEnrollments.has(enrollment._id) && (
+                                  <div className="w-2 h-2 bg-white rounded-sm" />
+                                )}
+                              </div>
+                              
+                              <div className="flex-1">
+                                <div className="font-medium text-gray-900">
+                                  {enrollment.user?.name || 'Unknown User'}
+                                </div>
+                                <div className="text-sm text-gray-600">
+                                  {enrollment.user?.email || 'No email'}
+                                </div>
+                              </div>
+                              
+                              <div className="text-sm text-gray-500">
+                                Enrolled {new Date(enrollment.enrolledAt).toLocaleDateString()}
+                              </div>
+                              
+                              <button
+                                onClick={() => toggleEnrollmentSelection(enrollment._id)}
+                                className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+                                  selectedEnrollments.has(enrollment._id)
+                                    ? "bg-red-100 text-red-700 hover:bg-red-200"
+                                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                }`}
+                              >
+                                {selectedEnrollments.has(enrollment._id) ? "Selected" : "Select"}
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+
+                {filteredEnrollments.length === 0 && (
+                  <div className="text-center py-12">
+                    <FaUsers className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">No enrollments found</h3>
+                    <p className="text-gray-600">
+                      {searchTerm ? "Try adjusting your search terms" : "Get started by enrolling users in courses"}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           )}

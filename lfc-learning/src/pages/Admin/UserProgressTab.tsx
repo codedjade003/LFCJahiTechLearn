@@ -2,18 +2,18 @@ import { useState, useEffect, useMemo } from 'react';
 import { FaSearch, FaUser, FaBook, FaChartLine, FaClock, FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
 
 interface UserProgress {
-  id: string;
+  _id: string;
   user: {
-    id: string;
+    _id: string;
     name: string;
     email: string;
-    lastLogin: string;
+    lastLogin?: string;
   };
   course: {
-    id: string;
+    _id: string;
     title: string;
     duration: string;
-    estimatedDuration: number;
+    estimatedDuration?: number;
   };
   progress: number;
   completed: boolean;
@@ -32,7 +32,7 @@ interface UserProgress {
     graded: boolean;
     score: number;
   }>;
-  projectProgress: {
+  projectProgress?: {
     submitted: boolean;
     reviewed: boolean;
     score: number;
@@ -46,16 +46,7 @@ const UserProgressTab = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCourse, setFilterCourse] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
-  const [selectedUser, setSelectedUser] = useState<string | null>(null);
-  // Simple modal or detail panel
-  const selectedUserData = selectedUser 
-    ? progressData.find(p => p.user.id === selectedUser)
-    : null;
-
-  // Add a click handler to view user details
-  const handleUserClick = (userId: string) => {
-    setSelectedUser(userId);
-  };
+  const [selectedUser, setSelectedUser] = useState<UserProgress | null>(null);
 
   useEffect(() => {
     fetchProgressData();
@@ -71,15 +62,14 @@ const UserProgressTab = () => {
       
       if (response.ok) {
         const data = await response.json();
-        setProgressData(data);
+        console.log('Fetched progress data:', data);
+        setProgressData(data.enrollments || data || []);
       } else {
         console.error('API Error:', response.status);
-        // Set empty array as fallback
         setProgressData([]);
       }
     } catch (error) {
       console.error('Error fetching progress data:', error);
-      // Set empty array as fallback to prevent rendering errors
       setProgressData([]);
     } finally {
       setLoading(false);
@@ -87,18 +77,17 @@ const UserProgressTab = () => {
   };
 
   const filteredProgress = useMemo(() => {
-    return progressData.filter(progress => {
-      // Add safety checks for undefined objects
-      if (!progress || !progress.user || !progress.course) {
-        return false; // Skip invalid entries
-      }
+    const validProgress = progressData.filter(progress => 
+      progress && progress.user && progress.course
+    );
 
+    return validProgress.filter(progress => {
       const matchesSearch = 
         progress.user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         progress.user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         progress.course.title?.toLowerCase().includes(searchTerm.toLowerCase());
 
-      const matchesCourse = filterCourse === 'all' || progress.course.id === filterCourse;
+      const matchesCourse = filterCourse === 'all' || progress.course._id === filterCourse;
       const matchesStatus = filterStatus === 'all' || 
         (filterStatus === 'completed' && progress.completed) ||
         (filterStatus === 'in-progress' && !progress.completed && progress.progress > 0) ||
@@ -108,6 +97,7 @@ const UserProgressTab = () => {
     });
   }, [progressData, searchTerm, filterCourse, filterStatus]);
 
+  // Safe calculation functions
   const getStatusColor = (progress: UserProgress) => {
     if (progress.completed) return 'bg-green-100 text-green-800';
     if (progress.progress > 0) return 'bg-blue-100 text-blue-800';
@@ -121,13 +111,26 @@ const UserProgressTab = () => {
   };
 
   const calculateRiskLevel = (progress: UserProgress) => {
-    const daysEnrolled = Math.floor((new Date().getTime() - new Date(progress.enrolledAt).getTime()) / (1000 * 60 * 60 * 24));
-    const expectedDuration = progress.course.estimatedDuration;
+    if (!progress.enrolledAt) return 'low';
     
-    if (progress.completed) return 'low';
+    const daysEnrolled = Math.floor((new Date().getTime() - new Date(progress.enrolledAt).getTime()) / (1000 * 60 * 60 * 24));
+    const expectedDuration = progress.course.estimatedDuration || 30;
+    
+    if (progress.completed) return 'none';
     if (daysEnrolled > expectedDuration * 1.5 && progress.progress < 50) return 'high';
     if (daysEnrolled > expectedDuration && progress.progress < 75) return 'medium';
     return 'low';
+  };
+
+  const formatTimeSpent = (seconds: number) => {
+    if (!seconds || isNaN(seconds)) return '0h 0m';
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    return `${hours}h ${minutes}m`;
+  };
+
+  const handleUserClick = (progress: UserProgress) => {
+    setSelectedUser(progress);
   };
 
   if (loading) {
@@ -152,7 +155,10 @@ const UserProgressTab = () => {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Total Users</p>
-              <p className="text-2xl font-bold">{new Set(progressData.filter(p => p?.user?.id).map(p => p.user.id)).size}</p>            </div>
+              <p className="text-2xl font-bold">
+                {new Set(progressData.filter(p => p?.user?._id).map(p => p.user._id)).size}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -163,7 +169,10 @@ const UserProgressTab = () => {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Courses Completed</p>
-              <p className="text-2xl font-bold">{progressData.filter(p => p?.completed).length}</p>            </div>
+              <p className="text-2xl font-bold">
+                {progressData.filter(p => p?.completed).length}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -174,7 +183,10 @@ const UserProgressTab = () => {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">At Risk</p>
-              <p className="text-2xl font-bold">{progressData.filter(p => p && calculateRiskLevel(p) === 'high').length}</p>            </div>
+              <p className="text-2xl font-bold">
+                {progressData.filter(p => p && calculateRiskLevel(p) === 'high').length}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -185,7 +197,10 @@ const UserProgressTab = () => {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Active Courses</p>
-              <p className="text-2xl font-bold">{new Set(progressData.filter(p => p?.course?.id).map(p => p.course.id)).size}</p>            </div>
+              <p className="text-2xl font-bold">
+                {new Set(progressData.filter(p => p?.course?._id).map(p => p.course._id)).size}
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -210,8 +225,8 @@ const UserProgressTab = () => {
             className="px-4 py-2 border border-gray-300 rounded-lg"
           >
             <option value="all">All Courses</option>
-            {Array.from(new Set(progressData.map(p => p.course.id))).map(courseId => {
-              const course = progressData.find(p => p.course.id === courseId)?.course;
+            {Array.from(new Set(progressData.map(p => p.course._id))).map(courseId => {
+              const course = progressData.find(p => p.course._id === courseId)?.course;
               return <option key={courseId} value={courseId}>{course?.title}</option>;
             })}
           </select>
@@ -259,11 +274,11 @@ const UserProgressTab = () => {
               {filteredProgress.map((progress) => {
                 if (!progress || !progress.user || !progress.course) return null;
                 return (
-                <tr key={progress.id} className="hover:bg-gray-50">
+                <tr key={progress._id} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
                     <div>
                       <button 
-                        onClick={() => handleUserClick(progress.user.id)}
+                        onClick={() => handleUserClick(progress)}
                         className="font-medium text-gray-900 hover:text-lfc-red cursor-pointer"
                       >
                         {progress.user.name || 'N/A'}
@@ -279,17 +294,17 @@ const UserProgressTab = () => {
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div 
                           className="bg-green-600 h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${progress.progress || 'N/A'}%` }}
+                          style={{ width: `${progress.progress || 0}%` }}
                         ></div>
                       </div>
-                      <span className="ml-3 text-sm font-medium">{progress.progress || 'N/A'}%</span>
+                      <span className="ml-3 text-sm font-medium">{progress.progress || 0}%</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">
-                    {Math.floor(progress.timeSpent / 3600) || 'N/A'}h {Math.floor((progress.timeSpent % 3600) / 60) || 'N/A'}m
+                    {formatTimeSpent(progress.timeSpent)}
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(progress)}` || 'N/A'}>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(progress)}`}>
                       {getStatusIcon(progress)}
                       <span className="ml-1">
                         {progress.completed ? 'Completed' : progress.progress > 0 ? 'In Progress' : 'Not Started'}
@@ -300,14 +315,15 @@ const UserProgressTab = () => {
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                       calculateRiskLevel(progress) === 'high' ? 'bg-red-100 text-red-800' :
                       calculateRiskLevel(progress) === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-green-100 text-green-800'
+                      calculateRiskLevel(progress) === 'low' ? 'bg-green-100 text-green-800' :
+                      'bg-blue-100 text-blue-800'
                     }`}>
                       <FaExclamationTriangle className="mr-1" />
-                      {calculateRiskLevel(progress).toUpperCase() || 'N/A'}
+                      {calculateRiskLevel(progress).toUpperCase()}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500">
-                    {new Date(progress.lastAccessed).toLocaleDateString() || 'N/A'}
+                    {progress.lastAccessed ? new Date(progress.lastAccessed).toLocaleDateString() : 'N/A'}
                   </td>
                 </tr>
               );
@@ -323,58 +339,68 @@ const UserProgressTab = () => {
           </div>
         )}
       </div>
-          {/* Modal - Positioned outside the main flow */}
-          {selectedUserData && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-              <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-                <div className="p-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-bold text-gray-900">User Progress Details</h3>
-                    <button 
-                      onClick={() => setSelectedUser(null)}
-                      className="text-gray-400 hover:text-gray-600 text-xl"
-                    >
-                      ×
-                    </button>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="font-semibold text-gray-700">User Information</h4>
-                      <p><strong>Name:</strong> {selectedUserData.user.name}</p>
-                      <p><strong>Email:</strong> {selectedUserData.user.email}</p>
-                      <p><strong>Last Login:</strong> {new Date(selectedUserData.user.lastLogin).toLocaleDateString()}</p>
+
+      {/* Modal */}
+      {selectedUser && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-bold text-gray-900">User Progress Details</h3>
+                <button 
+                  onClick={() => setSelectedUser(null)}
+                  className="text-gray-400 hover:text-gray-600 text-xl"
+                >
+                  ×
+                </button>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <h4 className="font-semibold text-gray-700">User Information</h4>
+                  <p><strong>Name:</strong> {selectedUser.user.name || 'N/A'}</p>
+                  <p><strong>Email:</strong> {selectedUser.user.email || 'N/A'}</p>
+                  <p><strong>Last Login:</strong> {selectedUser.user.lastLogin ? new Date(selectedUser.user.lastLogin).toLocaleDateString() : 'N/A'}</p>
+                </div>
+                
+                <div>
+                  <h4 className="font-semibold text-gray-700">Course Progress</h4>
+                  <p><strong>Course:</strong> {selectedUser.course.title || 'N/A'}</p>
+                  <p><strong>Progress:</strong> {selectedUser.progress || 0}%</p>
+                  <p><strong>Status:</strong> {selectedUser.completed ? 'Completed' : 'In Progress'}</p>
+                  <p><strong>Time Spent:</strong> {formatTimeSpent(selectedUser.timeSpent)}</p>
+                </div>
+                
+                <div>
+                  <h4 className="font-semibold text-gray-700">Enrollment Details</h4>
+                  <p><strong>Enrolled:</strong> {selectedUser.enrolledAt ? new Date(selectedUser.enrolledAt).toLocaleDateString() : 'N/A'}</p>
+                  <p><strong>Last Accessed:</strong> {selectedUser.lastAccessed ? new Date(selectedUser.lastAccessed).toLocaleDateString() : 'N/A'}</p>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold text-gray-700">Section Progress</h4>
+                  {selectedUser.sectionProgress?.map((section, index) => (
+                    <div key={index} className="text-sm">
+                      <p>Section {index + 1}: {section.modulesCompleted}/{section.totalModules} modules completed</p>
                     </div>
-                    
-                    <div>
-                      <h4 className="font-semibold text-gray-700">Course Progress</h4>
-                      <p><strong>Course:</strong> {selectedUserData.course.title}</p>
-                      <p><strong>Progress:</strong> {selectedUserData.progress}%</p>
-                      <p><strong>Status:</strong> {selectedUserData.completed ? 'Completed' : 'In Progress'}</p>
-                      <p><strong>Time Spent:</strong> {Math.floor(selectedUserData.timeSpent / 3600)}h {Math.floor((selectedUserData.timeSpent % 3600) / 60)}m</p>
-                    </div>
-                    
-                    <div>
-                      <h4 className="font-semibold text-gray-700">Enrollment Details</h4>
-                      <p><strong>Enrolled:</strong> {new Date(selectedUserData.enrolledAt).toLocaleDateString()}</p>
-                      <p><strong>Last Accessed:</strong> {new Date(selectedUserData.lastAccessed).toLocaleDateString()}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-6 flex justify-end">
-                    <button 
-                      onClick={() => setSelectedUser(null)}
-                      className="bg-lfc-red text-white px-4 py-2 rounded-lg hover:bg-red-700"
-                    >
-                      Close
-                    </button>
-                  </div>
+                  ))}
                 </div>
               </div>
+              
+              <div className="mt-6 flex justify-end">
+                <button 
+                  onClick={() => setSelectedUser(null)}
+                  className="bg-lfc-red text-white px-4 py-2 rounded-lg hover:bg-red-700"
+                >
+                  Close
+                </button>
+              </div>
             </div>
-          )}
+          </div>
         </div>
-      );
+      )}
+    </div>
+  );
 };
 
 export default UserProgressTab;

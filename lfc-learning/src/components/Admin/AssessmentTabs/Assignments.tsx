@@ -1,19 +1,19 @@
 // src/pages/Admin/Assignments.tsx
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { 
   FaSearch, 
   FaFilter, 
   FaDownload, 
-  FaEye, 
   FaEdit, 
   FaChartBar,
   FaClock,
   FaCheckCircle,
-  FaExclamationTriangle
+  FaExclamationTriangle,
+  FaFileAlt
 } from "react-icons/fa";
+import AssignmentSubmissionModal from "./AssignmentSubmissionModal";
 
-interface Submission {
+interface AssignmentSubmission {
   _id: string;
   submissionType: string;
   submission: {
@@ -23,16 +23,16 @@ interface Submission {
       url: string;
       name: string;
       type: string;
+      size: number;
     };
   };
   grade?: number;
   feedback?: string;
-  submittedAt: string;
+  createdAt: string;
   studentId: {
     _id: string;
     name: string;
     email: string;
-    profilePicture?: string;
   };
   courseId: {
     _id: string;
@@ -45,55 +45,170 @@ interface Submission {
     _id: string;
     title: string;
     dueDate: string;
+    instructions?: string;
+    maxPoints?: number;
   };
 }
 
 export default function Assignments() {
-  const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [submissions, setSubmissions] = useState<AssignmentSubmission[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     status: 'all',
     course: 'all',
     search: ''
   });
+  const [selectedSubmission, setSelectedSubmission] = useState<AssignmentSubmission | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   useEffect(() => {
-    fetchSubmissions();
+    fetchAssignmentSubmissions();
   }, []);
 
-  const fetchSubmissions = async () => {
+  const fetchAssignmentSubmissions = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE}/api/submissions/admin/submissions?type=assignment`, {
+      
+      // First, get all courses to find which ones have assignments
+      const coursesRes = await fetch(`${API_BASE}/api/courses`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       
-      if (res.ok) {
-        const data = await res.json();
-        setSubmissions(data.submissions || []);
+      if (!coursesRes.ok) {
+        console.error("Failed to fetch courses");
+        setSubmissions([]);
+        return;
       }
+
+      const courses = await coursesRes.json();
+      
+      // Filter courses that have assignments
+      const coursesWithAssignments = courses.filter((course: any) => 
+        course.assignments && course.assignments.length > 0
+      );
+      
+      console.log(`📊 Found ${coursesWithAssignments.length} courses with assignments`);
+      
+      // Fetch assignment submissions for each course
+      const allAssignmentSubmissions: AssignmentSubmission[] = [];
+      
+      for (const course of coursesWithAssignments) {
+        try {
+          const submissionRes = await fetch(
+            `${API_BASE}/api/submissions/admin/courses/${course._id}/submissions`,
+            {
+              headers: { "Authorization": `Bearer ${token}` }
+            }
+          );
+          
+          if (submissionRes.ok) {
+            const data = await submissionRes.json();
+            
+            // Filter only assignment submissions (not projects)
+            const assignmentSubmissions = data.submissions?.filter((submission: any) => 
+              submission.assignmentId && !submission.projectId
+            ).map((submission: any) => ({
+              ...submission,
+              courseId: {
+                _id: course._id,
+                title: course.title,
+                instructor: course.instructor
+              },
+              // Find the specific assignment details
+              assignmentId: course.assignments?.find((a: any) => a._id === submission.assignmentId)
+            })) || [];
+            
+            allAssignmentSubmissions.push(...assignmentSubmissions);
+          }
+        } catch (err) {
+          console.error(`Error fetching submissions for course ${course._id}:`, err);
+        }
+      }
+      
+      console.log(`✅ Loaded ${allAssignmentSubmissions.length} assignment submissions`);
+      setSubmissions(allAssignmentSubmissions);
+      
     } catch (err) {
-      console.error("Error fetching submissions", err);
+      console.error("Error fetching assignment submissions", err);
+      setSubmissions([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const getStatusBadge = (submission: Submission) => {
+  const handleGradeSubmission = async (submissionId: string, grade: number, feedback: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${API_BASE}/api/submissions/${submissionId}/grade`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          grade,
+          feedback
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to grade submission");
+      }
+
+      // Update local state
+      setSubmissions(prev => 
+        prev.map(sub => 
+          sub._id === submissionId 
+            ? { ...sub, grade, feedback }
+            : sub
+        )
+      );
+
+      // Show success message
+      alert("Assignment graded successfully!");
+    } catch (error) {
+      console.error("Error grading submission:", error);
+      throw error;
+    }
+  };
+
+  // Open submission for viewing/grading
+  const openSubmission = (submission: AssignmentSubmission) => {
+    setSelectedSubmission(submission);
+    setIsModalOpen(true);
+  };
+
+  // Close modal
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedSubmission(null);
+  };
+
+  const getStatusBadge = (submission: AssignmentSubmission) => {
     if (submission.grade !== undefined) {
       return { color: 'bg-green-100 text-green-800', text: 'Graded', icon: FaCheckCircle };
     }
     
-    const submittedDate = new Date(submission.submittedAt);
+    const submittedDate = new Date(submission.createdAt);
     const dueDate = submission.assignmentId ? new Date(submission.assignmentId.dueDate) : null;
     
     if (dueDate && submittedDate > dueDate) {
       return { color: 'bg-red-100 text-red-800', text: 'Late', icon: FaExclamationTriangle };
     }
     
-    return { color: 'bg-yellow-100 text-yellow-800', text: 'Pending', icon: FaClock };
+    return { color: 'bg-yellow-100 text-yellow-800', text: 'Pending Review', icon: FaClock };
+  };
+
+  const getFileTypeIcon = (submission: AssignmentSubmission) => {
+    if (submission.submission.file) {
+      return FaFileAlt;
+    }
+    if (submission.submission.link) {
+      return FaFileAlt; // Using same icon for consistency
+    }
+    return FaFileAlt;
   };
 
   const filteredSubmissions = submissions.filter(submission => {
@@ -101,12 +216,13 @@ export default function Assignments() {
     if (filters.status === 'pending' && submission.grade !== undefined) return false;
     if (filters.status === 'late') {
       const dueDate = submission.assignmentId ? new Date(submission.assignmentId.dueDate) : null;
-      const submittedDate = new Date(submission.submittedAt);
+      const submittedDate = new Date(submission.createdAt);
       if (!dueDate || submittedDate <= dueDate) return false;
     }
     
     if (filters.search && !submission.studentId.name.toLowerCase().includes(filters.search.toLowerCase()) &&
-        !submission.courseId.title.toLowerCase().includes(filters.search.toLowerCase())) {
+        !submission.courseId.title.toLowerCase().includes(filters.search.toLowerCase()) &&
+        !submission.assignmentId?.title.toLowerCase().includes(filters.search.toLowerCase())) {
       return false;
     }
     
@@ -147,19 +263,17 @@ export default function Assignments() {
       {/* Filters */}
       <div className="bg-white rounded-lg border border-yt-light-border p-4 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {/* Search */}
           <div className="relative">
             <FaSearch className="absolute left-3 top-3 text-yt-text-gray" />
             <input
               type="text"
-              placeholder="Search students or courses..."
+              placeholder="Search students, courses, or assignments..."
               className="w-full pl-10 pr-4 py-2 border border-yt-light-border rounded-lg focus:outline-none focus:border-lfc-red"
               value={filters.search}
               onChange={(e) => setFilters({...filters, search: e.target.value})}
             />
           </div>
           
-          {/* Status Filter */}
           <select
             className="border border-yt-light-border rounded-lg px-3 py-2 focus:outline-none focus:border-lfc-red"
             value={filters.status}
@@ -171,14 +285,16 @@ export default function Assignments() {
             <option value="late">Late Submissions</option>
           </select>
 
-          {/* Course Filter */}
           <select
             className="border border-yt-light-border rounded-lg px-3 py-2 focus:outline-none focus:border-lfc-red"
             value={filters.course}
             onChange={(e) => setFilters({...filters, course: e.target.value})}
           >
             <option value="all">All Courses</option>
-            {/* Would be populated from API */}
+            {/* Populate with unique courses */}
+            {Array.from(new Set(submissions.map(s => s.courseId.title))).map(courseTitle => (
+              <option key={courseTitle} value={courseTitle}>{courseTitle}</option>
+            ))}
           </select>
 
           <button className="px-4 py-2 border border-yt-light-border rounded-lg hover:bg-yt-light-hover flex items-center justify-center">
@@ -193,10 +309,10 @@ export default function Assignments() {
         <div className="bg-white p-4 rounded-lg border border-yt-light-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-yt-text-gray">Total Submissions</p>
+              <p className="text-sm text-yt-text-gray">Total Assignments</p>
               <p className="text-2xl font-bold text-yt-text-dark">{submissions.length}</p>
             </div>
-            <FaChartBar className="text-lfc-red text-xl" />
+            <FaFileAlt className="text-lfc-red text-xl" />
           </div>
         </div>
         
@@ -240,84 +356,74 @@ export default function Assignments() {
       </div>
 
       {/* Submissions List */}
-      <div className="bg-white rounded-lg border border-yt-light-border">
-        <div className="p-4 border-b border-yt-light-border">
-          <h3 className="font-semibold text-yt-text-dark">Assignment Submissions</h3>
-        </div>
-        
-        {filteredSubmissions.length === 0 ? (
-          <div className="p-8 text-center">
-            <FaChartBar className="text-4xl text-yt-text-gray mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No submissions found</h3>
-            <p className="text-yt-text-gray">Adjust your filters to see more results</p>
-          </div>
-        ) : (
-          <div className="divide-y divide-yt-light-border">
-            {filteredSubmissions.map((submission) => {
-              const status = getStatusBadge(submission);
-              const StatusIcon = status.icon;
-              
-              return (
-                <div key={submission._id} className="p-4 hover:bg-yt-light-hover transition-colors">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4 flex-1">
-                      {/* Student Avatar */}
-                      <div className="w-10 h-10 bg-lfc-red rounded-full flex items-center justify-center text-white font-semibold">
-                        {submission.studentId.name.charAt(0)}
-                      </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center space-x-2 mb-1">
-                          <h4 className="font-medium text-yt-text-dark truncate">
-                            {submission.studentId.name}
-                          </h4>
-                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${status.color}`}>
-                            <StatusIcon className="mr-1" size={10} />
-                            {status.text}
-                          </span>
-                          {submission.grade && (
-                            <span className="bg-lfc-red text-white px-2 py-1 rounded-full text-xs font-medium">
-                              {submission.grade}%
-                            </span>
-                          )}
-                        </div>
-                        
-                        <p className="text-sm text-yt-text-gray truncate">
-                          {submission.courseId.title} • {submission.assignmentId?.title}
-                        </p>
-                        
-                        <div className="flex items-center space-x-4 text-xs text-yt-text-gray mt-1">
-                          <span>Submitted: {new Date(submission.submittedAt).toLocaleDateString()}</span>
-                          {submission.assignmentId?.dueDate && (
-                            <span>Due: {new Date(submission.assignmentId.dueDate).toLocaleDateString()}</span>
-                          )}
-                        </div>
-                      </div>
+      <div className="divide-y divide-yt-light-border">
+        {filteredSubmissions.map((submission) => {
+          const status = getStatusBadge(submission);
+          const StatusIcon = status.icon;
+          const FileTypeIcon = getFileTypeIcon(submission);
+          
+          return (
+            <div key={submission._id} className="p-4 hover:bg-yt-light-hover transition-colors">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4 flex-1">
+                  <div className="w-10 h-10 bg-lfc-red rounded-full flex items-center justify-center text-white">
+                    <FileTypeIcon />
+                  </div>
+                  
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center space-x-2 mb-1">
+                      <h4 className="font-medium text-yt-text-dark truncate">
+                        {submission.studentId.name}
+                      </h4>
+                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${status.color}`}>
+                        <StatusIcon className="mr-1" size={10} />
+                        {status.text}
+                      </span>
+                      {submission.grade && (
+                        <span className="bg-lfc-red text-white px-2 py-1 rounded-full text-xs font-medium">
+                          {submission.grade}%
+                        </span>
+                      )}
                     </div>
                     
-                    <div className="flex items-center space-x-2">
-                      <Link
-                        to={`/admin/submissions/${submission._id}`}
-                        className="p-2 text-yt-text-gray hover:text-lfc-red hover:bg-red-50 rounded-lg transition-colors"
-                        title="View Submission"
-                      >
-                        <FaEye />
-                      </Link>
-                      
-                      <button
-                        className="p-2 text-yt-text-gray hover:text-lfc-red hover:bg-red-50 rounded-lg transition-colors"
-                        title="Grade Assignment"
-                      >
-                        <FaEdit />
-                      </button>
+                    <p className="text-sm text-yt-text-gray truncate">
+                      {submission.courseId.title} • {submission.assignmentId?.title || 'Assignment'}
+                    </p>
+                    
+                    <div className="flex items-center space-x-4 text-xs text-yt-text-gray mt-1">
+                      <span>Submitted: {new Date(submission.createdAt).toLocaleDateString()}</span>
+                      {submission.assignmentId?.dueDate && (
+                        <span>Due: {new Date(submission.assignmentId.dueDate).toLocaleDateString()}</span>
+                      )}
+                      {submission.submission.file && (
+                        <span>{submission.submission.file.name} ({(submission.submission.file.size / 1024 / 1024).toFixed(1)}MB)</span>
+                      )}
                     </div>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        )}
+                
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => openSubmission(submission)}
+                    className="p-2 text-yt-text-gray hover:text-lfc-red hover:bg-red-50 rounded-lg transition-colors"
+                    title="View and Grade Assignment"
+                  >
+                    <FaEdit />
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
+
+      {/* Add the modal */}
+      <AssignmentSubmissionModal
+        submission={selectedSubmission}
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onGrade={handleGradeSubmission}
+      />
     </div>
   );
 }

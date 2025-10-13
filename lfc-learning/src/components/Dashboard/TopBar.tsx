@@ -25,23 +25,35 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
 
   // Fetch notifications count
   useEffect(() => {
-    const fetchNotificationCount = async () => {
-      try {
-        const response = await fetch(`${API_BASE}/api/notifications/my?read=false`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
-          setNotifications(data.notifications || []);
-          setUnreadCount(data.unreadCount || 0);
+  const fetchNotificationCount = async () => {
+    try {
+      const response = await fetch(`${API_BASE}/api/notifications/my?limit=5`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
         }
-      } catch (error) {
-        console.error('Error fetching notifications:', error);
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        // Handle both direct array and nested response
+        const notificationsArray = data.notifications || data || [];
+        setNotifications(notificationsArray);
+        
+        // Calculate unread count from the data
+        const unread = notificationsArray.filter((n: { read: any; }) => !n.read).length;
+        setUnreadCount(unread);
+      } else {
+        console.error('Failed to fetch notifications:', response.status);
+        setNotifications([]);
+        setUnreadCount(0);
       }
-    };
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+      setNotifications([]);
+      setUnreadCount(0);
+    }
+  };
 
     fetchNotificationCount();
     // Refresh every 30 seconds
@@ -52,17 +64,23 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
   // Mark as read function
   const markAsRead = async (notificationId: string) => {
     try {
-      await fetch(`${API_BASE}/api/notifications/my/${notificationId}/read`, {
+      const response = await fetch(`${API_BASE}/api/notifications/${notificationId}/read`, {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
         }
       });
-      // Update local state
-      setNotifications(prev => 
-        prev.map(n => n._id === notificationId ? { ...n, read: true } : n)
-      );
-      setUnreadCount(prev => Math.max(0, prev - 1));
+      
+      if (response.ok) {
+        // Update local state
+        setNotifications(prev => 
+          prev.map(n => n._id === notificationId ? { ...n, read: true } : n)
+        );
+        setUnreadCount(prev => Math.max(0, prev - 1));
+      } else {
+        console.error('Failed to mark as read:', response.status);
+      }
     } catch (error) {
       console.error('Error marking notification as read:', error);
     }

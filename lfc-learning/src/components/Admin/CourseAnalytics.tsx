@@ -45,18 +45,37 @@ export default function CourseAnalytics() {
 
   const fetchCourses = async () => {
     try {
-      const response = await fetch('${API_BASE}/api/courses', {
+      const token = localStorage.getItem("token");
+      console.log('Fetching from:', `${API_BASE}/api/courses`);
+      
+      const response = await fetch(`${API_BASE}/api/courses`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
       });
       
+      console.log('Response status:', response.status);
+      console.log('Content-Type:', response.headers.get('content-type'));
+      
+      const text = await response.text();
+      console.log('First 200 chars:', text.substring(0, 200));
+      
       if (response.ok) {
-        const data = await response.json();
-        setCourses(data);
+        try {
+          const data = JSON.parse(text);
+          setCourses(data);
+        } catch (parseError) {
+          console.error('JSON parse error:', parseError);
+          setCourses([]);
+        }
+      } else {
+        console.error('API Error:', response.status, text);
+        setCourses([]);
       }
     } catch (error) {
       console.error('Error fetching courses:', error);
+      setCourses([]);
     }
   };
 

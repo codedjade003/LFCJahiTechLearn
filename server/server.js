@@ -26,6 +26,7 @@ import progressRoutes from './routes/progressRoutes.js';
 import submissionRoutes from './routes/submissionRoutes.js';
 import uploadRoutes from "./routes/uploadRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js"
+import proctoringRoutes from './routes/proctoringRoutes.js';
 
 // Import dueDateNotifier only if it exists and is needed
 try {
@@ -121,14 +122,14 @@ app.use("/api/logs", logsRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/enrollments", enrollmentRoutes);
 app.use("/api/notifications", notificationRoutes);
-app.use("/api/uploads", uploadRoutes);
+app.use("/api/uploads", uploadRoutes); // Unified upload route - USE THIS ONLY
 app.use('/api/users', userManagementRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api/submissions', submissionRoutes);
-
 // Static file serving
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use('/uploads/submissions', express.static(path.join(__dirname, 'uploads/submissions')));
+app.use('/api/proctoring', proctoringRoutes);
 
 // Serve static files in production (for Vite build)
 if (process.env.NODE_ENV === 'production') {

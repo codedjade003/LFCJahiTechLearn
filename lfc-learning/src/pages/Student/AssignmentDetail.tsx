@@ -45,7 +45,7 @@ interface Submission {
       type: string;
     };
   };
-  submittedAt: string;
+  createdAt: string;
   grade?: number;
   feedback?: string;
   gradedAt?: string;
@@ -148,7 +148,6 @@ export default function AssignmentDetail() {
 
       const courseId = assignment.course._id;
       
-      // CORRECT ROUTE: This should work based on your routes
       const res = await fetch(
         `${API_BASE}/api/submissions/course/${courseId}/assignments/${assignmentId}`, 
         {
@@ -164,10 +163,15 @@ export default function AssignmentDetail() {
       
       if (res.ok) {
         const submissionData = await res.json();
-        console.log('Submission data:', submissionData);
+        console.log('📅 SUBMISSION DATA DEBUG:', {
+          fullData: submissionData,
+          submittedAt: submissionData.submittedAt,
+          submittedAtType: typeof submissionData.submittedAt,
+          createdAt: submissionData.createdAt,
+          updatedAt: submissionData.updatedAt
+        });
         setSubmission(submissionData);
       } else if (res.status === 404) {
-        // No submission exists yet - this is normal
         console.log('No submission found (404)');
         setSubmission(null);
       } else {
@@ -418,7 +422,7 @@ export default function AssignmentDetail() {
                   )}
                   
                   <p className="text-sm text-yt-text-gray mt-2">
-                    Submitted on: {new Date(submission.submittedAt).toLocaleDateString()}
+                    Submitted on: {submission.createdAt ? new Date(submission.createdAt).toLocaleDateString() : 'Date not available'}
                   </p>
                 </div>
 

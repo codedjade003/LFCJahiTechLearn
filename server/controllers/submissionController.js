@@ -3,35 +3,20 @@ import multer from 'multer';
 import { uploadToCloudinary } from '../utils/fileUploader.js';
 
 // Use memory storage to get file buffer
-export const upload = multer({
-  storage: multer.memoryStorage(), // Store file in memory as buffer
+// Remove the old upload configuration and use the unified route
+export const upload = multer({ 
+  storage: unifiedStorage, // Use the unified storage
   limits: {
-    fileSize: 25 * 1024 * 1024, // 25MB
-  },
-  fileFilter: (req, file, cb) => {
-    const allowedMimes = [
-      'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
-      'application/pdf', 
-      'application/msword', 
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'application/vnd.ms-excel',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      'application/zip',
-      'text/plain',
-      'application/octet-stream'
-    ];
-    
-    if (allowedMimes.includes(file.mimetype)) {
-      cb(null, true);
-    } else {
-      cb(new Error(`File type ${file.mimetype} is not allowed`), false);
-    }
+    fileSize: 100 * 1024 * 1024, // 100MB
   }
 });
+
 import User from '../models/User.js';
 import Enrollment from '../models/Enrollment.js';
 import { Course } from '../models/Course.js';
 import { Submission } from '../models/Submission.js';
+import { unifiedStorage } from '../config/cloudinary.js';
+import { updateEnrollmentProgress } from './progressController.js';
 
 // Get all submissions for a course (student view)
 export const getSubmission = async (req, res) => {
@@ -720,7 +705,7 @@ export const getStudentSubmissions = async (req, res) => {
   }
 };
 
-// Enhanced grade submission with notification
+// Enhanced gradeSubmission function
 export const gradeSubmission = async (req, res) => {
   try {
     const { submissionId } = req.params;
@@ -728,7 +713,7 @@ export const gradeSubmission = async (req, res) => {
 
     const submission = await Submission.findById(submissionId)
       .populate('studentId', 'name email')
-      .populate('courseId', 'title');
+      .populate('courseId', 'title sections assignments project');
 
     if (!submission) {
       return res.status(404).json({ message: 'Submission not found' });
@@ -745,27 +730,70 @@ export const gradeSubmission = async (req, res) => {
 
     await submission.save();
 
-    // Update enrollment progress
+    // Update enrollment progress with proper course completion logic
     const enrollment = await Enrollment.findOne({
       user: submission.studentId,
       course: submission.courseId
     });
 
+    if (!enrollment) {
+      console.error('Enrollment not found for student:', submission.studentId, 'course:', submission.courseId);
+      return res.json({ 
+        message: 'Submission graded but enrollment not found', 
+        submission 
+      });
+    }
+
+    let shouldUpdateCourseProgress = false;
+
     if (submission.assignmentId) {
+      // Update assignment progress
       const assignmentProgress = enrollment.assignmentProgress.find(
         ap => ap.assignmentId && ap.assignmentId.toString() === submission.assignmentId.toString()
       );
+      
       if (assignmentProgress) {
         assignmentProgress.score = grade;
         assignmentProgress.graded = true;
         assignmentProgress.feedback = feedback;
         assignmentProgress.gradedAt = new Date();
+        
+        // Check if this assignment completion should trigger course progress update
+        if (grade >= 70) { // Passing grade threshold
+          shouldUpdateCourseProgress = true;
+        }
+      } else {
+        // Create new assignment progress entry if it doesn't exist
+        enrollment.assignmentProgress.push({
+          assignmentId: submission.assignmentId,
+          submitted: true,
+          score: grade,
+          graded: true,
+          feedback: feedback,
+          gradedAt: new Date()
+        });
+        shouldUpdateCourseProgress = true;
       }
     } else if (submission.projectId) {
-      enrollment.projectProgress.score = grade;
-      enrollment.projectProgress.reviewed = true;
-      enrollment.projectProgress.feedback = feedback;
-      enrollment.projectProgress.gradedAt = new Date();
+      // Update project progress
+      enrollment.projectProgress = {
+        submitted: true,
+        submittedAt: enrollment.projectProgress?.submittedAt || new Date(),
+        reviewed: true,
+        score: grade,
+        feedback: feedback,
+        gradedAt: new Date()
+      };
+      
+      // Project completion often has higher weight in course completion
+      if (grade >= 70) {
+        shouldUpdateCourseProgress = true;
+      }
+    }
+
+    // Update overall course progress if needed
+    if (shouldUpdateCourseProgress) {
+      await updateEnrollmentProgress(enrollment._id, submission.courseId._id);
     }
 
     await enrollment.save();
@@ -780,6 +808,7 @@ export const gradeSubmission = async (req, res) => {
         .populate('courseId', 'title')
         .populate('gradedBy', 'name'),
       enrollmentUpdate: {
+        progress: enrollment.progress,
         assignmentProgress: enrollment.assignmentProgress,
         projectProgress: enrollment.projectProgress
       }

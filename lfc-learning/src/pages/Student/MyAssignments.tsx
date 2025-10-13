@@ -1,4 +1,4 @@
-// src/pages/Dashboard/MyAssignments.tsx - CLEANED
+// src/pages/Dashboard/MyAssignments.tsx - FIXED
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { 
@@ -27,7 +27,8 @@ interface AssignmentWithProgress extends Assignment {
   progress: {
     submitted: boolean;
     graded: boolean;
-    grade?: number;
+    score?: number; // Changed from grade to score
+    grade?: number; // Keep for backward compatibility
   };
 }
 
@@ -58,9 +59,17 @@ export default function MyAssignments() {
           (course.assignments || []).map((assignment: any) => {
             // Find real progress from enrollments
             const enrollment = enrollments.find((e: any) => e.course?._id === course._id);
-            const progress = enrollment?.assignmentProgress?.find(
+            const assignmentProgress = enrollment?.assignmentProgress?.find(
               (ap: any) => ap.assignmentId === assignment._id
-            ) || { submitted: false, graded: false, grade: undefined };
+            );
+            
+            // Use score instead of grade, and check both fields
+            const progress = assignmentProgress ? {
+              submitted: assignmentProgress.submitted || false,
+              graded: assignmentProgress.graded || false,
+              score: assignmentProgress.score, // This is what's actually stored
+              grade: assignmentProgress.score || assignmentProgress.grade // Fallback
+            } : { submitted: false, graded: false, score: undefined, grade: undefined };
             
             return {
               ...assignment,
@@ -98,16 +107,35 @@ export default function MyAssignments() {
   });
 
   const getStatusBadge = (assignment: AssignmentWithProgress) => {
-    if (assignment.progress.graded) {
-      return { color: 'bg-green-100 text-green-800', text: `Graded: ${assignment.progress.grade}%`, icon: FaCheckCircle };
+    // Use score first, then fallback to grade
+    const displayGrade = assignment.progress.score ?? assignment.progress.grade;
+    
+    if (assignment.progress.graded && displayGrade !== undefined) {
+      return { 
+        color: 'bg-green-100 text-green-800', 
+        text: `Graded: ${displayGrade}%`, 
+        icon: FaCheckCircle 
+      };
     }
     if (assignment.progress.submitted) {
-      return { color: 'bg-blue-100 text-blue-800', text: 'Submitted', icon: FaCheckCircle };
+      return { 
+        color: 'bg-blue-100 text-blue-800', 
+        text: 'Submitted', 
+        icon: FaCheckCircle 
+      };
     }
     if (new Date(assignment.dueDate) < new Date()) {
-      return { color: 'bg-red-100 text-red-800', text: 'Overdue', icon: FaExclamationTriangle };
+      return { 
+        color: 'bg-red-100 text-red-800', 
+        text: 'Overdue', 
+        icon: FaExclamationTriangle 
+      };
     }
-    return { color: 'bg-yellow-100 text-yellow-800', text: 'Pending', icon: FaClock };
+    return { 
+      color: 'bg-yellow-100 text-yellow-800', 
+      text: 'Pending', 
+      icon: FaClock 
+    };
   };
 
   if (loading) {
@@ -180,6 +208,8 @@ export default function MyAssignments() {
           {filteredAssignments.map((assignment) => {
             const status = getStatusBadge(assignment);
             const StatusIcon = status.icon;
+            // Use score first, then fallback to grade for display
+            const displayGrade = assignment.progress.score ?? assignment.progress.grade;
             
             return (
               <Link
@@ -219,16 +249,16 @@ export default function MyAssignments() {
                 </div>
 
                 {/* Progress bar for graded assignments */}
-                {assignment.progress.graded && assignment.progress.grade && (
+                {assignment.progress.graded && displayGrade !== undefined && (
                   <div className="mt-3">
                     <div className="flex justify-between text-xs text-yt-text-gray mb-1">
                       <span>Grade</span>
-                      <span>{assignment.progress.grade}%</span>
+                      <span>{displayGrade}%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div 
                         className="h-2 rounded-full bg-lfc-gold transition-all duration-300"
-                        style={{ width: `${assignment.progress.grade}%` }}
+                        style={{ width: `${displayGrade}%` }}
                       ></div>
                     </div>
                   </div>

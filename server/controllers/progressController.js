@@ -48,47 +48,81 @@ export const updateEnrollmentProgress = async (enrollmentId, courseId) => {
 
     if (!enrollment || !course) return null;
 
-    const sectionProgress = course.sections.map(section => {
+    let totalWeight = 0;
+    let completedWeight = 0;
+
+    // Calculate progress based on different components with weights
+    const weights = {
+      modules: 0.4,    // 40% for module completion
+      assignments: 0.3, // 30% for assignments
+      project: 0.3     // 30% for project
+    };
+
+    // Module progress (40%)
+    const totalModules = course.sections?.reduce((acc, section) => 
+      acc + (section.modules?.length || 0), 0) || 0;
+    
+    const completedModules = enrollment.moduleProgress?.filter(mp => mp.completed).length || 0;
+    const moduleProgress = totalModules > 0 ? (completedModules / totalModules) * weights.modules : 0;
+
+    // Assignment progress (30%)
+    const totalAssignments = course.assignments?.length || 0;
+    const completedAssignments = enrollment.assignmentProgress?.filter(ap => 
+      ap.submitted && ap.score >= 70 // Only count passing assignments
+    ).length || 0;
+    const assignmentProgress = totalAssignments > 0 ? 
+      (completedAssignments / totalAssignments) * weights.assignments : 0;
+
+    // Project progress (30%)
+    const projectProgress = (enrollment.projectProgress?.submitted && 
+                           enrollment.projectProgress?.score >= 70) ? weights.project : 0;
+
+    // Calculate total progress
+    const progress = Math.min(100, Math.round((moduleProgress + assignmentProgress + projectProgress) * 100));
+    
+    // Mark course as completed if all major components are done
+    const completed = (
+      (totalModules === 0 || completedModules >= totalModules) &&
+      (totalAssignments === 0 || completedAssignments >= totalAssignments) &&
+      (course.project ? (enrollment.projectProgress?.submitted && enrollment.projectProgress?.score >= 70) : true)
+    );
+
+    // Update section progress
+    const sectionProgress = course.sections?.map(section => {
       const existing = enrollment.sectionProgress?.find(
         sp => sp.sectionId.toString() === section._id.toString()
       );
 
-      const completedModules = enrollment.moduleProgress?.filter(
+      const completedModulesInSection = enrollment.moduleProgress?.filter(
         mp => section.modules?.some(m => m._id.toString() === mp.moduleId.toString()) && mp.completed
       ).length || 0;
 
+      const sectionCompleted = completedModulesInSection === (section.modules?.length || 0);
+
       return {
         sectionId: section._id,
-        completed: completedModules === (section.modules?.length || 0),
-        modulesCompleted: completedModules,
+        completed: sectionCompleted,
+        modulesCompleted: completedModulesInSection,
         totalModules: section.modules?.length || 0,
-        completedAt: existing?.completedAt || null
+        completedAt: sectionCompleted ? (existing?.completedAt || new Date()) : null
       };
-    });
+    }) || [];
 
-    const totalItems = (course.sections?.reduce((acc, s) => acc + (s.modules?.length || 0), 0) || 0)
-      + (course.assignments?.length || 0)
-      + (course.project ? 1 : 0);
-
-    const completedItems = (enrollment.moduleProgress?.filter(mp => mp.completed).length || 0)
-      + (enrollment.assignmentProgress?.filter(a => a.submitted).length || 0)
-      + (enrollment.projectProgress?.submitted ? 1 : 0);
-
-    const progress = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
-    const completed = progress === 100;
-
-    // Atomic update to avoid version mismatch
+    // Atomic update
     const updated = await Enrollment.findByIdAndUpdate(
       enrollmentId,
       {
         $set: {
           sectionProgress,
           progress,
-          completed
+          completed,
+          completedAt: completed ? (enrollment.completedAt || new Date()) : null
         }
       },
       { new: true }
     );
+
+    console.log(`📊 Progress updated for enrollment ${enrollmentId}: ${progress}% completed: ${completed}`);
 
     return updated;
   } catch (error) {
