@@ -1,34 +1,34 @@
-import axios from "axios";
+import { Resend } from "resend";
 
-const sendEmail = async (to, subject, text) => {
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+/**
+ * Sends an email using the correct domain address.
+ *
+ * @param {string} to - Recipient email
+ * @param {string} subject - Subject line
+ * @param {string} html - HTML content
+ * @param {("welcome" | "verification" | "reset" | "support" | "default")} type - Email type
+ */
+export const sendEmail = async (to, subject, html, type = "default") => {
   try {
-    const res = await axios.post(
-      "https://api.mailjet.com/v3.1/send",
-      {
-        Messages: [
-          {
-            From: {
-              Email: process.env.EMAIL_FROM.replace(/^.*<|>.*$/g, ""),
-              Name: "LFC Jahi Tech Learn",
-            },
-            To: [{ Email: to }],
-            Subject: subject,
-            TextPart: text,
-          },
-        ],
-      },
-      {
-        auth: {
-          username: process.env.MJ_APIKEY_PUBLIC,
-          password: process.env.MJ_APIKEY_PRIVATE,
-        },
-      }
-    );
+    // Choose the correct sender address
+    let from = "hello@lfctechlearn.com"; // default
+    if (["welcome", "verification", "reset"].includes(type)) {
+      from = "noreply@lfctechlearn.com";
+    }
 
-    console.log("📧 Mailjet sent:", res.data);
+    const response = await resend.emails.send({
+      from: `LFC Tech Learn <${from}>`,
+      to,
+      subject,
+      html,
+    });
+
+    console.log(`📧 Email (${type}) sent to ${to}:`, response?.id || response);
+    return response;
   } catch (err) {
-    console.error("🚨 Mailjet send failed:", err.response?.data || err.message);
+    console.error("🚨 Email send failed:", err?.response?.data || err.message || err);
+    throw new Error("Failed to send email");
   }
 };
-
-export default sendEmail;
