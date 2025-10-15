@@ -10,7 +10,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
  * @param {string} html - HTML content
  * @param {("welcome" | "verification" | "reset" | "support" | "default")} type - Email type
  */
-export const sendEmail = async (to, subject, html, type = "default") => {
+const sendEmail = async (to, subject, html, type = "default") => {
   try {
     // Choose the correct sender address
     let from = "hello@lfctechlearn.com"; // default
@@ -32,3 +32,5 @@ export const sendEmail = async (to, subject, html, type = "default") => {
     throw new Error("Failed to send email");
   }
 };
+
+export default sendEmail;
