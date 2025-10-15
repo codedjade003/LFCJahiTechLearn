@@ -1,4 +1,4 @@
-// src/components/Admin/CourseFormModal.tsx
+// components/Admin/CourseFormModal.tsx
 import { useState } from "react";
 import { FaTimes } from "react-icons/fa";
 
@@ -8,118 +8,200 @@ interface CourseFormModalProps {
   onSubmit: (data: any) => void;
 }
 
-export default function CourseFormModal({
-  isOpen,
-  onClose,
-  onSubmit,
-}: CourseFormModalProps) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
-  const [types, setTypes] = useState<string[]>([]);
-  const [isPublic, setIsPublic] = useState(false);
+export default function CourseFormModal({ isOpen, onClose, onSubmit }: CourseFormModalProps) {
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    type: "Video",
+    level: "Beginner",
+    instructorName: "",
+  });
+
+  const [saving, setSaving] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validate required fields
+    if (!formData.title.trim() || !formData.description.trim()) {
+      alert("Title and description are required");
+      return;
+    }
+
+    setSaving(true);
+    
+    try {
+      // Prepare course data with all required fields
+      const courseData = {
+        title: formData.title.trim(),
+        description: formData.description.trim(),
+        type: formData.type,
+        level: formData.level,
+        instructor: {
+          name: formData.instructorName.trim() || "Unknown Instructor",
+          avatar: "" // Default empty, can be updated later
+        },
+        // Remove categories field since it's not needed
+        thumbnail: "", // Default empty
+        promoVideo: "", // Default empty
+      };
+
+      await onSubmit({ courseInfo: courseData });
+      
+      // Reset form on success
+      setFormData({
+        title: "",
+        description: "",
+        type: "Video",
+        level: "Beginner",
+        instructorName: "",
+      });
+    } catch (error) {
+      console.error("Error in form submission:", error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   if (!isOpen) return null;
 
-  const toggleType = (type: string) => {
-    setTypes((prev) =>
-      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
-    );
-  };
-
-  const handleSubmit = () => {
-    const payload = {
-      title,
-      description,
-      category,
-      types,
-      isPublic,
-    };
-    onSubmit(payload);
-    onClose();
-  };
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 relative">
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-        >
-          <FaTimes />
-        </button>
-
-        <h2 className="text-xl font-semibold mb-4 text-lfc-gray">
-          Create New Course
-        </h2>
-
-        <div className="space-y-4">
-          <input
-            type="text"
-            placeholder="Course Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full border rounded p-2"
-          />
-
-          <textarea
-            placeholder="Course Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="w-full border rounded p-2"
-          />
-
-          <input
-            type="text"
-            placeholder="Category"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="w-full border rounded p-2"
-          />
-
-          {/* Types multi-select */}
-          <div>
-            <p className="text-sm font-medium text-gray-600 mb-2">Types</p>
-            <div className="flex gap-2 flex-wrap">
-              {["Video", "Audio", "Graphics", "Required", "Content Creation", "Utility", "Secretariat"].map((type) => (
-                <button
-                  key={type}
-                  type="button"
-                  onClick={() => toggleType(type)}
-                  className={`px-3 py-1 rounded-full border ${
-                    types.includes(type)
-                      ? "bg-lfc-red text-white border-lfc-red"
-                      : "bg-gray-100 text-gray-700 border-gray-300"
-                  }`}
-                >
-                  {type}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Public toggle */}
-          <label className="flex items-center gap-2 text-sm text-gray-700">
-            <input
-              type="checkbox"
-              checked={isPublic}
-              onChange={(e) => setIsPublic(e.target.checked)}
-              className="h-4 w-4"
-            />
-            Make course public (visible to students)
-          </label>
-        </div>
-
-        {/* Footer */}
-        <div className="flex justify-end mt-6">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex justify-between items-center p-6 border-b">
+          <h2 className="text-xl font-semibold text-gray-800">Create New Course</h2>
           <button
-            onClick={handleSubmit}
-            className="bg-lfc-gold text-black px-4 py-2 rounded-lg hover:opacity-90"
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
           >
-            Save Course
+            <FaTimes size={20} />
           </button>
         </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {/* Title - Required */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Course Title *
+            </label>
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-lfc-red focus:border-lfc-red"
+              placeholder="Enter course title"
+              required
+            />
+          </div>
+
+          {/* Description - Required */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Description *
+            </label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              rows={4}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-lfc-red focus:border-lfc-red"
+              placeholder="Describe what students will learn in this course"
+              required
+            />
+          </div>
+
+          {/* Type */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Course Type
+            </label>
+            <select
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-lfc-red focus:border-lfc-red"
+            >
+              <option value="Video">Video</option>
+              <option value="Audio">Audio</option>
+              <option value="Graphics">Graphics</option>
+              <option value="Required">Required</option>
+              <option value="Content Creation">Content Creation</option>
+              <option value="Utility">Utility</option>
+              <option value="Secretariat">Secretariat</option>
+            </select>
+          </div>
+
+          {/* Level */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Difficulty Level
+            </label>
+            <select
+              name="level"
+              value={formData.level}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-lfc-red focus:border-lfc-red"
+            >
+              <option value="Beginner">Beginner</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Advanced">Advanced</option>
+            </select>
+          </div>
+
+          {/* Instructor Name */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Instructor Name
+            </label>
+            <input
+              type="text"
+              name="instructorName"
+              value={formData.instructorName}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-lfc-red focus:border-lfc-red"
+              placeholder="Enter instructor's name"
+            />
+          </div>
+
+          {/* Form Actions */}
+          <div className="flex justify-end space-x-3 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={saving || !formData.title.trim() || !formData.description.trim()}
+              className="bg-lfc-red hover:bg-red-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              {saving ? (
+                <span className="flex items-center">
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                  </svg>
+                  Creating...
+                </span>
+              ) : (
+                "Create Course"
+              )}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

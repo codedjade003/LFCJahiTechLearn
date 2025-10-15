@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaTimes, FaEnvelope, FaWhatsapp } from "react-icons/fa";
 import axios from "axios";
 
@@ -12,6 +12,18 @@ const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
 
+  // Prevent background scrolling when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -22,7 +34,7 @@ const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post("/api/support", form); // your backend route
+      await axios.post("/api/support", form);
       setSent(true);
       setForm({ name: "", email: "", message: "" });
     } catch (err) {
@@ -34,10 +46,15 @@ const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl p-6 relative animate-fadeIn">
+      <div
+        className="
+          bg-white rounded-2xl w-full max-w-md shadow-2xl p-6 relative animate-fadeIn
+          max-h-[90vh] overflow-y-auto scrollbar-hide
+        "
+      >
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 text-gray-500 hover:text-red-500"
+          className="absolute top-3 right-3 text-gray-500 hover:text-red-500 transition-colors"
         >
           <FaTimes size={20} />
         </button>
@@ -74,7 +91,7 @@ const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
               onChange={handleChange}
               required
               rows={4}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-lfc-red"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-lfc-red resize-none"
             />
             <button
               type="submit"
@@ -98,10 +115,8 @@ const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
           </div>
         )}
 
-        {/* Divider */}
         <div className="border-t border-gray-200 my-4"></div>
 
-        {/* Direct contact section */}
         <div className="space-y-3">
           <div className="flex items-center gap-2 text-gray-700">
             <FaEnvelope className="text-lfc-red" />

@@ -18,7 +18,7 @@ const colors = require('tailwindcss/colors');
           },
         },
       },
-      plugins: [],
+      plugins: [require("tailwind-scrollbar-hide")],
  }; 
 
 

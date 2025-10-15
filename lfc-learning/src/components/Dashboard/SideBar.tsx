@@ -109,7 +109,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           </div>
 
           {/* Navigation */}
-          <div className="flex flex-col flex-grow px-4 py-6 overflow-y-auto">
+          <div className="flex flex-col flex-grow px-4 py-6 overflow-y-auto scrollbar-hide">
             <nav className="space-y-2">
               {menuItems.map((item) => {
                 const Icon = item.icon;

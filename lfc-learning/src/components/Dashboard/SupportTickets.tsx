@@ -1,0 +1,265 @@
+// src/components/Student/SupportTickets.jsx
+import { useState, useEffect } from 'react';
+import { FaPlus, FaSpinner, FaClock, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
+import type { SupportTicket, NewTicketData } from '../../types/support';
+
+const SupportTickets: React.FC = () => {
+  const [tickets, setTickets] = useState<SupportTicket[]>([]);
+  const [showNewTicket, setShowNewTicket] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  
+  const [newTicket, setNewTicket] = useState<NewTicketData>({
+    title: '',
+    description: '',
+    category: 'general',
+    priority: 'medium'
+  });
+
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+  useEffect(() => {
+    fetchTickets();
+  }, []);
+
+  const fetchTickets = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE}/api/support/my-tickets`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setTickets(data);
+      }
+    } catch (error) {
+      console.error('Error fetching tickets:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createTicket = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE}/api/support`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(newTicket)
+      });
+
+      if (response.ok) {
+        const ticket: SupportTicket = await response.json();
+        setTickets([ticket, ...tickets]);
+        setShowNewTicket(false);
+        setNewTicket({
+          title: '',
+          description: '',
+          category: 'general',
+          priority: 'medium'
+        });
+      }
+    } catch (error) {
+      console.error('Error creating ticket:', error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'open': return <FaClock className="text-blue-500" />;
+      case 'in-progress': return <FaSpinner className="text-yellow-500" />;
+      case 'resolved': return <FaCheckCircle className="text-green-500" />;
+      case 'closed': return <FaCheckCircle className="text-gray-500" />;
+      default: return <FaClock className="text-blue-500" />;
+    }
+  };
+
+  const getPriorityBadge = (priority: string): string => {
+    const styles: { [key: string]: string } = {
+      low: 'bg-gray-100 text-gray-800',
+      medium: 'bg-blue-100 text-blue-800',
+      high: 'bg-orange-100 text-orange-800',
+      urgent: 'bg-red-100 text-red-800'
+    };
+    return `px-2 py-1 rounded-full text-xs font-medium ${styles[priority]}`;
+  };
+  
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <FaSpinner className="animate-spin text-2xl text-lfc-red" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Support Tickets</h1>
+          <p className="text-gray-600">Get help with your courses and account</p>
+        </div>
+        <button
+          onClick={() => setShowNewTicket(true)}
+          className="bg-lfc-red text-white px-4 py-2 rounded-lg hover:bg-red-700 flex items-center"
+        >
+          <FaPlus className="mr-2" />
+          New Ticket
+        </button>
+      </div>
+
+      {/* New Ticket Modal */}
+      {showNewTicket && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-2xl w-full p-6">
+            <h2 className="text-xl font-bold mb-4">Create Support Ticket</h2>
+            <form onSubmit={createTicket}>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Title
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={newTicket.title}
+                    onChange={(e) => setNewTicket({...newTicket, title: e.target.value})}
+                    className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-lfc-red focus:border-transparent"
+                    placeholder="Brief description of your issue"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Category
+                    </label>
+                    <select
+                      value={newTicket.category}
+                      onChange={(e) => setNewTicket({...newTicket, category: e.target.value})}
+                      className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-lfc-red focus:border-transparent"
+                    >
+                      <option value="general">General</option>
+                      <option value="technical">Technical</option>
+                      <option value="content">Course Content</option>
+                      <option value="billing">Billing</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Priority
+                    </label>
+                    <select
+                      value={newTicket.priority}
+                      onChange={(e) => setNewTicket({...newTicket, priority: e.target.value})}
+                      className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-lfc-red focus:border-transparent"
+                    >
+                      <option value="low">Low</option>
+                      <option value="medium">Medium</option>
+                      <option value="high">High</option>
+                      <option value="urgent">Urgent</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Description
+                  </label>
+                  <textarea
+                    required
+                    rows={6}
+                    value={newTicket.description}
+                    onChange={(e) => setNewTicket({...newTicket, description: e.target.value})}
+                    className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-lfc-red focus:border-transparent"
+                    placeholder="Please provide detailed information about your issue..."
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-3 mt-6">
+                <button
+                  type="button"
+                  onClick={() => setShowNewTicket(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="bg-lfc-red text-white px-4 py-2 rounded-lg hover:bg-red-700 disabled:opacity-50 flex items-center"
+                >
+                  {submitting && <FaSpinner className="animate-spin mr-2" />}
+                  Create Ticket
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Tickets List */}
+      <div className="bg-white rounded-lg border border-gray-200">
+        {tickets.length === 0 ? (
+          <div className="p-8 text-center">
+            <FaExclamationCircle className="text-4xl text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No support tickets</h3>
+            <p className="text-gray-600">Create your first support ticket to get help</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-gray-200">
+            {tickets.map((ticket) => (
+              <div key={ticket._id} className="p-6 hover:bg-gray-50">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-3 mb-2">
+                      <h3 className="font-semibold text-gray-900">{ticket.title}</h3>
+                      <span className={getPriorityBadge(ticket.priority)}>
+                        {ticket.priority}
+                      </span>
+                      <span className="flex items-center text-sm text-gray-600">
+                        {getStatusIcon(ticket.status)}
+                        <span className="ml-1 capitalize">{ticket.status.replace('-', ' ')}</span>
+                      </span>
+                    </div>
+                    
+                    <p className="text-gray-600 text-sm mb-2">{ticket.description}</p>
+                    
+                    <div className="flex items-center space-x-4 text-sm text-gray-500">
+                      <span>Category: {ticket.category}</span>
+                      <span>Created: {new Date(ticket.createdAt).toLocaleDateString()}</span>
+                      <span>Messages: {ticket.messages?.length || 0}</span>
+                    </div>
+                  </div>
+                  
+                  <button
+                    onClick={() => {/* Navigate to ticket detail */}}
+                    className="ml-4 px-3 py-1 border border-lfc-red text-lfc-red rounded-lg hover:bg-lfc-red hover:text-white transition-colors"
+                  >
+                    View
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default SupportTickets;

@@ -8,6 +8,7 @@ const __dirname = path.dirname(__filename);
 
 import express from "express";
 import dotenv from "dotenv";
+dotenv.config();
 import mongoose from "mongoose";
 import cors from "cors";
 
@@ -27,6 +28,7 @@ import submissionRoutes from './routes/submissionRoutes.js';
 import uploadRoutes from "./routes/uploadRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js"
 import proctoringRoutes from './routes/proctoringRoutes.js';
+import supportRoutes from './routes/supportRoutes.js';
 
 // Import dueDateNotifier only if it exists and is needed
 try {
@@ -35,8 +37,6 @@ try {
 } catch (error) {
   console.log('⚠️ Due date notifier not found, continuing without it');
 }
-
-dotenv.config();
 
 const app = express();
 
@@ -118,6 +118,7 @@ app.get("/health", (req, res) => {
 app.use("/api/stats", statsRoutes);
 app.use("/api/auth", authRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/support', supportRoutes);
 app.use("/api/logs", logsRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/enrollments", enrollmentRoutes);
@@ -190,7 +191,7 @@ const startServer = async () => {
   const PORT = process.env.PORT || 5000;
   const server = app.listen(PORT, () => {
     console.log(`🚀 Server running in ${process.env.NODE_ENV || 'development'} mode`);
-    console.log(`📍 http://localhost:${PORT}`);
+    console.log(`📍 ${process.env.CLIENT_URL || `https://localhost:${PORT}`}`);
   });
 
   // Handle server errors
