@@ -1,13 +1,15 @@
-// src/components/Student/SupportTickets.jsx
 import { useState, useEffect } from 'react';
-import { FaPlus, FaSpinner, FaClock, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
+import { FaPlus, FaSpinner, FaClock, FaCheckCircle, FaExclamationCircle, FaTimes, FaPaperPlane, FaArrowLeft } from 'react-icons/fa';
 import type { SupportTicket, NewTicketData } from '../../types/support';
 
 const SupportTickets: React.FC = () => {
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [showNewTicket, setShowNewTicket] = useState<boolean>(false);
+  const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
+  const [newMessage, setNewMessage] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [submitting, setSubmitting] = useState<boolean>(false);
+  const [currentUserId, setCurrentUserId] = useState<string>('');
   
   const [newTicket, setNewTicket] = useState<NewTicketData>({
     title: '',
@@ -15,21 +17,40 @@ const SupportTickets: React.FC = () => {
     category: 'general',
     priority: 'medium'
   });
+  const [filters, setFilters] = useState({
+    status: '',
+    category: '',
+    priority: ''
+});
 
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   useEffect(() => {
+    // Get current user ID from token
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const userData = JSON.parse(atob(token.split('.')[1]));
+        setCurrentUserId(userData.id);
+      } catch (error) {
+        console.error('Error parsing token:', error);
+      }
+    }
     fetchTickets();
   }, []);
 
   const fetchTickets = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE}/api/support/my-tickets`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+        const token = localStorage.getItem('token');
+        const queryParams = new URLSearchParams();
+        
+        if (filters.status) queryParams.append('status', filters.status);
+        if (filters.category) queryParams.append('category', filters.category);
+        if (filters.priority) queryParams.append('priority', filters.priority);
+
+        const response = await fetch(`${API_BASE}/api/support/my-tickets?${queryParams}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+        });
 
       if (response.ok) {
         const data = await response.json();
@@ -41,6 +62,10 @@ const SupportTickets: React.FC = () => {
       setLoading(false);
     }
   };
+
+    useEffect(() => {
+        fetchTickets();
+    }, [filters]);
 
   const createTicket = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,6 +100,31 @@ const SupportTickets: React.FC = () => {
     }
   };
 
+  const sendMessage = async (ticketId: string) => {
+    if (!newMessage.trim()) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE}/api/support/${ticketId}/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ message: newMessage })
+      });
+
+      if (response.ok) {
+        setNewMessage('');
+        fetchTickets(); // Refresh to get updated messages
+      } else if (response.status === 403) {
+        alert('You are not authorized to send messages to this ticket');
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+  };
+
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'open': return <FaClock className="text-blue-500" />;
@@ -94,7 +144,7 @@ const SupportTickets: React.FC = () => {
     };
     return `px-2 py-1 rounded-full text-xs font-medium ${styles[priority]}`;
   };
-  
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -212,6 +262,135 @@ const SupportTickets: React.FC = () => {
         </div>
       )}
 
+      {/* Ticket Detail Modal */}
+      {selectedTicket && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-4xl w-full h-[80vh] flex flex-col">
+            {/* Header */}
+            <div className="bg-lfc-red text-white p-4 rounded-t-lg flex justify-between items-center">
+              <div className="flex items-center">
+                <button
+                  onClick={() => setSelectedTicket(null)}
+                  className="mr-3 hover:text-gray-200"
+                >
+                  <FaArrowLeft />
+                </button>
+                <div>
+                  <h2 className="text-xl font-bold">{selectedTicket.title}</h2>
+                  <p className="text-sm opacity-90">
+                    Status: <span className="capitalize">{selectedTicket.status}</span> • 
+                    Created: {new Date(selectedTicket.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedTicket(null)}
+                className="text-white hover:text-gray-200"
+              >
+                <FaTimes size={20} />
+              </button>
+            </div>
+
+            {/* Messages */}
+            <div className="flex-1 p-6 overflow-y-auto">
+              {selectedTicket.messages?.map((message) => (
+                <div
+                  key={message._id}
+                  className={`mb-4 ${
+                    message.user._id === currentUserId ? 'text-right' : 'text-left'
+                  }`}
+                >
+                  <div
+                    className={`inline-block max-w-md rounded-lg p-4 ${
+                      message.user._id === currentUserId
+                        ? 'bg-lfc-red text-white'
+                        : 'bg-gray-100 text-gray-800'
+                    }`}
+                  >
+                    <p className="text-sm">{message.message}</p>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {message.user._id === currentUserId ? 'You' : message.user.name} • 
+                    {new Date(message.createdAt).toLocaleString()}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* Message Input */}
+            <div className="border-t p-4">
+              <div className="flex space-x-3">
+                <input
+                  type="text"
+                  placeholder="Type your message..."
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && sendMessage(selectedTicket._id)}
+                  className="flex-1 border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-lfc-red focus:border-transparent"
+                />
+                <button
+                  onClick={() => sendMessage(selectedTicket._id)}
+                  disabled={!newMessage.trim()}
+                  className="bg-lfc-red text-white px-6 py-3 rounded-lg hover:bg-red-700 disabled:opacity-50 flex items-center"
+                >
+                  <FaPaperPlane className="mr-2" />
+                  Send
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="bg-white rounded-lg border border-gray-200 p-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <select
+            value={filters.status}
+            onChange={(e) => setFilters({...filters, status: e.target.value})}
+            className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-lfc-red focus:border-transparent"
+            >
+            <option value="">All Statuses</option>
+            <option value="open">Open</option>
+            <option value="in-progress">In Progress</option>
+            <option value="resolved">Resolved</option>
+            <option value="closed">Closed</option>
+            </select>
+
+            <select
+            value={filters.category}
+            onChange={(e) => setFilters({...filters, category: e.target.value})}
+            className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-lfc-red focus:border-transparent"
+            >
+            <option value="">All Categories</option>
+            <option value="technical">Technical</option>
+            <option value="billing">Billing</option>
+            <option value="content">Content</option>
+            <option value="general">General</option>
+            <option value="other">Other</option>
+            </select>
+
+            <select
+            value={filters.priority}
+            onChange={(e) => setFilters({...filters, priority: e.target.value})}
+            className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-lfc-red focus:border-transparent"
+            >
+            <option value="">All Priorities</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+            <option value="urgent">Urgent</option>
+            </select>
+
+            <button
+            onClick={() => setFilters({ status: '', category: '', priority: '' })}
+            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+            >
+            Clear Filters
+            </button>
+        </div>
+      </div>
+
+
       {/* Tickets List */}
       <div className="bg-white rounded-lg border border-gray-200">
         {tickets.length === 0 ? (
@@ -247,8 +426,8 @@ const SupportTickets: React.FC = () => {
                   </div>
                   
                   <button
-                    onClick={() => {/* Navigate to ticket detail */}}
-                    className="ml-4 px-3 py-1 border border-lfc-red text-lfc-red rounded-lg hover:bg-lfc-red hover:text-white transition-colors"
+                    onClick={() => setSelectedTicket(ticket)}
+                    className="ml-4 px-4 py-2 border border-lfc-red text-lfc-red rounded-lg hover:bg-lfc-red hover:text-white transition-colors"
                   >
                     View
                   </button>

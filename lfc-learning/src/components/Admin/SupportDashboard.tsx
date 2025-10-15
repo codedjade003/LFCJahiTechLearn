@@ -1,11 +1,13 @@
 // src/components/Admin/SupportDashboard.jsx
 import { useState, useEffect } from 'react';
-import { FaSpinner, FaClock, FaCheckCircle, FaUser, FaExclamationTriangle } from 'react-icons/fa';
+import { FaSpinner, FaClock, FaCheckCircle, FaUser, FaExclamationTriangle, FaEye, FaTimes, FaPaperPlane } from 'react-icons/fa';
 import type { SupportTicket, TicketFilters } from '../../types/support';
 
 const SupportDashboard: React.FC = () => {
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
+  const [newMessage, setNewMessage] = useState<string>('');
   const [filters, setFilters] = useState<TicketFilters>({
     status: '',
     category: '',
@@ -13,6 +15,7 @@ const SupportDashboard: React.FC = () => {
   });
 
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
   useEffect(() => {
     fetchTickets();
   }, [filters]);
@@ -57,6 +60,10 @@ const SupportDashboard: React.FC = () => {
 
       if (response.ok) {
         fetchTickets();
+        // If we're viewing this ticket, update it in the modal too
+        if (selectedTicket && selectedTicket._id === ticketId) {
+          setSelectedTicket(prev => prev ? { ...prev, status: status as SupportTicket['status'] } : null);
+        }
       }
     } catch (error) {
       console.error('Error updating ticket:', error);
@@ -74,10 +81,87 @@ const SupportDashboard: React.FC = () => {
       });
 
       if (response.ok) {
+        // Send automatic notification to student
+        await sendAssignmentNotification(ticketId);
         fetchTickets();
+        
+        // If we're viewing this ticket, update it in the modal too
+        if (selectedTicket && selectedTicket._id === ticketId) {
+          const updatedTicket = await fetchTicketById(ticketId);
+          setSelectedTicket(updatedTicket);
+        }
       }
     } catch (error) {
       console.error('Error assigning ticket:', error);
+    }
+  };
+
+  const fetchTicketById = async (ticketId: string): Promise<SupportTicket | null> => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE}/api/support/${ticketId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        return await response.json();
+      }
+      return null;
+    } catch (error) {
+      console.error('Error fetching ticket:', error);
+      return null;
+    }
+  };
+
+  const sendAssignmentNotification = async (ticketId: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE}/api/support/${ticketId}/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ 
+          message: "Hello! I've been assigned to your support ticket and will be helping you resolve this issue. Please let me know if you have any additional information that might help." 
+        })
+      });
+
+      if (!response.ok) {
+        console.error('Failed to send assignment notification');
+      }
+    } catch (error) {
+      console.error('Error sending assignment notification:', error);
+    }
+  };
+
+  const sendMessage = async (ticketId: string, message: string) => {
+    if (!message.trim()) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE}/api/support/${ticketId}/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ message })
+      });
+
+      if (response.ok) {
+        setNewMessage('');
+        // Refresh the ticket to get updated messages
+        const updatedTicket = await fetchTicketById(ticketId);
+        if (updatedTicket) {
+          setSelectedTicket(updatedTicket);
+        }
+        fetchTickets(); // Refresh the list to show updated message count
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
     }
   };
 
@@ -209,6 +293,9 @@ const SupportDashboard: React.FC = () => {
       <div className="bg-white rounded-lg border border-gray-200">
         <div className="p-4 border-b border-gray-200">
           <h3 className="font-semibold text-gray-900">Support Tickets</h3>
+          <p className="text-sm text-gray-600 mt-1">
+            Showing {tickets.length} ticket{tickets.length !== 1 ? 's' : ''}
+          </p>
         </div>
 
         {tickets.length === 0 ? (
@@ -250,7 +337,7 @@ const SupportDashboard: React.FC = () => {
                       <span>Category: {ticket.category}</span>
                       <span>Created: {new Date(ticket.createdAt).toLocaleDateString()}</span>
                       {ticket.assignedTo && (
-                        <span>Assigned to: {ticket.assignedTo.name}</span>
+                        <span className="font-medium text-lfc-red">Assigned to: {ticket.assignedTo.name}</span>
                       )}
                     </div>
                   </div>
@@ -277,9 +364,10 @@ const SupportDashboard: React.FC = () => {
                     </select>
                     
                     <button
-                      onClick={() => {/* Navigate to ticket detail */}}
-                      className="px-3 py-1 border border-lfc-red text-lfc-red rounded-lg hover:bg-lfc-red hover:text-white transition-colors text-sm"
+                      onClick={() => setSelectedTicket(ticket)}
+                      className="px-3 py-1 border border-lfc-red text-lfc-red rounded-lg hover:bg-lfc-red hover:text-white transition-colors text-sm flex items-center"
                     >
+                      <FaEye className="mr-1" />
                       View
                     </button>
                   </div>
@@ -289,6 +377,105 @@ const SupportDashboard: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Ticket Detail Modal */}
+      {selectedTicket && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-4xl w-full h-[80vh] flex flex-col">
+            {/* Header */}
+            <div className="bg-lfc-red text-white p-4 rounded-t-lg flex justify-between items-center">
+              <div className="flex-1">
+                <h2 className="text-xl font-bold">{selectedTicket.title}</h2>
+                <div className="flex flex-wrap gap-2 mt-1 text-sm">
+                  <span className="bg-white bg-opacity-20 px-2 py-1 rounded">
+                    Status: <span className="capitalize">{selectedTicket.status}</span>
+                  </span>
+                  <span className="bg-white bg-opacity-20 px-2 py-1 rounded">
+                    Priority: <span className="capitalize">{selectedTicket.priority}</span>
+                  </span>
+                  <span className="bg-white bg-opacity-20 px-2 py-1 rounded">
+                    Category: <span className="capitalize">{selectedTicket.category}</span>
+                  </span>
+                  {selectedTicket.assignedTo && (
+                    <span className="bg-white bg-opacity-20 px-2 py-1 rounded">
+                      Assigned to: {selectedTicket.assignedTo.name}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setSelectedTicket(null);
+                  setNewMessage('');
+                }}
+                className="text-white hover:text-gray-200 text-xl ml-4"
+              >
+                <FaTimes />
+              </button>
+            </div>
+
+            {/* Ticket Info */}
+            <div className="border-b p-4 bg-gray-50">
+              <p className="text-gray-700">{selectedTicket.description}</p>
+              <div className="flex justify-between items-center mt-2 text-sm text-gray-600">
+                <span>Created by: {selectedTicket.createdBy?.name}</span>
+                <span>Created: {new Date(selectedTicket.createdAt).toLocaleString()}</span>
+              </div>
+            </div>
+
+            {/* Messages */}
+            <div className="flex-1 p-6 overflow-y-auto">
+              {selectedTicket.messages?.length > 0 ? (
+                selectedTicket.messages.map((message) => (
+                  <div
+                    key={message._id}
+                    className={`mb-4 ${message.user.role === 'admin' ? 'text-left' : 'text-right'}`}
+                  >
+                    <div
+                      className={`inline-block max-w-md rounded-lg p-4 ${
+                        message.user.role === 'admin'
+                          ? 'bg-gray-100 text-gray-800'
+                          : 'bg-lfc-red text-white'
+                      }`}
+                    >
+                      <p className="text-sm">{message.message}</p>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {message.user.name} • {new Date(message.createdAt).toLocaleString()}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center text-gray-500 py-8">
+                  No messages yet. Start the conversation!
+                </div>
+              )}
+            </div>
+
+            {/* Message Input */}
+            <div className="border-t p-4">
+              <div className="flex space-x-3">
+                <input
+                  type="text"
+                  placeholder="Type your response..."
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && sendMessage(selectedTicket._id, newMessage)}
+                  className="flex-1 border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-lfc-red focus:border-transparent"
+                />
+                <button
+                  onClick={() => sendMessage(selectedTicket._id, newMessage)}
+                  disabled={!newMessage.trim()}
+                  className="bg-lfc-red text-white px-6 py-3 rounded-lg hover:bg-red-700 disabled:opacity-50 flex items-center"
+                >
+                  <FaPaperPlane className="mr-2" />
+                  Send
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

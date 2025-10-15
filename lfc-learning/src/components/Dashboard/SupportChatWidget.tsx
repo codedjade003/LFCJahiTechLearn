@@ -1,6 +1,5 @@
-// src/components/Student/SupportChatWidget.tsx
 import React, { useState, useEffect, useRef } from 'react';
-import { FaComments, FaTimes, FaPaperPlane, FaPlus, FaHeadset } from 'react-icons/fa';
+import { FaComments, FaTimes, FaPaperPlane, FaPlus, FaHeadset, FaArrowLeft } from 'react-icons/fa';
 import type { SupportTicket, NewTicketData } from '../../types/support';
 
 const SupportChatWidget: React.FC = () => {
@@ -15,9 +14,28 @@ const SupportChatWidget: React.FC = () => {
     category: 'general',
     priority: 'medium'
   });
+  const [filters, setFilters] = useState({
+    status: '',
+    category: '',
+    priority: ''
+  });
+  const [currentUserId, setCurrentUserId] = useState<string>('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+  useEffect(() => {
+    // Get current user ID from token
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const userData = JSON.parse(atob(token.split('.')[1]));
+        setCurrentUserId(userData.id);
+      } catch (error) {
+        console.error('Error parsing token:', error);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -35,10 +53,16 @@ const SupportChatWidget: React.FC = () => {
 
   const fetchTickets = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE}/api/support/my-tickets`, {
+        const token = localStorage.getItem('token');
+        const queryParams = new URLSearchParams();
+        
+        if (filters.status) queryParams.append('status', filters.status);
+        if (filters.category) queryParams.append('category', filters.category);
+        if (filters.priority) queryParams.append('priority', filters.priority);
+
+        const response = await fetch(`${API_BASE}/api/support/my-tickets?${queryParams}`, {
         headers: { 'Authorization': `Bearer ${token}` }
-      });
+        });
 
       if (response.ok) {
         const data = await response.json();
@@ -51,6 +75,12 @@ const SupportChatWidget: React.FC = () => {
       console.error('Error fetching tickets:', error);
     }
   };
+
+    useEffect(() => {
+    if (isOpen) {
+        fetchTickets();
+    }
+    }, [filters, isOpen]);
 
   const createNewTicket = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,6 +129,8 @@ const SupportChatWidget: React.FC = () => {
       if (response.ok) {
         setNewMessage('');
         fetchTickets(); // Refresh to get updated messages
+      } else if (response.status === 403) {
+        alert('You are not authorized to send messages to this ticket');
       }
     } catch (error) {
       console.error('Error sending message:', error);
@@ -112,6 +144,10 @@ const SupportChatWidget: React.FC = () => {
       case 'resolved': return 'bg-green-100 text-green-800';
       default: return 'bg-gray-100 text-gray-800';
     }
+  };
+
+  const handleBackToList = () => {
+    setActiveTicket(null);
   };
 
   return (
@@ -130,8 +166,18 @@ const SupportChatWidget: React.FC = () => {
           {/* Header */}
           <div className="bg-lfc-red text-white p-4 rounded-t-lg flex justify-between items-center">
             <div className="flex items-center">
+              {activeTicket && (
+                <button
+                  onClick={handleBackToList}
+                  className="mr-2 hover:text-gray-200"
+                >
+                  <FaArrowLeft />
+                </button>
+              )}
               <FaHeadset className="mr-2" />
-              <h3 className="font-semibold">Support Center</h3>
+              <h3 className="font-semibold">
+                {activeTicket ? 'Support Ticket' : 'Support Center'}
+              </h3>
             </div>
             <button
               onClick={() => setIsOpen(false)}
@@ -217,11 +263,13 @@ const SupportChatWidget: React.FC = () => {
                   {activeTicket.messages?.map((message) => (
                     <div
                       key={message._id}
-                      className={`mb-3 ${message.user._id === 'current-user-id' ? 'text-right' : ''}`}
+                      className={`mb-3 ${
+                        message.user._id === currentUserId ? 'text-right' : 'text-left'
+                      }`}
                     >
                       <div
                         className={`inline-block max-w-xs rounded-lg p-3 ${
-                          message.user._id === 'current-user-id'
+                          message.user._id === currentUserId
                             ? 'bg-lfc-red text-white'
                             : 'bg-gray-100 text-gray-800'
                         }`}
@@ -229,6 +277,7 @@ const SupportChatWidget: React.FC = () => {
                         <p className="text-sm">{message.message}</p>
                       </div>
                       <p className="text-xs text-gray-500 mt-1">
+                        {message.user._id === currentUserId ? 'You' : message.user.name} • 
                         {new Date(message.createdAt).toLocaleTimeString()}
                       </p>
                     </div>
@@ -271,6 +320,40 @@ const SupportChatWidget: React.FC = () => {
                   </button>
                 </div>
                 <div className="space-y-2">
+                {!activeTicket && !showNewTicketForm && (
+                <div className="border-b p-3">
+                    <div className="grid grid-cols-3 gap-2">
+                    <select
+                        value={filters.status}
+                        onChange={(e) => setFilters({...filters, status: e.target.value})}
+                        className="text-xs border border-gray-300 rounded p-1"
+                    >
+                        <option value="">All Status</option>
+                        <option value="open">Open</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="resolved">Resolved</option>
+                    </select>
+                    
+                    <select
+                        value={filters.category}
+                        onChange={(e) => setFilters({...filters, category: e.target.value})}
+                        className="text-xs border border-gray-300 rounded p-1"
+                    >
+                        <option value="">All Categories</option>
+                        <option value="technical">Technical</option>
+                        <option value="content">Content</option>
+                        <option value="general">General</option>
+                    </select>
+                    
+                    <button
+                        onClick={() => setFilters({ status: '', category: '', priority: '' })}
+                        className="text-xs border border-gray-300 rounded p-1 hover:bg-gray-50"
+                    >
+                        Clear
+                    </button>
+                    </div>
+                </div>
+                )}
                   {tickets.map((ticket) => (
                     <div
                       key={ticket._id}

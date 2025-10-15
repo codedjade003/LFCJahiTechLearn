@@ -4,6 +4,7 @@ import { Course } from '../models/Course.js';
 import User from "../models/User.js";
 import { callCreateNotification} from "../controllers/notificationController.js";
 
+
 // POST /api/enrollments/:courseId
 export const enrollInCourse = async (req, res) => {
   try {

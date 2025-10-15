@@ -1,5 +1,6 @@
 // controllers/notificationController.js - UPDATED
 import Notification from "../models/Notification.js";
+import { createNotificationForUser } from '../services/notificationService.js';
 import Log from "../models/Log.js";
 
 // Create MANUAL notification (admin custom messages only)

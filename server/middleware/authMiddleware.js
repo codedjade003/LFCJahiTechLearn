@@ -27,3 +27,14 @@ export const protect = async (req, res, next) => {
     return res.status(401).json({ message: "Not authorized, token missing" });
   }
 };
+
+// Add this to your auth middleware or use in routes
+export const checkTicketAccess = (req, ticket) => {
+  const isAdmin = req.user.id.toString() === process.env.ADMIN_ID || 
+                 req.user.role === "admin-only" || 
+                 req.user.role === "admin";
+  
+  const isOwner = ticket.createdBy.toString() === req.user._id.toString();
+  
+  return isAdmin || isOwner;
+};
