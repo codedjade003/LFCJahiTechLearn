@@ -33,6 +33,8 @@ import ForgotPassword from "./components/ForgotPassword";
 import UserEnrollmentsTab from "./pages/Admin/UserEnrollmentsTab";
 import PlaceholderPage from "./components/shared/PlaceholderPage";
 import ErrorPage from "./components/shared/ErrorPage";
+import SupportDashboard from "./components/Admin/SupportDashboard";
+import SupportTickets from "./components/Dashboard/SupportTickets";
 
 function App() {
   return (
@@ -56,13 +58,12 @@ function App() {
           <Route index element={<StudentDashboard />} />
           <Route path="profile" element={<ProfilePage />} />
           <Route path="courses" element={<MyCourses />} />
-          <Route path="/dashboard/courses/:courseId" element= {<CourseDetails/>} />
+          <Route path="courses/:courseId" element={<CourseDetails/>} />
           <Route path="assignments" element={<MyAssignments />} />
-          <Route path="/dashboard/assignments/:assignmentId" element= {<AssignmentDetail/>} />
-          {/* FIXED: Use consistent "project" routes */}
-          <Route path="project" element={<MyProject />} /> {/* List page */}
-          <Route path="project/:courseId" element={<ProjectDetail />} /> {/* Detail page */}
-          {/* Add more student routes here */}
+          <Route path="assignments/:assignmentId" element={<AssignmentDetail/>} />
+          <Route path="project" element={<MyProject />} />
+          <Route path="project/:courseId" element={<ProjectDetail />} />
+          <Route path="support" element={<SupportTickets />} /> {/* ✅ Fixed */}
         </Route>
 
         {/* Protected Admin Routes */}
@@ -82,14 +83,14 @@ function App() {
           <Route path="users/enrollments" element={<UserEnrollmentsTab />} />
           <Route path="assessments/assignments" element={<Assignments />} />
           <Route path="assessments/projects" element={<Projects />} />
-          <Route path="assessments/Quizzes" element={<Quizzes />} />
+          <Route path="assessments/quizzes" element={<Quizzes />} />
+          <Route path="support" element={<SupportDashboard />} /> {/* ✅ Fixed */}
           
-          {/* Placeholder routes for admin section */}
+          {/* Placeholder routes */}
           <Route path="reports" element={<PlaceholderPage 
             title="Reports & Analytics"
             message="Detailed reports and analytics dashboard is coming in the next update."
           />} />
-          
           <Route path="settings" element={<PlaceholderPage 
             title="System Settings"
             message="Advanced system configuration and settings will be available shortly."
@@ -101,10 +102,8 @@ function App() {
 
         {/* Catch-all 404 route */}
         <Route path="*" element={<ErrorPage />} />
-
       </Routes>
       
-      {/* Toast Container */}
       <ToastContainer position="top-right" autoClose={3000} />
     </>
   );

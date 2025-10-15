@@ -36,6 +36,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     { path: "/dashboard/assignments", icon: FaTasks, label: "Assignments" },
     { path: "/dashboard/project", icon: FaProjectDiagram, label: "Project" },
     { path: "/dashboard/profile", icon: FaUser, label: "My Profile" },
+    { path: "/dashboard/support", icon: FaQuestionCircle, label: "Support Tickets" },
   ];
 
   return (

@@ -12,6 +12,7 @@ import {
   FaSignOutAlt,
   FaChevronDown,
   FaBars,
+  FaHeadset,
 } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -291,6 +292,10 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps)
             </div>
 
             {/* Simple Links */}
+            <Link to="/admin/dashboard/support" className="flex items-center p-2 rounded hover:bg-lfc-gold text-sm md:text-base">
+              <FaHeadset className="mr-3" />
+              Support Tickets
+            </Link>
             <Link
               to="/admin/dashboard/reports"
               className="flex items-center p-2 rounded hover:bg-lfc-gold text-sm md:text-base"

@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "../components/Dashboard/SideBar";
 import Topbar from "../components/Dashboard/TopBar";
 import { useState } from "react";
+import SupportChatWidget from "../components/Dashboard/SupportChatWidget";
 
 const StudentLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -22,6 +23,9 @@ const StudentLayout = () => {
           <Outlet />
         </main>
       </div>
+                  
+      {/* Add the chat widget */}
+      <SupportChatWidget />
     </div>
   );
 };
