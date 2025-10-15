@@ -687,7 +687,7 @@ export const verifyEmail = async (req, res) => {
     await sendEmail(
       user.email,
       "Welcome to the Learning Platform!",
-      `Hi ${user.name},\n\nWelcome aboard! Your email has been successfully verified.\n\nYou can now access your dashboard here:\nhttps://yourdomain.com/dashboard\n\nEnjoy learning! 🎉`
+      `Hi ${user.name},\n\nWelcome aboard! Your email has been successfully verified.\n\nYou can now access your dashboard here:\nhttps://lfctechlearn.com/dashboard\n\nEnjoy learning! 🎉`
     );
 
     res.status(200).json({ message: "Email verified successfully. You may now log in." });

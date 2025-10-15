@@ -2,6 +2,9 @@
 import { FaHome, FaBookOpen, FaTasks, FaUser, FaTimes, FaQuestionCircle, FaGraduationCap, FaProjectDiagram } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useState } from "react";
+import SupportModal from "./SupportModal";
+
 
 interface SidebarProps {
   isOpen: boolean;
@@ -12,6 +15,8 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
+  const [showSupport, setShowSupport] = useState(false);
+
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -136,9 +141,16 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                   <h3 className="text-sm font-semibold">Need help?</h3>
                 </div>
                 <p className="text-xs text-white/80 mb-3">Our support team is here to help you</p>
-                <button className="w-full bg-white text-lfc-red py-2 px-3 rounded-lg text-sm font-medium hover:bg-lfc-gold transition-all duration-200 hover:scale-105">
+                <button
+                  onClick={() => setShowSupport(true)}
+                  className="w-full bg-white text-lfc-red py-2 px-3 rounded-lg text-sm font-medium hover:bg-lfc-gold transition-all duration-200 hover:scale-105"
+                >
                   Contact Support
                 </button>
+
+                {showSupport && (
+                  <SupportModal isOpen={showSupport} onClose={() => setShowSupport(false)} />
+                )}
               </div>
               
               {/* Footer */}
