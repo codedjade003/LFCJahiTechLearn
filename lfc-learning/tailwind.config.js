@@ -1,7 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 const colors = require('tailwindcss/colors');
  module.exports = {
-      darkMode: 'class', // Enable dark mode with class strategy
       content: [
       "./index.html",
       "./src/**/*.{js,ts,jsx,tsx}"
