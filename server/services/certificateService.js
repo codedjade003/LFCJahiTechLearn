@@ -18,6 +18,25 @@ class CertificateService {
   async generateCertificatePDF(certificateData) {
     return new Promise((resolve, reject) => {
       try {
+        console.log('='.repeat(80));
+        console.log('📄 GENERATING CERTIFICATE PDF');
+        console.log('='.repeat(80));
+        
+        // Convert Mongoose document to plain object if needed
+        const certData = certificateData.toObject ? certificateData.toObject() : certificateData;
+        
+        console.log('Certificate Data Type:', typeof certData);
+        console.log('Is Mongoose Document:', !!certificateData.toObject);
+        console.log('Certificate Data Received:');
+        console.log(JSON.stringify(certData, null, 2));
+        console.log('Student Name:', certData.studentName);
+        console.log('Course Title:', certData.courseTitle);
+        console.log('Certificate ID:', certData.certificateId);
+        console.log('='.repeat(80));
+        
+        // Use the plain object for PDF generation
+        certificateData = certData;
+
         const doc = new PDFDocument({
           size: 'A4',
           layout: 'landscape',
@@ -314,6 +333,11 @@ class CertificateService {
    */
   async createCertificate(userId, courseId, enrollmentId) {
     try {
+      console.log('🔍 Checking for existing certificate...');
+      console.log('User ID:', userId);
+      console.log('Course ID:', courseId);
+      console.log('Enrollment ID:', enrollmentId);
+
       // Check if certificate already exists
       const existingCert = await Certificate.findOne({
         user: userId,
@@ -322,8 +346,14 @@ class CertificateService {
       });
 
       if (existingCert && existingCert.status === 'valid') {
+        console.log('✅ Found existing certificate:');
+        console.log('Certificate ID:', existingCert.certificateId);
+        console.log('Student Name:', existingCert.studentName);
+        console.log('Course Title:', existingCert.courseTitle);
         return existingCert;
       }
+
+      console.log('📝 No existing certificate found, creating new one...');
 
       // Fetch enrollment and course data
       const Enrollment = (await import('../models/Enrollment.js')).default;
@@ -388,6 +418,13 @@ class CertificateService {
       });
 
       await certificate.save();
+      
+      console.log('💾 Certificate saved to database:');
+      console.log('Certificate ID:', certificate.certificateId);
+      console.log('Student Name:', certificate.studentName);
+      console.log('Course Title:', certificate.courseTitle);
+      console.log('Validation Code:', certificate.validationCode);
+      
       return certificate;
     } catch (error) {
       throw error;
@@ -441,6 +478,13 @@ class CertificateService {
       certificate.revokedReason = reason;
 
       await certificate.save();
+      
+      console.log('💾 Certificate saved to database:');
+      console.log('Certificate ID:', certificate.certificateId);
+      console.log('Student Name:', certificate.studentName);
+      console.log('Course Title:', certificate.courseTitle);
+      console.log('Validation Code:', certificate.validationCode);
+      
       return certificate;
     } catch (error) {
       throw error;

@@ -29,12 +29,22 @@ router.post('/generate/:enrollmentId', protect, async (req, res) => {
       return res.status(400).json({ message: 'Course not completed yet' });
     }
 
+    console.log('🎓 Certificate Generation Request');
+    console.log('User ID:', userId);
+    console.log('Enrollment ID:', enrollmentId);
+    console.log('Course ID:', enrollment.course);
+
     // Create or get existing certificate
     const certificate = await certificateService.createCertificate(
       userId,
       enrollment.course,
       enrollmentId
     );
+
+    console.log('✅ Certificate created/retrieved:');
+    console.log('Certificate ID:', certificate.certificateId);
+    console.log('Student Name:', certificate.studentName);
+    console.log('Course Title:', certificate.courseTitle);
 
     // Generate PDF
     const pdfBuffer = await certificateService.generateCertificatePDF(certificate);
