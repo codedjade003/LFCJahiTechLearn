@@ -6,7 +6,7 @@ import {
   FaUser, FaEnvelope, FaCalendar, FaPhone, FaBriefcase, 
   FaBuilding, FaGlobe, FaLink, FaSave,
   FaMapMarkerAlt, FaHeart, FaCode, FaGithub, 
-  FaLinkedin, FaInstagram, FaFacebook, FaCamera, FaEdit, FaMoon, FaSun
+  FaLinkedin, FaInstagram, FaFacebook, FaCamera, FaEdit,
 } from "react-icons/fa";
 import { FaGraduationCap, FaPlus, FaXTwitter,
 } from "react-icons/fa6";
@@ -43,7 +43,7 @@ const ProfilePage = () => {
   const [passwordMessage, setPasswordMessage] = useState("");
   
   // Theme and preferences
-  const { theme, setTheme } = useTheme();
+  const { setTheme } = useTheme();
   const [onboardingEnabled, setOnboardingEnabled] = useState(true);
   const [preferencesLoading, setPreferencesLoading] = useState(false);
 
