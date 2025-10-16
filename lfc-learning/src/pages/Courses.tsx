@@ -63,9 +63,9 @@ export default function Course() {
   const progressPercent = ((activeIndex + 1) / tabs.length) * 100;
 
   return (
-    <div className="flex flex-col h-full bg-yt-light-gray text-yt-text-dark">
+    <div className="flex flex-col h-full bg-yt-light-gray dark:bg-gray-900 text-yt-text-dark dark:text-gray-100">
       {/* Header */}
-      <header className="flex items-center justify-between px-4 py-3 border-b border-yt-light-border bg-white shadow-sm">
+      <header className="flex items-center justify-between px-4 py-3 border-b border-yt-light-border dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
         <div className="flex items-center">
           <button 
             className="md:hidden mr-3 p-2 rounded-md text-yt-text-dark hover:bg-yt-light-hover"
@@ -87,7 +87,7 @@ export default function Course() {
 
       <div className="flex flex-1 overflow-hidden relative">
         {/* Sidebar */}
-        <aside className={`absolute md:static inset-y-0 left-0 z-30 w-64 bg-white border-r border-yt-light-border flex-shrink-0 overflow-y-auto shadow-sm transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+        <aside className={`absolute md:static inset-y-0 left-0 z-30 w-64 bg-white dark:bg-gray-800 border-r border-yt-light-border dark:border-gray-700 flex-shrink-0 overflow-y-auto shadow-sm transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
           <nav className="p-3">
             <div className="mb-6">
               <h2 className="px-3 py-2 text-xs font-medium text-yt-text-light uppercase tracking-wider">Course Setup</h2>

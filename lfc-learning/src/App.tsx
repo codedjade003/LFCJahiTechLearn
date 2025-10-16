@@ -39,7 +39,7 @@ import SurveyResponses from "./pages/Admin/SurveyResponses";
 
 function App() {
   return (
-    <>
+    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
@@ -107,7 +107,7 @@ function App() {
       </Routes>
       
       <ToastContainer position="top-right" autoClose={3000} />
-    </>
+    </div>
   );
 }
 

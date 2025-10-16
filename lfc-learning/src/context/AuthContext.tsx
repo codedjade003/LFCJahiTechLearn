@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 export interface UserProfile {
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     const token = localStorage.getItem("token");
     if (!token) {
       setUser(null);
@@ -65,9 +65,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
       const data = await res.json();
       if (res.status === 401) {
-        logout(); // clear token + redirect
+        logout();
       } else if (!res.ok) {
-        setUser(null); // temporary issue
+        setUser(null);
       }
       
       if (res.ok) {
@@ -82,17 +82,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setLoading(false);
     }
 
-  };
+  }, [API_BASE, logout]);
 
   useEffect(() => {
     fetchUser();
-  }, []);
+  }, [fetchUser]);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem("token");
     setUser(null);
     navigate("/");
-  };
+  }, [navigate]);
 
   return (
     <AuthContext.Provider value={{ user, loading, fetchUser, setUser, logout }}>

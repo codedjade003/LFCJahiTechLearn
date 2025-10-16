@@ -205,16 +205,20 @@ const StudentDashboard = () => {
         const pictureFormData = new FormData();
         pictureFormData.append("profilePicture", file);
 
-        await fetch(`${API_BASE}/api/auth/upload-profile-picture`, {
+        const pictureResponse = await fetch(`${API_BASE}/api/auth/upload-profile-picture`, {
           method: "PUT",
           headers: { Authorization: `Bearer ${token}` },
           body: pictureFormData,
         });
+        
+        if (!pictureResponse.ok) {
+          throw new Error("Failed to upload profile picture");
+        }
       }
 
       const { profilePicturePreview, ...safeProfile } = profile;
 
-      await fetch(`${API_BASE}/api/auth/update-profile`, {
+      const profileResponse = await fetch(`${API_BASE}/api/auth/update-profile`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -222,6 +226,10 @@ const StudentDashboard = () => {
         },
         body: JSON.stringify(safeProfile),
       });
+      
+      if (!profileResponse.ok) {
+        throw new Error("Failed to update profile");
+      }
 
       await fetch(`${API_BASE}/api/auth/seen-onboarding`, {
         method: "PUT",
@@ -231,7 +239,8 @@ const StudentDashboard = () => {
       setShowOnboarding(false);
       setProfile(prev => prev ? { ...prev, ...safeProfile } : null);
     } catch (err) {
-      console.error(err);
+      console.error("Error saving profile:", err);
+      alert("Failed to save profile. Please try again.");
     }
   }, [file, profile]);
 
@@ -393,7 +402,7 @@ const StudentDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Onboarding Tour - Shows BEFORE profile completion */}
       <OnboardingTour tourKey="dashboard" steps={dashboardTourSteps} />
 
