@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, type JSX } from "react";
 import { FaBell, FaChevronDown, FaBars, FaUserShield, FaUserCog, FaUser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import ThemeToggle from "../ThemeToggle";
 
 interface TopNavProps {
   onMenuToggle: () => void;
@@ -206,6 +207,9 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
         <div className="flex items-center gap-2 sm:gap-4">
 
           {/* Notifications - IMPROVED */}
+          {/* Theme Toggle */}
+          <ThemeToggle />
+
           <div className="relative" ref={notificationsRef}>
             <button 
               onClick={() => {

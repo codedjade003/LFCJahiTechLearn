@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { FaBars, FaBell, FaChevronDown, FaUserShield, FaUserCog, FaUser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import ThemeToggle from "../ThemeToggle";
 
 interface TopbarProps {
   onMenuClick: () => void;
@@ -142,6 +143,9 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
 
       {/* Right Section */}
       <div className="flex items-center space-x-3">
+
+        {/* Theme Toggle */}
+        <ThemeToggle />
 
         {/* Notifications */}
         <div className="relative" ref={dropdownRef}>

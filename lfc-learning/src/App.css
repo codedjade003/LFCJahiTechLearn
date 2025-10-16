@@ -20,6 +20,24 @@
   --yt-progress-light-bg: #f1f3f4;
 }
 
+/* Dark mode color scheme */
+.dark {
+  --yt-red: #ff0000;
+  --yt-red-dark: #cc0000;
+  --yt-blue: #3ea6ff;
+  --yt-blue-dark: #2a8fd8;
+  --yt-light-bg: #0f0f0f;
+  --yt-light-gray: #181818;
+  --yt-light-border: #3f3f3f;
+  --yt-light-hover: #272727;
+  --yt-light-blue: #263850;
+  --yt-card: #212121;
+  --yt-text-dark: #f1f1f1;
+  --yt-text-gray: #aaaaaa;
+  --yt-text-light: #717171;
+  --yt-progress-light-bg: #3f3f3f;
+}
+
 .bg-yt-light-gray { background-color: var(--yt-light-gray); }
 .bg-yt-light-bg { background-color: var(--yt-light-bg); }
 .bg-yt-card { background-color: var(--yt-card); }
@@ -54,4 +72,15 @@
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Ensure smooth theme transitions */
+* {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Dark mode body background */
+.dark body {
+  background-color: var(--yt-light-bg);
+  color: var(--yt-text-dark);
 }
