@@ -18,12 +18,8 @@ import {
   FaTrophy,
   FaGraduationCap
 } from "react-icons/fa";
-import { FaLinkedin, FaWhatsapp, FaFacebook, FaXTwitter } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
-
 import { ShareButton } from "../../components/ShareButton";
-import Certificate from "../../components/shared/Certificate";
-import { useAuth } from "../../context/AuthContext";
 import ModuleSurvey, { type SurveyData } from "../../components/shared/ModuleSurvey";
 import ModuleOverviewModal from "../../components/Student/ModuleOverviewModal";
 import ModuleCompletionModal from "../../components/Student/ModuleCompletionModal";
@@ -622,7 +618,6 @@ const resolveMediaUrl = (url: string | undefined) => {
 export default function CourseDetails() {
   const { courseId } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [course, setCourse] = useState<Course | null>(null);
   const [enrollment, setEnrollment] = useState<Enrollment | null>(null);
   const [loading, setLoading] = useState(true);
@@ -1342,14 +1337,18 @@ export default function CourseDetails() {
                           </div>
                         </div>
 
-                        {/* Certificate Section */}
-                        <div className="mb-8">
-                          <Certificate
-                            studentName={user?.name || "Student"}
-                            courseName={course.title}
-                            completionDate={enrollment?.completedAt || new Date().toISOString()}
-                            score={progressPercentage}
-                          />
+                        {/* Certificate Download Button */}
+                        <div className="mb-8 text-center">
+                          <button
+                            onClick={downloadCertificate}
+                            className="px-8 py-4 bg-gradient-to-r from-lfc-red to-lfc-gold text-white rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition-all inline-flex items-center gap-3 text-lg"
+                          >
+                            <FaDownload className="text-xl" />
+                            Download Your Certificate
+                          </button>
+                          <p className="text-sm text-gray-600 mt-2">
+                            Get your official certificate of completion
+                          </p>
                         </div>
 
                         {/* Share Section */}
