@@ -498,7 +498,6 @@ export const updateProfile = async (req, res) => {
     // ✅ Check if user has completed required onboarding fields
     const requiredFields = [
       user.name,
-      user.profilePicture.url,
       user.dateOfBirth,
       user.phoneNumber,
       user.maritalStatus,

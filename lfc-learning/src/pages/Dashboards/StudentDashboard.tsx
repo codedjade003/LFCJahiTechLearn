@@ -224,7 +224,7 @@ const StudentDashboard = () => {
         }
       }
 
-      const { profilePicturePreview, ...safeProfile } = profile;
+      const { profilePicturePreview, profilePicture, ...safeProfile } = profile;
 
       const profileResponse = await fetch(`${API_BASE}/api/auth/update-profile`, {
         method: "PUT",
