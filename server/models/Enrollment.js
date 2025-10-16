@@ -8,6 +8,7 @@ const enrollmentSchema = new mongoose.Schema(
     
     progress: { type: Number, default: 0, min: 0, max: 100 },
     completed: { type: Boolean, default: false },
+    completedAt: { type: Date },
     timeSpent: { type: Number, default: 0 },
     lastAccessed: { type: Date, default: Date.now },
     enrolledAt: { type: Date, default: Date.now },

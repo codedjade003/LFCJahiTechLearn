@@ -497,7 +497,7 @@ const validateUsername = (username: string) => {
             <div className="text-sm sm:text-base text-gray-600">Longest Streak</div>
           </div>
           <div className="bg-white p-4 rounded-lg shadow text-center">
-            <div className="text-2xl font-bold text-redCustom">
+            <div className="text-lg sm:text-2xl font-bold text-redCustom break-words">
               {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : "Never"}
             </div>
             <div className="text-sm sm:text-base text-gray-600">Last Login</div>

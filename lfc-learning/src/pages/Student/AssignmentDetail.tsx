@@ -372,7 +372,10 @@ export default function AssignmentDetail() {
                   className="flex items-center p-3 border border-yt-light-border rounded-lg hover:bg-yt-light-hover transition-colors"
                 >
                   <FaDownload className="text-lfc-red mr-3" />
-                  <span className="text-yt-text-dark">{material.name}</span>
+                  <div className="flex-1">
+                    <span className="text-yt-text-dark">{material.name}</span>
+                    <span className="text-xs text-gray-500 ml-2 capitalize">({material.type})</span>
+                  </div>
                 </a>
               ))}
             </div>

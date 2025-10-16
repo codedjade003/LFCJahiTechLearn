@@ -75,6 +75,7 @@ interface Enrollment {
   _id: string;
   progress: number;
   completed: boolean;
+  completedAt?: string;
   sectionProgress: Array<{
     sectionId: string;
     completed: boolean;

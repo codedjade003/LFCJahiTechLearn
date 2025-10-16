@@ -358,17 +358,28 @@ export default function ProjectDetail() {
           <div className="p-6 border-b border-yt-light-border">
             <h2 className="text-lg font-semibold mb-3">Materials</h2>
             <div className="space-y-2">
-              {project.materials.map((material, index) => (
-                <a
-                  key={index}
-                  href={`${API_BASE}${material.url}`}
-                  download
-                  className="flex items-center p-3 border border-yt-light-border rounded-lg hover:bg-yt-light-hover transition-colors"
-                >
-                  <FaDownload className="text-lfc-red mr-3" />
-                  <span className="text-yt-text-dark">{material.name}</span>
-                </a>
-              ))}
+              {project.materials.map((material, index) => {
+                // Handle both full URLs (Cloudinary) and relative paths
+                const materialUrl = material.url.startsWith('http') 
+                  ? material.url 
+                  : `${API_BASE}${material.url}`;
+                
+                return (
+                  <a
+                    key={index}
+                    href={materialUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center p-3 border border-yt-light-border rounded-lg hover:bg-yt-light-hover transition-colors"
+                  >
+                    <FaDownload className="text-lfc-red mr-3" />
+                    <div className="flex-1">
+                      <span className="text-yt-text-dark">{material.name}</span>
+                      <span className="text-xs text-gray-500 ml-2 capitalize">({material.type})</span>
+                    </div>
+                  </a>
+                );
+              })}
             </div>
           </div>
         )}
