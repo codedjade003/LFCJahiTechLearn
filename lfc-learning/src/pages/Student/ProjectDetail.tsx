@@ -188,7 +188,7 @@ export default function ProjectDetail() {
       if (submissionData.type === 'file_upload' && submissionData.file) {
         const formData = new FormData();
         formData.append('submissionType', submissionData.type);
-        formData.append('file', submissionData.file);
+        formData.append('submissionFile', submissionData.file);
         
         console.log('📤 Uploading file:', submissionData.file.name);
 

@@ -40,8 +40,8 @@ router.get('/course/:courseId/project', protect, getProjectSubmission);
 // router.get('/course/:courseId/assignments/:assignmentId/submission', protect, getSubmission);
 
 // Submission creation routes
-router.post('/course/:courseId/assignments/:assignmentId', upload.single('file'), logAction('upload', 'assignment'), protect, submitAssignment);
-router.post('/course/:courseId/project', upload.single('file'), logAction('upload', 'project'), protect, submitProject);
+router.post('/course/:courseId/assignments/:assignmentId', protect, upload.single('submissionFile'), logAction('upload', 'assignment'), submitAssignment);
+router.post('/course/:courseId/project', protect, upload.single('submissionFile'), logAction('upload', 'project'), submitProject);
 router.post('/course/:courseId/quizzes/:quizId', protect, submitQuiz);
 
 // Admin submission management routes

@@ -62,7 +62,10 @@ const unifiedStorage = new CloudinaryStorage({
     const params = {
       folder,
       resource_type, // ✅ Always auto
-      public_id: `${uploadType}-${userId}-${originalName}-${timestamp}-${random}.${ext}`,
+      // Don't add extension to public_id - Cloudinary handles it automatically
+      public_id: `${uploadType}-${userId}-${originalName}-${timestamp}-${random}`,
+      // Add format to preserve the original file type
+      format: ext,
     };
 
     // Image optimizations

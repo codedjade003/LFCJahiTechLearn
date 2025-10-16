@@ -483,24 +483,24 @@ const validateUsername = (username: string) => {
         </div>
 
         {/* Stats Bar */}
-        <div className="grid grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
           <div className="bg-white p-4 rounded-lg shadow text-center">
             <div className="text-2xl font-bold text-redCustom">{user.loginCount || 0}</div>
-            <div className="text-gray-600">Total Logins</div>
+            <div className="text-sm sm:text-base text-gray-600">Total Logins</div>
           </div>
           <div className="bg-white p-4 rounded-lg shadow text-center">
             <div className="text-2xl font-bold text-redCustom">{user.streak?.current || 0}</div>
-            <div className="text-gray-600">Current Streak</div>
+            <div className="text-sm sm:text-base text-gray-600">Current Streak</div>
           </div>
           <div className="bg-white p-4 rounded-lg shadow text-center">
             <div className="text-2xl font-bold text-redCustom">{user.streak?.longest || 0}</div>
-            <div className="text-gray-600">Longest Streak</div>
+            <div className="text-sm sm:text-base text-gray-600">Longest Streak</div>
           </div>
           <div className="bg-white p-4 rounded-lg shadow text-center">
             <div className="text-2xl font-bold text-redCustom">
               {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : "Never"}
             </div>
-            <div className="text-gray-600">Last Login</div>
+            <div className="text-sm sm:text-base text-gray-600">Last Login</div>
           </div>
         </div>
 

@@ -645,12 +645,21 @@ export const getAssignmentById = async (req, res) => {
 export const addAssignment = async (req, res) => {
   try {
     const { courseId } = req.params;
-    const { title, instructions, submissionType, dueDate } = req.body;
+    const { title, instructions, submissionTypes, dueDate, materials } = req.body;
     const course = await Course.findById(courseId);
     if (!course) return res.status(404).json({ message: "Course not found" });
-    const assignment = { title, instructions, submissionType, dueDate };
+    
+    const assignment = { 
+      title, 
+      instructions, 
+      submissionTypes: submissionTypes || ['text'], 
+      dueDate,
+      materials: materials || []
+    };
+    
     course.assignments.push(assignment);
     await course.save();
+    
     await notifyEnrolledUsers(
       courseId,
       `New assignment: "${title}"`,
@@ -658,7 +667,8 @@ export const addAssignment = async (req, res) => {
       dueDate,
       `/courses/${courseId}/assignments/${course.assignments.slice(-1)[0]._id}`
     );
-    res.status(201).json({ message: "Assignment added and notifications sent", assignment });
+    
+    res.status(201).json({ message: "Assignment added and notifications sent", assignment: course.assignments.slice(-1)[0] });
   } catch (err) {
     res.status(500).json({ message: "Failed to add assignment", error: err.message });
   }
@@ -666,7 +676,7 @@ export const addAssignment = async (req, res) => {
 
 export const updateAssignment = async (req, res) => {
   try {
-    const { title, instructions, submissionType, dueDate } = req.body;
+    const { title, instructions, submissionTypes, dueDate, materials } = req.body;
     
     // Validate required fields
     if (!title && title !== '') {
@@ -682,8 +692,9 @@ export const updateAssignment = async (req, res) => {
     // Only update provided fields
     if (title !== undefined) assignment.title = title;
     if (instructions !== undefined) assignment.instructions = instructions;
-    if (submissionType !== undefined) assignment.submissionType = submissionType;
+    if (submissionTypes !== undefined) assignment.submissionTypes = submissionTypes;
     if (dueDate !== undefined) assignment.dueDate = dueDate;
+    if (materials !== undefined) assignment.materials = materials;
     
     await course.save();
     
@@ -746,19 +757,8 @@ export const getProject = async (req, res) => {
       return res.json(null);
     }
     
-    // Convert string materials back to objects
-    const projectWithParsedMaterials = {
-      ...course.project.toObject(),
-      materials: course.project.materials.map(materialStr => {
-        try {
-          return JSON.parse(materialStr);
-        } catch {
-          return { name: 'Unknown', url: '', type: 'file' };
-        }
-      })
-    };
-    
-    res.json(projectWithParsedMaterials);
+    // Return project as-is (materials are already objects)
+    res.json(course.project);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch project", error: err.message });
   }
@@ -777,12 +777,8 @@ export const createProject = async (req, res) => {
       materialsLength: materials ? materials.length : 0
     });
 
-    // TEMPORARY FIX: Convert materials to strings
-    if (Array.isArray(materials)) {
-      console.log('🔄 Converting materials objects to JSON strings...');
-      materials = materials.map(material => JSON.stringify(material));
-      console.log('✅ Converted materials to strings');
-    } else {
+    // Ensure materials is an array of objects
+    if (!Array.isArray(materials)) {
       materials = [];
     }
 
@@ -792,7 +788,7 @@ export const createProject = async (req, res) => {
       return res.status(404).json({ message: "Course not found" });
     }
     
-    // Create project with stringified materials
+    // Create project with materials as objects
     course.project = { 
       title: title || '',
       instructions: instructions || '',
@@ -844,11 +840,9 @@ export const updateProject = async (req, res) => {
       materialsLength: materials ? materials.length : 0
     });
 
-    // TEMPORARY FIX: Convert materials array to strings to match current DB schema
-    if (Array.isArray(materials)) {
-      console.log('🔄 Converting materials objects to JSON strings...');
-      materials = materials.map(material => JSON.stringify(material));
-      console.log('✅ Converted materials to strings');
+    // Ensure materials is an array of objects
+    if (!Array.isArray(materials)) {
+      materials = undefined; // Don't update if not provided
     }
 
     // Find the course
@@ -876,17 +870,7 @@ export const updateProject = async (req, res) => {
     
     console.log('✅ Project updated successfully');
     
-    res.json({
-      ...course.project.toObject(),
-      // Convert string materials back to objects for response
-      materials: course.project.materials.map(materialStr => {
-        try {
-          return JSON.parse(materialStr);
-        } catch {
-          return { name: 'Unknown', url: '', type: 'file' };
-        }
-      })
-    });
+    res.json(course.project);
   } catch (err) {
     console.error('❌ updateProject error:', err);
     res.status(500).json({ 

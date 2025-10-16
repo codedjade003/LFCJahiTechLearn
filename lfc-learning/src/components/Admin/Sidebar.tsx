@@ -293,8 +293,8 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps)
 
             {/* Simple Links */}
             <Link to="/admin/dashboard/support" className="flex items-center p-2 rounded hover:bg-lfc-gold text-sm md:text-base">
-              <FaHeadset className="mr-3" />
-              Support Tickets
+              <FaHeadset />
+              {!collapsed && <span className="ml-3">Support Tickets</span>}
             </Link>
             <Link
               to="/admin/dashboard/reports"

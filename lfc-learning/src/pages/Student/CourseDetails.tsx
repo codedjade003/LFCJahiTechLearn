@@ -20,6 +20,9 @@ import {
 } from "react-icons/fa";
 import { FaLinkedin, FaWhatsapp, FaFacebook, FaXTwitter } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
+import Certificate from "../../components/shared/Certificate";
+import { useAuth } from "../../context/AuthContext";
+import ModuleSurvey, { SurveyData } from "../../components/shared/ModuleSurvey";
 
 interface Module {
   _id: string;
@@ -594,6 +597,7 @@ const resolveMediaUrl = (url: string | undefined) => {
 export default function CourseDetails() {
   const { courseId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [course, setCourse] = useState<Course | null>(null);
   const [enrollment, setEnrollment] = useState<Enrollment | null>(null);
   const [loading, setLoading] = useState(true);
@@ -603,6 +607,9 @@ export default function CourseDetails() {
   const [submittingFeedback, setSubmittingFeedback] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [rating, setRating] = useState(5);
+  const [showSurvey, setShowSurvey] = useState(false);
+  const [surveyModuleId, setSurveyModuleId] = useState<string | null>(null);
+  const [surveyModuleTitle, setSurveyModuleTitle] = useState<string>('');
 
   const submitFeedback = async () => {
     if (!feedback.trim()) return;
@@ -697,7 +704,7 @@ export default function CourseDetails() {
     });
   };
 
-  const markModuleComplete = async (moduleId: string) => {
+  const markModuleComplete = async (moduleId: string, moduleTitle?: string) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error('No auth token');
@@ -720,6 +727,13 @@ export default function CourseDetails() {
         console.log('Module marked complete:', data);
         await fetchEnrollmentProgress();
         toast.success("Module marked as complete!");
+        
+        // Show survey after marking complete
+        if (moduleTitle) {
+          setSurveyModuleId(moduleId);
+          setSurveyModuleTitle(moduleTitle);
+          setShowSurvey(true);
+        }
       } else {
         const errorText = await res.text();
         console.log("Mark complete failed:", errorText);
@@ -739,6 +753,31 @@ export default function CourseDetails() {
     } catch (err) {
       console.error("Error marking module complete:", err);
       toast.error("Network error while marking module complete");
+    }
+  };
+
+  const handleSurveySubmit = async (surveyData: SurveyData) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_BASE}/api/feedback/modules/${surveyModuleId}`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          courseId,
+          ...surveyData
+        })
+      });
+
+      if (res.ok) {
+        toast.success("Thank you for your feedback!");
+      } else {
+        console.error("Failed to submit survey");
+      }
+    } catch (error) {
+      console.error("Error submitting survey:", error);
     }
   };
 
@@ -1092,7 +1131,7 @@ export default function CourseDetails() {
                       <QuizComponent 
                         module={module} 
                         onComplete={() => {
-                          markModuleComplete(module._id);
+                          markModuleComplete(module._id, module.title);
                           setActiveModule(null);
                         }} 
                       />
@@ -1122,7 +1161,7 @@ export default function CourseDetails() {
                           <button
                             onClick={async () => {
                               try {
-                                await markModuleComplete(module._id);
+                                await markModuleComplete(module._id, module.title);
                               } catch (error) {
                                 console.error("Failed to mark complete:", error);
                               }
@@ -1252,6 +1291,16 @@ export default function CourseDetails() {
                           <div className="mt-4 text-sm text-green-600 font-semibold">
                             ✅ Passed with excellence!
                           </div>
+                        </div>
+
+                        {/* Certificate Section */}
+                        <div className="mb-8">
+                          <Certificate
+                            studentName={user?.name || "Student"}
+                            courseName={course.title}
+                            completionDate={enrollment?.completedAt || new Date().toISOString()}
+                            score={progressPercentage}
+                          />
                         </div>
 
                         {/* Share Section */}
@@ -1403,6 +1452,17 @@ export default function CourseDetails() {
           </AnimatePresence>
         </main>
       </div>
+
+      {/* Module Survey Modal */}
+      {showSurvey && surveyModuleId && courseId && (
+        <ModuleSurvey
+          moduleTitle={surveyModuleTitle}
+          courseId={courseId}
+          moduleId={surveyModuleId}
+          onClose={() => setShowSurvey(false)}
+          onSubmit={handleSurveySubmit}
+        />
+      )}
     </div>
   );
 }
