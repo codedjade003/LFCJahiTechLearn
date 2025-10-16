@@ -261,7 +261,7 @@ class CertificateService {
       const User = (await import('../models/User.js')).default;
 
       const enrollment = await Enrollment.findById(enrollmentId)
-        .populate('user', 'firstName lastName')
+        .populate('user', 'name email')
         .populate('course', 'title level duration instructor');
 
       if (!enrollment || !enrollment.completed) {
@@ -288,7 +288,7 @@ class CertificateService {
         validationCode,
         completionDate: enrollment.updatedAt,
         finalScore: enrollment.progress,
-        studentName: `${user.firstName} ${user.lastName}`,
+        studentName: user.name || user.email || 'Student',
         courseTitle: course.title,
         instructorName: course.instructor?.name,
         metadata: {
@@ -312,7 +312,7 @@ class CertificateService {
   async validateCertificate(validationCode) {
     try {
       const certificate = await Certificate.findOne({ validationCode })
-        .populate('user', 'firstName lastName email')
+        .populate('user', 'name email')
         .populate('course', 'title level duration');
 
       if (!certificate) {

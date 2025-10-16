@@ -3,6 +3,27 @@ import { useParams, Link } from "react-router-dom";
 import { FaCheckCircle, FaTimesCircle, FaSpinner, FaCertificate, FaCalendar, FaTrophy, FaUser, FaBook } from "react-icons/fa";
 import { toast } from "react-toastify";
 
+// Add print styles
+const printStyles = `
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    .print-area, .print-area * {
+      visibility: visible;
+    }
+    .print-area {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+    }
+    .no-print {
+      display: none !important;
+    }
+  }
+`;
+
 interface CertificateData {
   valid: boolean;
   certificateId: string;
@@ -22,14 +43,16 @@ interface CertificateData {
 }
 
 export default function CertificateValidation() {
-  const { validationCode } = useParams<{ validationCode: string }>();
+  const { validationCode, enrollmentId } = useParams<{ validationCode?: string; enrollmentId?: string }>();
   const [certificate, setCertificate] = useState<CertificateData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const validateCertificate = async () => {
-      if (!validationCode) {
+      const code = validationCode || enrollmentId;
+      
+      if (!code) {
         setError("No validation code provided");
         setLoading(false);
         return;
@@ -37,7 +60,7 @@ export default function CertificateValidation() {
 
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/certificates/validate/${validationCode}`
+          `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/certificates/validate/${code}`
         );
 
         const data = await response.json();
@@ -59,14 +82,18 @@ export default function CertificateValidation() {
     };
 
     validateCertificate();
-  }, [validationCode]);
+  }, [validationCode, enrollmentId]);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100 flex items-center justify-center p-4">
         <div className="text-center">
-          <FaSpinner className="text-6xl text-blue-600 animate-spin mx-auto mb-4" />
-          <p className="text-xl text-gray-700">Validating certificate...</p>
+          <div className="relative">
+            <FaSpinner className="text-6xl text-blue-600 animate-spin mx-auto mb-4" />
+            <div className="absolute inset-0 blur-xl bg-blue-400 opacity-20 animate-pulse"></div>
+          </div>
+          <p className="text-xl font-semibold text-gray-700 animate-pulse">Validating certificate...</p>
+          <p className="text-sm text-gray-500 mt-2">Please wait while we verify the authenticity</p>
         </div>
       </div>
     );
@@ -74,17 +101,33 @@ export default function CertificateValidation() {
 
   if (error || !certificate) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-100 flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-xl p-8 text-center">
-          <FaTimesCircle className="text-6xl text-red-500 mx-auto mb-4" />
+      <div className="min-h-screen bg-gradient-to-br from-red-50 via-pink-50 to-orange-100 flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8 text-center transform hover:scale-105 transition-transform">
+          <div className="relative mb-6">
+            <FaTimesCircle className="text-7xl text-red-500 mx-auto animate-bounce" />
+            <div className="absolute inset-0 blur-2xl bg-red-400 opacity-20"></div>
+          </div>
           <h1 className="text-3xl font-bold text-gray-800 mb-4">Invalid Certificate</h1>
-          <p className="text-gray-600 mb-6">{error || "Certificate not found"}</p>
-          <Link
-            to="/"
-            className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Go to Homepage
-          </Link>
+          <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded">
+            <p className="text-red-700 font-medium">{error || "Certificate not found"}</p>
+          </div>
+          <p className="text-gray-600 mb-6 text-sm">
+            This certificate could not be verified. It may have been revoked, expired, or the validation code is incorrect.
+          </p>
+          <div className="space-y-3">
+            <Link
+              to="/"
+              className="block w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg"
+            >
+              Go to Homepage
+            </Link>
+            <button
+              onClick={() => window.location.reload()}
+              className="block w-full px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+            >
+              Try Again
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -94,18 +137,27 @@ export default function CertificateValidation() {
   const issuedDate = new Date(certificate.issuedAt);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-100 py-12 px-4">
-      <div className="max-w-4xl mx-auto">
+    <>
+      <style>{printStyles}</style>
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-blue-100 py-12 px-4">
+        <div className="max-w-4xl mx-auto">
         {/* Success Header */}
-        <div className="bg-white rounded-lg shadow-xl p-8 mb-6 text-center">
-          <FaCheckCircle className="text-6xl text-green-500 mx-auto mb-4" />
+        <div className="bg-white rounded-2xl shadow-2xl p-8 mb-6 text-center transform hover:scale-105 transition-transform no-print">
+          <div className="relative mb-6">
+            <FaCheckCircle className="text-7xl text-green-500 mx-auto animate-bounce" />
+            <div className="absolute inset-0 blur-2xl bg-green-400 opacity-20"></div>
+          </div>
+          <div className="inline-block px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-semibold mb-4">
+            ✓ VERIFIED AUTHENTIC
+          </div>
           <h1 className="text-4xl font-bold text-gray-800 mb-2">Certificate Verified!</h1>
           <p className="text-xl text-gray-600">This certificate is valid and authentic</p>
+          <p className="text-sm text-gray-500 mt-2">Issued by LFC Jahi Tech Learn</p>
         </div>
 
         {/* Certificate Details */}
-        <div className="bg-white rounded-lg shadow-xl p-8">
-          <div className="border-4 border-blue-600 rounded-lg p-8">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 hover:shadow-3xl transition-shadow print-area">
+          <div className="border-4 border-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-8 bg-gradient-to-br from-blue-50 to-indigo-50">
             {/* Certificate Header */}
             <div className="text-center mb-8">
               <FaCertificate className="text-5xl text-blue-600 mx-auto mb-4" />
@@ -195,19 +247,33 @@ export default function CertificateValidation() {
           </div>
 
           {/* Footer */}
-          <div className="mt-8 text-center">
-            <p className="text-sm text-gray-600 mb-4">
-              This certificate has been verified and is authentic.
-            </p>
-            <Link
-              to="/"
-              className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Explore More Courses
-            </Link>
+          <div className="mt-8 text-center space-y-4">
+            <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-4">
+              <p className="text-sm text-gray-700 font-medium mb-2">
+                ✓ This certificate has been verified and is authentic.
+              </p>
+              <p className="text-xs text-gray-500">
+                Verified on {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link
+                to="/"
+                className="inline-block px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg"
+              >
+                Explore More Courses
+              </Link>
+              <button
+                onClick={() => window.print()}
+                className="inline-block px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Print Certificate
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
+    </>
   );
 }

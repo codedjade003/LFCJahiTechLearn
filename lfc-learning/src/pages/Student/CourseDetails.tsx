@@ -1382,17 +1382,17 @@ export default function CourseDetails() {
                               courseTitle={course.title}
                               progress={progressPercentage}
                               passed={passed}
-                            />
                               enrollmentId={enrollment?._id}
+                            />
                             <ShareButton 
                               platform="facebook"
                               courseTitle={course.title}
                               progress={progressPercentage}
                               passed={passed}
+                              enrollmentId={enrollment?._id}
                             />
                           </div>
                         </div>
-                              enrollmentId={enrollment?._id}
 
                         <div className="mb-8">
                           <h3 className="font-semibold mb-4">Share Your Feedback</h3>
