@@ -16,9 +16,14 @@
   - `server/controllers/courseController.js`: Fixed `addAssignment`, `updateAssignment`, `createProject`, `updateProject`, and `getProject` functions
   - Removed JSON stringification of materials (they're now stored as objects)
 
+**Additional Fix (Jan 16, 2025 - 4:52 PM)**:
+- Added parsing logic to handle materials if they arrive as stringified JSON
+- Backend now accepts materials as both objects (preferred) or strings (fallback)
+- Added debug logging to track material format
+
 **Files Modified**:
 - `server/config/cloudinary.js`
-- `server/controllers/courseController.js`
+- `server/controllers/courseController.js` (updated with parsing logic)
 
 ---
 

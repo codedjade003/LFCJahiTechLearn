@@ -624,7 +624,27 @@ export const getAssignments = async (req, res) => {
   try {
     const course = await Course.findById(req.params.courseId);
     if (!course) return res.status(404).json({ message: "Course not found" });
-    res.json(course.assignments);
+    
+    // Parse materials if they're stored as strings (legacy data)
+    const assignments = course.assignments.map(assignment => {
+      const assignmentObj = assignment.toObject();
+      if (assignmentObj.materials && Array.isArray(assignmentObj.materials) && assignmentObj.materials.length > 0) {
+        if (typeof assignmentObj.materials[0] === 'string') {
+          console.log('⚠️ Assignment materials are strings, parsing them...');
+          assignmentObj.materials = assignmentObj.materials.map(m => {
+            try {
+              return typeof m === 'string' ? JSON.parse(m) : m;
+            } catch (e) {
+              console.error('Failed to parse material:', m);
+              return null;
+            }
+          }).filter(m => m !== null);
+        }
+      }
+      return assignmentObj;
+    });
+    
+    res.json(assignments);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch assignments", error: err.message });
   }
@@ -636,7 +656,24 @@ export const getAssignmentById = async (req, res) => {
     if (!course) return res.status(404).json({ message: "Course not found" });
     const assignment = course.assignments.id(req.params.assignmentId);
     if (!assignment) return res.status(404).json({ message: "Assignment not found" });
-    res.json(assignment);
+    
+    // Parse materials if they're stored as strings (legacy data)
+    const assignmentObj = assignment.toObject();
+    if (assignmentObj.materials && Array.isArray(assignmentObj.materials) && assignmentObj.materials.length > 0) {
+      if (typeof assignmentObj.materials[0] === 'string') {
+        console.log('⚠️ Assignment materials are strings, parsing them...');
+        assignmentObj.materials = assignmentObj.materials.map(m => {
+          try {
+            return typeof m === 'string' ? JSON.parse(m) : m;
+          } catch (e) {
+            console.error('Failed to parse material:', m);
+            return null;
+          }
+        }).filter(m => m !== null);
+      }
+    }
+    
+    res.json(assignmentObj);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch assignment", error: err.message });
   }
@@ -645,9 +682,31 @@ export const getAssignmentById = async (req, res) => {
 export const addAssignment = async (req, res) => {
   try {
     const { courseId } = req.params;
-    const { title, instructions, submissionTypes, dueDate, materials } = req.body;
+    let { title, instructions, submissionTypes, dueDate, materials } = req.body;
+    
+    console.log('📦 Received add assignment request:', {
+      materialsType: typeof materials,
+      materialsIsArray: Array.isArray(materials),
+      materialsLength: materials ? materials.length : 0,
+      materialsRaw: JSON.stringify(materials, null, 2)
+    });
+    
     const course = await Course.findById(courseId);
     if (!course) return res.status(404).json({ message: "Course not found" });
+    
+    // Parse materials if they're strings
+    if (Array.isArray(materials) && materials.length > 0 && typeof materials[0] === 'string') {
+      console.log('⚠️ Materials are strings, parsing them...');
+      materials = materials.map(m => {
+        try {
+          return typeof m === 'string' ? JSON.parse(m) : m;
+        } catch (e) {
+          console.error('Failed to parse material:', m);
+          return null;
+        }
+      }).filter(m => m !== null);
+      console.log('✅ Parsed materials:', JSON.stringify(materials, null, 2));
+    }
     
     const assignment = { 
       title, 
@@ -676,7 +735,14 @@ export const addAssignment = async (req, res) => {
 
 export const updateAssignment = async (req, res) => {
   try {
-    const { title, instructions, submissionTypes, dueDate, materials } = req.body;
+    let { title, instructions, submissionTypes, dueDate, materials } = req.body;
+    
+    console.log('📦 Received update assignment request:', {
+      materialsType: typeof materials,
+      materialsIsArray: Array.isArray(materials),
+      materialsLength: materials ? materials.length : 0,
+      materialsRaw: JSON.stringify(materials, null, 2)
+    });
     
     // Validate required fields
     if (!title && title !== '') {
@@ -688,6 +754,20 @@ export const updateAssignment = async (req, res) => {
     
     const assignment = course.assignments.id(req.params.assignmentId);
     if (!assignment) return res.status(404).json({ message: "Assignment not found" });
+    
+    // Parse materials if they're strings
+    if (Array.isArray(materials) && materials.length > 0 && typeof materials[0] === 'string') {
+      console.log('⚠️ Materials are strings, parsing them...');
+      materials = materials.map(m => {
+        try {
+          return typeof m === 'string' ? JSON.parse(m) : m;
+        } catch (e) {
+          console.error('Failed to parse material:', m);
+          return null;
+        }
+      }).filter(m => m !== null);
+      console.log('✅ Parsed materials:', JSON.stringify(materials, null, 2));
+    }
     
     // Only update provided fields
     if (title !== undefined) assignment.title = title;
@@ -757,8 +837,24 @@ export const getProject = async (req, res) => {
       return res.json(null);
     }
     
-    // Return project as-is (materials are already objects)
-    res.json(course.project);
+    // Parse materials if they're stored as strings (legacy data)
+    let project = course.project.toObject();
+    if (project.materials && Array.isArray(project.materials) && project.materials.length > 0) {
+      if (typeof project.materials[0] === 'string') {
+        console.log('⚠️ Project materials are strings, parsing them...');
+        project.materials = project.materials.map(m => {
+          try {
+            return typeof m === 'string' ? JSON.parse(m) : m;
+          } catch (e) {
+            console.error('Failed to parse material:', m);
+            return null;
+          }
+        }).filter(m => m !== null);
+        console.log('✅ Parsed project materials');
+      }
+    }
+    
+    res.json(project);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch project", error: err.message });
   }
@@ -774,12 +870,27 @@ export const createProject = async (req, res) => {
     console.log('📦 Received create project request:', {
       materialsType: typeof materials,
       materialsIsArray: Array.isArray(materials),
-      materialsLength: materials ? materials.length : 0
+      materialsLength: materials ? materials.length : 0,
+      materialsRaw: JSON.stringify(materials, null, 2)
     });
 
     // Ensure materials is an array of objects
     if (!Array.isArray(materials)) {
       materials = [];
+    }
+    
+    // Parse materials if they're strings
+    if (Array.isArray(materials) && materials.length > 0 && typeof materials[0] === 'string') {
+      console.log('⚠️ Materials are strings, parsing them...');
+      materials = materials.map(m => {
+        try {
+          return typeof m === 'string' ? JSON.parse(m) : m;
+        } catch (e) {
+          console.error('Failed to parse material:', m);
+          return null;
+        }
+      }).filter(m => m !== null);
+      console.log('✅ Parsed materials:', JSON.stringify(materials, null, 2));
     }
 
     const course = await Course.findById(courseId);
@@ -837,11 +948,23 @@ export const updateProject = async (req, res) => {
     console.log('📦 Received update project request - RAW materials:', {
       materialsType: typeof materials,
       materialsIsArray: Array.isArray(materials),
-      materialsLength: materials ? materials.length : 0
+      materialsLength: materials ? materials.length : 0,
+      materialsRaw: JSON.stringify(materials, null, 2)
     });
 
-    // Ensure materials is an array of objects
-    if (!Array.isArray(materials)) {
+    // Parse materials if they're strings
+    if (Array.isArray(materials) && materials.length > 0 && typeof materials[0] === 'string') {
+      console.log('⚠️ Materials are strings, parsing them...');
+      materials = materials.map(m => {
+        try {
+          return typeof m === 'string' ? JSON.parse(m) : m;
+        } catch (e) {
+          console.error('Failed to parse material:', m);
+          return null;
+        }
+      }).filter(m => m !== null);
+      console.log('✅ Parsed materials:', JSON.stringify(materials, null, 2));
+    } else if (!Array.isArray(materials)) {
       materials = undefined; // Don't update if not provided
     }
 
