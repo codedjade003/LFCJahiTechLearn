@@ -197,11 +197,16 @@ const StudentDashboard = () => {
     loadAllData();
   }, [fetchUser]);
 
-  // Show onboarding modal after tour completes
+  // Show onboarding modal after tour completes OR if tour is disabled
   useEffect(() => {
-    if (!isInitialLoading && profile && progress.dashboard && !onboardingDismissed) {
+    if (!isInitialLoading && profile && !onboardingDismissed) {
+      // Only show modal if user hasn't seen onboarding
       if (!profile.hasSeenOnboarding) {
-        setTimeout(() => setShowOnboarding(true), 500);
+        // If tour is completed OR if user has onboarding disabled, show modal
+        if (progress.dashboard) {
+          // Tour completed, show modal after short delay
+          setTimeout(() => setShowOnboarding(true), 500);
+        }
       }
     }
   }, [isInitialLoading, profile, progress.dashboard, onboardingDismissed]);

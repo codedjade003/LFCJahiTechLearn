@@ -86,11 +86,17 @@ export const checkUsernameAvailability = async (req, res) => {
 
 // Register new student or original admin
 export const registerUser = async (req, res) => {
+  console.log("=== REGISTER USER REQUEST ===");
+  console.log("Timestamp:", new Date().toISOString());
+  console.log("Email:", req.body.email);
+  console.log("Name:", req.body.name);
+  
   const { name, email, password } = req.body;
 
   if (req.body.username) delete req.body.username;
 
   if (!name || !email || !password) {
+    console.log("Missing required fields");
     return res.status(400).json({ message: "Name, email, and password are required" });
   }
 
@@ -118,17 +124,22 @@ export const registerUser = async (req, res) => {
     });
 
     // Send verification email
+    console.log("Sending verification email to:", email);
     await sendEmail(
       email,
       "Your Verification Code",
       `Your verification code is: ${code}`
     );
+    console.log("Verification email sent successfully");
 
     res.status(201).json({
       message: "Account created. Please check your email for the verification code.",
       userId: user._id,
     });
   } catch (err) {
+    console.error("=== REGISTER USER ERROR ===");
+    console.error("Error:", err.message);
+    console.error("Stack:", err.stack);
     res.status(500).json({ message: err.message });
   }
 };
@@ -400,22 +411,31 @@ export const getAllUsers = async (req, res) => {
 };
 
 export const deleteUser = async (req, res) => {
+  console.log("=== DELETE USER REQUEST ===");
+  console.log("Requesting user:", req.user?.email);
+  console.log("Target user ID:", req.params.id);
+  
   const requestingUser = req.user; // from middleware
-  const targetUserId = req.params._id;
+  const targetUserId = req.params.id;
 
   try {
     const userToDelete = await User.findById(targetUserId);
     if (!userToDelete) {
+      console.log("User not found:", targetUserId);
       return res.status(404).json({ message: "User not found" });
     }
+    
+    console.log("User to delete:", userToDelete.email);
 
     // Prevent original admin from ever being deleted
     if (userToDelete.role === "admin") {
+      console.log("Attempted to delete original admin");
       return res.status(403).json({ message: "The original admin account cannot be deleted" });
     }
 
     // Allow users to delete their own account (except original admin already blocked above)
-    if (requestingUser._id === targetUserId) {
+    if (requestingUser._id.toString() === targetUserId) {
+      console.log("User deleting own account");
       await User.findByIdAndDelete(targetUserId);
       return res.status(200).json({ message: "Your account has been deleted" });
     }
@@ -425,13 +445,18 @@ export const deleteUser = async (req, res) => {
       requestingUser.role === "admin" ||
       requestingUser.role === "admin-only"
     ) {
+      console.log("Admin deleting user");
       await User.findByIdAndDelete(targetUserId);
       return res.status(200).json({ message: "User deleted successfully" });
     }
 
     // All other cases — reject
+    console.log("Not authorized to delete user");
     return res.status(403).json({ message: "Not authorized to delete this user" });
   } catch (err) {
+    console.error("=== DELETE USER ERROR ===");
+    console.error("Error:", err.message);
+    console.error("Stack:", err.stack);
     res.status(500).json({ message: err.message });
   }
 };
@@ -751,10 +776,20 @@ export const verifyEmail = async (req, res) => {
 };
 
 export const resendVerification = async (req, res) => {
+  console.log("=== RESEND VERIFICATION REQUEST ===");
+  console.log("Timestamp:", new Date().toISOString());
+  console.log("Email:", req.body.email);
+  
   const { email } = req.body;
   const user = await User.findOne({ email });
-  if (!user) return res.status(400).json({ message: "User not found" });
-  if (user.isVerified) return res.status(400).json({ message: "Email already verified" });
+  if (!user) {
+    console.log("User not found");
+    return res.status(400).json({ message: "User not found" });
+  }
+  if (user.isVerified) {
+    console.log("Email already verified");
+    return res.status(400).json({ message: "Email already verified" });
+  }
 
   // Generate fresh code
   const code = Math.floor(100000 + Math.random() * 900000).toString();
@@ -765,7 +800,9 @@ export const resendVerification = async (req, res) => {
   await user.save();
 
   // Send the raw code to the user
+  console.log("Sending verification code to:", email);
   await sendEmail(user.email, "Verify Your Email", `Your code is: ${code}`);
+  console.log("Verification code sent successfully");
 
   res.json({ message: "Verification code resent" });
 };

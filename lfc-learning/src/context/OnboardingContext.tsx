@@ -64,7 +64,14 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
 
       if (res.ok) {
         const data = await res.json();
-        setProgress(data.onboardingProgress || progress);
+        
+        // If user hasn't seen onboarding, force dashboard tour to false so it shows
+        let userProgress = data.onboardingProgress || progress;
+        if (!data.hasSeenOnboarding && userProgress.dashboard) {
+          userProgress = { ...userProgress, dashboard: false };
+        }
+        
+        setProgress(userProgress);
         setIsFirstLogin(data.firstLogin || false);
         setOnboardingEnabled(data.preferences?.onboardingEnabled !== false);
       }
