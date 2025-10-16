@@ -33,12 +33,12 @@ const CourseGrid = ({ courses, searchQuery = "", onEnrollmentUpdate }: CourseGri
 
   if (!courses?.length) {
     return (
-      <div className="col-span-full text-center py-16 text-gray-500">
+      <div className="col-span-full text-center py-16 text-gray-500 dark:text-gray-400">
         <div className="max-w-md mx-auto">
-          <p className="text-lg font-semibold text-gray-600 mb-2">
+          <p className="text-lg font-semibold text-gray-600 dark:text-gray-300 mb-2">
             {searchQuery ? "No courses found" : "No courses available"}
           </p>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             {searchQuery
               ? `No courses match "${searchQuery}". Try different keywords or browse all courses.`
               : "New courses will be available soon. Check back later!"}

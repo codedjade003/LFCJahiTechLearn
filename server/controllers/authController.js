@@ -501,10 +501,12 @@ export const updateProfile = async (req, res) => {
     if (occupation) user.occupation = occupation;
     if (company) user.company = company;
     if (skills) user.skills = Array.isArray(skills) ? skills : skills.split(',').map(s => s.trim());
-    if (socialLinks) user.socialLinks = { ...user.socialLinks, ...socialLinks };
+    if (socialLinks) {
+      user.socialLinks = { ...user.socialLinks, ...socialLinks };
       if (socialLinks.twitter && !socialLinks.x) {
-          user.socialLinks.x = socialLinks.twitter;
-        }
+        user.socialLinks.x = socialLinks.twitter;
+      }
+    }
     if (preferences) user.preferences = { ...user.preferences, ...preferences };
     if (education) {
       user.education = education;
