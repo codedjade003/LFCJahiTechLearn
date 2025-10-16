@@ -20,6 +20,7 @@ interface UserProfile {
   maritalStatus: string;
   technicalUnit: string;
   profilePicturePreview?: string;
+  hasSeenOnboarding?: boolean;
 }
 
 const StudentDashboard = () => {
@@ -76,6 +77,7 @@ const StudentDashboard = () => {
   const [file, setFile] = useState<File | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [onboardingDismissed, setOnboardingDismissed] = useState(false);
   const { fetchUser } = useAuth();
   const { progress } = useOnboarding();
 
@@ -179,6 +181,7 @@ const StudentDashboard = () => {
             phoneNumber: userData.phoneNumber || "",
             maritalStatus: userData.maritalStatus || "",
             technicalUnit: userData.technicalUnit || "All Courses",
+            hasSeenOnboarding: userData.hasSeenOnboarding || false,
           };
 
           setProfile(userProfile);
@@ -196,13 +199,12 @@ const StudentDashboard = () => {
 
   // Show onboarding modal after tour completes
   useEffect(() => {
-    if (!isInitialLoading && profile && progress.dashboard) {
-      const userData = profile as any;
-      if (!userData.hasSeenOnboarding) {
+    if (!isInitialLoading && profile && progress.dashboard && !onboardingDismissed) {
+      if (!profile.hasSeenOnboarding) {
         setTimeout(() => setShowOnboarding(true), 500);
       }
     }
-  }, [isInitialLoading, profile, progress.dashboard]);
+  }, [isInitialLoading, profile, progress.dashboard, onboardingDismissed]);
 
   const handleFinish = useCallback(async () => {
     try {
@@ -269,7 +271,8 @@ const StudentDashboard = () => {
       });
 
       setShowOnboarding(false);
-      setProfile(prev => prev ? { ...prev, ...safeProfile } : null);
+      setOnboardingDismissed(true);
+      setProfile(prev => prev ? { ...prev, ...safeProfile, hasSeenOnboarding: true } : null);
       await fetchUser();
       console.log("Profile update complete!");
     } catch (err) {
@@ -278,9 +281,22 @@ const StudentDashboard = () => {
     }
   }, [file, profile, fetchUser, API_BASE]);
 
-  const handleSkip = useCallback(() => {
+  const handleSkip = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (token) {
+        await fetch(`${API_BASE}/api/auth/seen-onboarding`, {
+          method: "PUT",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setProfile(prev => prev ? { ...prev, hasSeenOnboarding: true } : null);
+      }
+    } catch (err) {
+      console.error("Error marking onboarding as seen:", err);
+    }
     setShowOnboarding(false);
-  }, []);
+    setOnboardingDismissed(true);
+  }, [API_BASE]);
 
   const handleNextStep = useCallback(() => {
     if (currentStep === onboardingSteps.current.length - 1) {

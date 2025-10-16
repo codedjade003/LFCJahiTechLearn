@@ -923,6 +923,9 @@ export const resetUserFirstLogin = async (req, res) => {
 
 // routes/auth.ts (or similar)
 export const seeOnboarding = async (req, res) => {
+  console.log("=== MARK ONBOARDING AS SEEN ===");
+  console.log("User ID:", req.user.id);
+  
   try {
     const user = await User.findByIdAndUpdate(
       req.user.id,
@@ -930,8 +933,12 @@ export const seeOnboarding = async (req, res) => {
       { new: true }
     ).select("-password");
 
+    console.log("Onboarding marked as seen for user:", user.email);
+    console.log("hasSeenOnboarding:", user.hasSeenOnboarding);
+
     res.json({ success: true, user });
   } catch (err) {
+    console.error("=== ERROR MARKING ONBOARDING AS SEEN ===");
     console.error(err);
     res.status(500).json({ success: false, message: "Server error" });
   }

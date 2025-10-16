@@ -1047,48 +1047,6 @@ const validateUsername = (username: string) => {
           {/* Preferences Tab */}
           {activeTab === "preferences" && (
             <div className="space-y-8 max-w-2xl mx-auto">
-              {/* Theme Settings */}
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                  Appearance
-                </h3>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      {theme === "dark" ? <FaMoon className="text-blue-500" /> : <FaSun className="text-yellow-500" />}
-                      <div>
-                        <p className="font-medium text-gray-900 dark:text-white">Theme</p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Choose your preferred theme</p>
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handlePreferenceUpdate("theme", "light")}
-                        disabled={preferencesLoading}
-                        className={`px-4 py-2 rounded-lg transition-colors ${
-                          theme === "light"
-                            ? "bg-redCustom text-white"
-                            : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
-                        }`}
-                      >
-                        Light
-                      </button>
-                      <button
-                        onClick={() => handlePreferenceUpdate("theme", "dark")}
-                        disabled={preferencesLoading}
-                        className={`px-4 py-2 rounded-lg transition-colors ${
-                          theme === "dark"
-                            ? "bg-redCustom text-white"
-                            : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
-                        }`}
-                      >
-                        Dark
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
               {/* Onboarding Settings */}
               <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
