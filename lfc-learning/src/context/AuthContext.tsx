@@ -51,6 +51,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const logout = useCallback(() => {
+    localStorage.removeItem("token");
+    setUser(null);
+    navigate("/");
+  }, [navigate]);
+
   const fetchUser = useCallback(async () => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -87,12 +93,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
-
-  const logout = useCallback(() => {
-    localStorage.removeItem("token");
-    setUser(null);
-    navigate("/");
-  }, [navigate]);
 
   return (
     <AuthContext.Provider value={{ user, loading, fetchUser, setUser, logout }}>

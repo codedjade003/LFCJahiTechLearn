@@ -4,6 +4,7 @@ import CourseCategories from "../../components/Dashboard/CourseCategories";
 import CourseGrid from "../../components/Dashboard/CourseGrid";
 import { useAuthGuard } from "../../hooks/useAuthGuard";
 import { useAuth } from "../../context/AuthContext";
+import { useOnboarding } from "../../context/OnboardingContext";
 import DashboardStats from "../../components/Dashboard/DashboardStats";
 import ProfileCompletionBanner from "../../components/Dashboard/ProfileCompletionBanner";
 import OnboardingModal from "../../components/Dashboard/OnboardingModal";
@@ -76,6 +77,7 @@ const StudentDashboard = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const { fetchUser } = useAuth();
+  const { progress } = useOnboarding();
 
   // Use the fixed categories for the filter options
   const filterOptions = useMemo(() => FIXED_CATEGORIES, []);
@@ -181,10 +183,6 @@ const StudentDashboard = () => {
 
           setProfile(userProfile);
           setSelectedCategory(userData.technicalUnit || "All Courses");
-
-          if (!userData.hasSeenOnboarding) {
-            setTimeout(() => setShowOnboarding(true), 100);
-          }
         }
       } catch (err) {
         console.error("Error loading data:", err);
@@ -195,6 +193,16 @@ const StudentDashboard = () => {
 
     loadAllData();
   }, [fetchUser]);
+
+  // Show onboarding modal after tour completes
+  useEffect(() => {
+    if (!isInitialLoading && profile && progress.dashboard) {
+      const userData = profile as any;
+      if (!userData.hasSeenOnboarding) {
+        setTimeout(() => setShowOnboarding(true), 500);
+      }
+    }
+  }, [isInitialLoading, profile, progress.dashboard]);
 
   const handleFinish = useCallback(async () => {
     try {
@@ -238,6 +246,7 @@ const StudentDashboard = () => {
 
       setShowOnboarding(false);
       setProfile(prev => prev ? { ...prev, ...safeProfile } : null);
+      await fetchUser();
     } catch (err) {
       console.error("Error saving profile:", err);
       alert("Failed to save profile. Please try again.");
