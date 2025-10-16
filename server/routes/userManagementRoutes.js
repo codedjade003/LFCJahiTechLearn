@@ -264,4 +264,124 @@ router.post('/register-admin', protect, logAction('register', 'admin'), isSuperA
 });
 
 
+// Onboarding endpoints
+router.post('/onboarding/complete', protect, async (req, res) => {
+  try {
+    const { tourKey } = req.body;
+    const userId = req.user._id;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Update specific tour completion
+    if (!user.onboardingProgress) {
+      user.onboardingProgress = {};
+    }
+    user.onboardingProgress[tourKey] = true;
+    
+    await user.save();
+
+    res.json({ 
+      message: 'Tour completed', 
+      onboardingProgress: user.onboardingProgress 
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error completing tour', error: error.message });
+  }
+});
+
+router.post('/onboarding/finish', protect, async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.isOnboarded = true;
+    user.hasSeenOnboarding = true;
+    await user.save();
+
+    res.json({ message: 'Onboarding completed' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error finishing onboarding', error: error.message });
+  }
+});
+
+router.post('/onboarding/skip-all', protect, async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Mark all tours as completed
+    user.onboardingProgress = {
+      dashboard: true,
+      courses: true,
+      courseDetails: true,
+      profile: true,
+      assessments: true,
+      adminDashboard: true,
+      courseManagement: true,
+      userManagement: true,
+      assessmentGrading: true,
+    };
+    user.isOnboarded = true;
+    user.hasSeenOnboarding = true;
+    
+    await user.save();
+
+    res.json({ message: 'All tours skipped' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error skipping tours', error: error.message });
+  }
+});
+
+// User preferences endpoints
+router.get('/preferences', protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({ preferences: user.preferences || {} });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching preferences', error: error.message });
+  }
+});
+
+router.put('/preferences', protect, async (req, res) => {
+  try {
+    const { theme, onboardingEnabled, emailNotifications, pushNotifications } = req.body;
+    const user = await User.findById(req.user._id);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Update preferences
+    if (!user.preferences) {
+      user.preferences = {};
+    }
+    
+    if (theme !== undefined) user.preferences.theme = theme;
+    if (onboardingEnabled !== undefined) user.preferences.onboardingEnabled = onboardingEnabled;
+    if (emailNotifications !== undefined) user.preferences.emailNotifications = emailNotifications;
+    if (pushNotifications !== undefined) user.preferences.pushNotifications = pushNotifications;
+
+    await user.save();
+
+    res.json({ message: 'Preferences updated', preferences: user.preferences });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating preferences', error: error.message });
+  }
+});
+
 export default router;

@@ -7,7 +7,9 @@ import { useAuth } from "../../context/AuthContext";
 import DashboardStats from "../../components/Dashboard/DashboardStats";
 import ProfileCompletionBanner from "../../components/Dashboard/ProfileCompletionBanner";
 import OnboardingModal from "../../components/Dashboard/OnboardingModal";
+import OnboardingTour from "../../components/shared/OnboardingTour";
 import type { Course } from "../../types/course";
+import type { Step } from "react-joyride";
 
 interface UserProfile {
   profilePicture: string;
@@ -22,6 +24,35 @@ interface UserProfile {
 const StudentDashboard = () => {
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   useAuthGuard();
+
+  // Onboarding tour steps
+  const dashboardTourSteps: Step[] = [
+    {
+      target: "body",
+      content: "Welcome to your Student Dashboard! Let's take a quick tour to help you get started.",
+      placement: "center",
+    },
+    {
+      target: '[data-tour="stats"]',
+      content: "Here you can see your learning progress, enrolled courses, and achievements at a glance.",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tour="search"]',
+      content: "Use the search bar to quickly find courses, instructors, or topics you're interested in.",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tour="categories"]',
+      content: "Browse courses by category. Click on any category to filter the course list.",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tour="courses"]',
+      content: "All available courses are displayed here. Click on any course to view details and enroll.",
+      placement: "top",
+    },
+  ];
 
   const [courses, setCourses] = useState<Course[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -363,6 +394,9 @@ const StudentDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Onboarding Tour - Shows BEFORE profile completion */}
+      <OnboardingTour tourKey="dashboard" steps={dashboardTourSteps} />
+
       {/* Profile completion banner */}
       {showBanner && (
         <ProfileCompletionBanner
@@ -389,13 +423,15 @@ const StudentDashboard = () => {
       {/* Main Content - YouTube-like Layout */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Header Stats */}
-        <DashboardStats />
+        <div data-tour="stats">
+          <DashboardStats />
+        </div>
 
         {/* Notifications */}
         <Notifications />
 
         {/* Search Bar - YouTube Style */}
-        <div className="mb-6">
+        <div className="mb-6" data-tour="search">
           <div className="relative max-w-2xl mx-auto">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <svg className="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -413,7 +449,7 @@ const StudentDashboard = () => {
         </div>
 
         {/* Categories - Horizontal Scrolling like YouTube */}
-        <div className="mb-6">
+        <div className="mb-6" data-tour="categories">
           <CourseCategories 
             filterOptions={filterOptions}
             selectedFilter={selectedCategory}
@@ -421,7 +457,7 @@ const StudentDashboard = () => {
         </div>
 
         {/* Course Grid */}
-        <div className="mb-8">
+        <div className="mb-8" data-tour="courses">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
             {selectedCategory === "All Courses" ? "Recommended Courses" : selectedCategory}
           </h2>

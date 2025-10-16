@@ -42,6 +42,27 @@ const userSchema = new mongoose.Schema(
     firstLogin: { type: Boolean, default: true },
     isOnboarded: { type: Boolean, default: false },
     hasSeenOnboarding: { type: Boolean, default: false },
+    
+    // Onboarding progress tracking (per feature/page)
+    onboardingProgress: {
+      dashboard: { type: Boolean, default: false },
+      courses: { type: Boolean, default: false },
+      courseDetails: { type: Boolean, default: false },
+      profile: { type: Boolean, default: false },
+      assessments: { type: Boolean, default: false },
+      adminDashboard: { type: Boolean, default: false },
+      courseManagement: { type: Boolean, default: false },
+      userManagement: { type: Boolean, default: false },
+      assessmentGrading: { type: Boolean, default: false },
+    },
+
+    // User preferences
+    preferences: {
+      theme: { type: String, enum: ["light", "dark"], default: "light" },
+      onboardingEnabled: { type: Boolean, default: true },
+      emailNotifications: { type: Boolean, default: true },
+      pushNotifications: { type: Boolean, default: true },
+    },
 
     // Profile
     profilePicture: {
