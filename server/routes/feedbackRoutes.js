@@ -4,11 +4,11 @@ import { ModuleFeedback } from '../models/ModuleFeedback.js';
 
 const router = express.Router();
 
-// Submit module feedback
+// Submit module feedback (survey responses)
 router.post('/modules/:moduleId', protect, async (req, res) => {
   try {
     const { moduleId } = req.params;
-    const { courseId, difficulty, clarity, usefulness, feedback } = req.body;
+    const { courseId, responses, moduleTitle, difficulty, clarity, usefulness, feedback } = req.body;
     const studentId = req.user._id;
 
     // Check if feedback already exists
@@ -20,10 +20,13 @@ router.post('/modules/:moduleId', protect, async (req, res) => {
 
     if (existingFeedback) {
       // Update existing feedback
-      existingFeedback.difficulty = difficulty;
-      existingFeedback.clarity = clarity;
-      existingFeedback.usefulness = usefulness;
-      existingFeedback.feedback = feedback;
+      if (responses) existingFeedback.responses = responses;
+      if (moduleTitle) existingFeedback.moduleTitle = moduleTitle;
+      if (difficulty) existingFeedback.difficulty = difficulty;
+      if (clarity) existingFeedback.clarity = clarity;
+      if (usefulness) existingFeedback.usefulness = usefulness;
+      if (feedback) existingFeedback.feedback = feedback;
+      existingFeedback.submittedAt = new Date();
       await existingFeedback.save();
       
       return res.json({ 
@@ -37,10 +40,13 @@ router.post('/modules/:moduleId', protect, async (req, res) => {
       courseId,
       moduleId,
       studentId,
+      moduleTitle: moduleTitle || '',
+      responses: responses || {},
       difficulty,
       clarity,
       usefulness,
-      feedback
+      feedback,
+      submittedAt: new Date()
     });
 
     await newFeedback.save();
@@ -87,6 +93,41 @@ router.get('/modules/:moduleId', protect, async (req, res) => {
     console.error('Error fetching module feedback:', error);
     res.status(500).json({ 
       message: 'Error fetching feedback', 
+      error: error.message 
+    });
+  }
+});
+
+// Get all survey responses (admin only)
+router.get('/survey-responses', protect, async (req, res) => {
+  try {
+    const feedback = await ModuleFeedback.find({ responses: { $exists: true, $ne: {} } })
+      .populate('studentId', 'name email')
+      .populate('courseId', 'title')
+      .sort({ submittedAt: -1 });
+
+    const formattedResponses = feedback.map(f => ({
+      _id: f._id,
+      userId: {
+        _id: f.studentId._id,
+        name: f.studentId.name,
+        email: f.studentId.email
+      },
+      courseId: {
+        _id: f.courseId._id,
+        title: f.courseId.title
+      },
+      moduleId: f.moduleId,
+      moduleTitle: f.moduleTitle || 'Unknown Module',
+      responses: f.responses,
+      submittedAt: f.submittedAt || f.createdAt
+    }));
+
+    res.json(formattedResponses);
+  } catch (error) {
+    console.error('Error fetching survey responses:', error);
+    res.status(500).json({ 
+      message: 'Error fetching survey responses', 
       error: error.message 
     });
   }

@@ -1583,6 +1583,7 @@ export default function CourseDetails() {
                   body: JSON.stringify({
                     responses: surveyResponses,
                     courseId: courseId,
+                    moduleTitle: pendingModule.title,
                   }),
                 });
               } catch (err) {

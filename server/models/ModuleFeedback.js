@@ -15,27 +15,36 @@ const moduleFeedbackSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
+  moduleTitle: {
+    type: String,
+    default: ''
+  },
+  responses: {
+    type: mongoose.Schema.Types.Mixed,
+    default: {}
+  },
   difficulty: {
     type: Number,
     min: 1,
-    max: 5,
-    required: true
+    max: 5
   },
   clarity: {
     type: Number,
     min: 1,
-    max: 5,
-    required: true
+    max: 5
   },
   usefulness: {
     type: Number,
     min: 1,
-    max: 5,
-    required: true
+    max: 5
   },
   feedback: {
     type: String,
     default: ''
+  },
+  submittedAt: {
+    type: Date,
+    default: Date.now
   }
 }, {
   timestamps: true

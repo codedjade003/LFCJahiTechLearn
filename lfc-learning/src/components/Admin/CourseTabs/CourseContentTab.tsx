@@ -941,6 +941,137 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                         </div>
                       )}
 
+                      {/* Survey Configuration (Optional) */}
+                      <div className="border-t border-gray-200 pt-4 mt-4">
+                        <div className="flex justify-between items-center mb-3">
+                          <div>
+                            <label className="block text-sm font-medium text-yt-text-dark">Post-Module Survey (Optional)</label>
+                            <p className="text-xs text-gray-500 mt-1">Collect feedback after students complete this module</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setNewModule({
+                                ...newModule,
+                                surveyQuestions: [
+                                  ...newModule.surveyQuestions,
+                                  { question: "", type: "text", options: [] }
+                                ]
+                              });
+                            }}
+                            className="px-3 py-1 bg-lfc-gold text-white rounded-md text-sm flex items-center hover:bg-lfc-gold/90"
+                          >
+                            <FaPlus size={10} className="mr-1" /> Add Survey Question
+                          </button>
+                        </div>
+
+                        {newModule.surveyQuestions.length > 0 && (
+                          <div className="space-y-3">
+                            {newModule.surveyQuestions.map((sq, sqi) => (
+                              <div key={sqi} className="p-4 border border-gray-200 rounded-md bg-gray-50 space-y-3">
+                                <div className="flex justify-between items-center">
+                                  <h5 className="font-medium text-sm text-gray-900">Survey Question #{sqi + 1}</h5>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const newSurveyQuestions = newModule.surveyQuestions.filter((_, i) => i !== sqi);
+                                      setNewModule({ ...newModule, surveyQuestions: newSurveyQuestions });
+                                    }}
+                                    className="text-gray-400 hover:text-red-500"
+                                  >
+                                    <FaTrash size={14} />
+                                  </button>
+                                </div>
+
+                                <div>
+                                  <label className="block text-xs font-medium text-gray-700 mb-1">Question Text</label>
+                                  <input
+                                    type="text"
+                                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
+                                    placeholder="e.g., How would you rate this module?"
+                                    value={sq.question}
+                                    onChange={(e) => {
+                                      const newSurveyQuestions = [...newModule.surveyQuestions];
+                                      newSurveyQuestions[sqi].question = e.target.value;
+                                      setNewModule({ ...newModule, surveyQuestions: newSurveyQuestions });
+                                    }}
+                                  />
+                                </div>
+
+                                <div>
+                                  <label className="block text-xs font-medium text-gray-700 mb-1">Question Type</label>
+                                  <select
+                                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
+                                    value={sq.type}
+                                    onChange={(e) => {
+                                      const newSurveyQuestions = [...newModule.surveyQuestions];
+                                      newSurveyQuestions[sqi].type = e.target.value as "text" | "rating" | "multiple-choice";
+                                      if (e.target.value !== "multiple-choice") {
+                                        newSurveyQuestions[sqi].options = [];
+                                      }
+                                      setNewModule({ ...newModule, surveyQuestions: newSurveyQuestions });
+                                    }}
+                                  >
+                                    <option value="text">Text Response</option>
+                                    <option value="rating">Star Rating (1-5)</option>
+                                    <option value="multiple-choice">Multiple Choice</option>
+                                  </select>
+                                </div>
+
+                                {sq.type === "multiple-choice" && (
+                                  <div>
+                                    <div className="flex justify-between items-center mb-2">
+                                      <label className="block text-xs font-medium text-gray-700">Options</label>
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          const newSurveyQuestions = [...newModule.surveyQuestions];
+                                          newSurveyQuestions[sqi].options = [...(newSurveyQuestions[sqi].options || []), ""];
+                                          setNewModule({ ...newModule, surveyQuestions: newSurveyQuestions });
+                                        }}
+                                        className="text-xs text-lfc-gold hover:text-lfc-gold/80"
+                                      >
+                                        + Add Option
+                                      </button>
+                                    </div>
+                                    <div className="space-y-2">
+                                      {(sq.options || []).map((opt, oi) => (
+                                        <div key={oi} className="flex gap-2">
+                                          <input
+                                            type="text"
+                                            className="flex-1 border border-gray-300 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
+                                            placeholder={`Option ${oi + 1}`}
+                                            value={opt}
+                                            onChange={(e) => {
+                                              const newSurveyQuestions = [...newModule.surveyQuestions];
+                                              const newOptions = [...(newSurveyQuestions[sqi].options || [])];
+                                              newOptions[oi] = e.target.value;
+                                              newSurveyQuestions[sqi].options = newOptions;
+                                              setNewModule({ ...newModule, surveyQuestions: newSurveyQuestions });
+                                            }}
+                                          />
+                                          <button
+                                            type="button"
+                                            onClick={() => {
+                                              const newSurveyQuestions = [...newModule.surveyQuestions];
+                                              newSurveyQuestions[sqi].options = (newSurveyQuestions[sqi].options || []).filter((_, i) => i !== oi);
+                                              setNewModule({ ...newModule, surveyQuestions: newSurveyQuestions });
+                                            }}
+                                            className="px-2 py-1.5 text-gray-400 hover:text-red-500"
+                                          >
+                                            <FaTrash size={12} />
+                                          </button>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
                       <button
                         onClick={() => handleAddModule(section._id)}
                         disabled={!newModule.title.trim() || 
