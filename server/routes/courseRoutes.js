@@ -30,6 +30,7 @@ import {
   getEnums,
   migrateInstructors,
   addInstructors,
+  getCoursePermissions,
 } from "../controllers/courseController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import { isAdminOnly } from "../middleware/isAdminOnly.js";
@@ -59,6 +60,7 @@ router.delete("/", protect, logAction('delete', 'all_courses'), isAdminOnly, del
 
 // DYNAMIC COURSE ROUTES
 router.get("/:courseId", getCourseById); // No logging
+router.get('/:courseId/permissions', protect, getCoursePermissions); // No logging
 router.post('/:courseId/feedback', logAction('feedback', 'course'), protect, submitCourseFeedback);
 router.put("/:courseId", protect, logAction('update', 'course'), isAdminOnly, updateCourse);
 router.delete("/:courseId", protect, logAction('delete', 'course'), isAdminOnly, deleteCourse);

@@ -13,6 +13,7 @@ import {
   FaFileAlt
 } from "react-icons/fa";
 import ProjectSubmissionModal from "./ProjectSubmissionModal";
+import { useNotification } from "../../../hooks/useNotification";
 
 interface ProjectSubmission {
   _id: string;
@@ -55,6 +56,8 @@ export default function Projects() {
   });
   const [selectedSubmission, setSelectedSubmission] = useState<ProjectSubmission | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [coursePermissions, setCoursePermissions] = useState<Record<string, boolean>>({});
+  const { showNotification } = useNotification();
 
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [selectedSubmissions, setSelectedSubmissions] = useState<string[]>([]);
@@ -70,6 +73,33 @@ export default function Projects() {
   useEffect(() => {
     fetchProjectSubmissions();
   }, []);
+
+  const checkPermissionsForCourses = async (courses: any[]) => {
+  const token = localStorage.getItem("token");
+  const permissionsMap: Record<string, boolean> = {};
+
+  for (const course of courses) {
+    try {
+      const res = await fetch(`${API_BASE}/api/courses/${course._id}/permissions`, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        permissionsMap[course._id] = data.canGrade || data.canManage || false;
+      } else {
+        permissionsMap[course._id] = false;
+      }
+    } catch (error) {
+      console.error(`Error checking permissions for course ${course._id}:`, error);
+      permissionsMap[course._id] = false;
+    }
+  }
+
+    setCoursePermissions(permissionsMap);
+  };
 
   const fetchProjectSubmissions = async () => {
     try {
@@ -116,6 +146,8 @@ export default function Projects() {
                 project: course.project
               }
             })) || [];
+
+            await checkPermissionsForCourses(coursesWithProjects);
             
             allProjectSubmissions.push(...courseSubmissions);
           }
@@ -135,37 +167,58 @@ export default function Projects() {
     }
   };
 
+  const canGradeCourse = (courseId: string) => {
+    return coursePermissions[courseId] === true;
+  };
+
   const handleBulkGrade = async (grade: number) => {
     if (!selectedSubmissions.length) return;
 
-    if (!confirm(`Give ${grade}% to ${selectedSubmissions.length} submissions?`)) return;
+    // Check permissions for all selected submissions
+    const unauthorizedSubmissions = selectedSubmissions.filter(submissionId => {
+      const submission = submissions.find(s => s._id === submissionId);
+      return submission && !canGradeCourse(submission.courseId._id);
+    });
 
-    try {
-      const token = localStorage.getItem("token");
-      await Promise.all(
-        selectedSubmissions.map(submissionId =>
-          fetch(`${API_BASE}/api/submissions/${submissionId}/grade`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`,
-            },
-            body: JSON.stringify({ grade, feedback: "Bulk graded" }),
-          })
-        )
-      );
-
-      // Refresh submissions
-      await fetchProjectSubmissions();
-      setSelectedSubmissions([]);
-      alert(`Successfully graded ${selectedSubmissions.length} submissions`);
-    } catch (error) {
-      console.error("Error in bulk grading:", error);
-      alert("Error in bulk grading");
+    if (unauthorizedSubmissions.length > 0) {
+      showNotification("You don't have permission to grade some of the selected submissions", 'error');
+      return;
     }
+
+    if (!confirm(`Give ${grade}% to ${selectedSubmissions.length} submissions?`)) return;
+      try {
+        const token = localStorage.getItem("token");
+        await Promise.all(
+          selectedSubmissions.map(submissionId =>
+            fetch(`${API_BASE}/api/submissions/${submissionId}/grade`, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+              },
+              body: JSON.stringify({ grade, feedback: "Bulk graded" }),
+            })
+          )
+        );
+
+        // Refresh submissions
+        await fetchProjectSubmissions();
+        setSelectedSubmissions([]);
+        alert(`Successfully graded ${selectedSubmissions.length} submissions`);
+      } catch (error) {
+        console.error("Error in bulk grading:", error);
+        alert("Error in bulk grading");
+      }
   };
 
   const handleGradeSubmission = async (submissionId: string, grade: number, feedback: string) => {
+    const submission = submissions.find(s => s._id === submissionId);
+    if (!submission) return;
+
+    if (!canGradeCourse(submission.courseId._id)) {
+      showNotification("You don't have permission to grade projects for this course", 'error');
+      return;
+    }
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(`${API_BASE}/api/submissions/${submissionId}/grade`, {
@@ -203,6 +256,10 @@ export default function Projects() {
 
   // Open submission for viewing/grading
   const openSubmission = (submission: ProjectSubmission) => {
+    if (!canGradeCourse(submission.courseId._id)) {
+      showNotification("You don't have permission to view or grade projects for this course", 'error');
+      return;
+    }
     setSelectedSubmission(submission);
     setIsModalOpen(true);
   };

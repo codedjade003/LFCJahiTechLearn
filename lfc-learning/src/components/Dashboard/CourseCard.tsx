@@ -6,6 +6,7 @@ import CourseModal from "./CourseModal";
 
 interface Props extends Course {
   onEnroll?: (courseId: string) => Promise<void>;
+  promoVideo?: string;
 }
 
 const levelColor: Record<NonNullable<Course["level"]>, string> = {
@@ -61,6 +62,7 @@ const CourseCard: React.FC<Props> = ({
   level = "Beginner",
   type = "Video",
   thumbnail,
+  promoVideo,
   categories,
   enrolled = false,
   objectives = [],
@@ -391,6 +393,7 @@ const CourseCard: React.FC<Props> = ({
           level,
           type,
           thumbnail,
+          promoVideo,
           categories,
           enrolled,
           objectives,

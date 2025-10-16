@@ -349,8 +349,8 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
           </div>
 
           {/* Category and Type */}
-          <div>
-            <label className="block text-sm font-medium">Category</label>
+          <div className="mt-4">
+            <label className="block text-sm font-medium mb-2">Category</label>
             <select
               className="w-full border rounded-md px-3 py-2 focus:ring-lfc-red focus:border-lfc-red text-sm md:text-base"
               value={selectedCategory}

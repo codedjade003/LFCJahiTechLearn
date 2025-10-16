@@ -1,5 +1,5 @@
 // utils/cloudinaryUtils.js
-import { cloudinary } from '../config/cloudinary.js';
+import { v2 as cloudinary } from '../config/cloudinary.js';
 
 export const deleteFromCloudinary = async (publicId) => {
   try {

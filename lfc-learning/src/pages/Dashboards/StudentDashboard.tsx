@@ -122,6 +122,7 @@ const StudentDashboard = () => {
               level: course.level || "Beginner",
               type: course.type || "Video",
               thumbnail: course.thumbnail,
+              promoVideo: course.promoVideo,
               enrolled: !!enrollment,
               isPublic: course.isPublic !== false,
               objectives: course.objectives || [],

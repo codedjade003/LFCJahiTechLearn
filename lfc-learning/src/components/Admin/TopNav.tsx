@@ -1,4 +1,4 @@
-// src/components/TopNav.tsx - FIXED
+// src/components/TopNav.tsx - FIXED NOTIFICATIONS FETCHING
 import { useEffect, useRef, useState, type JSX } from "react";
 import { FaBell, FaChevronDown, FaBars, FaUserShield, FaUserCog, FaUser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -13,85 +13,163 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
   const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const notificationsRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState<any[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [notificationsLoading, setNotificationsLoading] = useState(false);
 
   // Check if user is admin
   const isAdmin = user?.role === 'admin' || user?.role === 'admin-only';
   const isSuperAdmin = user?.email === 'codedjade003@gmail.com';
 
-  // Fetch notifications count - FIXED like TopBar
-  useEffect(() => {
-    const fetchNotificationCount = async () => {
-      try {
-        const response = await fetch(`${API_BASE}/api/notifications/my?limit=5`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
-          const notificationsArray = data.notifications || data || [];
-          setNotifications(notificationsArray);
-          
-          const unread = notificationsArray.filter((n: { read: any; }) => !n.read).length;
-          setUnreadCount(unread);
-        } else {
-          console.error('Failed to fetch notifications:', response.status);
-          setNotifications([]);
-          setUnreadCount(0);
+  // Fetch notifications count - IMPROVED with better error handling
+  const fetchNotifications = async () => {
+    if (notificationsLoading) return;
+    
+    setNotificationsLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No token found');
+        return;
+      }
+
+      console.log('🔔 Fetching notifications...');
+      
+      const response = await fetch(`${API_BASE}/api/notifications/my?limit=5`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
-      } catch (error) {
-        console.error('Error fetching notifications:', error);
+      });
+      
+      console.log('🔔 Response status:', response.status);
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('🔔 Notifications data:', data);
+        
+        // Handle different response formats
+        let notificationsArray = [];
+        
+        if (Array.isArray(data)) {
+          notificationsArray = data;
+        } else if (data.notifications && Array.isArray(data.notifications)) {
+          notificationsArray = data.notifications;
+        } else if (data.data && Array.isArray(data.data)) {
+          notificationsArray = data.data;
+        } else {
+          console.warn('🔔 Unexpected notifications response format:', data);
+          notificationsArray = [];
+        }
+        
+        setNotifications(notificationsArray);
+        
+        // Calculate unread count
+        const unread = notificationsArray.filter((n: any) => !n.read).length;
+        setUnreadCount(unread);
+        console.log(`🔔 Loaded ${notificationsArray.length} notifications, ${unread} unread`);
+        
+      } else {
+        console.error('🔔 Failed to fetch notifications:', response.status, response.statusText);
+        const errorText = await response.text();
+        console.error('🔔 Error response:', errorText);
         setNotifications([]);
         setUnreadCount(0);
       }
-    };
+    } catch (error) {
+      console.error('🔔 Error fetching notifications:', error);
+      setNotifications([]);
+      setUnreadCount(0);
+    } finally {
+      setNotificationsLoading(false);
+    }
+  };
 
-    fetchNotificationCount();
-    const interval = setInterval(fetchNotificationCount, 30000);
+  useEffect(() => {
+    fetchNotifications();
+    
+    // Refresh every 30 seconds
+    const interval = setInterval(fetchNotifications, 30000);
     return () => clearInterval(interval);
   }, []);
 
-  // Mark as read function - FIXED like TopBar
+  // Mark as read function - IMPROVED
   const markAsRead = async (notificationId: string) => {
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`${API_BASE}/api/notifications/${notificationId}/read`, {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
       
       if (response.ok) {
+        // Update local state immediately for better UX
         setNotifications(prev => 
           prev.map((n: any) => n._id === notificationId ? { ...n, read: true } : n)
         );
         setUnreadCount(prev => Math.max(0, prev - 1));
+        console.log('🔔 Marked notification as read:', notificationId);
       } else {
-        console.error('Failed to mark as read:', response.status);
+        console.error('🔔 Failed to mark as read:', response.status);
+        // Try to refetch notifications if marking as read fails
+        fetchNotifications();
       }
     } catch (error) {
-      console.error('Error marking notification as read:', error);
+      console.error('🔔 Error marking notification as read:', error);
+    }
+  };
+
+  // Mark all as read function
+  const markAllAsRead = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE}/api/notifications/mark-all-read`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (response.ok) {
+        // Update all notifications to read
+        setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+        setUnreadCount(0);
+        console.log('🔔 Marked all notifications as read');
+      } else {
+        console.error('🔔 Failed to mark all as read:', response.status);
+      }
+    } catch (error) {
+      console.error('🔔 Error marking all notifications as read:', error);
     }
   };
 
   // Format time function
   const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
+    if (!dateString) return 'Just now';
+    
+    try {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffMs = now.getTime() - date.getTime();
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMs / 3600000);
+      const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    return date.toLocaleDateString();
+      if (diffMins < 1) return 'Just now';
+      if (diffMins < 60) return `${diffMins}m ago`;
+      if (diffHours < 24) return `${diffHours}h ago`;
+      if (diffDays < 7) return `${diffDays}d ago`;
+      return date.toLocaleDateString();
+    } catch (error) {
+      return 'Recently';
+    }
   };
 
   // Close dropdowns on outside click
@@ -99,9 +177,13 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setOpen(false);
+      }
+      
+      if (notificationsRef.current && !notificationsRef.current.contains(e.target as Node)) {
         setShowNotifications(false);
       }
     };
+    
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -123,17 +205,28 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
         {/* Right: icons + profile */}
         <div className="flex items-center gap-2 sm:gap-4">
 
-          {/* Notifications - FIXED like TopBar */}
-          <div className="relative" ref={dropdownRef}>
+          {/* Notifications - IMPROVED */}
+          <div className="relative" ref={notificationsRef}>
             <button 
-              onClick={() => setShowNotifications(!showNotifications)}
-              className="p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors duration-200 relative"
+              onClick={() => {
+                setShowNotifications(!showNotifications);
+                if (!showNotifications) {
+                  fetchNotifications(); // Refresh when opening
+                }
+              }}
+              disabled={notificationsLoading}
+              className="p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors duration-200 relative disabled:opacity-50"
             >
               <FaBell className="text-lg" />
               {unreadCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-lfc-red text-white rounded-full min-w-[18px] h-[18px] flex items-center justify-center text-xs font-medium px-1">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
+              )}
+              {notificationsLoading && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-4 h-4 border-2 border-gray-300 border-t-lfc-red rounded-full animate-spin"></div>
+                </div>
               )}
             </button>
 
@@ -143,72 +236,87 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
                 <div className="p-4 border-b border-gray-200">
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-semibold text-gray-800">Notifications</h3>
-                    {unreadCount > 0 && (
+                    <div className="flex items-center gap-2">
+                      {unreadCount > 0 && (
+                        <button
+                          onClick={markAllAsRead}
+                          className="text-xs text-blue-600 hover:text-blue-800"
+                        >
+                          Mark all read
+                        </button>
+                      )}
                       <span className="bg-lfc-red text-white text-xs px-2 py-1 rounded-full">
                         {unreadCount} unread
                       </span>
-                    )}
+                    </div>
                   </div>
                 </div>
 
                 <div className="p-2">
-                  {notifications.length === 0 ? (
+                  {notificationsLoading ? (
+                    <div className="text-center py-4">
+                      <div className="w-6 h-6 border-2 border-gray-300 border-t-lfc-red rounded-full animate-spin mx-auto"></div>
+                      <p className="text-sm text-gray-500 mt-2">Loading notifications...</p>
+                    </div>
+                  ) : notifications.length === 0 ? (
                     <div className="text-center py-4 text-gray-500 text-sm">
-                      No new notifications
+                      No notifications yet
                     </div>
                   ) : (
-                    notifications.slice(0, 5).map((notification) => (
-                      <div
-                        key={notification._id}
-                        className={`p-3 rounded-lg mb-2 cursor-pointer transition-colors ${
-                          notification.read 
-                            ? 'bg-gray-50 hover:bg-gray-100' 
-                            : 'bg-blue-50 hover:bg-blue-100 border-l-4 border-l-blue-500'
-                        }`}
-                        onClick={() => markAsRead(notification._id)}
-                      >
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <p className={`text-sm font-medium ${
-                              notification.read ? 'text-gray-700' : 'text-gray-900'
-                            }`}>
-                              {notification.title}
-                            </p>
-                            {notification.message && (
-                              <p className="text-xs text-gray-600 mt-1 line-clamp-2">
-                                {notification.message}
+                    <>
+                      {notifications.slice(0, 5).map((notification) => (
+                        <div
+                          key={notification._id}
+                          className={`p-3 rounded-lg mb-2 cursor-pointer transition-colors ${
+                            notification.read 
+                              ? 'bg-gray-50 hover:bg-gray-100' 
+                              : 'bg-blue-50 hover:bg-blue-100 border-l-4 border-l-blue-500'
+                          }`}
+                          onClick={() => markAsRead(notification._id)}
+                        >
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <p className={`text-sm font-medium ${
+                                notification.read ? 'text-gray-700' : 'text-gray-900'
+                              }`}>
+                                {notification.title || 'Notification'}
                               </p>
+                              {notification.message && (
+                                <p className="text-xs text-gray-600 mt-1 line-clamp-2">
+                                  {notification.message}
+                                </p>
+                              )}
+                              <p className="text-xs text-gray-400 mt-1">
+                                {formatTime(notification.createdAt)}
+                              </p>
+                            </div>
+                            {!notification.read && (
+                              <div className="w-2 h-2 bg-blue-500 rounded-full ml-2 mt-1 flex-shrink-0" />
                             )}
-                            <p className="text-xs text-gray-400 mt-1">
-                              {formatTime(notification.createdAt)}
-                            </p>
                           </div>
-                          {!notification.read && (
-                            <div className="w-2 h-2 bg-blue-500 rounded-full ml-2 mt-1 flex-shrink-0" />
-                          )}
                         </div>
-                      </div>
-                    ))
-                  )}
-                  
-                  {notifications.length > 5 && (
-                    <button
-                      onClick={() => {
-                        setShowNotifications(false);
-                        // Navigate to full notifications page
-                        // navigate('/dashboard/notifications');
-                      }}
-                      className="w-full text-center py-2 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors"
-                    >
-                      View all notifications
-                    </button>
+                      ))}
+                      
+                      {notifications.length > 5 && (
+                        <button
+                          onClick={() => {
+                            setShowNotifications(false);
+                            // Navigate to full notifications page
+                            // navigate('/dashboard/notifications');
+                          }}
+                          className="w-full text-center py-2 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors"
+                        >
+                          View all notifications
+                        </button>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
             )}
           </div>
 
-          {/* Profile dropdown - ENHANCED like TopBar */}
+          {/* Profile dropdown */}
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setOpen(!open)}

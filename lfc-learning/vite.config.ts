@@ -19,6 +19,9 @@ export default defineConfig({
   },
   // Use environment variables
   define: {
-    'process.env': process.env
+    'process.env': {
+      // Only expose safe public variables
+      VITE_API_URL: process.env.VITE_API_URL,
+    }
   }
 })

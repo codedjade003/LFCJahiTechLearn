@@ -15,8 +15,10 @@ import {
   FaCalendar,
   FaListOl,
   FaPercentage,
-  FaTimes
+  FaTimes,
+  FaLock
 } from "react-icons/fa";
+import { useNotification } from "../../../hooks/useNotification";
 
 interface QuizSubmission {
   _id: string;
@@ -68,30 +70,15 @@ export default function Quizzes() {
   const [selectedSubmission, setSelectedSubmission] = useState<QuizSubmission | null>(null);
   const [quizDetails, setQuizDetails] = useState<QuizDetails | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [coursePermissions, setCoursePermissions] = useState<Record<string, boolean>>({});
+  const { showNotification } = useNotification();
+
 
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   useEffect(() => {
     fetchQuizSubmissions();
   }, []);
-
-  const fetchQuizSubmissions = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE}/api/submissions/admin/submissions?type=quiz`, {
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-      
-      if (res.ok) {
-        const data = await res.json();
-        setSubmissions(data.submissions || []);
-      }
-    } catch (err) {
-      console.error("Error fetching quiz submissions", err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const fetchQuizDetails = async (courseId: string, moduleId: string) => {
     try {
@@ -131,7 +118,74 @@ export default function Quizzes() {
     return totalQuestions > 0 ? (rawScore / totalQuestions) * 100 : 0;
   };
 
+// Add permission checking to fetchQuizSubmissions
+const fetchQuizSubmissions = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    
+    // First get courses to check permissions
+    const coursesRes = await fetch(`${API_BASE}/api/courses`, {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    
+    if (coursesRes.ok) {
+      const courses = await coursesRes.json();
+      await checkPermissionsForCourses(courses);
+    }
+
+    const res = await fetch(`${API_BASE}/api/submissions/admin/submissions?type=quiz`, {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    
+    if (res.ok) {
+      const data = await res.json();
+      setSubmissions(data.submissions || []);
+    }
+  } catch (err) {
+    console.error("Error fetching quiz submissions", err);
+  } finally {
+    setLoading(false);
+  }
+};
+
+  // Add permission check functions
+  const checkPermissionsForCourses = async (courses: any[]) => {
+    const token = localStorage.getItem("token");
+    const permissionsMap: Record<string, boolean> = {};
+
+    for (const course of courses) {
+      try {
+        const res = await fetch(`${API_BASE}/api/courses/${course._id}/permissions`, {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+        
+        if (res.ok) {
+          const data = await res.json();
+          permissionsMap[course._id] = data.canGrade || data.canManage || data.canReview || false;
+        } else {
+          permissionsMap[course._id] = false;
+        }
+      } catch (error) {
+        console.error(`Error checking permissions for course ${course._id}:`, error);
+        permissionsMap[course._id] = false;
+      }
+    }
+
+    setCoursePermissions(permissionsMap);
+  };
+
+  const canViewQuizResults = (courseId: string) => {
+    return coursePermissions[courseId] === true;
+  };
+
+  // Update openQuizDetails with permission check
   const openQuizDetails = async (submission: QuizSubmission) => {
+    if (!canViewQuizResults(submission.courseId._id)) {
+      showNotification("You don't have permission to view quiz results for this course", 'error');
+      return;
+    }
     setSelectedSubmission(submission);
     setIsModalOpen(true);
     await fetchQuizDetails(submission.courseId._id, submission.moduleId);
@@ -317,57 +371,71 @@ export default function Quizzes() {
           </div>
         ) : (
           <div className="divide-y divide-yt-light-border">
-            {filteredSubmissions.map((submission) => {
-              const status = getPassFailBadge(submission);
-              const StatusIcon = status.icon;
-              const percentageScore = calculatePercentageScore(submission);
-              
-              return (
-                <div key={submission._id} className="p-4 hover:bg-yt-light-hover transition-colors">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4 flex-1">
-                      <div className="w-10 h-10 bg-lfc-red rounded-full flex items-center justify-center text-white font-semibold">
-                        {submission.studentId.name.charAt(0)}
-                      </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center space-x-2 mb-1">
-                          <h4 className="font-medium text-yt-text-dark truncate">
-                            {submission.studentId.name}
-                          </h4>
-                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${status.color}`}>
-                            <StatusIcon className="mr-1" size={10} />
-                            {status.text}
-                          </span>
-                          <span className="bg-lfc-red text-white px-2 py-1 rounded-full text-xs font-medium">
-                            {Math.round(percentageScore)}%
-                          </span>
-                        </div>
-                        
-                        <p className="text-sm text-yt-text-gray truncate">
-                          {submission.courseId.title} • Quiz Attempt
-                        </p>
-                        
-                        <div className="flex items-center space-x-4 text-xs text-yt-text-gray mt-1">
-                          <span>Submitted: {new Date(submission.createdAt).toLocaleDateString()}</span>
-                          <span>Score: {Math.round(percentageScore)}%</span>
-                        </div>
-                      </div>
+          {filteredSubmissions.map((submission) => {
+            const status = getPassFailBadge(submission);
+            const StatusIcon = status.icon;
+            const percentageScore = calculatePercentageScore(submission);
+            const canView = canViewQuizResults(submission.courseId._id);
+            
+            return (
+              <div key={submission._id} className={`p-4 transition-colors ${
+                canView ? 'hover:bg-yt-light-hover' : 'bg-gray-50'
+              }`}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4 flex-1">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white ${
+                      canView ? 'bg-lfc-red' : 'bg-gray-400'
+                    } font-semibold`}>
+                      {submission.studentId.name.charAt(0)}
+                      {!canView && <FaLock className="absolute" size={10} />}
                     </div>
                     
-                    <div className="flex items-center space-x-2">
-                      <button
-                        onClick={() => openQuizDetails(submission)}
-                        className="p-2 text-yt-text-gray hover:text-lfc-red hover:bg-yt-light-hover rounded-lg transition-colors"
-                        title="View Details"
-                      >
-                        <FaEye />
-                      </button>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center space-x-2 mb-1">
+                        <h4 className="font-medium text-yt-text-dark truncate">
+                          {submission.studentId.name}
+                          {!canView && (
+                            <FaLock className="inline ml-2 text-gray-400" size={12} />
+                          )}
+                        </h4>
+                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${status.color}`}>
+                          <StatusIcon className="mr-1" size={10} />
+                          {status.text}
+                        </span>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          canView ? 'bg-lfc-red text-white' : 'bg-gray-300 text-gray-600'
+                        }`}>
+                          {Math.round(percentageScore)}%
+                        </span>
+                      </div>
+                      
+                      <p className="text-sm text-yt-text-gray truncate">
+                        {submission.courseId.title} • Quiz Attempt
+                        {!canView && (
+                          <span className="text-xs text-gray-500 ml-2">(Restricted Access)</span>
+                        )}
+                      </p>
                     </div>
                   </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => openQuizDetails(submission)}
+                      className={`p-2 rounded-lg transition-colors ${
+                        canView 
+                          ? 'text-yt-text-gray hover:text-lfc-red hover:bg-yt-light-hover' 
+                          : 'text-gray-300 cursor-not-allowed'
+                      }`}
+                      title={canView ? "View Details" : "No permission to view quiz results"}
+                      disabled={!canView}
+                    >
+                      <FaEye />
+                    </button>
+                  </div>
                 </div>
-              );
-            })}
+              </div>
+            );
+          })}
           </div>
         )}
       </div>

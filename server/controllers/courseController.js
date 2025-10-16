@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { Course } from '../models/Course.js';
 import { Submission } from '../models/Submission.js';import Enrollment from "../models/Enrollment.js";
 import { callCreateNotification } from "./notificationController.js";
+import { getUserCoursePermissions } from "../utils/coursePermissions.js";
 
 /**
  * COURSES
@@ -104,12 +105,30 @@ export const getCourseById = async (req, res) => {
   try {
     const course = await Course.findById(req.params.courseId)
       .populate('createdBy', 'name email')  // ADD THIS
-      .populate('instructors.userId', 'name email'); // ADD THIS
+      .populate('instructors.userId', 'name email') // ADD THIS
+      .select('+promoVideo');
     
     if (!course) return res.status(404).json({ message: "Course not found" });
     res.json(course);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch course", error: err.message });
+  }
+};
+
+// routes/courses.js - Add this route
+export const getCoursePermissions = async (req, res) => {
+  try {
+    const course = await Course.findById(req.params.courseId);
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+
+    const permissions = await getUserCoursePermissions(req.user._id, req.params.courseId);
+    
+    res.json(permissions);
+  } catch (error) {
+    console.error('Error fetching course permissions:', error);
+    res.status(500).json({ message: 'Error fetching permissions' });
   }
 };
 

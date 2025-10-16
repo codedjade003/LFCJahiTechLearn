@@ -573,6 +573,24 @@ const QuizComponent = ({ module, onComplete }: { module: Module; onComplete: () 
   );
 };
 
+const resolveMediaUrl = (url: string | undefined) => {
+  if (!url) return "";
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  
+  // If it's already a full URL (Cloudinary, external, etc.), return as is
+  if (url.startsWith('http')) {
+    return url;
+  }
+  
+  // If it's a Cloudinary URL without protocol
+  if (url.includes('cloudinary.com') || url.includes('res.cloudinary.com')) {
+    return `https://${url}`;
+  }
+  
+  // For local files, prepend API base
+  return `${API_BASE}${url.startsWith('/') ? '' : '/'}${url}`;
+};
+
 export default function CourseDetails() {
   const { courseId } = useParams();
   const navigate = useNavigate();
@@ -1125,7 +1143,24 @@ export default function CourseDetails() {
                           <video 
                             controls 
                             className="w-full h-auto max-h-96"
-                            src={`${API_BASE}${module.contentUrl}`}
+                            src={resolveMediaUrl(module.contentUrl)}
+                            onError={(e) => {
+                              console.error('Failed to load video:', module.contentUrl);
+                              const videoElement = e.target as HTMLVideoElement;
+                              videoElement.style.display = 'none';
+                              // Show error message
+                              const errorDiv = document.createElement('div');
+                              errorDiv.className = 'text-white p-4 text-center';
+                              errorDiv.innerHTML = `
+                                <p>Failed to load video</p>
+                                <p class="text-sm opacity-75">URL: ${module.contentUrl}</p>
+                                <button onclick="window.open('${resolveMediaUrl(module.contentUrl)}', '_blank')" 
+                                        class="mt-2 px-4 py-2 bg-red-600 rounded hover:bg-red-700">
+                                  Open Video in New Tab
+                                </button>
+                              `;
+                              (e.target as HTMLElement).parentNode?.appendChild(errorDiv);
+                            }}
                           >
                             Your browser does not support the video tag.
                           </video>
@@ -1137,9 +1172,11 @@ export default function CourseDetails() {
                           <FaFilePdf className="text-4xl text-red-500 mx-auto mb-4" />
                           <p className="text-yt-text-gray mb-4">PDF Document</p>
                           <a
-                            href={`${API_BASE}${module.contentUrl}`}
+                            href={resolveMediaUrl(module.contentUrl)}
                             download
                             className="px-6 py-2 bg-lfc-red text-white rounded-md hover:bg-lfc-gold-dark inline-flex items-center"
+                            target="_blank"
+                            rel="noopener noreferrer"
                           >
                             <FaDownload className="mr-2" />
                             Download PDF

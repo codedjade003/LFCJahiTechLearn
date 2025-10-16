@@ -9,9 +9,11 @@ import {
   FaClock,
   FaCheckCircle,
   FaExclamationTriangle,
-  FaFileAlt
+  FaFileAlt,
+  FaLock
 } from "react-icons/fa";
 import AssignmentSubmissionModal from "./AssignmentSubmissionModal";
+import { useNotification } from "../../../hooks/useNotification";
 
 interface AssignmentSubmission {
   _id: string;
@@ -60,8 +62,10 @@ export default function Assignments() {
   });
   const [selectedSubmission, setSelectedSubmission] = useState<AssignmentSubmission | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [coursePermissions, setCoursePermissions] = useState<Record<string, boolean>>({});
 
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const { showNotification } = useNotification();
 
   useEffect(() => {
     fetchAssignmentSubmissions();
@@ -90,6 +94,9 @@ export default function Assignments() {
       );
       
       console.log(`📊 Found ${coursesWithAssignments.length} courses with assignments`);
+      
+      // Check permissions for each course
+      await checkPermissionsForCourses(coursesWithAssignments);
       
       // Fetch assignment submissions for each course
       const allAssignmentSubmissions: AssignmentSubmission[] = [];
@@ -138,7 +145,46 @@ export default function Assignments() {
     }
   };
 
+  const checkPermissionsForCourses = async (courses: any[]) => {
+    const token = localStorage.getItem("token");
+    const permissionsMap: Record<string, boolean> = {};
+
+    for (const course of courses) {
+      try {
+        const res = await fetch(`${API_BASE}/api/courses/${course._id}/permissions`, {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+        
+        if (res.ok) {
+          const data = await res.json();
+          permissionsMap[course._id] = data.canGrade || data.canManage || false;
+        } else {
+          permissionsMap[course._id] = false;
+        }
+      } catch (error) {
+        console.error(`Error checking permissions for course ${course._id}:`, error);
+        permissionsMap[course._id] = false;
+      }
+    }
+
+    setCoursePermissions(permissionsMap);
+  };
+
+  const canGradeCourse = (courseId: string) => {
+    return coursePermissions[courseId] === true;
+  };
+
   const handleGradeSubmission = async (submissionId: string, grade: number, feedback: string) => {
+    const submission = submissions.find(s => s._id === submissionId);
+    if (!submission) return;
+
+    if (!canGradeCourse(submission.courseId._id)) {
+      showNotification("You don't have permission to grade assignments for this course", 'error');
+      return;
+    }
+
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(`${API_BASE}/api/submissions/${submissionId}/grade`, {
@@ -176,6 +222,10 @@ export default function Assignments() {
 
   // Open submission for viewing/grading
   const openSubmission = (submission: AssignmentSubmission) => {
+    if (!canGradeCourse(submission.courseId._id)) {
+      showNotification("You don't have permission to view or grade assignments for this course", 'error');
+      return;
+    }
     setSelectedSubmission(submission);
     setIsModalOpen(true);
   };
@@ -357,38 +407,49 @@ export default function Assignments() {
 
       {/* Submissions List */}
       <div className="divide-y divide-yt-light-border">
-        {filteredSubmissions.map((submission) => {
-          const status = getStatusBadge(submission);
-          const StatusIcon = status.icon;
-          const FileTypeIcon = getFileTypeIcon(submission);
-          
-          return (
-            <div key={submission._id} className="p-4 hover:bg-yt-light-hover transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4 flex-1">
-                  <div className="w-10 h-10 bg-lfc-red rounded-full flex items-center justify-center text-white">
-                    <FileTypeIcon />
+      {filteredSubmissions.map((submission) => {
+        const status = getStatusBadge(submission);
+        const StatusIcon = status.icon;
+        const FileTypeIcon = getFileTypeIcon(submission);
+        const canGrade = canGradeCourse(submission.courseId._id);
+        
+        return (
+          <div key={submission._id} className={`p-4 transition-colors ${
+            canGrade ? 'hover:bg-yt-light-hover' : 'bg-gray-50'
+          }`}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4 flex-1">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white ${
+                  canGrade ? 'bg-lfc-red' : 'bg-gray-400'
+                }`}>
+                  <FileTypeIcon />
+                </div>
+                
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center space-x-2 mb-1">
+                    <h4 className="font-medium text-yt-text-dark truncate">
+                      {submission.studentId.name}
+                      {!canGrade && (
+                        <FaLock className="inline ml-2 text-gray-400" size={12} />
+                      )}
+                    </h4>
+                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${status.color}`}>
+                      <StatusIcon className="mr-1" size={10} />
+                      {status.text}
+                    </span>
+                    {submission.grade && (
+                      <span className="bg-lfc-red text-white px-2 py-1 rounded-full text-xs font-medium">
+                        {submission.grade}%
+                      </span>
+                    )}
                   </div>
                   
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center space-x-2 mb-1">
-                      <h4 className="font-medium text-yt-text-dark truncate">
-                        {submission.studentId.name}
-                      </h4>
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${status.color}`}>
-                        <StatusIcon className="mr-1" size={10} />
-                        {status.text}
-                      </span>
-                      {submission.grade && (
-                        <span className="bg-lfc-red text-white px-2 py-1 rounded-full text-xs font-medium">
-                          {submission.grade}%
-                        </span>
-                      )}
-                    </div>
-                    
-                    <p className="text-sm text-yt-text-gray truncate">
-                      {submission.courseId.title} • {submission.assignmentId?.title || 'Assignment'}
-                    </p>
+                  <p className="text-sm text-yt-text-gray truncate">
+                    {submission.courseId.title} • {submission.assignmentId?.title || 'Assignment'}
+                    {!canGrade && (
+                      <span className="text-xs text-gray-500 ml-2">(Read Only)</span>
+                    )}
+                  </p>
                     
                     <div className="flex items-center space-x-4 text-xs text-yt-text-gray mt-1">
                       <span>Submitted: {new Date(submission.createdAt).toLocaleDateString()}</span>
@@ -405,8 +466,13 @@ export default function Assignments() {
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => openSubmission(submission)}
-                    className="p-2 text-yt-text-gray hover:text-lfc-red hover:bg-red-50 rounded-lg transition-colors"
-                    title="View and Grade Assignment"
+                    className={`p-2 rounded-lg transition-colors ${
+                      canGrade 
+                        ? 'text-yt-text-gray hover:text-lfc-red hover:bg-red-50' 
+                        : 'text-gray-300 cursor-not-allowed'
+                    }`}
+                    title={canGrade ? "View and Grade Assignment" : "No permission to grade"}
+                    disabled={!canGrade}
                   >
                     <FaEdit />
                   </button>

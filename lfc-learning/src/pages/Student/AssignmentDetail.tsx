@@ -209,7 +209,7 @@ export default function AssignmentDetail() {
     if (submissionData.type === 'file_upload' && submissionData.file) {
       const formData = new FormData();
       formData.append('submissionType', submissionData.type);
-      formData.append('file', submissionData.file);
+      formData.append('submissionFile', submissionData.file); 
       
       const res = await fetch(
         `${API_BASE}/api/submissions/course/${courseId}/assignments/${assignmentId}`, 
@@ -366,8 +366,9 @@ export default function AssignmentDetail() {
               {assignment.materials.map((material, index) => (
                 <a
                   key={index}
-                  href={`${API_BASE}${material.url}`}
-                  download
+                  href={material.url.startsWith('http') ? material.url : `${API_BASE}${material.url}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-center p-3 border border-yt-light-border rounded-lg hover:bg-yt-light-hover transition-colors"
                 >
                   <FaDownload className="text-lfc-red mr-3" />
