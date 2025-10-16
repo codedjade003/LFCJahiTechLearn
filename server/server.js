@@ -31,6 +31,7 @@ import proctoringRoutes from './routes/proctoringRoutes.js';
 import supportRoutes from './routes/supportRoutes.js';
 import nukeRoutes from './routes/nuke.js';
 import certificateRoutes from './routes/certificateRoutes.js';
+import feedbackRoutes from './routes/feedbackRoutes.js';
 
 // Import dueDateNotifier only if it exists and is needed
 try {
@@ -134,6 +135,7 @@ app.use('/api/certificates', certificateRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use('/uploads/submissions', express.static(path.join(__dirname, 'uploads/submissions')));
 app.use('/api/proctoring', proctoringRoutes);
+app.use('/api/feedback', feedbackRoutes);
 app.use('/api', nukeRoutes);
 
 // Serve static files in production (for Vite build)

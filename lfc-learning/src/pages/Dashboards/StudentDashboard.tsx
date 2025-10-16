@@ -4,10 +4,13 @@ import CourseCategories from "../../components/Dashboard/CourseCategories";
 import CourseGrid from "../../components/Dashboard/CourseGrid";
 import { useAuthGuard } from "../../hooks/useAuthGuard";
 import { useAuth } from "../../context/AuthContext";
+import { useOnboarding } from "../../context/OnboardingContext";
 import DashboardStats from "../../components/Dashboard/DashboardStats";
 import ProfileCompletionBanner from "../../components/Dashboard/ProfileCompletionBanner";
 import OnboardingModal from "../../components/Dashboard/OnboardingModal";
+import OnboardingTour from "../../components/shared/OnboardingTour";
 import type { Course } from "../../types/course";
+import type { Step } from "react-joyride";
 
 interface UserProfile {
   profilePicture: string;
@@ -17,11 +20,41 @@ interface UserProfile {
   maritalStatus: string;
   technicalUnit: string;
   profilePicturePreview?: string;
+  hasSeenOnboarding?: boolean;
 }
 
 const StudentDashboard = () => {
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   useAuthGuard();
+
+  // Onboarding tour steps
+  const dashboardTourSteps: Step[] = [
+    {
+      target: "body",
+      content: "Welcome to your Student Dashboard! Let's take a quick tour to help you get started.",
+      placement: "center",
+    },
+    {
+      target: '[data-tour="stats"]',
+      content: "Here you can see your learning progress, enrolled courses, and achievements at a glance.",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tour="search"]',
+      content: "Use the search bar to quickly find courses, instructors, or topics you're interested in.",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tour="categories"]',
+      content: "Browse courses by category. Click on any category to filter the course list.",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tour="courses"]',
+      content: "All available courses are displayed here. Click on any course to view details and enroll.",
+      placement: "top",
+    },
+  ];
 
   const [courses, setCourses] = useState<Course[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -44,7 +77,9 @@ const StudentDashboard = () => {
   const [file, setFile] = useState<File | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [onboardingDismissed, setOnboardingDismissed] = useState(false);
   const { fetchUser } = useAuth();
+  const { progress } = useOnboarding();
 
   // Use the fixed categories for the filter options
   const filterOptions = useMemo(() => FIXED_CATEGORIES, []);
@@ -146,14 +181,11 @@ const StudentDashboard = () => {
             phoneNumber: userData.phoneNumber || "",
             maritalStatus: userData.maritalStatus || "",
             technicalUnit: userData.technicalUnit || "All Courses",
+            hasSeenOnboarding: userData.hasSeenOnboarding || false,
           };
 
           setProfile(userProfile);
           setSelectedCategory(userData.technicalUnit || "All Courses");
-
-          if (!userData.hasSeenOnboarding) {
-            setTimeout(() => setShowOnboarding(true), 100);
-          }
         }
       } catch (err) {
         console.error("Error loading data:", err);
@@ -165,25 +197,59 @@ const StudentDashboard = () => {
     loadAllData();
   }, [fetchUser]);
 
+  // Show onboarding modal after tour completes OR if tour is disabled
+  useEffect(() => {
+    if (!isInitialLoading && profile && !onboardingDismissed) {
+      // Only show modal if user hasn't seen onboarding
+      if (!profile.hasSeenOnboarding) {
+        // If tour is completed OR if user has onboarding disabled, show modal
+        if (progress.dashboard) {
+          // Tour completed, show modal after short delay
+          setTimeout(() => setShowOnboarding(true), 500);
+        }
+      }
+    }
+  }, [isInitialLoading, profile, progress.dashboard, onboardingDismissed]);
+
   const handleFinish = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
-      if (!token || !profile) return;
+      if (!token || !profile) {
+        console.error("Missing token or profile:", { token: !!token, profile: !!profile });
+        return;
+      }
+
+      console.log("Starting profile update...");
+      console.log("Profile data:", profile);
+      console.log("File to upload:", file);
 
       if (file) {
+        console.log("Uploading profile picture...");
         const pictureFormData = new FormData();
-        pictureFormData.append("profilePicture", file);
+        pictureFormData.append("image", file);
 
-        await fetch(`${API_BASE}/api/auth/upload-profile-picture`, {
+        const pictureResponse = await fetch(`${API_BASE}/api/auth/profile-picture`, {
           method: "PUT",
           headers: { Authorization: `Bearer ${token}` },
           body: pictureFormData,
         });
+        
+        console.log("Picture upload response status:", pictureResponse.status);
+        
+        if (!pictureResponse.ok) {
+          const errorData = await pictureResponse.json().catch(() => ({ message: "Unknown error" }));
+          console.error("Picture upload failed:", errorData);
+          throw new Error(`Failed to upload profile picture: ${errorData.message || pictureResponse.statusText}`);
+        }
+        
+        console.log("Picture uploaded successfully");
       }
 
-      const { profilePicturePreview, ...safeProfile } = profile;
+      const { profilePicturePreview, profilePicture, ...safeProfile } = profile;
+      
+      console.log("Updating profile with data:", safeProfile);
 
-      await fetch(`${API_BASE}/api/auth/update-profile`, {
+      const profileResponse = await fetch(`${API_BASE}/api/auth/update-profile`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -191,22 +257,51 @@ const StudentDashboard = () => {
         },
         body: JSON.stringify(safeProfile),
       });
+      
+      console.log("Profile update response status:", profileResponse.status);
+      
+      if (!profileResponse.ok) {
+        const errorData = await profileResponse.json().catch(() => ({ message: "Unknown error" }));
+        console.error("Profile update failed:", errorData);
+        throw new Error(`Failed to update profile: ${errorData.message || profileResponse.statusText}`);
+      }
 
+      const profileData = await profileResponse.json();
+      console.log("Profile updated successfully:", profileData);
+
+      console.log("Marking onboarding as seen...");
       await fetch(`${API_BASE}/api/auth/seen-onboarding`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
       });
 
       setShowOnboarding(false);
-      setProfile(prev => prev ? { ...prev, ...safeProfile } : null);
+      setOnboardingDismissed(true);
+      setProfile(prev => prev ? { ...prev, ...safeProfile, hasSeenOnboarding: true } : null);
+      await fetchUser();
+      console.log("Profile update complete!");
     } catch (err) {
-      console.error(err);
+      console.error("Error saving profile:", err);
+      alert(`Failed to save profile: ${err instanceof Error ? err.message : "Unknown error"}`);
     }
-  }, [file, profile]);
+  }, [file, profile, fetchUser, API_BASE]);
 
-  const handleSkip = useCallback(() => {
+  const handleSkip = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (token) {
+        await fetch(`${API_BASE}/api/auth/seen-onboarding`, {
+          method: "PUT",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setProfile(prev => prev ? { ...prev, hasSeenOnboarding: true } : null);
+      }
+    } catch (err) {
+      console.error("Error marking onboarding as seen:", err);
+    }
     setShowOnboarding(false);
-  }, []);
+    setOnboardingDismissed(true);
+  }, [API_BASE]);
 
   const handleNextStep = useCallback(() => {
     if (currentStep === onboardingSteps.current.length - 1) {
@@ -362,7 +457,10 @@ const StudentDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Onboarding Tour - Shows BEFORE profile completion */}
+      <OnboardingTour tourKey="dashboard" steps={dashboardTourSteps} />
+
       {/* Profile completion banner */}
       {showBanner && (
         <ProfileCompletionBanner
@@ -389,13 +487,15 @@ const StudentDashboard = () => {
       {/* Main Content - YouTube-like Layout */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Header Stats */}
-        <DashboardStats />
+        <div data-tour="stats">
+          <DashboardStats />
+        </div>
 
         {/* Notifications */}
         <Notifications />
 
         {/* Search Bar - YouTube Style */}
-        <div className="mb-6">
+        <div className="mb-6" data-tour="search">
           <div className="relative max-w-2xl mx-auto">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <svg className="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -413,7 +513,7 @@ const StudentDashboard = () => {
         </div>
 
         {/* Categories - Horizontal Scrolling like YouTube */}
-        <div className="mb-6">
+        <div className="mb-6" data-tour="categories">
           <CourseCategories 
             filterOptions={filterOptions}
             selectedFilter={selectedCategory}
@@ -421,7 +521,7 @@ const StudentDashboard = () => {
         </div>
 
         {/* Course Grid */}
-        <div className="mb-8">
+        <div className="mb-8" data-tour="courses">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
             {selectedCategory === "All Courses" ? "Recommended Courses" : selectedCategory}
           </h2>

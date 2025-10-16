@@ -88,7 +88,7 @@ export default function RecentUsers() {
     if (!confirm('Are you sure you want to delete this user?')) return;
     
     try {
-      const response = await fetch(`${API_BASE}/api/admin/users/${userId}`, {
+      const response = await fetch(`${API_BASE}/api/auth/users/${userId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -98,11 +98,12 @@ export default function RecentUsers() {
       if (response.ok) {
         fetchRecentUsers();
       } else {
-        alert('Failed to delete user');
+        const errorData = await response.json();
+        alert(`Failed to delete user: ${errorData.message || 'Unknown error'}`);
       }
     } catch (error) {
       console.error('Error deleting user:', error);
-      alert('Error deleting user');
+      alert(`Error deleting user: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 

@@ -1,5 +1,6 @@
 // src/components/Admin/PendingAssessments.tsx
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { FaFileAlt, FaProjectDiagram, FaQuestionCircle, FaExclamationCircle } from "react-icons/fa";
 
 interface Assessment {
@@ -77,6 +78,16 @@ export default function PendingAssessments() {
     return `In ${diffDays} days`;
   };
 
+  const getAssessmentLink = (type: string) => {
+    switch (type) {
+      case 'assignment': return "/admin/dashboard/assessments/assignments";
+      case 'project': return "/admin/dashboard/assessments/projects";
+      case 'quiz': return "/admin/dashboard/assessments/quizzes";
+      case 'exam': return "/admin/dashboard/assessments/exams";
+      default: return "/admin/dashboard/assessments/assignments";
+    }
+  };
+
   if (loading) {
     return (
       <div className="bg-white rounded-lg shadow">
@@ -102,14 +113,20 @@ export default function PendingAssessments() {
     <div className="bg-white rounded-lg shadow">
       <div className="p-6 border-b flex justify-between items-center">
         <h2 className="text-lg font-semibold text-redCustom">Pending Assessments</h2>
-        <button className="text-goldCustom hover:text-redCustom text-sm">View All</button>
+        <Link to="/admin/dashboard/assessments/assignments" className="text-goldCustom hover:text-redCustom text-sm">
+          View All
+        </Link>
       </div>
       <div className="p-6 space-y-4">
         {assessments.length === 0 ? (
           <div className="text-center py-4 text-gray-500">No pending assessments</div>
         ) : (
           assessments.map((item) => (
-            <div key={item._id} className="flex items-start p-3 border rounded-lg hover:bg-gray-50">
+            <Link 
+              key={item._id} 
+              to={getAssessmentLink(item.type)}
+              className="flex items-start p-3 border rounded-lg hover:bg-gray-50 transition-colors"
+            >
               <div className={`p-2 rounded-full mr-4 ${getAssessmentColor(item.type, item.status)}`}>
                 {getAssessmentIcon(item.type)}
               </div>
@@ -122,11 +139,11 @@ export default function PendingAssessments() {
                 </div>
                 <p className="text-sm text-gray-500 mb-2">Submitted by: {item.submittedBy}</p>
                 <div className="flex space-x-2">
-                  <button className="text-sm bg-goldCustom hover:bg-redCustom text-white px-3 py-1 rounded">Review</button>
-                  <button className="text-sm border border-gray-300 hover:bg-gray-100 px-3 py-1 rounded">View</button>
+                  <span className="text-sm bg-goldCustom hover:bg-redCustom text-white px-3 py-1 rounded inline-block">Review</span>
+                  <span className="text-sm border border-gray-300 hover:bg-gray-100 px-3 py-1 rounded inline-block">View</span>
                 </div>
               </div>
-            </div>
+            </Link>
           ))
         )}
       </div>

@@ -305,6 +305,56 @@ export const submitQuiz = async (userId, courseId, quizId, answers) => {
   }
 };
 
+// Track when a module is started/accessed
+export const trackModuleAccess = async (userId, courseId, moduleId) => {
+  try {
+    const enrollment = await Enrollment.findOne({ user: userId, course: courseId });
+    if (!enrollment) throw new Error("Enrollment not found");
+
+    const timestamp = now();
+    
+    // Check if module progress already exists
+    const existingProgress = enrollment.moduleProgress.find(
+      mp => mp.moduleId.toString() === moduleId.toString()
+    );
+
+    if (existingProgress) {
+      // Update lastAccessed time
+      await Enrollment.findOneAndUpdate(
+        {
+          user: userId,
+          course: courseId,
+          "moduleProgress.moduleId": moduleId
+        },
+        {
+          $set: {
+            "moduleProgress.$.lastAccessed": timestamp
+          }
+        }
+      );
+    } else {
+      // Create new module progress entry with start time
+      await Enrollment.findOneAndUpdate(
+        { user: userId, course: courseId },
+        {
+          $push: {
+            moduleProgress: {
+              moduleId,
+              completed: false,
+              lastAccessed: timestamp
+            }
+          }
+        }
+      );
+    }
+
+    return { success: true, timestamp };
+  } catch (error) {
+    console.error("Error tracking module access:", error);
+    throw error;
+  }
+};
+
 export const markModuleComplete = async (userId, courseId, moduleId, completed = true) => {
   // ensure enrollment exists
   const enrollment = await Enrollment.findOne({ user: userId, course: courseId });

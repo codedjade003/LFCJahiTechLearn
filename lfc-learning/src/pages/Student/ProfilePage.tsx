@@ -1,11 +1,12 @@
 // src/pages/ProfilePage.tsx
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { useTheme } from "../../context/ThemeContext";
 import { 
   FaUser, FaEnvelope, FaCalendar, FaPhone, FaBriefcase, 
   FaBuilding, FaGlobe, FaLink, FaSave,
   FaMapMarkerAlt, FaHeart, FaCode, FaGithub, 
-  FaLinkedin, FaInstagram, FaFacebook, FaCamera, FaEdit
+  FaLinkedin, FaInstagram, FaFacebook, FaCamera, FaEdit,
 } from "react-icons/fa";
 import { FaGraduationCap, FaPlus, FaXTwitter,
 } from "react-icons/fa6";
@@ -40,6 +41,11 @@ const ProfilePage = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [passwordMessage, setPasswordMessage] = useState("");
+  
+  // Theme and preferences
+  const { setTheme } = useTheme();
+  const [onboardingEnabled, setOnboardingEnabled] = useState(true);
+  const [preferencesLoading, setPreferencesLoading] = useState(false);
 
 
   if (!user) return <div className="flex justify-center items-center min-h-screen">
@@ -107,6 +113,56 @@ const ProfilePage = () => {
       setPasswordMessage(err.message);
     } finally {
       setPasswordLoading(false);
+    }
+  };
+
+  // Fetch user preferences
+  useEffect(() => {
+    const fetchPreferences = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch(`${API_BASE}/api/users/preferences`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setOnboardingEnabled(data.preferences?.onboardingEnabled !== false);
+          if (data.preferences?.theme) {
+            setTheme(data.preferences.theme);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching preferences:", err);
+      }
+    };
+    fetchPreferences();
+  }, []);
+
+  // Update preferences
+  const handlePreferenceUpdate = async (key: string, value: any) => {
+    setPreferencesLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_BASE}/api/users/preferences`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ [key]: value }),
+      });
+
+      if (res.ok) {
+        if (key === "theme") {
+          setTheme(value);
+        } else if (key === "onboardingEnabled") {
+          setOnboardingEnabled(value);
+        }
+      }
+    } catch (err) {
+      console.error("Error updating preference:", err);
+    } finally {
+      setPreferencesLoading(false);
     }
   };
 
@@ -483,24 +539,24 @@ const validateUsername = (username: string) => {
         </div>
 
         {/* Stats Bar */}
-        <div className="grid grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
           <div className="bg-white p-4 rounded-lg shadow text-center">
             <div className="text-2xl font-bold text-redCustom">{user.loginCount || 0}</div>
-            <div className="text-gray-600">Total Logins</div>
+            <div className="text-sm sm:text-base text-gray-600">Total Logins</div>
           </div>
           <div className="bg-white p-4 rounded-lg shadow text-center">
             <div className="text-2xl font-bold text-redCustom">{user.streak?.current || 0}</div>
-            <div className="text-gray-600">Current Streak</div>
+            <div className="text-sm sm:text-base text-gray-600">Current Streak</div>
           </div>
           <div className="bg-white p-4 rounded-lg shadow text-center">
             <div className="text-2xl font-bold text-redCustom">{user.streak?.longest || 0}</div>
-            <div className="text-gray-600">Longest Streak</div>
+            <div className="text-sm sm:text-base text-gray-600">Longest Streak</div>
           </div>
           <div className="bg-white p-4 rounded-lg shadow text-center">
-            <div className="text-2xl font-bold text-redCustom">
+            <div className="text-lg sm:text-2xl font-bold text-redCustom break-words">
               {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : "Never"}
             </div>
-            <div className="text-gray-600">Last Login</div>
+            <div className="text-sm sm:text-base text-gray-600">Last Login</div>
           </div>
         </div>
 
@@ -990,71 +1046,111 @@ const validateUsername = (username: string) => {
 
           {/* Preferences Tab */}
           {activeTab === "preferences" && (
-            <div className="space-y-6 max-w-md mx-auto">
-              <h3 className="text-lg font-semibold text-gray-900">
-                Change Password
-              </h3>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Current Password
-                  </label>
-                  <input
-                    type="password"
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                    placeholder="Enter your current password"
-                  />
+            <div className="space-y-8 max-w-2xl mx-auto">
+              {/* Onboarding Settings */}
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  Onboarding & Hints
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-gray-900 dark:text-white">Show Onboarding Tours</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Display helpful hints when visiting new pages
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => handlePreferenceUpdate("onboardingEnabled", !onboardingEnabled)}
+                      disabled={preferencesLoading}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                        onboardingEnabled ? "bg-redCustom" : "bg-gray-300 dark:bg-gray-600"
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                          onboardingEnabled ? "translate-x-6" : "translate-x-1"
+                        }`}
+                      />
+                    </button>
+                  </div>
+                  {!onboardingEnabled && (
+                    <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
+                      <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                        💡 Tip: You can re-enable onboarding tours anytime to get helpful hints while navigating the platform.
+                      </p>
+                    </div>
+                  )}
                 </div>
+              </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    New Password
-                  </label>
-                  <input
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                    placeholder="Enter new password"
-                  />
-                </div>
+              {/* Password Settings */}
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  Change Password
+                </h3>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Confirm New Password
-                  </label>
-                  <input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                    placeholder="Confirm new password"
-                  />
-                </div>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Current Password
+                    </label>
+                    <input
+                      type="password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      placeholder="Enter your current password"
+                    />
+                  </div>
 
-                <button
-                  type="button"
-                  onClick={handlePasswordChange}
-                  disabled={passwordLoading}
-                  className="w-full bg-redCustom text-white py-2 rounded-lg hover:bg-red-700 disabled:opacity-50"
-                >
-                  {passwordLoading ? "Updating..." : "Update Password"}
-                </button>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      New Password
+                    </label>
+                    <input
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      placeholder="Enter new password"
+                    />
+                  </div>
 
-                {passwordMessage && (
-                  <p
-                    className={`text-sm mt-2 ${
-                      passwordMessage.includes("success")
-                        ? "text-green-600"
-                        : "text-red-600"
-                    }`}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Confirm New Password
+                    </label>
+                    <input
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      placeholder="Confirm new password"
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handlePasswordChange}
+                    disabled={passwordLoading}
+                    className="w-full bg-redCustom text-white py-2 rounded-lg hover:bg-red-700 disabled:opacity-50"
                   >
-                    {passwordMessage}
-                  </p>
-                )}
+                    {passwordLoading ? "Updating..." : "Update Password"}
+                  </button>
+
+                  {passwordMessage && (
+                    <p
+                      className={`text-sm mt-2 ${
+                        passwordMessage.includes("success")
+                          ? "text-green-600 dark:text-green-400"
+                          : "text-red-600 dark:text-red-400"
+                      }`}
+                    >
+                      {passwordMessage}
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           )}

@@ -188,7 +188,7 @@ export default function ProjectDetail() {
       if (submissionData.type === 'file_upload' && submissionData.file) {
         const formData = new FormData();
         formData.append('submissionType', submissionData.type);
-        formData.append('file', submissionData.file);
+        formData.append('submissionFile', submissionData.file);
         
         console.log('📤 Uploading file:', submissionData.file.name);
 
@@ -358,17 +358,42 @@ export default function ProjectDetail() {
           <div className="p-6 border-b border-yt-light-border">
             <h2 className="text-lg font-semibold mb-3">Materials</h2>
             <div className="space-y-2">
-              {project.materials.map((material, index) => (
-                <a
-                  key={index}
-                  href={`${API_BASE}${material.url}`}
-                  download
-                  className="flex items-center p-3 border border-yt-light-border rounded-lg hover:bg-yt-light-hover transition-colors"
-                >
-                  <FaDownload className="text-lfc-red mr-3" />
-                  <span className="text-yt-text-dark">{material.name}</span>
-                </a>
-              ))}
+              {project.materials.map((material, index) => {
+                // Parse material if it's a string (legacy data)
+                let parsedMaterial = material;
+                if (typeof material === 'string') {
+                  try {
+                    parsedMaterial = JSON.parse(material);
+                  } catch (e) {
+                    console.error('Failed to parse material:', material);
+                    return null;
+                  }
+                }
+                
+                // Skip if no URL
+                if (!parsedMaterial || !parsedMaterial.url) return null;
+                
+                // Handle both full URLs (Cloudinary) and relative paths
+                const materialUrl = parsedMaterial.url.startsWith('http') 
+                  ? parsedMaterial.url 
+                  : `${API_BASE}${parsedMaterial.url}`;
+                
+                return (
+                  <a
+                    key={index}
+                    href={materialUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center p-3 border border-yt-light-border rounded-lg hover:bg-yt-light-hover transition-colors"
+                  >
+                    <FaDownload className="text-lfc-red mr-3" />
+                    <div className="flex-1">
+                      <span className="text-yt-text-dark">{parsedMaterial.name || 'Unnamed file'}</span>
+                      {parsedMaterial.type && <span className="text-xs text-gray-500 ml-2 capitalize">({parsedMaterial.type})</span>}
+                    </div>
+                  </a>
+                );
+              })}
             </div>
           </div>
         )}

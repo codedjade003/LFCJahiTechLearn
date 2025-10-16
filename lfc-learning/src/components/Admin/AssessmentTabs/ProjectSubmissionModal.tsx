@@ -120,9 +120,11 @@ export default function ProjectSubmissionModal({
               <div className="flex items-center">
                 <FaPaperclip className="text-gray-400 mr-2" />
                 <span className="font-medium">{file.name}</span>
-                <span className="text-sm text-gray-500 ml-2">
-                  ({(file.size / 1024 / 1024).toFixed(1)} MB)
-                </span>
+                {file.size && !isNaN(file.size) && (
+                  <span className="text-sm text-gray-500 ml-2">
+                    ({(file.size / 1024 / 1024).toFixed(1)} MB)
+                  </span>
+                )}
               </div>
               <a
                 href={file.url}

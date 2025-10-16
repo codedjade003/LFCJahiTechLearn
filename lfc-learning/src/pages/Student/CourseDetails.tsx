@@ -22,12 +22,18 @@ import { FaLinkedin, FaWhatsapp, FaFacebook, FaXTwitter } from "react-icons/fa6"
 import { motion, AnimatePresence } from "framer-motion";
 
 import { ShareButton } from "../../components/ShareButton";
+import Certificate from "../../components/shared/Certificate";
+import { useAuth } from "../../context/AuthContext";
+import ModuleSurvey, { type SurveyData } from "../../components/shared/ModuleSurvey";
+import ModuleOverviewModal from "../../components/Student/ModuleOverviewModal";
+import ModuleCompletionModal from "../../components/Student/ModuleCompletionModal";
 
 interface Module {
   _id: string;
   type: 'video' | 'pdf' | 'quiz';
   title: string;
   description?: string;
+  objectives?: string[];
   contentUrl?: string;
   duration?: string;
   estimatedDuration?: {
@@ -41,7 +47,14 @@ interface Module {
       correctAnswer: string;
     }>;
     dueDate?: string;
-    timeLimit?: number; // Add this line
+    timeLimit?: number;
+  };
+  survey?: {
+    questions: Array<{
+      question: string;
+      type: "text" | "rating" | "multiple-choice";
+      options?: string[];
+    }>;
   };
 }
 
@@ -74,6 +87,7 @@ interface Enrollment {
   _id: string;
   progress: number;
   completed: boolean;
+  completedAt?: string;
   sectionProgress: Array<{
     sectionId: string;
     completed: boolean;
@@ -91,7 +105,17 @@ type Page = 'overview' | 'modules' | 'completion';
 
 // Add this component above CourseDetails
 // Enhanced QuizComponent with Advanced Proctoring
-const QuizComponent = ({ module, onComplete }: { module: Module; onComplete: () => void }) => {
+const QuizComponent = ({ 
+  module, 
+  onComplete,
+  setPendingModule,
+  setShowCompletionModal
+}: { 
+  module: Module; 
+  onComplete: () => void;
+  setPendingModule: (module: Module) => void;
+  setShowCompletionModal: (show: boolean) => void;
+}) => {
   const { courseId } = useParams();
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   
@@ -166,8 +190,10 @@ const QuizComponent = ({ module, onComplete }: { module: Module; onComplete: () 
       await submitQuizResults(quizState.userAnswers, quizState.score, passed);
       
       if (passed) {
-        // Only complete if not requiring review
-        onComplete();
+        // Show completion modal with survey instead of directly completing
+        setPendingModule(module);
+        setShowCompletionModal(true);
+        onComplete(); // Still mark as complete in the background
       } else {
         toast.error(`Quiz failed. You scored ${percentage.toFixed(1)}%, but need 70% to pass.`);
       }
@@ -596,6 +622,7 @@ const resolveMediaUrl = (url: string | undefined) => {
 export default function CourseDetails() {
   const { courseId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [course, setCourse] = useState<Course | null>(null);
   const [enrollment, setEnrollment] = useState<Enrollment | null>(null);
   const [loading, setLoading] = useState(true);
@@ -605,6 +632,12 @@ export default function CourseDetails() {
   const [submittingFeedback, setSubmittingFeedback] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [rating, setRating] = useState(5);
+  const [showSurvey, setShowSurvey] = useState(false);
+  const [surveyModuleId] = useState<string | null>(null);
+  const [surveyModuleTitle] = useState<string>('');
+  const [showOverviewModal, setShowOverviewModal] = useState(false);
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [pendingModule, setPendingModule] = useState<Module | null>(null);
 
   const submitFeedback = async () => {
     if (!feedback.trim()) return;
@@ -722,6 +755,18 @@ export default function CourseDetails() {
         console.log('Module marked complete:', data);
         await fetchEnrollmentProgress();
         toast.success("Module marked as complete!");
+        
+        // Show completion modal with survey
+        if (course) {
+          const module = course.sections
+            .flatMap(s => s.modules)
+            .find(m => m._id === moduleId);
+          
+          if (module) {
+            setPendingModule(module);
+            setShowCompletionModal(true);
+          }
+        }
       } else {
         const errorText = await res.text();
         console.log("Mark complete failed:", errorText);
@@ -741,6 +786,31 @@ export default function CourseDetails() {
     } catch (err) {
       console.error("Error marking module complete:", err);
       toast.error("Network error while marking module complete");
+    }
+  };
+
+  const handleSurveySubmit = async (surveyData: SurveyData) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_BASE}/api/feedback/modules/${surveyModuleId}`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          courseId,
+          ...surveyData
+        })
+      });
+
+      if (res.ok) {
+        toast.success("Thank you for your feedback!");
+      } else {
+        console.error("Failed to submit survey");
+      }
+    } catch (error) {
+      console.error("Error submitting survey:", error);
     }
   };
 
@@ -953,9 +1023,31 @@ export default function CourseDetails() {
                               return (
                                 <button
                                   key={module._id}
-                                  onClick={() => {
-                                    setActiveModule(module._id);
-                                    setActivePage('modules');
+                                  onClick={async () => {
+                                    const isCompleted = isModuleCompleted(module._id);
+                                    if (!isCompleted && (module.description || (module.objectives && module.objectives.length > 0))) {
+                                      setPendingModule(module);
+                                      setShowOverviewModal(true);
+                                    } else {
+                                      // Track module access
+                                      if (!isCompleted && courseId) {
+                                        try {
+                                          const token = localStorage.getItem("token");
+                                          await fetch(`${API_BASE}/api/progress/${courseId}/modules/${module._id}/access`, {
+                                            method: "POST",
+                                            headers: {
+                                              "Authorization": `Bearer ${token}`,
+                                              "Content-Type": "application/json",
+                                            },
+                                          });
+                                        } catch (err) {
+                                          console.error("Error tracking module access:", err);
+                                        }
+                                      }
+                                      
+                                      setActiveModule(module._id);
+                                      setActivePage('modules');
+                                    }
                                   }}
                                   className={`w-full text-left p-2 rounded text-sm transition-colors ${
                                     isCompleted
@@ -1088,7 +1180,9 @@ export default function CourseDetails() {
                         onComplete={() => {
                           markModuleComplete(module._id);
                           setActiveModule(null);
-                        }} 
+                        }}
+                        setPendingModule={setPendingModule}
+                        setShowCompletionModal={setShowCompletionModal}
                       />
                     );
                   }
@@ -1248,21 +1342,14 @@ export default function CourseDetails() {
                           </div>
                         </div>
 
-
-
-
-                        {/* Certificate Download Button */}
-                        <div className="mb-8 text-center">
-                          <button
-                            onClick={downloadCertificate}
-                            className="px-8 py-4 bg-gradient-to-r from-lfc-red to-lfc-gold text-white rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition-all inline-flex items-center gap-3 text-lg"
-                          >
-                            <FaDownload className="text-xl" />
-                            Download Your Certificate
-                          </button>
-                          <p className="text-sm text-gray-600 mt-2">
-                            Get your official certificate of completion
-                          </p>
+                        {/* Certificate Section */}
+                        <div className="mb-8">
+                          <Certificate
+                            studentName={user?.name || "Student"}
+                            courseName={course.title}
+                            completionDate={enrollment?.completedAt || new Date().toISOString()}
+                            score={progressPercentage}
+                          />
                         </div>
 
                         {/* Share Section */}
@@ -1418,6 +1505,110 @@ export default function CourseDetails() {
           </AnimatePresence>
         </main>
       </div>
+
+      {/* Module Survey Modal */}
+      {showSurvey && surveyModuleId && courseId && (
+        <ModuleSurvey
+          moduleTitle={surveyModuleTitle}
+          courseId={courseId}
+          moduleId={surveyModuleId}
+          onClose={() => setShowSurvey(false)}
+          onSubmit={handleSurveySubmit}
+        />
+      )}
+
+      {/* Module Overview Modal */}
+      {showOverviewModal && pendingModule && (
+        <ModuleOverviewModal
+          isOpen={showOverviewModal}
+          onClose={() => {
+            setShowOverviewModal(false);
+            setPendingModule(null);
+          }}
+          onStart={async () => {
+            setShowOverviewModal(false);
+            if (pendingModule && courseId) {
+              // Track module access
+              try {
+                const token = localStorage.getItem("token");
+                await fetch(`${API_BASE}/api/progress/${courseId}/modules/${pendingModule._id}/access`, {
+                  method: "POST",
+                  headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                  },
+                });
+              } catch (err) {
+                console.error("Error tracking module access:", err);
+              }
+              
+              setActiveModule(pendingModule._id);
+              setActivePage('modules');
+              setPendingModule(null);
+            }
+          }}
+          module={{
+            title: pendingModule.title,
+            description: pendingModule.description,
+            objectives: pendingModule.objectives,
+            type: pendingModule.type,
+            duration: pendingModule.duration,
+          }}
+        />
+      )}
+
+      {/* Module Completion Modal */}
+      {showCompletionModal && pendingModule && (
+        <ModuleCompletionModal
+          isOpen={showCompletionModal}
+          onClose={() => {
+            setShowCompletionModal(false);
+            setPendingModule(null);
+          }}
+          onComplete={async (surveyResponses) => {
+            setShowCompletionModal(false);
+            
+            // Submit survey responses if provided
+            if (surveyResponses && pendingModule && courseId) {
+              try {
+                const token = localStorage.getItem("token");
+                await fetch(`${API_BASE}/api/feedback/modules/${pendingModule._id}`, {
+                  method: "POST",
+                  headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    responses: surveyResponses,
+                    courseId: courseId,
+                    moduleTitle: pendingModule.title,
+                  }),
+                });
+              } catch (err) {
+                console.error("Error submitting survey:", err);
+              }
+            }
+            
+            // Auto-advance to next module
+            if (course && pendingModule) {
+              const allModules = course.sections.flatMap(s => s.modules);
+              const currentIndex = allModules.findIndex(m => m._id === pendingModule._id);
+              
+              if (currentIndex !== -1 && currentIndex < allModules.length - 1) {
+                const nextModule = allModules[currentIndex + 1];
+                setActiveModule(nextModule._id);
+                setActivePage('modules');
+              }
+            }
+            
+            setPendingModule(null);
+          }}
+          module={{
+            title: pendingModule.title,
+            survey: pendingModule.survey,
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -197,11 +197,11 @@ const CourseCard: React.FC<Props> = ({
   return (
     <>
       <div
-        className="course-card flex flex-col bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer w-full max-w-sm mx-auto"
+        className="course-card flex flex-col bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer w-full max-w-sm mx-auto"
         onClick={handleCardClick}
       >
         {/* Thumbnail Section - Fixed flickering */}
-        <div className="relative w-full h-48 bg-gray-200 overflow-hidden">
+        <div className="relative w-full h-48 bg-gray-200 dark:bg-gray-700 overflow-hidden">
           {/* Main Image */}
           <img
             src={getThumbnailUrl()}

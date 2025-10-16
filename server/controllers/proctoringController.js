@@ -437,6 +437,13 @@ const updateEnrollmentProgress = async (userId, courseId, quizId, score, passed)
 
     await enrollment.save();
     console.log('✅ Enrollment progress updated for quiz:', quizId);
+    
+    // Recalculate overall course progress
+    if (passed) {
+      const { updateEnrollmentProgress: recalculateProgress } = await import('./progressController.js');
+      await recalculateProgress(enrollment._id, courseId);
+      console.log('✅ Course progress recalculated');
+    }
 
   } catch (error) {
     console.error('❌ Error updating enrollment progress:', error);

@@ -22,11 +22,22 @@ interface Module {
   _id: string;
   title: string;
   type: string;
+  description?: string;
+  objectives?: string[];
   contentUrl?: string;
   quiz?: {
     questions: Question[];
     dueDate?: Date;
   };
+  survey?: {
+    questions: SurveyQuestion[];
+  };
+}
+
+interface SurveyQuestion {
+  question: string;
+  type: "text" | "rating" | "multiple-choice";
+  options?: string[];
 }
 
 interface Question {
@@ -63,8 +74,11 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
   const [newModule, setNewModule] = useState({
     title: "",
     type: "video",
+    description: "",
+    objectives: [] as string[],
     file: null as File | null,
     questions: [] as Question[],
+    surveyQuestions: [] as SurveyQuestion[],
   });
 
   useEffect(() => {
@@ -99,8 +113,11 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
     setNewModule({
       title: "",
       type: "video",
+      description: "",
+      objectives: [] as string[],
       file: null,
       questions: [] as Question[],
+      surveyQuestions: [] as SurveyQuestion[],
     });
     setContentUrl("");
     setActiveUploadTab('file');
@@ -155,6 +172,7 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
     
     // FIX: Properly extract quiz questions from the nested structure
     const quizQuestions = module.quiz?.questions || [];
+    const surveyQuestions = module.survey?.questions || [];
     
     console.log("Editing module quiz data:", {
       moduleQuiz: module.quiz,
@@ -166,8 +184,11 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
     setNewModule({
       title: module.title,
       type: module.type,
+      description: module.description || "",
+      objectives: module.objectives || [],
       file: null,
-      questions: quizQuestions, // This should now have the actual questions
+      questions: quizQuestions,
+      surveyQuestions: surveyQuestions,
     });
     
     if (module.contentUrl) {
@@ -264,6 +285,8 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
       const payload: any = {
         title: newModule.title,
         type: newModule.type,
+        description: newModule.description || "",
+        objectives: newModule.objectives.filter(obj => obj.trim() !== ""),
         contentUrl: finalContentUrl || undefined,
       };
 
@@ -278,6 +301,17 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
         };
       } else if (newModule.type === "quiz") {
         payload.quiz = { questions: [] };
+      }
+
+      // Survey handling...
+      if (newModule.surveyQuestions.length > 0) {
+        payload.survey = {
+          questions: newModule.surveyQuestions.map(sq => ({
+            question: sq.question,
+            type: sq.type,
+            options: sq.type === "multiple-choice" ? sq.options?.filter(opt => opt.trim() !== "") : undefined,
+          }))
+        };
       }
 
       const method = editingModule ? "PUT" : "POST";
@@ -643,6 +677,55 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                           onChange={(e) => setNewModule({ ...newModule, title: e.target.value })}
                         />
                       </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-yt-text-dark mb-2">Module Description</label>
+                        <textarea
+                          className="w-full border border-yt-light-border rounded-md px-3 py-2 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
+                          placeholder="Brief description of what students will learn"
+                          rows={3}
+                          value={newModule.description}
+                          onChange={(e) => setNewModule({ ...newModule, description: e.target.value })}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-yt-text-dark mb-2">Learning Objectives</label>
+                        <div className="space-y-2">
+                          {newModule.objectives.map((obj, idx) => (
+                            <div key={idx} className="flex gap-2">
+                              <input
+                                type="text"
+                                className="flex-1 border border-yt-light-border rounded-md px-3 py-2 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
+                                placeholder={`Objective ${idx + 1}`}
+                                value={obj}
+                                onChange={(e) => {
+                                  const newObjectives = [...newModule.objectives];
+                                  newObjectives[idx] = e.target.value;
+                                  setNewModule({ ...newModule, objectives: newObjectives });
+                                }}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const newObjectives = newModule.objectives.filter((_, i) => i !== idx);
+                                  setNewModule({ ...newModule, objectives: newObjectives });
+                                }}
+                                className="px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 text-sm"
+                              >
+                                <FaTrash />
+                              </button>
+                            </div>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={() => setNewModule({ ...newModule, objectives: [...newModule.objectives, ""] })}
+                            className="px-3 py-2 bg-lfc-gold text-white rounded-md hover:bg-lfc-gold/90 text-sm flex items-center gap-2"
+                          >
+                            <FaPlus /> Add Objective
+                          </button>
+                        </div>
+                      </div>
                       
                       <div>
                         <label className="block text-sm font-medium text-yt-text-dark mb-2">Module Type</label>
@@ -857,6 +940,137 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                           )}
                         </div>
                       )}
+
+                      {/* Survey Configuration (Optional) */}
+                      <div className="border-t border-gray-200 pt-4 mt-4">
+                        <div className="flex justify-between items-center mb-3">
+                          <div>
+                            <label className="block text-sm font-medium text-yt-text-dark">Post-Module Survey (Optional)</label>
+                            <p className="text-xs text-gray-500 mt-1">Collect feedback after students complete this module</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setNewModule({
+                                ...newModule,
+                                surveyQuestions: [
+                                  ...newModule.surveyQuestions,
+                                  { question: "", type: "text", options: [] }
+                                ]
+                              });
+                            }}
+                            className="px-3 py-1 bg-lfc-gold text-white rounded-md text-sm flex items-center hover:bg-lfc-gold/90"
+                          >
+                            <FaPlus size={10} className="mr-1" /> Add Survey Question
+                          </button>
+                        </div>
+
+                        {newModule.surveyQuestions.length > 0 && (
+                          <div className="space-y-3">
+                            {newModule.surveyQuestions.map((sq, sqi) => (
+                              <div key={sqi} className="p-4 border border-gray-200 rounded-md bg-gray-50 space-y-3">
+                                <div className="flex justify-between items-center">
+                                  <h5 className="font-medium text-sm text-gray-900">Survey Question #{sqi + 1}</h5>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const newSurveyQuestions = newModule.surveyQuestions.filter((_, i) => i !== sqi);
+                                      setNewModule({ ...newModule, surveyQuestions: newSurveyQuestions });
+                                    }}
+                                    className="text-gray-400 hover:text-red-500"
+                                  >
+                                    <FaTrash size={14} />
+                                  </button>
+                                </div>
+
+                                <div>
+                                  <label className="block text-xs font-medium text-gray-700 mb-1">Question Text</label>
+                                  <input
+                                    type="text"
+                                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
+                                    placeholder="e.g., How would you rate this module?"
+                                    value={sq.question}
+                                    onChange={(e) => {
+                                      const newSurveyQuestions = [...newModule.surveyQuestions];
+                                      newSurveyQuestions[sqi].question = e.target.value;
+                                      setNewModule({ ...newModule, surveyQuestions: newSurveyQuestions });
+                                    }}
+                                  />
+                                </div>
+
+                                <div>
+                                  <label className="block text-xs font-medium text-gray-700 mb-1">Question Type</label>
+                                  <select
+                                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
+                                    value={sq.type}
+                                    onChange={(e) => {
+                                      const newSurveyQuestions = [...newModule.surveyQuestions];
+                                      newSurveyQuestions[sqi].type = e.target.value as "text" | "rating" | "multiple-choice";
+                                      if (e.target.value !== "multiple-choice") {
+                                        newSurveyQuestions[sqi].options = [];
+                                      }
+                                      setNewModule({ ...newModule, surveyQuestions: newSurveyQuestions });
+                                    }}
+                                  >
+                                    <option value="text">Text Response</option>
+                                    <option value="rating">Star Rating (1-5)</option>
+                                    <option value="multiple-choice">Multiple Choice</option>
+                                  </select>
+                                </div>
+
+                                {sq.type === "multiple-choice" && (
+                                  <div>
+                                    <div className="flex justify-between items-center mb-2">
+                                      <label className="block text-xs font-medium text-gray-700">Options</label>
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          const newSurveyQuestions = [...newModule.surveyQuestions];
+                                          newSurveyQuestions[sqi].options = [...(newSurveyQuestions[sqi].options || []), ""];
+                                          setNewModule({ ...newModule, surveyQuestions: newSurveyQuestions });
+                                        }}
+                                        className="text-xs text-lfc-gold hover:text-lfc-gold/80"
+                                      >
+                                        + Add Option
+                                      </button>
+                                    </div>
+                                    <div className="space-y-2">
+                                      {(sq.options || []).map((opt, oi) => (
+                                        <div key={oi} className="flex gap-2">
+                                          <input
+                                            type="text"
+                                            className="flex-1 border border-gray-300 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
+                                            placeholder={`Option ${oi + 1}`}
+                                            value={opt}
+                                            onChange={(e) => {
+                                              const newSurveyQuestions = [...newModule.surveyQuestions];
+                                              const newOptions = [...(newSurveyQuestions[sqi].options || [])];
+                                              newOptions[oi] = e.target.value;
+                                              newSurveyQuestions[sqi].options = newOptions;
+                                              setNewModule({ ...newModule, surveyQuestions: newSurveyQuestions });
+                                            }}
+                                          />
+                                          <button
+                                            type="button"
+                                            onClick={() => {
+                                              const newSurveyQuestions = [...newModule.surveyQuestions];
+                                              newSurveyQuestions[sqi].options = (newSurveyQuestions[sqi].options || []).filter((_, i) => i !== oi);
+                                              setNewModule({ ...newModule, surveyQuestions: newSurveyQuestions });
+                                            }}
+                                            className="px-2 py-1.5 text-gray-400 hover:text-red-500"
+                                          >
+                                            <FaTrash size={12} />
+                                          </button>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
 
                       <button
                         onClick={() => handleAddModule(section._id)}

@@ -36,10 +36,11 @@ import ErrorPage from "./components/shared/ErrorPage";
 import SupportDashboard from "./components/Admin/SupportDashboard";
 import SupportTickets from "./components/Dashboard/SupportTickets";
 import CertificateValidation from "./pages/CertificateValidation";
+import SurveyResponses from "./pages/Admin/SurveyResponses";
 
 function App() {
   return (
-    <>
+    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
@@ -87,6 +88,7 @@ function App() {
           <Route path="assessments/assignments" element={<Assignments />} />
           <Route path="assessments/projects" element={<Projects />} />
           <Route path="assessments/quizzes" element={<Quizzes />} />
+          <Route path="survey-responses" element={<SurveyResponses />} />
           <Route path="support" element={<SupportDashboard />} /> {/* ✅ Fixed */}
           
           {/* Placeholder routes */}
@@ -108,7 +110,7 @@ function App() {
       </Routes>
       
       <ToastContainer position="top-right" autoClose={3000} />
-    </>
+    </div>
   );
 }
 

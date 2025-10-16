@@ -86,11 +86,17 @@ export const checkUsernameAvailability = async (req, res) => {
 
 // Register new student or original admin
 export const registerUser = async (req, res) => {
+  console.log("=== REGISTER USER REQUEST ===");
+  console.log("Timestamp:", new Date().toISOString());
+  console.log("Email:", req.body.email);
+  console.log("Name:", req.body.name);
+  
   const { name, email, password } = req.body;
 
   if (req.body.username) delete req.body.username;
 
   if (!name || !email || !password) {
+    console.log("Missing required fields");
     return res.status(400).json({ message: "Name, email, and password are required" });
   }
 
@@ -118,17 +124,22 @@ export const registerUser = async (req, res) => {
     });
 
     // Send verification email
+    console.log("Sending verification email to:", email);
     await sendEmail(
       email,
       "Your Verification Code",
       `Your verification code is: ${code}`
     );
+    console.log("Verification email sent successfully");
 
     res.status(201).json({
       message: "Account created. Please check your email for the verification code.",
       userId: user._id,
     });
   } catch (err) {
+    console.error("=== REGISTER USER ERROR ===");
+    console.error("Error:", err.message);
+    console.error("Stack:", err.stack);
     res.status(500).json({ message: err.message });
   }
 };
@@ -400,22 +411,31 @@ export const getAllUsers = async (req, res) => {
 };
 
 export const deleteUser = async (req, res) => {
+  console.log("=== DELETE USER REQUEST ===");
+  console.log("Requesting user:", req.user?.email);
+  console.log("Target user ID:", req.params.id);
+  
   const requestingUser = req.user; // from middleware
-  const targetUserId = req.params._id;
+  const targetUserId = req.params.id;
 
   try {
     const userToDelete = await User.findById(targetUserId);
     if (!userToDelete) {
+      console.log("User not found:", targetUserId);
       return res.status(404).json({ message: "User not found" });
     }
+    
+    console.log("User to delete:", userToDelete.email);
 
     // Prevent original admin from ever being deleted
     if (userToDelete.role === "admin") {
+      console.log("Attempted to delete original admin");
       return res.status(403).json({ message: "The original admin account cannot be deleted" });
     }
 
     // Allow users to delete their own account (except original admin already blocked above)
-    if (requestingUser._id === targetUserId) {
+    if (requestingUser._id.toString() === targetUserId) {
+      console.log("User deleting own account");
       await User.findByIdAndDelete(targetUserId);
       return res.status(200).json({ message: "Your account has been deleted" });
     }
@@ -425,19 +445,29 @@ export const deleteUser = async (req, res) => {
       requestingUser.role === "admin" ||
       requestingUser.role === "admin-only"
     ) {
+      console.log("Admin deleting user");
       await User.findByIdAndDelete(targetUserId);
       return res.status(200).json({ message: "User deleted successfully" });
     }
 
     // All other cases — reject
+    console.log("Not authorized to delete user");
     return res.status(403).json({ message: "Not authorized to delete this user" });
   } catch (err) {
+    console.error("=== DELETE USER ERROR ===");
+    console.error("Error:", err.message);
+    console.error("Stack:", err.stack);
     res.status(500).json({ message: err.message });
   }
 };
 
 export const updateProfile = async (req, res) => {
   const userId = req.user.id;
+  
+  console.log("=== UPDATE PROFILE REQUEST ===");
+  console.log("User ID:", userId);
+  console.log("Request body:", JSON.stringify(req.body, null, 2));
+  
   const {
     name,
     email,
@@ -458,7 +488,17 @@ export const updateProfile = async (req, res) => {
 
   try {
     const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!user) {
+      console.error("User not found:", userId);
+      return res.status(404).json({ message: "User not found" });
+    }
+    
+    console.log("Current user data:", {
+      name: user.name,
+      email: user.email,
+      technicalUnit: user.technicalUnit,
+      profilePicture: user.profilePicture
+    });
 
     // 🔒 Prevent role or password update here
     if (user.role === "admin-only") {
@@ -486,10 +526,12 @@ export const updateProfile = async (req, res) => {
     if (occupation) user.occupation = occupation;
     if (company) user.company = company;
     if (skills) user.skills = Array.isArray(skills) ? skills : skills.split(',').map(s => s.trim());
-    if (socialLinks) user.socialLinks = { ...user.socialLinks, ...socialLinks };
+    if (socialLinks) {
+      user.socialLinks = { ...user.socialLinks, ...socialLinks };
       if (socialLinks.twitter && !socialLinks.x) {
-          user.socialLinks.x = socialLinks.twitter;
-        }
+        user.socialLinks.x = socialLinks.twitter;
+      }
+    }
     if (preferences) user.preferences = { ...user.preferences, ...preferences };
     if (education) {
       user.education = education;
@@ -498,7 +540,6 @@ export const updateProfile = async (req, res) => {
     // ✅ Check if user has completed required onboarding fields
     const requiredFields = [
       user.name,
-      user.profilePicture.url,
       user.dateOfBirth,
       user.phoneNumber,
       user.maritalStatus,
@@ -506,7 +547,15 @@ export const updateProfile = async (req, res) => {
 
     user.isOnboarded = requiredFields.every((field) => field && field !== "");
 
+    console.log("Saving user with updated data...");
     await user.save();
+    
+    console.log("User saved successfully");
+    console.log("Updated user data:", {
+      name: user.name,
+      technicalUnit: user.technicalUnit,
+      isOnboarded: user.isOnboarded
+    });
 
     res.status(200).json({
       message: "Profile updated successfully",
@@ -534,19 +583,40 @@ export const updateProfile = async (req, res) => {
       },
     });
   } catch (err) {
+    console.error("=== UPDATE PROFILE ERROR ===");
+    console.error("Error message:", err.message);
+    console.error("Error stack:", err.stack);
     res.status(500).json({ message: err.message });
   }
 };
 
 // ✅ Profile picture upload
 export const uploadProfilePicture = async (req, res) => {
+  console.log("=== UPLOAD PROFILE PICTURE REQUEST ===");
+  console.log("User ID:", req.user?.id);
+  console.log("File received:", !!req.file);
+  console.log("File details:", req.file ? {
+    fieldname: req.file.fieldname,
+    originalname: req.file.originalname,
+    mimetype: req.file.mimetype,
+    size: req.file.size
+  } : "No file");
+  
   try {
     if (!req.file) {
+      console.error("No file uploaded");
       return res.status(400).json({ message: 'No file uploaded' });
     }
 
     const userId = req.user.id;
     const user = await User.findById(userId);
+    
+    if (!user) {
+      console.error("User not found:", userId);
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    console.log("Current profile picture:", user.profilePicture);
 
     // Delete old profile picture if exists
     if (user.profilePicture?.public_id) {
@@ -558,19 +628,28 @@ export const uploadProfilePicture = async (req, res) => {
     }
 
     // ✅ Correct fields from Cloudinary
+    console.log("Cloudinary upload result:", {
+      public_id: req.file.public_id,
+      url: req.file.path
+    });
+    
     user.profilePicture = {
       public_id: req.file.public_id,
       url: req.file.path
     };
 
     await user.save();
+    
+    console.log("Profile picture saved successfully");
 
     res.json({
       message: 'Profile picture updated successfully',
       profilePicture: user.profilePicture
     });
   } catch (error) {
-    console.error('Profile picture upload error:', error);
+    console.error('=== PROFILE PICTURE UPLOAD ERROR ===');
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
@@ -697,10 +776,20 @@ export const verifyEmail = async (req, res) => {
 };
 
 export const resendVerification = async (req, res) => {
+  console.log("=== RESEND VERIFICATION REQUEST ===");
+  console.log("Timestamp:", new Date().toISOString());
+  console.log("Email:", req.body.email);
+  
   const { email } = req.body;
   const user = await User.findOne({ email });
-  if (!user) return res.status(400).json({ message: "User not found" });
-  if (user.isVerified) return res.status(400).json({ message: "Email already verified" });
+  if (!user) {
+    console.log("User not found");
+    return res.status(400).json({ message: "User not found" });
+  }
+  if (user.isVerified) {
+    console.log("Email already verified");
+    return res.status(400).json({ message: "Email already verified" });
+  }
 
   // Generate fresh code
   const code = Math.floor(100000 + Math.random() * 900000).toString();
@@ -711,7 +800,9 @@ export const resendVerification = async (req, res) => {
   await user.save();
 
   // Send the raw code to the user
+  console.log("Sending verification code to:", email);
   await sendEmail(user.email, "Verify Your Email", `Your code is: ${code}`);
+  console.log("Verification code sent successfully");
 
   res.json({ message: "Verification code resent" });
 };
@@ -869,6 +960,9 @@ export const resetUserFirstLogin = async (req, res) => {
 
 // routes/auth.ts (or similar)
 export const seeOnboarding = async (req, res) => {
+  console.log("=== MARK ONBOARDING AS SEEN ===");
+  console.log("User ID:", req.user.id);
+  
   try {
     const user = await User.findByIdAndUpdate(
       req.user.id,
@@ -876,8 +970,12 @@ export const seeOnboarding = async (req, res) => {
       { new: true }
     ).select("-password");
 
+    console.log("Onboarding marked as seen for user:", user.email);
+    console.log("hasSeenOnboarding:", user.hasSeenOnboarding);
+
     res.json({ success: true, user });
   } catch (err) {
+    console.error("=== ERROR MARKING ONBOARDING AS SEEN ===");
     console.error(err);
     res.status(500).json({ success: false, message: "Server error" });
   }

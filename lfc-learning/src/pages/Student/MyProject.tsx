@@ -62,7 +62,11 @@ export default function MyProject() {
         
         // Filter courses that have projects and create project objects
         const allProjects: ProjectWithProgress[] = courses
-          .filter((course: any) => course.project) // Only courses with projects
+          .filter((course: any) => {
+            // Get enrolled course IDs
+            const enrolledCourseIds = new Set(enrollments.map((e: any) => e.course?._id).filter(Boolean));
+            return course.project && enrolledCourseIds.has(course._id);
+          })
           .map((course: any) => {
             // Find enrollment for this course
             const enrollment = enrollments.find((e: any) => e.course?._id === course._id);
