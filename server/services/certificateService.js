@@ -4,6 +4,12 @@ const PDFDocument = require('pdfkit');
 
 import Certificate from '../models/Certificate.js';
 import { Readable } from 'stream';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 class CertificateService {
   /**
@@ -30,18 +36,18 @@ class CertificateService {
         // Header
         this.drawHeader(doc);
 
-        // Certificate title
+        // Certificate title (adjusted for logo)
         doc.fontSize(36)
            .font('Helvetica-Bold')
            .fillColor('#1a365d')
-           .text('CERTIFICATE OF COMPLETION', 50, 150, {
+           .text('CERTIFICATE OF COMPLETION', 50, 180, {
              align: 'center',
              width: doc.page.width - 100
            });
 
         // Decorative line
-        doc.moveTo(250, 200)
-           .lineTo(doc.page.width - 250, 200)
+        doc.moveTo(250, 230)
+           .lineTo(doc.page.width - 250, 230)
            .strokeColor('#d4af37')
            .lineWidth(2)
            .stroke();
@@ -50,7 +56,7 @@ class CertificateService {
         doc.fontSize(14)
            .font('Helvetica')
            .fillColor('#4a5568')
-           .text('This is to certify that', 50, 230, {
+           .text('This is to certify that', 50, 260, {
              align: 'center',
              width: doc.page.width - 100
            });
@@ -59,7 +65,7 @@ class CertificateService {
         doc.fontSize(32)
            .font('Helvetica-Bold')
            .fillColor('#2d3748')
-           .text(certificateData.studentName, 50, 260, {
+           .text(certificateData.studentName, 50, 290, {
              align: 'center',
              width: doc.page.width - 100
            });
@@ -68,7 +74,7 @@ class CertificateService {
         doc.fontSize(14)
            .font('Helvetica')
            .fillColor('#4a5568')
-           .text('has successfully completed the course', 50, 310, {
+           .text('has successfully completed the course', 50, 340, {
              align: 'center',
              width: doc.page.width - 100
            });
@@ -77,13 +83,13 @@ class CertificateService {
         doc.fontSize(24)
            .font('Helvetica-Bold')
            .fillColor('#1a365d')
-           .text(certificateData.courseTitle, 50, 340, {
+           .text(certificateData.courseTitle, 50, 370, {
              align: 'center',
              width: doc.page.width - 100
            });
 
         // Course details
-        const detailsY = 390;
+        const detailsY = 420;
         if (certificateData.metadata) {
           let details = [];
           if (certificateData.metadata.courseLevel) {
@@ -108,7 +114,7 @@ class CertificateService {
         }
 
         // Date and certificate ID
-        const bottomY = 450;
+        const bottomY = 480;
         const completionDate = new Date(certificateData.completionDate);
         const formattedDate = completionDate.toLocaleDateString('en-US', {
           year: 'numeric',
@@ -210,22 +216,86 @@ class CertificateService {
   }
 
   drawHeader(doc) {
-    // Organization name/logo area
-    doc.fontSize(18)
-       .font('Helvetica-Bold')
-       .fillColor('#1a365d')
-       .text('LFC Jahi Tech Learn', 50, 70, {
-         align: 'center',
-         width: doc.page.width - 100
-       });
+    // Try to add logo
+    try {
+      // Try multiple possible logo paths
+      const logoPaths = [
+        path.join(__dirname, '../../lfc-learning/public/logo.png'),
+        path.join(__dirname, '../public/logo.png'),
+        path.join(__dirname, '../../public/logo.png')
+      ];
+      
+      let logoPath = null;
+      for (const p of logoPaths) {
+        if (fs.existsSync(p)) {
+          logoPath = p;
+          break;
+        }
+      }
+      
+      if (logoPath) {
+        // Add logo centered at top
+        const logoSize = 60;
+        const logoX = (doc.page.width - logoSize) / 2;
+        doc.image(logoPath, logoX, 50, {
+          width: logoSize,
+          height: logoSize,
+          align: 'center'
+        });
+        
+        // Organization name below logo
+        doc.fontSize(18)
+           .font('Helvetica-Bold')
+           .fillColor('#1a365d')
+           .text('LFC Jahi Tech Learn', 50, 120, {
+             align: 'center',
+             width: doc.page.width - 100
+           });
 
-    doc.fontSize(10)
-       .font('Helvetica')
-       .fillColor('#718096')
-       .text('Excellence in Digital Education', 50, 95, {
-         align: 'center',
-         width: doc.page.width - 100
-       });
+        doc.fontSize(10)
+           .font('Helvetica')
+           .fillColor('#718096')
+           .text('Excellence in Digital Education', 50, 145, {
+             align: 'center',
+             width: doc.page.width - 100
+           });
+      } else {
+        // Fallback without logo
+        doc.fontSize(18)
+           .font('Helvetica-Bold')
+           .fillColor('#1a365d')
+           .text('LFC Jahi Tech Learn', 50, 70, {
+             align: 'center',
+             width: doc.page.width - 100
+           });
+
+        doc.fontSize(10)
+           .font('Helvetica')
+           .fillColor('#718096')
+           .text('Excellence in Digital Education', 50, 95, {
+             align: 'center',
+             width: doc.page.width - 100
+           });
+      }
+    } catch (error) {
+      console.error('Error adding logo to certificate:', error);
+      // Fallback without logo
+      doc.fontSize(18)
+         .font('Helvetica-Bold')
+         .fillColor('#1a365d')
+         .text('LFC Jahi Tech Learn', 50, 70, {
+           align: 'center',
+           width: doc.page.width - 100
+         });
+
+      doc.fontSize(10)
+         .font('Helvetica')
+         .fillColor('#718096')
+         .text('Excellence in Digital Education', 50, 95, {
+           align: 'center',
+           width: doc.page.width - 100
+         });
+    }
   }
 
   drawFooter(doc) {
@@ -271,6 +341,12 @@ class CertificateService {
       const course = enrollment.course;
       const user = enrollment.user;
 
+      // Debug logging
+      console.log('📝 Certificate Generation Debug:');
+      console.log('User object:', JSON.stringify(user, null, 2));
+      console.log('User name:', user?.name);
+      console.log('User email:', user?.email);
+
       // Generate unique IDs
       const certificateId = Certificate.generateCertificateId();
       const validationCode = Certificate.generateValidationCode();
@@ -278,6 +354,18 @@ class CertificateService {
       // Calculate total modules
       const totalModules = course.sections?.reduce((sum, section) => 
         sum + (section.modules?.length || 0), 0) || 0;
+
+      // Get student name - handle various cases
+      let studentName = 'Student';
+      if (user) {
+        if (user.name && user.name.trim()) {
+          studentName = user.name.trim();
+        } else if (user.email) {
+          studentName = user.email.split('@')[0];
+        }
+      }
+
+      console.log('Final student name:', studentName);
 
       // Create certificate
       const certificate = new Certificate({
@@ -288,7 +376,7 @@ class CertificateService {
         validationCode,
         completionDate: enrollment.updatedAt,
         finalScore: enrollment.progress,
-        studentName: user.name || user.email || 'Student',
+        studentName: studentName,
         courseTitle: course.title,
         instructorName: course.instructor?.name,
         metadata: {
