@@ -438,6 +438,11 @@ export const deleteUser = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   const userId = req.user.id;
+  
+  console.log("=== UPDATE PROFILE REQUEST ===");
+  console.log("User ID:", userId);
+  console.log("Request body:", JSON.stringify(req.body, null, 2));
+  
   const {
     name,
     email,
@@ -458,7 +463,17 @@ export const updateProfile = async (req, res) => {
 
   try {
     const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!user) {
+      console.error("User not found:", userId);
+      return res.status(404).json({ message: "User not found" });
+    }
+    
+    console.log("Current user data:", {
+      name: user.name,
+      email: user.email,
+      technicalUnit: user.technicalUnit,
+      profilePicture: user.profilePicture
+    });
 
     // 🔒 Prevent role or password update here
     if (user.role === "admin-only") {
@@ -505,7 +520,15 @@ export const updateProfile = async (req, res) => {
 
     user.isOnboarded = requiredFields.every((field) => field && field !== "");
 
+    console.log("Saving user with updated data...");
     await user.save();
+    
+    console.log("User saved successfully");
+    console.log("Updated user data:", {
+      name: user.name,
+      technicalUnit: user.technicalUnit,
+      isOnboarded: user.isOnboarded
+    });
 
     res.status(200).json({
       message: "Profile updated successfully",
@@ -533,19 +556,40 @@ export const updateProfile = async (req, res) => {
       },
     });
   } catch (err) {
+    console.error("=== UPDATE PROFILE ERROR ===");
+    console.error("Error message:", err.message);
+    console.error("Error stack:", err.stack);
     res.status(500).json({ message: err.message });
   }
 };
 
 // ✅ Profile picture upload
 export const uploadProfilePicture = async (req, res) => {
+  console.log("=== UPLOAD PROFILE PICTURE REQUEST ===");
+  console.log("User ID:", req.user?.id);
+  console.log("File received:", !!req.file);
+  console.log("File details:", req.file ? {
+    fieldname: req.file.fieldname,
+    originalname: req.file.originalname,
+    mimetype: req.file.mimetype,
+    size: req.file.size
+  } : "No file");
+  
   try {
     if (!req.file) {
+      console.error("No file uploaded");
       return res.status(400).json({ message: 'No file uploaded' });
     }
 
     const userId = req.user.id;
     const user = await User.findById(userId);
+    
+    if (!user) {
+      console.error("User not found:", userId);
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    console.log("Current profile picture:", user.profilePicture);
 
     // Delete old profile picture if exists
     if (user.profilePicture?.public_id) {
@@ -557,19 +601,28 @@ export const uploadProfilePicture = async (req, res) => {
     }
 
     // ✅ Correct fields from Cloudinary
+    console.log("Cloudinary upload result:", {
+      public_id: req.file.public_id,
+      url: req.file.path
+    });
+    
     user.profilePicture = {
       public_id: req.file.public_id,
       url: req.file.path
     };
 
     await user.save();
+    
+    console.log("Profile picture saved successfully");
 
     res.json({
       message: 'Profile picture updated successfully',
       profilePicture: user.profilePicture
     });
   } catch (error) {
-    console.error('Profile picture upload error:', error);
+    console.error('=== PROFILE PICTURE UPLOAD ERROR ===');
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };

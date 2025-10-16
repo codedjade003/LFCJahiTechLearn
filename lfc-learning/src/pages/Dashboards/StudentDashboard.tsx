@@ -207,24 +207,40 @@ const StudentDashboard = () => {
   const handleFinish = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
-      if (!token || !profile) return;
+      if (!token || !profile) {
+        console.error("Missing token or profile:", { token: !!token, profile: !!profile });
+        return;
+      }
+
+      console.log("Starting profile update...");
+      console.log("Profile data:", profile);
+      console.log("File to upload:", file);
 
       if (file) {
+        console.log("Uploading profile picture...");
         const pictureFormData = new FormData();
-        pictureFormData.append("profilePicture", file);
+        pictureFormData.append("image", file);
 
-        const pictureResponse = await fetch(`${API_BASE}/api/auth/upload-profile-picture`, {
+        const pictureResponse = await fetch(`${API_BASE}/api/auth/profile-picture`, {
           method: "PUT",
           headers: { Authorization: `Bearer ${token}` },
           body: pictureFormData,
         });
         
+        console.log("Picture upload response status:", pictureResponse.status);
+        
         if (!pictureResponse.ok) {
-          throw new Error("Failed to upload profile picture");
+          const errorData = await pictureResponse.json().catch(() => ({ message: "Unknown error" }));
+          console.error("Picture upload failed:", errorData);
+          throw new Error(`Failed to upload profile picture: ${errorData.message || pictureResponse.statusText}`);
         }
+        
+        console.log("Picture uploaded successfully");
       }
 
       const { profilePicturePreview, profilePicture, ...safeProfile } = profile;
+      
+      console.log("Updating profile with data:", safeProfile);
 
       const profileResponse = await fetch(`${API_BASE}/api/auth/update-profile`, {
         method: "PUT",
@@ -235,10 +251,18 @@ const StudentDashboard = () => {
         body: JSON.stringify(safeProfile),
       });
       
+      console.log("Profile update response status:", profileResponse.status);
+      
       if (!profileResponse.ok) {
-        throw new Error("Failed to update profile");
+        const errorData = await profileResponse.json().catch(() => ({ message: "Unknown error" }));
+        console.error("Profile update failed:", errorData);
+        throw new Error(`Failed to update profile: ${errorData.message || profileResponse.statusText}`);
       }
 
+      const profileData = await profileResponse.json();
+      console.log("Profile updated successfully:", profileData);
+
+      console.log("Marking onboarding as seen...");
       await fetch(`${API_BASE}/api/auth/seen-onboarding`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
@@ -247,11 +271,12 @@ const StudentDashboard = () => {
       setShowOnboarding(false);
       setProfile(prev => prev ? { ...prev, ...safeProfile } : null);
       await fetchUser();
+      console.log("Profile update complete!");
     } catch (err) {
       console.error("Error saving profile:", err);
-      alert("Failed to save profile. Please try again.");
+      alert(`Failed to save profile: ${err instanceof Error ? err.message : "Unknown error"}`);
     }
-  }, [file, profile]);
+  }, [file, profile, fetchUser, API_BASE]);
 
   const handleSkip = useCallback(() => {
     setShowOnboarding(false);
