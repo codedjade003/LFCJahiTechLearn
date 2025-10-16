@@ -55,7 +55,13 @@ export default function MyAssignments() {
         const courses = await coursesRes.json();
         const enrollments = await enrollmentsRes.json();
         
-        const allAssignments: AssignmentWithProgress[] = courses.flatMap((course: any) => 
+        // Get enrolled course IDs
+        const enrolledCourseIds = new Set(enrollments.map((e: any) => e.course?._id).filter(Boolean));
+        
+        // Only show assignments from enrolled courses
+        const allAssignments: AssignmentWithProgress[] = courses
+          .filter((course: any) => enrolledCourseIds.has(course._id))
+          .flatMap((course: any) => 
           (course.assignments || []).map((assignment: any) => {
             // Find real progress from enrollments
             const enrollment = enrollments.find((e: any) => e.course?._id === course._id);

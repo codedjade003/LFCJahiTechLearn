@@ -52,7 +52,6 @@ export default function AssignmentSubmissionModal({
   onClose, 
   onGrade 
 }: AssignmentSubmissionModalProps) {
-  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [grade, setGrade] = useState(0);
   const [feedback, setFeedback] = useState("");
   const [isGrading, setIsGrading] = useState(false);
@@ -65,15 +64,6 @@ export default function AssignmentSubmissionModal({
   }, [submission]);
 
   if (!isOpen || !submission) return null;
-  
-  // Helper function to resolve file URL
-  const resolveFileUrl = (url: string) => {
-    if (!url) return '';
-    // If it's already a full URL (Cloudinary), return as is
-    if (url.startsWith('http')) return url;
-    // If it's a relative path, prepend API_BASE
-    return `${API_BASE}${url.startsWith('/') ? '' : '/'}${url}`;
-  };
 
   const handleSubmitGrade = async () => {
     const maxPoints = submission.assignmentId?.maxPoints || 100;
@@ -136,12 +126,14 @@ export default function AssignmentSubmissionModal({
               <div className="flex items-center">
                 <FaPaperclip className="text-gray-400 mr-2" />
                 <span className="font-medium">{file.name}</span>
-                <span className="text-sm text-gray-500 ml-2">
-                  ({(file.size / 1024 / 1024).toFixed(1)} MB)
-                </span>
+                {file.size && !isNaN(file.size) && (
+                  <span className="text-sm text-gray-500 ml-2">
+                    ({(file.size / 1024 / 1024).toFixed(1)} MB)
+                  </span>
+                )}
               </div>
               <a
-                href={resolveFileUrl(file.url)}
+                href={file.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center text-blue-600 hover:text-blue-800"
@@ -155,7 +147,7 @@ export default function AssignmentSubmissionModal({
             <div className="mt-4">
               {isImage && (
                 <img 
-                  src={resolveFileUrl(file.url)} 
+                  src={file.url} 
                   alt={file.name}
                   className="max-w-full h-auto rounded-lg border"
                 />
@@ -165,13 +157,13 @@ export default function AssignmentSubmissionModal({
                   controls 
                   className="max-w-full rounded-lg border"
                 >
-                  <source src={resolveFileUrl(file.url)} type={file.type} />
+                  <source src={file.url} type={file.type} />
                   Your browser does not support the video tag.
                 </video>
               )}
               {isPDF && (
                 <iframe
-                  src={resolveFileUrl(file.url)}
+                  src={file.url}
                   className="w-full h-96 rounded-lg border"
                   title={file.name}
                 />
