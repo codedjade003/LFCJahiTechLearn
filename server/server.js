@@ -30,6 +30,7 @@ import adminRoutes from "./routes/adminRoutes.js"
 import proctoringRoutes from './routes/proctoringRoutes.js';
 import supportRoutes from './routes/supportRoutes.js';
 import nukeRoutes from './routes/nuke.js';
+import certificateRoutes from './routes/certificateRoutes.js';
 
 // Import dueDateNotifier only if it exists and is needed
 try {
@@ -128,6 +129,7 @@ app.use("/api/uploads", uploadRoutes); // Unified upload route - USE THIS ONLY
 app.use('/api/users', userManagementRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api/submissions', submissionRoutes);
+app.use('/api/certificates', certificateRoutes);
 // Static file serving
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use('/uploads/submissions', express.static(path.join(__dirname, 'uploads/submissions')));

@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 const colors = require('tailwindcss/colors');
  module.exports = {
+      darkMode: false, // Explicitly disable dark mode
       content: [
       "./index.html",
       "./src/**/*.{js,ts,jsx,tsx}"

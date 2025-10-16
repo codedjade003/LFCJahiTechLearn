@@ -38,9 +38,7 @@ export const calculateCourseProgress = (enrollment, course) => {
     }
   }
 
-  // Ensure progress never exceeds 100% and is never negative
-  const rawProgress = totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
-  return Math.min(100, Math.max(0, Math.round(rawProgress)));
+  return totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
 };
 
 export const updateEnrollmentProgress = async (enrollmentId, courseId) => {
@@ -80,9 +78,7 @@ export const updateEnrollmentProgress = async (enrollmentId, courseId) => {
                            enrollment.projectProgress?.score >= 70) ? weights.project : 0;
 
     // Calculate total progress
-    // Calculate total progress - ensure it never exceeds 100% or goes below 0%
-    const rawProgress = (moduleProgress + assignmentProgress + projectProgress) * 100;
-    const progress = Math.min(100, Math.max(0, Math.round(rawProgress)));
+    const progress = Math.min(100, Math.round((moduleProgress + assignmentProgress + projectProgress) * 100));
     
     // Mark course as completed if all major components are done
     const completed = (

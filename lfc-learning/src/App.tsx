@@ -35,6 +35,7 @@ import PlaceholderPage from "./components/shared/PlaceholderPage";
 import ErrorPage from "./components/shared/ErrorPage";
 import SupportDashboard from "./components/Admin/SupportDashboard";
 import SupportTickets from "./components/Dashboard/SupportTickets";
+import CertificateValidation from "./pages/CertificateValidation";
 
 function App() {
   return (
@@ -45,6 +46,8 @@ function App() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/validate/:validationCode" element={<CertificateValidation />} />
+        <Route path="/certificate/:enrollmentId" element={<CertificateValidation />} />
 
         {/* Protected Student Routes */}
         <Route

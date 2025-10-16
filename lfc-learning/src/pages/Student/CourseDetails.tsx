@@ -21,6 +21,8 @@ import {
 import { FaLinkedin, FaWhatsapp, FaFacebook, FaXTwitter } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
 
+import { ShareButton } from "../../components/ShareButton";
+
 interface Module {
   _id: string;
   type: 'video' | 'pdf' | 'quiz';
@@ -757,65 +759,57 @@ export default function CourseDetails() {
     }
   };
 
-  // ShareButton Component
-  const ShareButton = ({ 
-    platform, 
-    courseTitle, 
-    progress,
-    passed
-  }: { 
-    platform: 'linkedin' | 'x' | 'whatsapp' | 'facebook';
-    courseTitle: string;
-    progress: number;
-    passed: boolean;
-  }) => {
-    const shareMessage = passed 
-      ? `🎓 I successfully completed "${courseTitle}" with ${progress}% mastery! So proud of this achievement!`
-      : `📚 I'm making great progress in "${courseTitle}" - currently at ${progress}% completion!`;
+  // Certificate download function
+  const downloadCertificate = async () => {
+    try {
+      if (!enrollment?._id) {
+        toast.error("Enrollment not found");
+        return;
+      }
 
-    const shareUrls = {
-      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.origin)}&summary=${encodeURIComponent(shareMessage)}`,
-      x: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareMessage)}&url=${encodeURIComponent(window.location.origin)}`,
-      whatsapp: `https://wa.me/?text=${encodeURIComponent(`${shareMessage} ${window.location.origin}`)}`,
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.origin)}&quote=${encodeURIComponent(shareMessage)}`
-    };
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("Please log in to download your certificate");
+        return;
+      }
 
-    const platformIcons = {
-      linkedin: <FaLinkedin className="text-xl" />,
-      x: <FaXTwitter className="text-xl" />, // Using X/Twitter icon
-      whatsapp: <FaWhatsapp className="text-xl" />,
-      facebook: <FaFacebook className="text-xl" />
-    };
+      toast.info("Generating your certificate...");
 
-    const platformColors = {
-      linkedin: 'bg-blue-600 hover:bg-blue-700',
-      x: 'bg-black hover:bg-gray-800',
-      whatsapp: 'bg-green-500 hover:bg-green-600',
-      facebook: 'bg-blue-800 hover:bg-blue-900'
-    };
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/certificates/generate/${enrollment._id}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    const platformNames = {
-      linkedin: 'LinkedIn',
-      x: 'X',
-      whatsapp: 'WhatsApp',
-      facebook: 'Facebook'
-    };
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to generate certificate");
+      }
 
-    const handleShare = () => {
-      const url = shareUrls[platform];
-      window.open(url, '_blank', 'width=600,height=400');
-    };
+      // Get the PDF blob
+      const blob = await response.blob();
+      
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `certificate-${course?.title.replace(/\s+/g, "-") || "course"}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
 
-    return (
-      <button
-        onClick={handleShare}
-        className={`p-3 rounded-full text-white ${platformColors[platform]} transition-colors transform hover:scale-110`}
-        title={`Share on ${platformNames[platform]}`}
-      >
-        <span className="text-xl font-bold">{platformIcons[platform]}</span>
-      </button>
-    );
+      toast.success("Certificate downloaded successfully!");
+    } catch (error: any) {
+      console.error("Certificate download error:", error);
+      toast.error(error.message || "Failed to download certificate");
+    }
   };
+
 
   if (loading) {
     return (
@@ -1254,6 +1248,23 @@ export default function CourseDetails() {
                           </div>
                         </div>
 
+
+
+
+                        {/* Certificate Download Button */}
+                        <div className="mb-8 text-center">
+                          <button
+                            onClick={downloadCertificate}
+                            className="px-8 py-4 bg-gradient-to-r from-lfc-red to-lfc-gold text-white rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition-all inline-flex items-center gap-3 text-lg"
+                          >
+                            <FaDownload className="text-xl" />
+                            Download Your Certificate
+                          </button>
+                          <p className="text-sm text-gray-600 mt-2">
+                            Get your official certificate of completion
+                          </p>
+                        </div>
+
                         {/* Share Section */}
                         <div className="mb-8 p-6 bg-blue-50 rounded-lg border border-blue-200">
                           <h3 className="font-semibold mb-4 text-blue-800">
@@ -1271,12 +1282,14 @@ export default function CourseDetails() {
                               courseTitle={course.title}
                               progress={progressPercentage}
                               passed={passed}
+                              enrollmentId={enrollment?._id}
                             />
                             <ShareButton 
                               platform="x"
                               courseTitle={course.title}
                               progress={progressPercentage}
                               passed={passed}
+                              enrollmentId={enrollment?._id}
                             />
                             <ShareButton 
                               platform="whatsapp"
@@ -1284,6 +1297,7 @@ export default function CourseDetails() {
                               progress={progressPercentage}
                               passed={passed}
                             />
+                              enrollmentId={enrollment?._id}
                             <ShareButton 
                               platform="facebook"
                               courseTitle={course.title}
@@ -1292,6 +1306,7 @@ export default function CourseDetails() {
                             />
                           </div>
                         </div>
+                              enrollmentId={enrollment?._id}
 
                         <div className="mb-8">
                           <h3 className="font-semibold mb-4">Share Your Feedback</h3>
