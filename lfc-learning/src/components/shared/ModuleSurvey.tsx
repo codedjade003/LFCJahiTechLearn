@@ -16,7 +16,7 @@ export interface SurveyData {
   feedback: string;
 }
 
-export default function ModuleSurvey({ moduleTitle, courseId, moduleId, onClose, onSubmit }: ModuleSurveyProps) {
+export default function ModuleSurvey({ moduleTitle, onClose, onSubmit }: ModuleSurveyProps) {
   const [surveyData, setSurveyData] = useState<SurveyData>({
     difficulty: 3,
     clarity: 3,

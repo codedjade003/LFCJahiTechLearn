@@ -1,22 +1,19 @@
 // controllers/submissionController.js - UPDATED with Cloudinary
 import multer from 'multer';
-import { uploadToCloudinary } from '../utils/fileUploader.js';
-
-// Use memory storage to get file buffer
-// Remove the old upload configuration and use the unified route
-export const upload = multer({ 
-  storage: unifiedStorage, // Use the unified storage
-  limits: {
-    fileSize: 100 * 1024 * 1024, // 100MB
-  }
-});
-
 import User from '../models/User.js';
 import Enrollment from '../models/Enrollment.js';
 import { Course } from '../models/Course.js';
 import { Submission } from '../models/Submission.js';
 import { unifiedStorage } from '../config/cloudinary.js';
 import { updateEnrollmentProgress } from './progressController.js';
+
+// Use unified cloudinary storage from multer
+export const upload = multer({ 
+  storage: unifiedStorage, // Use the unified storage
+  limits: {
+    fileSize: 100 * 1024 * 1024, // 100MB
+  }
+});
 
 // Get all submissions for a course (student view)
 export const getSubmission = async (req, res) => {
@@ -106,10 +103,17 @@ export const submitAssignment = async (req, res) => {
       if (!req.file) {
         return res.status(400).json({ message: 'No file uploaded for file_upload submission type' });
       }
+      
+      // File is already uploaded by multer-storage-cloudinary
+      // req.file.path contains the Cloudinary URL
+      console.log('✅ Assignment file already uploaded to Cloudinary:', req.file.path);
+      
       formattedSubmission.file = {
-        url: `/uploads/submissions/${req.file.filename}`,
+        url: req.file.path, // Cloudinary URL from multer
+        public_id: req.file.filename, // Cloudinary public_id from multer
         name: req.file.originalname,
-        type: req.file.mimetype
+        type: req.file.mimetype,
+        size: req.file.size
       };
     }
 
@@ -274,32 +278,17 @@ export const submitProject = async (req, res) => {
         return res.status(400).json({ message: 'No file uploaded for file_upload submission type' });
       }
       
-      try {
-        // Upload to Cloudinary directly
-        const uploadResult = await uploadToCloudinary(
-          req.file.buffer,
-          req.file.originalname,
-          userId
-        );
+      // File is already uploaded by multer-storage-cloudinary
+      // req.file.path contains the Cloudinary URL
+      console.log('✅ File already uploaded to Cloudinary:', req.file.path);
 
-        console.log('✅ Cloudinary upload result:', uploadResult);
-
-        formattedSubmission.file = {
-          url: uploadResult.secure_url,
-          public_id: uploadResult.public_id,
-          name: req.file.originalname,
-          type: req.file.mimetype,
-          size: req.file.size,
-          format: uploadResult.format,
-          resource_type: uploadResult.resource_type
-        };
-      } catch (uploadError) {
-        console.error('❌ Cloudinary upload failed:', uploadError);
-        return res.status(500).json({ 
-          message: 'Failed to upload file to cloud storage', 
-          error: uploadError.message 
-        });
-      }
+      formattedSubmission.file = {
+        url: req.file.path, // Cloudinary URL from multer
+        public_id: req.file.filename, // Cloudinary public_id from multer
+        name: req.file.originalname,
+        type: req.file.mimetype,
+        size: req.file.size
+      };
     }
 
     // Create submission record

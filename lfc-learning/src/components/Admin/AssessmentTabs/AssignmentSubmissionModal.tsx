@@ -52,6 +52,7 @@ export default function AssignmentSubmissionModal({
   onClose, 
   onGrade 
 }: AssignmentSubmissionModalProps) {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [grade, setGrade] = useState(0);
   const [feedback, setFeedback] = useState("");
   const [isGrading, setIsGrading] = useState(false);
@@ -64,6 +65,15 @@ export default function AssignmentSubmissionModal({
   }, [submission]);
 
   if (!isOpen || !submission) return null;
+  
+  // Helper function to resolve file URL
+  const resolveFileUrl = (url: string) => {
+    if (!url) return '';
+    // If it's already a full URL (Cloudinary), return as is
+    if (url.startsWith('http')) return url;
+    // If it's a relative path, prepend API_BASE
+    return `${API_BASE}${url.startsWith('/') ? '' : '/'}${url}`;
+  };
 
   const handleSubmitGrade = async () => {
     const maxPoints = submission.assignmentId?.maxPoints || 100;
@@ -131,7 +141,7 @@ export default function AssignmentSubmissionModal({
                 </span>
               </div>
               <a
-                href={file.url}
+                href={resolveFileUrl(file.url)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center text-blue-600 hover:text-blue-800"
@@ -145,7 +155,7 @@ export default function AssignmentSubmissionModal({
             <div className="mt-4">
               {isImage && (
                 <img 
-                  src={file.url} 
+                  src={resolveFileUrl(file.url)} 
                   alt={file.name}
                   className="max-w-full h-auto rounded-lg border"
                 />
@@ -155,13 +165,13 @@ export default function AssignmentSubmissionModal({
                   controls 
                   className="max-w-full rounded-lg border"
                 >
-                  <source src={file.url} type={file.type} />
+                  <source src={resolveFileUrl(file.url)} type={file.type} />
                   Your browser does not support the video tag.
                 </video>
               )}
               {isPDF && (
                 <iframe
-                  src={file.url}
+                  src={resolveFileUrl(file.url)}
                   className="w-full h-96 rounded-lg border"
                   title={file.name}
                 />

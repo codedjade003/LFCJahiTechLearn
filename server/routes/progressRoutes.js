@@ -3,6 +3,7 @@ import express from 'express';
 import { protect } from '../middleware/authMiddleware.js';
 import { 
   markModuleComplete,
+  trackModuleAccess,
   submitAssignment,
   submitProject,
   submitQuiz,
@@ -22,6 +23,20 @@ router.get('/overview', protect, async (req, res) => {
     res.json(overview);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching progress overview', error: error.message });
+  }
+});
+
+// Track module access/start
+router.post('/:courseId/modules/:moduleId/access', protect, async (req, res) => {
+  try {
+    const result = await trackModuleAccess(
+      req.user._id,
+      req.params.courseId,
+      req.params.moduleId
+    );
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
 });
 

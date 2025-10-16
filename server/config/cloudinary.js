@@ -18,8 +18,36 @@ const unifiedStorage = new CloudinaryStorage({
     let resource_type = 'auto';
     let folder = 'uploads';
 
-    // Determine folder based on upload type
+    // Determine folder based on upload type or route
     const uploadType = req.params.type || 'general';
+    
+    // Check if this is a submission route
+    if (req.originalUrl && req.originalUrl.includes('/api/submissions/')) {
+      if (req.originalUrl.includes('/project')) {
+        folder = 'submissions/projects';
+      } else if (req.originalUrl.includes('/assignments/')) {
+        folder = 'submissions/assignments';
+      } else {
+        folder = 'submissions';
+      }
+      
+      const timestamp = Date.now();
+      const random = Math.random().toString(36).substring(2, 8);
+      const userId = req.user?._id || 'anonymous';
+      const originalName = file.originalname
+        .split('.')[0]
+        .replace(/[^a-zA-Z0-9]/g, '-');
+      const ext = file.originalname.split('.').pop();
+
+      return {
+        folder,
+        resource_type,
+        public_id: `submission-${userId}-${originalName}-${timestamp}-${random}`,
+        format: ext,
+      };
+    }
+    
+    // Handle other upload types
     switch (uploadType) {
       case 'thumbnail':
       case 'avatar':

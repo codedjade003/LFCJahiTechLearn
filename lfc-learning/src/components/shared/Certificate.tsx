@@ -165,7 +165,7 @@ export default function Certificate({ studentName, courseName, completionDate, s
           <span>Download Certificate</span>
         </button>
         
-        {navigator.share && (
+        {typeof navigator !== 'undefined' && 'share' in navigator && (
           <button
             onClick={shareCertificate}
             className="flex items-center space-x-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md"

@@ -22,11 +22,22 @@ interface Module {
   _id: string;
   title: string;
   type: string;
+  description?: string;
+  objectives?: string[];
   contentUrl?: string;
   quiz?: {
     questions: Question[];
     dueDate?: Date;
   };
+  survey?: {
+    questions: SurveyQuestion[];
+  };
+}
+
+interface SurveyQuestion {
+  question: string;
+  type: "text" | "rating" | "multiple-choice";
+  options?: string[];
 }
 
 interface Question {
@@ -63,8 +74,11 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
   const [newModule, setNewModule] = useState({
     title: "",
     type: "video",
+    description: "",
+    objectives: [] as string[],
     file: null as File | null,
     questions: [] as Question[],
+    surveyQuestions: [] as SurveyQuestion[],
   });
 
   useEffect(() => {
@@ -99,8 +113,11 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
     setNewModule({
       title: "",
       type: "video",
+      description: "",
+      objectives: [] as string[],
       file: null,
       questions: [] as Question[],
+      surveyQuestions: [] as SurveyQuestion[],
     });
     setContentUrl("");
     setActiveUploadTab('file');
@@ -155,6 +172,7 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
     
     // FIX: Properly extract quiz questions from the nested structure
     const quizQuestions = module.quiz?.questions || [];
+    const surveyQuestions = module.survey?.questions || [];
     
     console.log("Editing module quiz data:", {
       moduleQuiz: module.quiz,
@@ -166,8 +184,11 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
     setNewModule({
       title: module.title,
       type: module.type,
+      description: module.description || "",
+      objectives: module.objectives || [],
       file: null,
-      questions: quizQuestions, // This should now have the actual questions
+      questions: quizQuestions,
+      surveyQuestions: surveyQuestions,
     });
     
     if (module.contentUrl) {
@@ -264,6 +285,8 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
       const payload: any = {
         title: newModule.title,
         type: newModule.type,
+        description: newModule.description || "",
+        objectives: newModule.objectives.filter(obj => obj.trim() !== ""),
         contentUrl: finalContentUrl || undefined,
       };
 
@@ -278,6 +301,17 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
         };
       } else if (newModule.type === "quiz") {
         payload.quiz = { questions: [] };
+      }
+
+      // Survey handling...
+      if (newModule.surveyQuestions.length > 0) {
+        payload.survey = {
+          questions: newModule.surveyQuestions.map(sq => ({
+            question: sq.question,
+            type: sq.type,
+            options: sq.type === "multiple-choice" ? sq.options?.filter(opt => opt.trim() !== "") : undefined,
+          }))
+        };
       }
 
       const method = editingModule ? "PUT" : "POST";
@@ -642,6 +676,55 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                           value={newModule.title}
                           onChange={(e) => setNewModule({ ...newModule, title: e.target.value })}
                         />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-yt-text-dark mb-2">Module Description</label>
+                        <textarea
+                          className="w-full border border-yt-light-border rounded-md px-3 py-2 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
+                          placeholder="Brief description of what students will learn"
+                          rows={3}
+                          value={newModule.description}
+                          onChange={(e) => setNewModule({ ...newModule, description: e.target.value })}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-yt-text-dark mb-2">Learning Objectives</label>
+                        <div className="space-y-2">
+                          {newModule.objectives.map((obj, idx) => (
+                            <div key={idx} className="flex gap-2">
+                              <input
+                                type="text"
+                                className="flex-1 border border-yt-light-border rounded-md px-3 py-2 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
+                                placeholder={`Objective ${idx + 1}`}
+                                value={obj}
+                                onChange={(e) => {
+                                  const newObjectives = [...newModule.objectives];
+                                  newObjectives[idx] = e.target.value;
+                                  setNewModule({ ...newModule, objectives: newObjectives });
+                                }}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const newObjectives = newModule.objectives.filter((_, i) => i !== idx);
+                                  setNewModule({ ...newModule, objectives: newObjectives });
+                                }}
+                                className="px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 text-sm"
+                              >
+                                <FaTrash />
+                              </button>
+                            </div>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={() => setNewModule({ ...newModule, objectives: [...newModule.objectives, ""] })}
+                            className="px-3 py-2 bg-lfc-gold text-white rounded-md hover:bg-lfc-gold/90 text-sm flex items-center gap-2"
+                          >
+                            <FaPlus /> Add Objective
+                          </button>
+                        </div>
                       </div>
                       
                       <div>

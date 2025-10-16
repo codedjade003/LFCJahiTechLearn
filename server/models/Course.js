@@ -16,6 +16,8 @@ const moduleSchema = new mongoose.Schema({
     required: true,
   },
   title: { type: String, required: true },
+  description: { type: String, default: "" },
+  objectives: [{ type: String }],
   contentUrl: String,
   duration: String,
 
@@ -29,6 +31,16 @@ const moduleSchema = new mongoose.Schema({
     ],
     dueDate: Date,
     timeLimit: { type: Number, default: 1800 } // 30 minutes default
+  },
+  
+  survey: {
+    questions: [
+      {
+        question: String,
+        type: { type: String, enum: ["text", "rating", "multiple-choice"], default: "text" },
+        options: [String], // For multiple-choice questions
+      },
+    ],
   },
 }, { _id: true }); // Ensure _id is preserved
 
