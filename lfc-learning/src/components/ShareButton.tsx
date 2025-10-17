@@ -24,10 +24,10 @@ export const ShareButton = ({
     : `I'm making great progress in "${courseTitle}" - currently at ${progress}% completion!`;
 
   const shareUrls = {
-    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(certificateUrl)}&summary=${encodeURIComponent(shareMessage)}`,
-    x: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareMessage)}`,
-    whatsapp: `https://wa.me/?text=${encodeURIComponent(shareMessage)}`,
-    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(certificateUrl)}&quote=${encodeURIComponent(shareMessage)}`
+    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(certificateUrl)}`,
+    x: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareMessage)}&url=${encodeURIComponent(certificateUrl)}`,
+    whatsapp: `https://api.whatsapp.com/send?text=${encodeURIComponent(shareMessage + '\n\n' + certificateUrl)}`,
+    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(certificateUrl)}`
   };
 
   const platformIcons = {
