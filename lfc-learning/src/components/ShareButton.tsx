@@ -16,17 +16,17 @@ export const ShareButton = ({
   validationCode
 }: ShareButtonProps) => {
   const certificateUrl = passed && validationCode 
-    ? `https://www.lfctechlearn.com/validate/${validationCode}`
-    : window.location.origin;
+    ? `${window.location.origin}/validate/${validationCode}`
+    : window.location.href; // Use current URL if no certificate
 
   const shareMessage = passed 
-    ? `I successfully completed "${courseTitle}" with ${progress}% mastery! Check out my certificate: ${certificateUrl}`
+    ? `I successfully completed "${courseTitle}" with ${progress}% mastery! Check out my certificate`
     : `I'm making great progress in "${courseTitle}" - currently at ${progress}% completion!`;
 
   const shareUrls = {
     linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(certificateUrl)}`,
     x: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareMessage)}&url=${encodeURIComponent(certificateUrl)}`,
-    whatsapp: `https://api.whatsapp.com/send?text=${encodeURIComponent(shareMessage + '\n\n' + certificateUrl)}`,
+    whatsapp: `https://api.whatsapp.com/send?text=${encodeURIComponent(shareMessage + ' ' + certificateUrl)}`,
     facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(certificateUrl)}`
   };
 
@@ -38,31 +38,43 @@ export const ShareButton = ({
   };
 
   const platformColors = {
-    linkedin: 'bg-blue-600 hover:bg-blue-700',
+    linkedin: 'bg-[#0077B5] hover:bg-[#00669c]',
     x: 'bg-black hover:bg-gray-800',
-    whatsapp: 'bg-green-500 hover:bg-green-600',
-    facebook: 'bg-blue-800 hover:bg-blue-900'
+    whatsapp: 'bg-[#25D366] hover:bg-[#20bd5c]',
+    facebook: 'bg-[#1877F2] hover:bg-[#1666d9]'
   };
 
   const platformNames = {
     linkedin: 'LinkedIn',
-    x: 'X',
+    x: 'X (Twitter)',
     whatsapp: 'WhatsApp',
     facebook: 'Facebook'
   };
 
   const handleShare = () => {
     const url = shareUrls[platform];
-    window.open(url, '_blank', 'width=600,height=400');
+    
+    // Better window positioning
+    const width = 600;
+    const height = platform === 'whatsapp' ? 700 : 500;
+    const left = (window.screen.width - width) / 2;
+    const top = (window.screen.height - height) / 2;
+    
+    window.open(
+      url, 
+      `share-${platform}`, 
+      `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
+    );
   };
 
   return (
     <button
       onClick={handleShare}
-      className={`p-3 rounded-full text-white ${platformColors[platform]} transition-colors transform hover:scale-110`}
+      className={`p-3 rounded-full text-white ${platformColors[platform]} transition-all duration-200 transform hover:scale-110 active:scale-95 shadow-md hover:shadow-lg`}
       title={`Share on ${platformNames[platform]}`}
+      aria-label={`Share on ${platformNames[platform]}`}
     >
-      <span className="text-xl font-bold">{platformIcons[platform]}</span>
+      {platformIcons[platform]}
     </button>
   );
 };
