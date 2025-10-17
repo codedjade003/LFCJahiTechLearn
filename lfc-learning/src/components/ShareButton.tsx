@@ -5,7 +5,7 @@ interface ShareButtonProps {
   courseTitle: string;
   progress: number;
   passed: boolean;
-  enrollmentId?: string;
+  validationCode?: string;
 }
 
 export const ShareButton = ({ 
@@ -13,15 +13,15 @@ export const ShareButton = ({
   courseTitle, 
   progress,
   passed,
-  enrollmentId
+  validationCode
 }: ShareButtonProps) => {
-  const certificateUrl = passed && enrollmentId 
-    ? `${window.location.origin}/certificate/${enrollmentId}`
+  const certificateUrl = passed && validationCode 
+    ? `https://www.lfctechlearn.com/validate/${validationCode}`
     : window.location.origin;
 
   const shareMessage = passed 
-    ? `🎓 I successfully completed "${courseTitle}" with ${progress}% mastery! Check out my certificate: ${certificateUrl}`
-    : `📚 I'm making great progress in "${courseTitle}" - currently at ${progress}% completion!`;
+    ? `I successfully completed "${courseTitle}" with ${progress}% mastery! Check out my certificate: ${certificateUrl}`
+    : `I'm making great progress in "${courseTitle}" - currently at ${progress}% completion!`;
 
   const shareUrls = {
     linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(certificateUrl)}&summary=${encodeURIComponent(shareMessage)}`,

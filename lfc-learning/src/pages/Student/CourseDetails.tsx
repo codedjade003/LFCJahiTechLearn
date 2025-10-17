@@ -620,6 +620,7 @@ export default function CourseDetails() {
   const navigate = useNavigate();
   const [course, setCourse] = useState<Course | null>(null);
   const [enrollment, setEnrollment] = useState<Enrollment | null>(null);
+  const [certificate, setCertificate] = useState<{ validationCode: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [activePage, setActivePage] = useState<Page>('overview');
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
@@ -677,6 +678,12 @@ export default function CourseDetails() {
     }
   }, [courseId]);
 
+  useEffect(() => {
+    if (enrollment?.completed && enrollment._id) {
+      fetchCertificate();
+    }
+  }, [enrollment?.completed, enrollment?._id]);
+
   const fetchCourseData = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -712,6 +719,24 @@ export default function CourseDetails() {
       console.error("Error fetching enrollment progress", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchCertificate = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token || !enrollment?._id) return;
+
+      const res = await fetch(`${API_BASE}/api/certificates/${enrollment._id}`, {
+        headers: { "Authorization": `Bearer ${token}` },
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        setCertificate(data);
+      }
+    } catch (err) {
+      console.error("Error fetching certificate", err);
     }
   };
 
@@ -1368,28 +1393,28 @@ export default function CourseDetails() {
                               courseTitle={course.title}
                               progress={progressPercentage}
                               passed={passed}
-                              enrollmentId={enrollment?._id}
+                              validationCode={certificate?.validationCode}
                             />
                             <ShareButton 
                               platform="x"
                               courseTitle={course.title}
                               progress={progressPercentage}
                               passed={passed}
-                              enrollmentId={enrollment?._id}
+                              validationCode={certificate?.validationCode}
                             />
                             <ShareButton 
                               platform="whatsapp"
                               courseTitle={course.title}
                               progress={progressPercentage}
                               passed={passed}
-                              enrollmentId={enrollment?._id}
+                              validationCode={certificate?.validationCode}
                             />
                             <ShareButton 
                               platform="facebook"
                               courseTitle={course.title}
                               progress={progressPercentage}
                               passed={passed}
-                              enrollmentId={enrollment?._id}
+                              validationCode={certificate?.validationCode}
                             />
                           </div>
                         </div>

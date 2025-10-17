@@ -81,6 +81,9 @@ export default function CertificateValidation() {
         
         setCertificate(data);
         setLoading(false);
+
+        // Set Open Graph meta tags for social media sharing
+        updateMetaTags(data);
       } catch (err: any) {
         console.error("Validation error:", err);
         setError("Failed to validate certificate. Please check your connection.");
@@ -90,18 +93,57 @@ export default function CertificateValidation() {
     };
 
     validateCertificate();
-  }, [validationCode]); // Remove enrollmentId from dependencies
+  }, [validationCode]);
+
+  const updateMetaTags = (cert: CertificateData) => {
+    const title = `${cert.studentName} - ${cert.courseTitle} Certificate`;
+    const description = `${cert.studentName} successfully completed ${cert.courseTitle} at LFC Jahi Tech Learn`;
+    const url = window.location.href;
+    // Use logo-social.png if available (with white background), otherwise use regular logo
+    const logoUrl = `${window.location.origin}/logo-social.png`;
+    const faviconUrl = `${window.location.origin}/logo.png`;
+    
+    // Update document title
+    document.title = title;
+    
+    // Update favicon
+    let favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement;
+    if (!favicon) {
+      favicon = document.createElement('link');
+      favicon.rel = 'icon';
+      document.head.appendChild(favicon);
+    }
+    favicon.href = faviconUrl;
+    
+    // Update or create meta tags
+    const updateMeta = (property: string, content: string) => {
+      let meta = document.querySelector(`meta[property="${property}"]`) as HTMLMetaElement;
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute('property', property);
+        document.head.appendChild(meta);
+      }
+      meta.content = content;
+    };
+
+    updateMeta('og:title', title);
+    updateMeta('og:description', description);
+    updateMeta('og:url', url);
+    updateMeta('og:type', 'website');
+    updateMeta('og:image', logoUrl);
+    updateMeta('twitter:card', 'summary');
+    updateMeta('twitter:title', title);
+    updateMeta('twitter:description', description);
+    updateMeta('twitter:image', logoUrl);
+  };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="text-center">
-          <div className="relative">
-            <FaSpinner className="text-6xl text-blue-600 animate-spin mx-auto mb-4" />
-            <div className="absolute inset-0 blur-xl bg-blue-400 opacity-20 animate-pulse"></div>
-          </div>
-          <p className="text-xl font-semibold text-gray-700 animate-pulse">Validating certificate...</p>
-          <p className="text-sm text-gray-500 mt-2">Please wait while we verify the authenticity</p>
+          <FaSpinner className="text-5xl text-lfc-red animate-spin mx-auto mb-4" />
+          <p className="text-xl font-semibold text-gray-800">Validating certificate...</p>
+          <p className="text-sm text-gray-600 mt-2">Please wait while we verify the authenticity</p>
         </div>
       </div>
     );
@@ -109,29 +151,26 @@ export default function CertificateValidation() {
 
   if (error || !certificate) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 via-pink-50 to-orange-100 flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8 text-center transform hover:scale-105 transition-transform">
-          <div className="relative mb-6">
-            <FaTimesCircle className="text-7xl text-red-500 mx-auto animate-bounce" />
-            <div className="absolute inset-0 blur-2xl bg-red-400 opacity-20"></div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center border border-gray-200">
+          <FaTimesCircle className="text-6xl text-red-500 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Invalid Certificate</h1>
+          <div className="bg-red-50 border border-red-200 p-4 mb-6 rounded">
+            <p className="text-red-800 font-medium">{error || "Certificate not found"}</p>
           </div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-4">Invalid Certificate</h1>
-          <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded">
-            <p className="text-red-700 font-medium">{error || "Certificate not found"}</p>
-          </div>
-          <p className="text-gray-600 mb-6 text-sm">
+          <p className="text-gray-700 mb-6 text-sm">
             This certificate could not be verified. It may have been revoked, expired, or the validation code is incorrect.
           </p>
           <div className="space-y-3">
             <Link
               to="/"
-              className="block w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg"
+              className="block w-full px-6 py-3 bg-lfc-red text-white rounded-lg hover:bg-lfc-gold-dark transition-colors font-medium"
             >
               Go to Homepage
             </Link>
             <button
               onClick={() => window.location.reload()}
-              className="block w-full px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+              className="block w-full px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-medium"
             >
               Try Again
             </button>
@@ -147,51 +186,48 @@ export default function CertificateValidation() {
   return (
     <>
       <style>{printStyles}</style>
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-blue-100 py-12 px-4">
+      <div className="min-h-screen bg-gray-50 py-12 px-4">
         <div className="max-w-4xl mx-auto">
         {/* Success Header */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8 mb-6 text-center transform hover:scale-105 transition-transform no-print">
-          <div className="relative mb-6">
-            <FaCheckCircle className="text-7xl text-green-500 mx-auto animate-bounce" />
-            <div className="absolute inset-0 blur-2xl bg-green-400 opacity-20"></div>
-          </div>
-          <div className="inline-block px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-semibold mb-4">
+        <div className="bg-white rounded-lg shadow-md p-8 mb-6 text-center border border-gray-200 no-print">
+          <FaCheckCircle className="text-6xl text-green-600 mx-auto mb-4" />
+          <div className="inline-block px-4 py-2 bg-green-100 text-green-900 rounded-full text-sm font-semibold mb-4">
             ✓ VERIFIED AUTHENTIC
           </div>
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">Certificate Verified!</h1>
-          <p className="text-xl text-gray-600">This certificate is valid and authentic</p>
-          <p className="text-sm text-gray-500 mt-2">Issued by LFC Jahi Tech Learn</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Certificate Verified!</h1>
+          <p className="text-lg text-gray-700">This certificate is valid and authentic</p>
+          <p className="text-sm text-gray-600 mt-2">Issued by LFC Jahi Tech Learn</p>
         </div>
 
         {/* Certificate Details */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8 hover:shadow-3xl transition-shadow print-area">
-          <div className="border-4 border-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-8 bg-gradient-to-br from-blue-50 to-indigo-50">
+        <div className="bg-white rounded-lg shadow-lg p-8 border border-gray-200 print-area">
+          <div className="border-2 border-gray-300 rounded-lg p-8 bg-gray-50">
             {/* Certificate Header */}
             <div className="text-center mb-8">
-              <FaCertificate className="text-5xl text-blue-600 mx-auto mb-4" />
-              <h2 className="text-3xl font-bold text-gray-800 mb-2">Certificate of Completion</h2>
-              <p className="text-gray-600">LFC Jahi Tech Learn</p>
+              <FaCertificate className="text-5xl text-lfc-red mx-auto mb-4" />
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">Certificate of Completion</h2>
+              <p className="text-gray-700 font-medium">LFC Jahi Tech Learn</p>
             </div>
 
             {/* Student Info */}
             <div className="mb-8 text-center">
               <div className="flex items-center justify-center gap-2 mb-2">
-                <FaUser className="text-blue-600" />
-                <p className="text-gray-600">This certifies that</p>
+                <FaUser className="text-gray-700" />
+                <p className="text-gray-700">This certifies that</p>
               </div>
-              <h3 className="text-4xl font-bold text-gray-800 mb-4">{certificate.studentName}</h3>
-              <p className="text-gray-600 mb-2">has successfully completed</p>
-              <h4 className="text-2xl font-semibold text-blue-600">{certificate.courseTitle}</h4>
+              <h3 className="text-4xl font-bold text-gray-900 mb-4">{certificate.studentName}</h3>
+              <p className="text-gray-700 mb-2">has successfully completed</p>
+              <h4 className="text-2xl font-semibold text-lfc-red">{certificate.courseTitle}</h4>
             </div>
 
             {/* Details Grid */}
             <div className="grid md:grid-cols-2 gap-6 mb-8">
-              <div className="bg-gray-50 rounded-lg p-4">
+              <div className="bg-white rounded-lg p-4 border border-gray-200">
                 <div className="flex items-center gap-2 mb-2">
-                  <FaCalendar className="text-blue-600" />
-                  <p className="font-semibold text-gray-700">Completion Date</p>
+                  <FaCalendar className="text-gray-700" />
+                  <p className="font-semibold text-gray-900">Completion Date</p>
                 </div>
-                <p className="text-gray-600">
+                <p className="text-gray-700">
                   {completionDate.toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
@@ -201,41 +237,41 @@ export default function CertificateValidation() {
               </div>
 
               {certificate.finalScore && (
-                <div className="bg-gray-50 rounded-lg p-4">
+                <div className="bg-white rounded-lg p-4 border border-gray-200">
                   <div className="flex items-center gap-2 mb-2">
-                    <FaTrophy className="text-yellow-500" />
-                    <p className="font-semibold text-gray-700">Final Score</p>
+                    <FaTrophy className="text-lfc-gold" />
+                    <p className="font-semibold text-gray-900">Final Score</p>
                   </div>
-                  <p className="text-2xl font-bold text-green-600">{certificate.finalScore}%</p>
+                  <p className="text-2xl font-bold text-green-700">{certificate.finalScore}%</p>
                 </div>
               )}
 
               {certificate.metadata?.courseLevel && (
-                <div className="bg-gray-50 rounded-lg p-4">
+                <div className="bg-white rounded-lg p-4 border border-gray-200">
                   <div className="flex items-center gap-2 mb-2">
-                    <FaBook className="text-blue-600" />
-                    <p className="font-semibold text-gray-700">Course Level</p>
+                    <FaBook className="text-gray-700" />
+                    <p className="font-semibold text-gray-900">Course Level</p>
                   </div>
-                  <p className="text-gray-600">{certificate.metadata.courseLevel}</p>
+                  <p className="text-gray-700">{certificate.metadata.courseLevel}</p>
                 </div>
               )}
 
               {certificate.metadata?.courseDuration && (
-                <div className="bg-gray-50 rounded-lg p-4">
+                <div className="bg-white rounded-lg p-4 border border-gray-200">
                   <div className="flex items-center gap-2 mb-2">
-                    <FaCalendar className="text-blue-600" />
-                    <p className="font-semibold text-gray-700">Duration</p>
+                    <FaCalendar className="text-gray-700" />
+                    <p className="font-semibold text-gray-900">Duration</p>
                   </div>
-                  <p className="text-gray-600">{certificate.metadata.courseDuration}</p>
+                  <p className="text-gray-700">{certificate.metadata.courseDuration}</p>
                 </div>
               )}
             </div>
 
             {/* Certificate ID */}
-            <div className="border-t pt-6 text-center">
-              <p className="text-sm text-gray-600 mb-1">Certificate ID</p>
-              <p className="font-mono text-lg font-semibold text-gray-800">{certificate.certificateId}</p>
-              <p className="text-xs text-gray-500 mt-2">
+            <div className="border-t border-gray-300 pt-6 text-center">
+              <p className="text-sm text-gray-700 mb-1 font-medium">Certificate ID</p>
+              <p className="font-mono text-lg font-semibold text-gray-900">{certificate.certificateId}</p>
+              <p className="text-xs text-gray-600 mt-2">
                 Issued on {issuedDate.toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'long',
@@ -246,9 +282,9 @@ export default function CertificateValidation() {
 
             {certificate.instructorName && (
               <div className="mt-6 text-center">
-                <div className="inline-block border-t-2 border-gray-300 pt-2">
-                  <p className="font-semibold text-gray-800">{certificate.instructorName}</p>
-                  <p className="text-sm text-gray-600">Course Instructor</p>
+                <div className="inline-block border-t-2 border-gray-400 pt-2">
+                  <p className="font-semibold text-gray-900">{certificate.instructorName}</p>
+                  <p className="text-sm text-gray-700">Course Instructor</p>
                 </div>
               </div>
             )}
@@ -256,24 +292,24 @@ export default function CertificateValidation() {
 
           {/* Footer */}
           <div className="mt-8 text-center space-y-4">
-            <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-4">
-              <p className="text-sm text-gray-700 font-medium mb-2">
+            <div className="bg-green-50 border border-green-300 rounded-lg p-4">
+              <p className="text-sm text-gray-900 font-medium mb-2">
                 ✓ This certificate has been verified and is authentic.
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-700">
                 Verified on {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
                 to="/"
-                className="inline-block px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg"
+                className="inline-block px-6 py-3 bg-lfc-red text-white rounded-lg hover:bg-lfc-gold-dark transition-colors font-medium"
               >
                 Explore More Courses
               </Link>
               <button
                 onClick={() => window.print()}
-                className="inline-block px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                className="inline-block px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-medium"
               >
                 Print Certificate
               </button>
