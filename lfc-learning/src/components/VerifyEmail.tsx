@@ -50,24 +50,33 @@ export default function VerifyEmailPage() {
         return;
       }
 
-      // ✅ Update verification status in localStorage
-      localStorage.setItem("isVerified", "true");
-
-      // ✅ Check if user has a token (from signup)
-      const token = localStorage.getItem("token");
+      // ✅ Check if user has pending token from signup (in sessionStorage)
+      const pendingToken = sessionStorage.getItem("pendingToken");
       
-      if (token) {
-        // User signed up and has token - auto-login them
-        const role = localStorage.getItem("role");
-
+      if (pendingToken) {
+        // User just signed up - move token from sessionStorage to localStorage
+        localStorage.setItem("token", pendingToken);
+        localStorage.setItem("role", sessionStorage.getItem("pendingRole") || "student");
+        localStorage.setItem("firstLogin", sessionStorage.getItem("pendingFirstLogin") || "true");
+        localStorage.setItem("isOnboarded", sessionStorage.getItem("pendingIsOnboarded") || "false");
+        localStorage.setItem("isVerified", "true");
+        
+        // Clear pending data
+        sessionStorage.removeItem("pendingToken");
+        sessionStorage.removeItem("pendingRole");
+        sessionStorage.removeItem("pendingFirstLogin");
+        sessionStorage.removeItem("pendingIsOnboarded");
+        
         // Navigate to appropriate dashboard
+        const role = localStorage.getItem("role");
         if (role === "admin" || role === "admin-only") {
           navigate("/admin/dashboard");
         } else {
           navigate("/dashboard");
         }
       } else {
-        // No token - send to login page
+        // Existing user verifying email - just update status and send to login
+        localStorage.setItem("isVerified", "true");
         navigate("/");
       }
     } catch (err) {

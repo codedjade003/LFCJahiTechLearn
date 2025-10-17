@@ -4,85 +4,111 @@
 
 ## Problem Identified
 
-Users reported that after signing up, they would be redirected to the verification page, but it would flash and immediately redirect back to the sign-in page. This created confusion and caused double verification requests.
+Users reported that after signing up, they would be redirected to the verification page, but it would **flash and immediately redirect back to the sign-in page**. This created confusion and caused double verification requests.
 
 ### Root Cause
 
-The issue was in the verification flow logic:
+The real issue was discovered in the server logs:
 
-1. **User signs up** → Receives token and `isVerified: false` is stored in localStorage
+```
+[REQ] GET /api/auth/me
+JWT verification failed: jwt malformed
+```
+
+The problem flow:
+
+1. **User signs up** → Backend returns a token, frontend stores it in `localStorage`
 2. **Navigates to `/verify-email`** → Verification page loads
-3. **User enters code and verifies** → Backend marks email as verified
-4. **Problem:** After verification, the code navigated to `/` (login page) but:
-   - The user already had a token from signup
-   - `isVerified` in localStorage was still `false` (not updated)
-   - This could cause redirect loops or confusion
+3. **AuthContext runs on mount** → Calls `fetchUser()` which tries to validate the token
+4. **Token validation fails** → Backend returns 401 (token is for unverified user)
+5. **AuthContext calls `logout()`** → Clears token and redirects to `/` (login page)
+6. **Result:** User is kicked off the verification page before they can verify!
+
+The core issue: **Storing the token in localStorage before email verification** caused the AuthContext to try validating it, which failed and triggered an automatic logout/redirect.
 
 ## Solution Implemented
 
-### 1. Update `isVerified` in localStorage After Verification ✅
+### Key Insight: Don't Store Token Until After Verification! 🔑
 
-**File: `lfc-learning/src/components/VerifyEmail.tsx`**
+The solution is to **use sessionStorage as a temporary holding area** for the token and user data until email verification is complete.
 
-After successful verification, we now:
-- Update `localStorage.setItem("isVerified", "true")`
-- Check if user has a token (from signup)
-- If token exists, auto-login them to the appropriate dashboard
-- If no token, send them to login page
+### 1. Store Token in sessionStorage During Signup ✅
+
+**File: `lfc-learning/src/components/SignUpForm.tsx`**
 
 **Before:**
 ```typescript
-// ✅ Verified now, send to login
-navigate("/");
+// Stored in localStorage immediately - BAD!
+localStorage.setItem("token", data.token);
+localStorage.setItem("role", data.role || "student");
+// ... etc
 ```
 
 **After:**
 ```typescript
-// ✅ Update verification status in localStorage
-localStorage.setItem("isVerified", "true");
-
-// ✅ Check if user has a token (from signup)
-const token = localStorage.getItem("token");
-
-if (token) {
-  // User signed up and has token - auto-login them
-  const role = localStorage.getItem("role");
-
-  // Navigate to appropriate dashboard
-  if (role === "admin" || role === "admin-only") {
-    navigate("/admin/dashboard");
-  } else {
-    navigate("/dashboard");
-  }
-} else {
-  // No token - send to login page
-  navigate("/");
+if (!data.isVerified) {
+  // Don't store token in localStorage yet - use sessionStorage
+  sessionStorage.setItem("pendingToken", data.token);
+  sessionStorage.setItem("pendingRole", data.role || "student");
+  sessionStorage.setItem("pendingFirstLogin", JSON.stringify(data.firstLogin));
+  sessionStorage.setItem("pendingIsOnboarded", JSON.stringify(data.isOnboarded));
+  navigate(`/verify-email?email=${encodeURIComponent(email)}`);
 }
 ```
 
-### 2. Store User Role During Signup ✅
+**Why this works:**
+- `sessionStorage` is NOT checked by AuthContext
+- Token is safely stored but won't trigger authentication checks
+- User can stay on verification page without being kicked out
 
-**File: `lfc-learning/src/components/SignUpForm.tsx`**
+### 2. Move Token to localStorage After Verification ✅
 
-Added role storage during signup so the verification page knows where to redirect:
+**File: `lfc-learning/src/components/VerifyEmail.tsx`**
+
+After successful verification:
 
 ```typescript
-localStorage.setItem("role", data.role || "student");
+// Check if user has pending token from signup
+const pendingToken = sessionStorage.getItem("pendingToken");
+
+if (pendingToken) {
+  // Move token from sessionStorage to localStorage
+  localStorage.setItem("token", pendingToken);
+  localStorage.setItem("role", sessionStorage.getItem("pendingRole") || "student");
+  localStorage.setItem("firstLogin", sessionStorage.getItem("pendingFirstLogin") || "true");
+  localStorage.setItem("isOnboarded", sessionStorage.getItem("pendingIsOnboarded") || "false");
+  localStorage.setItem("isVerified", "true");
+  
+  // Clear pending data
+  sessionStorage.removeItem("pendingToken");
+  sessionStorage.removeItem("pendingRole");
+  sessionStorage.removeItem("pendingFirstLogin");
+  sessionStorage.removeItem("pendingIsOnboarded");
+  
+  // Auto-login to dashboard
+  navigate("/dashboard");
+} else {
+  // Existing user verifying - send to login
+  navigate("/");
+}
 ```
 
 ## New Flow
 
 ### Scenario 1: New User Signup
 1. User fills signup form and submits
-2. Backend creates account with `isVerified: false`
-3. Frontend stores: `token`, `role`, `firstLogin`, `isOnboarded`, `isVerified: false`
+2. Backend creates account with `isVerified: false` and returns token
+3. **Frontend stores token in sessionStorage** (NOT localStorage) as `pendingToken`
 4. User is redirected to `/verify-email?email=user@example.com`
 5. Verification code is automatically sent
-6. User enters 6-digit code
-7. Backend verifies code and marks email as verified
-8. Frontend updates `isVerified: true` in localStorage
-9. **User is automatically logged in** and redirected to dashboard
-10. ✅ No need to login again!
+6. **AuthContext does NOT try to validate token** (it's not in localStorage)
+7. User stays on verification page without being kicked out ✅
+8. User enters 6-digit code
+9. Backend verifies code and marks email as verified
+10. **Frontend moves token from sessionStorage to localStorage**
+11. Frontend sets `isVerified: true` in localStorage
+12. **User is automatically logged in** and redirected to dashboard
+13. ✅ No need to login again!
 
 ### Scenario 2: Existing User Trying to Login (Unverified)
 1. User tries to login
@@ -96,11 +122,13 @@ localStorage.setItem("role", data.role || "student");
 
 ## Benefits
 
-✅ **No more redirect loops** - `isVerified` is properly updated after verification
+✅ **No more redirect loops** - Token is not in localStorage until after verification
+✅ **No more "flashing"** - User stays on verification page without being kicked out
 ✅ **Better UX** - Users don't need to login again after verifying email
 ✅ **Automatic login** - Seamless transition from signup → verify → dashboard
 ✅ **No double verification requests** - Clear flow prevents confusion
 ✅ **Proper role-based routing** - Admin users go to admin dashboard, students to student dashboard
+✅ **AuthContext doesn't interfere** - sessionStorage is not checked by authentication logic
 
 ## Files Modified
 
@@ -136,12 +164,20 @@ localStorage.setItem("role", data.role || "student");
 
 ## Technical Notes
 
-### localStorage Keys Used
-- `token` - JWT authentication token
+### Storage Keys Used
+
+**localStorage** (checked by AuthContext):
+- `token` - JWT authentication token (only stored AFTER verification)
 - `role` - User role (student, admin, admin-only)
 - `isVerified` - Email verification status (true/false)
 - `firstLogin` - First time login flag
 - `isOnboarded` - Onboarding completion status
+
+**sessionStorage** (temporary, NOT checked by AuthContext):
+- `pendingToken` - Token from signup, waiting for verification
+- `pendingRole` - User role, waiting for verification
+- `pendingFirstLogin` - First login flag, waiting for verification
+- `pendingIsOnboarded` - Onboarding status, waiting for verification
 
 ### Protected Routes
 The `ProtectedRoute` component checks:

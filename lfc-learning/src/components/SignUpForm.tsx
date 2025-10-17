@@ -35,17 +35,22 @@ export default function SignupForm() {
         return;
       }
 
-      // Save token + flags same as login
+      // Navigate after signup
+    if (!data.isVerified) {
+      // Don't store token yet - wait until after verification
+      // Store email and other data for after verification
+      sessionStorage.setItem("pendingToken", data.token);
+      sessionStorage.setItem("pendingRole", data.role || "student");
+      sessionStorage.setItem("pendingFirstLogin", JSON.stringify(data.firstLogin));
+      sessionStorage.setItem("pendingIsOnboarded", JSON.stringify(data.isOnboarded));
+      navigate(`/verify-email?email=${encodeURIComponent(email)}`);
+    } else {
+      // Already verified (shouldn't happen on signup, but just in case)
       localStorage.setItem("token", data.token);
       localStorage.setItem("role", data.role || "student");
       localStorage.setItem("firstLogin", JSON.stringify(data.firstLogin));
       localStorage.setItem("isOnboarded", JSON.stringify(data.isOnboarded));
-      localStorage.setItem("isVerified", JSON.stringify(data.isVerified)); // store verification flag
-
-      // Navigate after signup
-    if (!data.isVerified) {
-      navigate(`/verify-email?email=${encodeURIComponent(email)}`);
-    } else {
+      localStorage.setItem("isVerified", "true");
       if (data.firstLogin) {
         navigate("/onboarding");
       } else if (!data.isOnboarded) {
