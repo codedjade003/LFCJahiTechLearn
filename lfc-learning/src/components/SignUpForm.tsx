@@ -37,6 +37,7 @@ export default function SignupForm() {
 
       // Save token + flags same as login
       localStorage.setItem("token", data.token);
+      localStorage.setItem("role", data.role || "student");
       localStorage.setItem("firstLogin", JSON.stringify(data.firstLogin));
       localStorage.setItem("isOnboarded", JSON.stringify(data.isOnboarded));
       localStorage.setItem("isVerified", JSON.stringify(data.isVerified)); // store verification flag

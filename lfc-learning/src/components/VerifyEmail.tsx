@@ -50,8 +50,26 @@ export default function VerifyEmailPage() {
         return;
       }
 
-      // ✅ Verified now, send to login
-      navigate("/");
+      // ✅ Update verification status in localStorage
+      localStorage.setItem("isVerified", "true");
+
+      // ✅ Check if user has a token (from signup)
+      const token = localStorage.getItem("token");
+      
+      if (token) {
+        // User signed up and has token - auto-login them
+        const role = localStorage.getItem("role");
+
+        // Navigate to appropriate dashboard
+        if (role === "admin" || role === "admin-only") {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/dashboard");
+        }
+      } else {
+        // No token - send to login page
+        navigate("/");
+      }
     } catch (err) {
       setError("Something went wrong. Please try again.");
     } finally {
