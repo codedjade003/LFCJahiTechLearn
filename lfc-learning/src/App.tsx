@@ -37,6 +37,7 @@ import SupportDashboard from "./components/Admin/SupportDashboard";
 import SupportTickets from "./components/Dashboard/SupportTickets";
 import CertificateValidation from "./pages/CertificateValidation";
 import SurveyResponses from "./pages/Admin/SurveyResponses";
+import CertificateValidator from "./pages/CertificateValidator";
 
 function App() {
   return (
@@ -48,6 +49,7 @@ function App() {
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/validate/:validationCode" element={<CertificateValidation />} />
+        <Route path="/validate/:validationCode" element={<CertificateValidator />} />
         <Route path="/certificate/:enrollmentId" element={<CertificateValidation />} />
 
         {/* Protected Student Routes */}

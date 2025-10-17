@@ -166,7 +166,7 @@ class CertificateService {
            });
 
         // Validation URL
-        const validationUrl = `${process.env.FRONTEND_URL || 'https://lfcjahitechlearn.com'}/validate/${certificateData.validationCode}`;
+        const validationUrl = `${process.env.CLIENT_URL || 'https://lfcjahitechlearn.com'}/validate/${certificateData.validationCode}`;
         doc.fontSize(9)
            .font('Helvetica')
            .fillColor('#4299e1')
@@ -343,7 +343,7 @@ class CertificateService {
         user: userId,
         course: courseId,
         enrollment: enrollmentId
-      });
+      }).populate('user', 'name email'); // ADD THIS POPULATE
 
       if (existingCert && existingCert.status === 'valid') {
         console.log('✅ Found existing certificate:');
@@ -355,94 +355,115 @@ class CertificateService {
 
       console.log('📝 No existing certificate found, creating new one...');
 
-      // Fetch enrollment and course data
+      // Fetch enrollment and course data with proper population
       const Enrollment = (await import('../models/Enrollment.js')).default;
       const { Course } = await import('../models/Course.js');
       const User = (await import('../models/User.js')).default;
 
-      const enrollment = await Enrollment.findById(enrollmentId)
-        .populate('user', 'name email')
-        .populate('course', 'title level duration instructor');
-
-      if (!enrollment || !enrollment.completed) {
-        throw new Error('Course not completed');
-      }
-
-      const course = enrollment.course;
-      const user = enrollment.user;
-
-      // Debug logging
-      console.log('📝 Certificate Generation Debug:');
-      console.log('User object:', JSON.stringify(user, null, 2));
-      console.log('User name:', user?.name);
-      console.log('User email:', user?.email);
-
-      // Generate unique IDs
-      const certificateId = Certificate.generateCertificateId();
-      const validationCode = Certificate.generateValidationCode();
-
-      // Calculate total modules
-      const totalModules = course.sections?.reduce((sum, section) => 
-        sum + (section.modules?.length || 0), 0) || 0;
-
-      // Get student name - handle various cases
-      let studentName = 'Student';
-      if (user) {
-        if (user.name && user.name.trim()) {
-          studentName = user.name.trim();
-        } else if (user.email) {
-          studentName = user.email.split('@')[0];
-        }
-      }
-
-      console.log('Final student name:', studentName);
-
-      // Create certificate
-      const certificate = new Certificate({
-        user: userId,
-        course: courseId,
-        enrollment: enrollmentId,
-        certificateId,
-        validationCode,
-        completionDate: enrollment.updatedAt,
-        finalScore: enrollment.progress,
-        studentName: studentName,
-        courseTitle: course.title,
-        instructorName: course.instructor?.name,
-        metadata: {
-          courseDuration: course.duration,
-          courseLevel: course.level,
-          totalModules,
-          completedModules: enrollment.moduleProgress?.filter(m => m.completed).length || 0
-        }
+      // FIXED: Proper population for your schema
+    const enrollment = await Enrollment.findById(enrollmentId)
+      .populate({
+        path: 'user',
+        select: 'name email'  // Only these fields exist in your schema
+      })
+      .populate({
+        path: 'course',
+        select: 'title level duration instructor sections'
       });
 
-      await certificate.save();
-      
-      console.log('💾 Certificate saved to database:');
-      console.log('Certificate ID:', certificate.certificateId);
-      console.log('Student Name:', certificate.studentName);
-      console.log('Course Title:', certificate.courseTitle);
-      console.log('Validation Code:', certificate.validationCode);
-      
-      return certificate;
-    } catch (error) {
-      throw error;
+    if (!enrollment || !enrollment.completed) {
+      throw new Error('Course not completed');
     }
-  }
 
+    const course = enrollment.course;
+    const user = enrollment.user;
+
+    // Debug logging
+    console.log('📝 Certificate Generation Debug:');
+    console.log('User object:', user);
+    console.log('User name:', user?.name);
+    console.log('User email:', user?.email);
+
+    // Generate unique IDs
+    const certificateId = Certificate.generateCertificateId();
+    const validationCode = Certificate.generateValidationCode();
+
+    // Calculate total modules
+    const totalModules = course.sections?.reduce((sum, section) => 
+      sum + (section.modules?.length || 0), 0) || 0;
+
+    // SIMPLIFIED: Get student name from your schema
+    let studentName = 'Student';
+    if (user) {
+      if (user.name && user.name.trim() && user.name !== 'undefined') {
+        studentName = user.name.trim();
+      } else if (user.email) {
+        // Fallback to email
+        studentName = user.email.split('@')[0];
+        studentName = studentName.charAt(0).toUpperCase() + studentName.slice(1);
+      }
+    }
+
+    console.log('Final student name:', studentName);
+
+    // Create certificate
+    const certificate = new Certificate({
+      user: userId,
+      course: courseId,
+      enrollment: enrollmentId,
+      certificateId,
+      validationCode,
+      completionDate: enrollment.updatedAt || new Date(),
+      finalScore: enrollment.progress || enrollment.finalScore || 100,
+      studentName: studentName,  // This should now work
+      courseTitle: course.title,
+      instructorName: course.instructor?.name || 'Course Instructor',
+      metadata: {
+        courseDuration: course.duration,
+        courseLevel: course.level,
+        totalModules,
+        completedModules: enrollment.moduleProgress?.filter(m => m.completed).length || totalModules
+      }
+    });
+
+    await certificate.save();
+    
+    console.log('💾 Certificate saved to database:');
+    console.log('Certificate ID:', certificate.certificateId);
+    console.log('Student Name:', certificate.studentName);
+    console.log('Course Title:', certificate.courseTitle);
+    console.log('Validation Code:', certificate.validationCode);
+    
+    return certificate;
+  } catch (error) {
+    console.error('❌ Certificate creation error:', error);
+    throw error;
+  }
+}
   /**
    * Validate certificate by validation code
    */
   async validateCertificate(validationCode) {
     try {
-      const certificate = await Certificate.findOne({ validationCode })
-        .populate('user', 'name email')
-        .populate('course', 'title level duration');
+      console.log('🔍 Validating certificate with code:', validationCode);
+      
+      // Clean and format the validation code
+      const cleanCode = validationCode.trim().toUpperCase().replace(/\s+/g, '');
+      
+      const certificate = await Certificate.findOne({ 
+        validationCode: cleanCode 
+      })
+      .populate('user', 'name email firstName lastName')
+      .populate('course', 'title level duration instructor');
 
       if (!certificate) {
+        console.log('❌ Certificate not found for code:', cleanCode);
         return { valid: false, message: 'Certificate not found' };
       }
+
+      console.log('✅ Certificate found:', certificate.certificateId);
+      console.log('Student Name:', certificate.studentName);
+      console.log('Course Title:', certificate.courseTitle);
 
       if (certificate.status !== 'valid') {
         return { 
@@ -458,6 +479,7 @@ class CertificateService {
         certificate 
       };
     } catch (error) {
+      console.error('❌ Validation service error:', error);
       throw error;
     }
   }

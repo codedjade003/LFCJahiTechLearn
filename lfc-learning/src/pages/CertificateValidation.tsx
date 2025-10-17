@@ -43,14 +43,15 @@ interface CertificateData {
 }
 
 export default function CertificateValidation() {
-  const { validationCode, enrollmentId } = useParams<{ validationCode?: string; enrollmentId?: string }>();
+  const { validationCode } = useParams<{ validationCode?: string; enrollmentId?: string }>();
   const [certificate, setCertificate] = useState<CertificateData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const validateCertificate = async () => {
-      const code = validationCode || enrollmentId;
+      // Only use validationCode, not enrollmentId for validation
+      const code = validationCode;
       
       if (!code) {
         setError("No validation code provided");
@@ -59,6 +60,8 @@ export default function CertificateValidation() {
       }
 
       try {
+        console.log('🔍 Validating certificate with code:', code);
+        
         const response = await fetch(
           `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/certificates/validate/${code}`
         );
@@ -66,23 +69,28 @@ export default function CertificateValidation() {
         const data = await response.json();
 
         if (!response.ok) {
+          console.log('❌ Validation failed:', data.message);
           setError(data.message || "Certificate not found");
           setLoading(false);
           return;
         }
 
+        console.log('✅ Validation successful:', data);
+        console.log('Student Name:', data.studentName);
+        console.log('Course Title:', data.courseTitle);
+        
         setCertificate(data);
         setLoading(false);
       } catch (err: any) {
         console.error("Validation error:", err);
-        setError("Failed to validate certificate");
+        setError("Failed to validate certificate. Please check your connection.");
         setLoading(false);
         toast.error("Failed to validate certificate");
       }
     };
 
     validateCertificate();
-  }, [validationCode, enrollmentId]);
+  }, [validationCode]); // Remove enrollmentId from dependencies
 
   if (loading) {
     return (

@@ -111,11 +111,19 @@ router.get('/validate/:validationCode', async (req, res) => {
   try {
     const { validationCode } = req.params;
 
-    const result = await certificateService.validateCertificate(validationCode);
+    console.log('🔍 Certificate validation request:', validationCode);
+
+    // Clean the validation code (remove any extra characters)
+    const cleanValidationCode = validationCode.trim().toUpperCase();
+    
+    const result = await certificateService.validateCertificate(cleanValidationCode);
 
     if (!result.valid) {
+      console.log('❌ Certificate validation failed:', result.message);
       return res.status(404).json(result);
     }
+
+    console.log('✅ Certificate validated successfully:', result.certificate.certificateId);
 
     // Return sanitized certificate data
     const certificateData = {
@@ -128,12 +136,13 @@ router.get('/validate/:validationCode', async (req, res) => {
       finalScore: result.certificate.finalScore,
       instructorName: result.certificate.instructorName,
       metadata: result.certificate.metadata,
-      status: result.certificate.status
+      status: result.certificate.status,
+      validationCode: result.certificate.validationCode // Include for reference
     };
 
     res.json(certificateData);
   } catch (error) {
-    console.error('Certificate validation error:', error);
+    console.error('❌ Certificate validation error:', error);
     res.status(500).json({ 
       message: 'Failed to validate certificate',
       error: error.message 
@@ -187,6 +196,55 @@ router.post('/revoke/:certificateId', protect, async (req, res) => {
     console.error('Certificate revocation error:', error);
     res.status(500).json({ 
       message: 'Failed to revoke certificate',
+      error: error.message 
+    });
+  }
+});
+
+/**
+ * Repair certificate data (for existing certificates)
+ * POST /api/certificates/repair/:certificateId
+ */
+router.post('/repair/:certificateId', async (req, res) => {
+  try {
+    const { certificateId } = req.params;
+    
+    const certificate = await Certificate.findOne({ certificateId });
+    if (!certificate) {
+      return res.status(404).json({ message: 'Certificate not found' });
+    }
+    
+    const repairedCertificate = await certificateRepairService.repairCertificate(certificate);
+    
+    res.json({
+      message: 'Certificate repaired successfully',
+      certificate: repairedCertificate
+    });
+  } catch (error) {
+    console.error('Certificate repair error:', error);
+    res.status(500).json({ 
+      message: 'Failed to repair certificate',
+      error: error.message 
+    });
+  }
+});
+
+/**
+ * Repair all certificates (admin only)
+ * POST /api/certificates/repair-all
+ */
+router.post('/repair-all', async (req, res) => {
+  try {
+    const repairedCount = await certificateRepairService.repairAllCertificates();
+    
+    res.json({
+      message: `Successfully repaired ${repairedCount} certificates`,
+      repairedCount
+    });
+  } catch (error) {
+    console.error('Bulk certificate repair error:', error);
+    res.status(500).json({ 
+      message: 'Failed to repair certificates',
       error: error.message 
     });
   }
