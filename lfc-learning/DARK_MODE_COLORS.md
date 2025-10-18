@@ -17,11 +17,11 @@ These colors maintain consistency in both light and dark modes:
 --lfc-gold-hover: #B89530;    /* Darker gold for hover */
 --lfc-gold-light: #E5C758;    /* Lighter gold accent */
 
-/* Dark Mode - Slightly brighter for better visibility */
---lfc-red: #C92428;           /* Brighter red */
---lfc-red-hover: #E53E42;     /* Even brighter on hover */
---lfc-red-light: #DC3539;     /* Light accent */
---lfc-gold: #E5C758;          /* Brighter gold */
+/* Dark Mode - Darker, muted tones for eye comfort */
+--lfc-red: #8B1518;           /* Darker, muted red */
+--lfc-red-hover: #A41E21;     /* Slightly brighter on hover */
+--lfc-red-light: #9A1A1D;     /* Light accent */
+--lfc-gold: #E5C758;          /* Brighter gold (unchanged) */
 --lfc-gold-hover: #F0D97A;    /* Brighter on hover */
 --lfc-gold-light: #EDD685;    /* Light accent */
 ```

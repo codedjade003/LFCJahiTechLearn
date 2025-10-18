@@ -449,7 +449,7 @@ const QuizComponent = ({
     const passed = percentage >= 70;
 
     return (
-      <div className="text-center p-8 bg-white rounded-lg border border-gray-200">
+      <div className="text-center p-8 bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200">
         <div className={`mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4 ${
           passed ? 'bg-green-100' : 'bg-red-100'
         }`}>
@@ -509,7 +509,7 @@ const QuizComponent = ({
   if (!question) return null;
 
   return (
-    <div className="p-6 bg-white rounded-lg border border-gray-200">
+    <div className="p-6 bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200">
       {/* Enhanced Quiz Header with Proctoring Info */}
       <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
         <div className="flex items-center justify-between">
@@ -921,7 +921,7 @@ export default function CourseDetails() {
     return (
       <div className="flex flex-col h-screen bg-yt-light-gray">
         <div className="p-6">
-          <div className="bg-white p-8 rounded-lg text-center border border-yt-light-border">
+          <div className="bg-white dark:bg-[var(--bg-elevated)] p-8 rounded-lg text-center border border-yt-light-border">
             <p className="text-yt-text-gray mb-4">Course not found.</p>
             <Link to="/dashboard/courses" className="text-lfc-red hover:underline">
               Back to My Courses
@@ -938,7 +938,7 @@ export default function CourseDetails() {
       <OnboardingTour tourKey="courseDetails" steps={courseDetailsTour} />
       
       {/* Header */}
-      <header className="bg-white border-b border-yt-light-border shadow-sm">
+      <header className="bg-white dark:bg-[var(--bg-elevated)] border-b border-yt-light-border shadow-sm">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
@@ -977,7 +977,7 @@ export default function CourseDetails() {
                 onClick={() => setActivePage(page)}
                 className={`pb-3 px-1 font-medium transition-colors ${
                   activePage === page
-                    ? 'text-lfc-red border-b-2 border-lfc-red'
+                    ? 'text-lfc-red border-b-2 border-lfc-red dark:border-[var(--lfc-red)]'
                     : 'text-yt-text-gray hover:text-yt-text-dark'
                 }`}
               >
@@ -991,7 +991,7 @@ export default function CourseDetails() {
                 onClick={() => setActivePage('completion')}
                 className={`pb-3 px-1 font-medium transition-colors ${
                   activePage === 'completion'
-                    ? 'text-lfc-red border-b-2 border-lfc-red'
+                    ? 'text-lfc-red border-b-2 border-lfc-red dark:border-[var(--lfc-red)]'
                     : 'text-yt-text-gray hover:text-yt-text-dark'
                 }`}
               >
@@ -1005,7 +1005,7 @@ export default function CourseDetails() {
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar - Course Outline */}
-        <aside className="w-80 bg-white border-r border-yt-light-border overflow-y-auto">
+        <aside className="w-80 bg-white dark:bg-[var(--bg-elevated)] border-r border-yt-light-border overflow-y-auto">
           <div className="p-4">
             <h2 className="font-semibold text-yt-text-dark mb-4">Course Content</h2>
             <div className="space-y-2">
@@ -1104,7 +1104,7 @@ export default function CourseDetails() {
         </aside>
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto bg-white p-6">
+        <main className="flex-1 overflow-y-auto bg-white dark:bg-[var(--bg-elevated)] p-6">
           <AnimatePresence mode="wait">
             {activePage === 'overview' && (
               <motion.div
@@ -1338,7 +1338,7 @@ export default function CourseDetails() {
                     return (
                       <div>
                         <div className="bg-gradient-to-br from-lfc-red to-lfc-gold p-1 rounded-full w-32 h-32 mx-auto mb-6">
-                          <div className="bg-white rounded-full w-full h-full flex items-center justify-center">
+                          <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-full w-full h-full flex items-center justify-center">
                             <FaTrophy className="text-4xl text-yellow-500" />
                           </div>
                         </div>
@@ -1477,7 +1477,7 @@ export default function CourseDetails() {
                     return (
                       <div>
                         <div className="bg-gradient-to-br from-blue-500 to-purple-600 p-1 rounded-full w-32 h-32 mx-auto mb-6">
-                          <div className="bg-white rounded-full w-full h-full flex items-center justify-center">
+                          <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-full w-full h-full flex items-center justify-center">
                             <FaClock className="text-4xl text-blue-500" />
                           </div>
                         </div>

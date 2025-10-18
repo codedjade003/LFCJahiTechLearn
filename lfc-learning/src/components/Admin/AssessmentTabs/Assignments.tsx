@@ -311,7 +311,7 @@ export default function Assignments() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg border border-yt-light-border p-4 mb-6">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-yt-light-border p-4 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="relative">
             <FaSearch className="absolute left-3 top-3 text-yt-text-gray" />
@@ -356,7 +356,7 @@ export default function Assignments() {
 
       {/* Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white p-4 rounded-lg border border-yt-light-border">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-yt-light-border">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-yt-text-gray">Total Assignments</p>
@@ -366,7 +366,7 @@ export default function Assignments() {
           </div>
         </div>
         
-        <div className="bg-white p-4 rounded-lg border border-yt-light-border">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-yt-light-border">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-yt-text-gray">Pending Review</p>
@@ -378,7 +378,7 @@ export default function Assignments() {
           </div>
         </div>
         
-        <div className="bg-white p-4 rounded-lg border border-yt-light-border">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-yt-light-border">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-yt-text-gray">Graded</p>
@@ -390,7 +390,7 @@ export default function Assignments() {
           </div>
         </div>
         
-        <div className="bg-white p-4 rounded-lg border border-yt-light-border">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-yt-light-border">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-yt-text-gray">Average Grade</p>

@@ -165,7 +165,7 @@ export default function CourseAssignmentsTab({ courseId }: { courseId: string | 
 
   if (!courseId) {
     return (
-      <div className="bg-white p-6 rounded-lg border border-yt-light-border shadow-sm">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] p-6 rounded-lg border border-yt-light-border shadow-sm">
         <h3 className="text-lg font-medium text-yt-text-dark mb-4">Course Assignments</h3>
         <p className="text-yt-text-gray">Please save the course first to add assignments.</p>
       </div>
@@ -180,7 +180,7 @@ export default function CourseAssignmentsTab({ courseId }: { courseId: string | 
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="bg-white border border-yt-light-border rounded-lg p-5 shadow-sm">
+      <form onSubmit={handleSubmit} className="bg-white dark:bg-[var(--bg-elevated)] border border-yt-light-border rounded-lg p-5 shadow-sm">
         <h3 className="text-lg font-medium text-yt-text-dark mb-4">
           {editingId ? "Edit Assignment" : "Add New Assignment"}
         </h3>
@@ -276,7 +276,7 @@ export default function CourseAssignmentsTab({ courseId }: { courseId: string | 
         </button>
       </form>
 
-      <div className="bg-white border border-yt-light-border rounded-lg p-5 shadow-sm">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] border border-yt-light-border rounded-lg p-5 shadow-sm">
         <h3 className="text-lg font-medium text-yt-text-dark mb-4">Course Assignments</h3>
         
         {loading ? (

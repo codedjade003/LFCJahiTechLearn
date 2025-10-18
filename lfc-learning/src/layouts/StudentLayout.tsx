@@ -8,7 +8,7 @@ import SupportChatWidget from "../components/Dashboard/SupportChatWidget";
 const StudentLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 dark:bg-[var(--bg-primary)]">
       <Sidebar 
         isOpen={sidebarOpen} 
         onClose={() => setSidebarOpen(false)} 

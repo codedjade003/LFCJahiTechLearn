@@ -157,7 +157,7 @@ const AddUsersTab = () => {
   return (
     <div className="space-y-6 p-4">
       {/* Section 1: Bulk Upload */}
-      <div className="bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-6">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-6">
         <h2 className="text-xl font-semibold mb-4 flex items-center">
           <FaUpload className="mr-2 text-lfc-gold" />
           Bulk Upload Users
@@ -200,7 +200,7 @@ const AddUsersTab = () => {
       </div>
 
       {/* Section 2: Add Multiple Users */}
-      <div className="bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-6">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold flex items-center">
             <FaPlus className="mr-2 text-lfc-gold" />
@@ -291,7 +291,7 @@ const AddUsersTab = () => {
       </div>
 
       {/* Section 3: Generate Admin Helper */}
-      <div className="bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-6">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-6">
         <h2 className="text-xl font-semibold mb-4 flex items-center">
           <FaUserShield className="mr-2 text-lfc-red" />
           Generate Admin Helper

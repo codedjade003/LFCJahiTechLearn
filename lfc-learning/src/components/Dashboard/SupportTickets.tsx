@@ -185,7 +185,7 @@ const SupportTickets: React.FC = () => {
       {/* New Ticket Modal */}
       {showNewTicket && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full p-6">
+          <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg max-w-2xl w-full p-6">
             <h2 className="text-xl font-bold mb-4">Create Support Ticket</h2>
             <form onSubmit={createTicket}>
               <div className="space-y-4">
@@ -278,7 +278,7 @@ const SupportTickets: React.FC = () => {
       {/* Ticket Detail Modal */}
       {selectedTicket && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-4xl w-full h-[80vh] flex flex-col">
+          <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg max-w-4xl w-full h-[80vh] flex flex-col">
             {/* Header */}
             <div className="bg-lfc-red text-white p-4 rounded-t-lg flex justify-between items-center">
               <div className="flex items-center">
@@ -355,7 +355,7 @@ const SupportTickets: React.FC = () => {
         </div>
       )}
 
-      <div className="bg-white rounded-lg border border-gray-200 p-4 mb-6">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 p-4 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <select
             value={filters.status}
@@ -405,7 +405,7 @@ const SupportTickets: React.FC = () => {
 
 
       {/* Tickets List */}
-      <div className="bg-white rounded-lg border border-gray-200">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200">
         {tickets.length === 0 ? (
           <div className="p-8 text-center">
             <FaExclamationCircle className="text-4xl text-gray-400 mx-auto mb-4" />

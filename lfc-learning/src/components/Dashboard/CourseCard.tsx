@@ -197,7 +197,7 @@ const CourseCard: React.FC<Props> = ({
   return (
     <>
       <div
-        className="course-card flex flex-col bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow-lg border border-gray-200 dark:border-[var(--border-primary)] overflow-hidden hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer w-full max-w-sm mx-auto"
+        className="course-card flex flex-col bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] rounded-lg shadow-lg border border-gray-200 dark:border-[var(--border-primary)] overflow-hidden hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer w-full max-w-sm mx-auto"
         onClick={handleCardClick}
       >
         {/* Thumbnail Section - Fixed flickering */}

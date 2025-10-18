@@ -126,7 +126,7 @@ const LogsTab = () => {
   return (
     <div className="space-y-6 p-4">
       {/* Header */}
-      <div className="bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-6">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-6">
         <h1 className="text-2xl font-bold mb-2">Activity Logs</h1>
         <p className="text-gray-600 dark:text-[var(--text-secondary)]">View user activity logs and login history</p>
         
@@ -156,7 +156,7 @@ const LogsTab = () => {
       </div>
 
       {/* Controls */}
-      <div className="bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-6">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-6">
         <div className="flex flex-col md:flex-row gap-4 mb-4">
           <div className="flex-1 relative">
             <FaSearch className="absolute left-3 top-3 text-gray-400" />

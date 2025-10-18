@@ -370,7 +370,7 @@ const UserEnrollmentsTab = () => {
         </div>
 
         {/* Tabs */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 mb-6">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-2xl shadow-sm border border-gray-200 mb-6">
           <div className="flex border-b border-gray-200">
             <button
               onClick={() => setActiveTab("enrollments")}
@@ -428,7 +428,7 @@ const UserEnrollmentsTab = () => {
                       </div>
                       
                       {showUserSearch && (
-                        <div className="absolute z-10 w-full mt-2 bg-white border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                        <div className="absolute z-10 w-full mt-2 bg-white dark:bg-[var(--bg-elevated)] border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-y-auto">
                           {userResults.length > 0 ? (
                             userResults.map((user) => (
                               <div
@@ -442,7 +442,7 @@ const UserEnrollmentsTab = () => {
                                     : "border-gray-300"
                                 }`}>
                                   {selectedUsers.some(u => u._id === user._id) && (
-                                    <div className="w-2 h-2 bg-white rounded-sm" />
+                                    <div className="w-2 h-2 bg-white dark:bg-[var(--bg-elevated)] rounded-sm" />
                                   )}
                                 </div>
                                 <div className="flex-1">
@@ -480,7 +480,7 @@ const UserEnrollmentsTab = () => {
                                   : "border-gray-300"
                               }`}>
                                 {selectedUsers.some(u => u._id === user._id) && (
-                                  <div className="w-2 h-2 bg-white rounded-sm" />
+                                  <div className="w-2 h-2 bg-white dark:bg-[var(--bg-elevated)] rounded-sm" />
                                 )}
                               </div>
                               <div className="flex-1">
@@ -552,7 +552,7 @@ const UserEnrollmentsTab = () => {
                       </div>
                       
                       {showCourseSearch && (
-                        <div className="absolute z-10 w-full mt-2 bg-white border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                        <div className="absolute z-10 w-full mt-2 bg-white dark:bg-[var(--bg-elevated)] border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-y-auto">
                           {courseResults.length > 0 ? (
                             courseResults.map((course) => (
                               <div
@@ -566,7 +566,7 @@ const UserEnrollmentsTab = () => {
                                     : "border-gray-300"
                                 }`}>
                                   {selectedCourses.some(c => c._id === course._id) && (
-                                    <div className="w-2 h-2 bg-white rounded-sm" />
+                                    <div className="w-2 h-2 bg-white dark:bg-[var(--bg-elevated)] rounded-sm" />
                                   )}
                                 </div>
                                 <div className="flex-1">
@@ -608,7 +608,7 @@ const UserEnrollmentsTab = () => {
                                   : "border-gray-300"
                               }`}>
                                 {selectedCourses.some(c => c._id === course._id) && (
-                                  <div className="w-2 h-2 bg-white rounded-sm" />
+                                  <div className="w-2 h-2 bg-white dark:bg-[var(--bg-elevated)] rounded-sm" />
                                 )}
                               </div>
                               <div className="flex-1">
@@ -726,7 +726,7 @@ const UserEnrollmentsTab = () => {
                   const allSelected = courseEnrollments.every(e => selectedEnrollments.has(e._id));
 
                   return (
-                    <div key={courseId} className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                    <div key={courseId} className="bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 rounded-xl overflow-hidden">
                       {/* Course Header */}
                       <div className="flex items-center gap-4 p-4 bg-gray-50 border-b border-gray-200">
                         <div className={`w-5 h-5 rounded border-2 flex items-center justify-center cursor-pointer ${
@@ -734,7 +734,7 @@ const UserEnrollmentsTab = () => {
                         }`}
                         onClick={() => selectAllEnrollmentsInCourse(courseEnrollments)}
                         >
-                          {allSelected && <div className="w-2 h-2 bg-white rounded-sm" />}
+                          {allSelected && <div className="w-2 h-2 bg-white dark:bg-[var(--bg-elevated)] rounded-sm" />}
                         </div>
                         
                         <div className="flex-1">
@@ -771,7 +771,7 @@ const UserEnrollmentsTab = () => {
                               onClick={() => toggleEnrollmentSelection(enrollment._id)}
                               >
                                 {selectedEnrollments.has(enrollment._id) && (
-                                  <div className="w-2 h-2 bg-white rounded-sm" />
+                                  <div className="w-2 h-2 bg-white dark:bg-[var(--bg-elevated)] rounded-sm" />
                                 )}
                               </div>
                               

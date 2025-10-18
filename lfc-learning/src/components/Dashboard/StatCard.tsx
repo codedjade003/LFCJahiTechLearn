@@ -19,7 +19,7 @@ const StatCard: React.FC<StatCardProps> = ({
   color,
 }) => {
   return (
-    <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] p-6 hover:shadow-md dark:hover:shadow-[var(--shadow-lg)] border dark:border-[var(--border-primary)] transition-shadow">
+    <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] p-6 hover:shadow-md dark:hover:shadow-[var(--shadow-lg)] border dark:border-[var(--border-primary)] transition-shadow">
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="text-sm font-medium text-gray-600 dark:text-[var(--text-secondary)]">{title}</h3>

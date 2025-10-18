@@ -4,7 +4,7 @@ import SignupForm from "../components/SignUpForm";
 
 export default function SignupPage() {
   return (
-    <div className="bg-white font-sans">
+    <div className="bg-white dark:bg-[var(--bg-elevated)] font-sans">
       <Navbar />
 
       <section className="hero-pattern py-16 md:py-24">

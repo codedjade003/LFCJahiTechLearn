@@ -278,16 +278,16 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-4">
           {/* Thumbnail */}
-          <div className="w-40 h-24 bg-gray-100 dark:bg-[var(--bg-tertiary)] rounded-md overflow-hidden flex-shrink-0 border border-gray-200 dark:border-[var(--border-primary)]">
+          <div className="w-40 h-24 bg-gray-100 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] rounded-md overflow-hidden flex-shrink-0 border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">
             {course.thumbnail ? (
               // resolve to absolute URL if necessary
               <img
                 src={course.thumbnail.startsWith("http") ? course.thumbnail : `${API_BASE}${course.thumbnail}`}
                 alt={course.title}
-                className="w-full h-full object-cover"
+                className="w-full min-h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-yt-text-gray bg-gray-50 dark:bg-[var(--bg-secondary)]">
+              <div className="w-full min-h-full flex items-center justify-center text-yt-text-gray bg-gray-50 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]">
                 <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
@@ -300,12 +300,12 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
             <p className="text-sm text-yt-text-gray mt-1 max-w-2xl">{course.description}</p>
 
             <div className="mt-3 flex flex-wrap gap-2 items-center">
-              <span className="px-2 py-1 bg-gray-100 dark:bg-[var(--bg-tertiary)] rounded-md text-xs text-yt-text-dark font-medium">{course.level}</span>
+              <span className="px-2 py-1 bg-gray-100 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] rounded-md text-xs text-yt-text-dark font-medium">{course.level}</span>
               {toArray(course.categories).map((c, idx) => (
-                <span key={idx} className="px-2 py-1 bg-gray-100 dark:bg-[var(--bg-tertiary)] rounded-md text-xs text-yt-text-dark font-medium">{c}</span>
+                <span key={idx} className="px-2 py-1 bg-gray-100 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] rounded-md text-xs text-yt-text-dark font-medium">{c}</span>
               ))}
               {toArray(course.tags).map((t, idx) => (
-                <span key={`tag-${idx}`} className="px-2 py-1 bg-gray-100 dark:bg-[var(--bg-tertiary)] rounded-md text-xs text-yt-text-dark font-medium">#{t}</span>
+                <span key={`tag-${idx}`} className="px-2 py-1 bg-gray-100 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] rounded-md text-xs text-yt-text-dark font-medium">#{t}</span>
               ))}
             </div>
 
@@ -316,7 +316,7 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
                 className={`px-4 py-2 rounded-md font-medium flex items-center gap-2 transition ${
                   course.isPublic 
                     ? "bg-red-600 text-white hover:bg-red-700" 
-                    : "bg-white border border-gray-300 text-yt-text-dark hover:bg-gray-50 dark:bg-[var(--bg-secondary)]"
+                    : "bg-white border border-gray-300 text-yt-text-dark hover:bg-gray-50 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]"
                 }`}
                 title={course.isPublic ? "Make private" : "Make public"}
               >
@@ -334,11 +334,11 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
         {/* promo video preview */}
         <div className="w-80">
           <h4 className="text-sm font-medium text-yt-text-dark mb-2">Promo Video</h4>
-          <div className="w-full aspect-video bg-gray-50 dark:bg-[var(--bg-secondary)] rounded-md overflow-hidden border border-gray-200 dark:border-[var(--border-primary)]">
+          <div className="w-full aspect-video bg-gray-50 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-md overflow-hidden border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">
             {course.promoVideo ? (
-              <video src={course.promoVideo.startsWith("http") ? course.promoVideo : `${API_BASE}${course.promoVideo}`} controls className="w-full h-full object-contain" />
+              <video src={course.promoVideo.startsWith("http") ? course.promoVideo : `${API_BASE}${course.promoVideo}`} controls className="w-full min-h-full object-contain" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-yt-text-gray p-4 bg-gray-50 dark:bg-[var(--bg-secondary)]">
+              <div className="w-full min-h-full flex items-center justify-center text-yt-text-gray p-4 bg-gray-50 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]">
                 <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
@@ -353,7 +353,7 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Left: overview */}
         <div className="flex-1 space-y-4 min-w-0">
-          <section className="bg-white p-5 rounded-lg shadow-sm border border-gray-200 dark:border-[var(--border-primary)]">
+          <section className="bg-white dark:bg-[var(--bg-elevated)] p-5 rounded-lg shadow-sm border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">
             <h3 className="text-lg font-semibold text-yt-text-dark mb-3">Overview</h3>
             <div className="grid grid-cols-2 gap-4 text-sm text-yt-text-dark">
               <div><span className="font-medium">Duration:</span> {course.duration || "—"}</div>
@@ -384,7 +384,7 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
           </section>
 
           {/* Sections -> modules */}
-          <section className="bg-white p-5 rounded-lg shadow-sm border border-gray-200 dark:border-[var(--border-primary)]">            <div className="flex items-center justify-between mb-4">
+          <section className="bg-white dark:bg-[var(--bg-elevated)] p-5 rounded-lg shadow-sm border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">            <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-yt-text-dark">Sections & Modules</h3>
               <div className="text-sm text-yt-text-gray">{(course.sections || []).length} sections</div>
             </div>
@@ -396,11 +396,11 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
                 {(course.sections || []).map((section, si) => {
                   const sid = section._id || `sec-${si}`;
                   return (
-                    <div key={sid} className="border border-gray-200 dark:border-[var(--border-primary)] rounded-md overflow-hidden">
+                    <div key={sid} className="border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)] rounded-md overflow-hidden">
                       <button
                         type="button"
                         onClick={() => setSectionsOpen((s) => ({ ...s, [sid]: !s[sid] }))}
-                        className="w-full text-left px-4 py-3 flex items-center justify-between bg-gray-50 dark:bg-[var(--bg-secondary)] hover:bg-gray-100 dark:bg-[var(--bg-tertiary)] transition-colors"
+                        className="w-full text-left px-4 py-3 flex items-center justify-between bg-gray-50 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] hover:bg-gray-100 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] transition-colors"
                       >
                         <div>
                           <div className="font-medium text-yt-text-dark">{section.title}</div>
@@ -410,13 +410,13 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
                       </button>
 
                       {sectionsOpen[sid] && (
-                        <div className="p-4 bg-white">
+                        <div className="p-4 bg-white dark:bg-[var(--bg-elevated)]">
                           {section.modules && section.modules.length ? (
                             <ul className="space-y-3">
                               {section.modules.map((m, mi) => (
-                                <li key={m._id || `m-${mi}`} className="p-3 border border-gray-200 dark:border-[var(--border-primary)] rounded-md">
+                                <li key={m._id || `m-${mi}`} className="p-3 border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)] rounded-md">
                                   <div className="flex items-start gap-4">
-                                    <div className="w-12 h-12 bg-gray-100 dark:bg-[var(--bg-tertiary)] rounded-md flex items-center justify-center text-sm font-medium">
+                                    <div className="w-12 h-12 bg-gray-100 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] rounded-md flex items-center justify-center text-sm font-medium">
                                       {m.type?.toUpperCase?.() || m.type}
                                     </div>
                                     <div className="flex-1">
@@ -467,7 +467,7 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
           </section>
 
           {/* Assignments */}
-          <section className="bg-white p-5 rounded-lg shadow-sm border border-gray-200 dark:border-[var(--border-primary)]">            <div className="flex items-center justify-between mb-4">
+          <section className="bg-white dark:bg-[var(--bg-elevated)] p-5 rounded-lg shadow-sm border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">            <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-yt-text-dark">Assignments</h3>
               <div className="text-sm text-yt-text-gray">{(course.assignments || []).length}</div>
             </div>
@@ -477,7 +477,7 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
             ) : (
               <div className="space-y-3">
                 {(course.assignments || []).map((a, i) => (
-                  <div key={a._id || `a-${i}`} className="p-3 border border-gray-200 dark:border-[var(--border-primary)] rounded-md">
+                  <div key={a._id || `a-${i}`} className="p-3 border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)] rounded-md">
                     <div className="flex justify-between items-start">
                       <div>
                         <div className="font-medium">{a.title}</div>
@@ -494,7 +494,7 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
           </section>
 
           {/* Project */}
-          <section className="bg-white p-5 rounded-lg shadow-sm border border-gray-200 dark:border-[var(--border-primary)]">            <h3 className="text-lg font-semibold text-yt-text-dark mb-3">Project</h3>
+          <section className="bg-white dark:bg-[var(--bg-elevated)] p-5 rounded-lg shadow-sm border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">            <h3 className="text-lg font-semibold text-yt-text-dark mb-3">Project</h3>
             {course.project ? (
               <div>
                 <div className="font-medium">{course.project.title}</div>
@@ -511,14 +511,14 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
 
         {/* Right: controls / preview */}
         <aside className="w-full lg:w-96 space-y-4 flex-shrink-0">
-          <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-200 dark:border-[var(--border-primary)]">
+          <div className="bg-white dark:bg-[var(--bg-elevated)] p-5 rounded-lg shadow-sm border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">
             <h4 className="text-sm font-semibold text-yt-text-dark mb-3">Instructor</h4>
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100 dark:bg-[var(--bg-tertiary)] border border-gray-200 dark:border-[var(--border-primary)]">
+              <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">
                 {course.instructor?.avatar ? (
-                  <img src={course.instructor.avatar.startsWith("http") ? course.instructor.avatar : `${API_BASE}${course.instructor.avatar}`} alt={course.instructor?.name} className="w-full h-full object-cover" />
+                  <img src={course.instructor.avatar.startsWith("http") ? course.instructor.avatar : `${API_BASE}${course.instructor.avatar}`} alt={course.instructor?.name} className="w-full min-h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-yellow-500 text-white font-bold">{(course.instructor?.name?.charAt(0) || "?").toUpperCase()}</div>
+                  <div className="w-full min-h-full flex items-center justify-center bg-yellow-500 text-white font-bold">{(course.instructor?.name?.charAt(0) || "?").toUpperCase()}</div>
                 )}
               </div>
               <div>
@@ -528,7 +528,7 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
             </div>
           </div>
 
-          <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-200 dark:border-[var(--border-primary)]">
+          <div className="bg-white dark:bg-[var(--bg-elevated)] p-5 rounded-lg shadow-sm border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">
             <div className="flex items-center justify-between mb-2">
               <div className="font-semibold text-yt-text-dark">Course Data</div>
               <button
@@ -542,7 +542,7 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
                   linkElement.setAttribute('download', exportFileDefaultName);
                   linkElement.click();
                 }}
-                className="px-3 py-1.5 bg-gray-100 dark:bg-[var(--bg-tertiary)] hover:bg-gray-200 text-yt-text-dark rounded-md text-sm font-medium transition-colors flex items-center gap-2"
+                className="px-3 py-1.5 bg-gray-100 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] hover:bg-gray-200 text-yt-text-dark rounded-md text-sm font-medium transition-colors flex items-center gap-2"
               >
                 <FaDownload className="text-sm" />
                 Download JSON
@@ -553,7 +553,7 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
             </div>
           </div>
 
-                    <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-200 dark:border-[var(--border-primary)]">
+                    <div className="bg-white dark:bg-[var(--bg-elevated)] p-5 rounded-lg shadow-sm border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">
             <h4 className="text-sm font-semibold text-yt-text-dark mb-3">Preview & Publish</h4>
             <div className="text-sm text-yt-text-gray mb-4">
               Look through the course contents above. Use the controls to change visibility, enroll users, or publish.
@@ -576,7 +576,7 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
               <button
                 onClick={enrollAllUsers}
                 disabled={enrollingAll}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-[var(--bg-secondary)] transition font-medium"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-white dark:bg-[var(--bg-elevated)] border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] transition font-medium"
                 title="Enroll all users (admin endpoint required)"
               >
                 <FaUsers /> {enrollingAll ? "Enrolling..." : "Enroll all users"}
@@ -584,7 +584,7 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
 
               <button
                 onClick={enrollSomeUsersPrompt}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-[var(--bg-secondary)] transition font-medium"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-white dark:bg-[var(--bg-elevated)] border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] transition font-medium"
               >
                 <FaUsers /> Enroll specific users
               </button>

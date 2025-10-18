@@ -118,7 +118,7 @@ export default function MaterialsUploader({ materials, setMaterials }: Materials
         <div className="space-y-2">
           <h4 className="text-sm font-medium text-gray-700">Uploaded Files:</h4>
           {materials.map((material, index) => (
-            <div key={index} className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg">
+            <div key={index} className="flex items-center justify-between p-3 bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 rounded-lg">
               <div className="flex items-center space-x-3">
                 <div className={`p-2 rounded ${
                   material.type === 'image' ? 'bg-blue-100 text-blue-600' :

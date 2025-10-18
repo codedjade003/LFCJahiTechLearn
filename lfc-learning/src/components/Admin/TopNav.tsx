@@ -190,7 +190,7 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
   }, []);
 
   return (
-    <header className="sticky top-0 z-30 bg-white dark:bg-[var(--bg-elevated)] border-b border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">
+    <header className="sticky top-0 z-30 bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] border-b border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">
       <div className="px-3 sm:px-4 py-3 flex items-center justify-between">
         {/* Left: Menu button and Title */}
         <div className="flex items-center gap-3">
@@ -236,7 +236,7 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
 
             {/* Notifications Dropdown */}
             {showNotifications && (
-              <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 dark:border-[var(--border-primary)] rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+              <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 dark:border-[var(--border-primary)] rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
                 <div className="p-4 border-b border-gray-200 dark:border-[var(--border-primary)]">
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-semibold text-gray-800 dark:text-[var(--text-primary)] dark:text-[var(--text-primary)]">Notifications</h3>
@@ -362,10 +362,10 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
             </button>
 
             {open && (
-              <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 dark:border-[var(--border-primary)] rounded-lg shadow-lg z-50 py-1">
+              <div className="absolute right-0 mt-2 w-56 bg-white  border border-gray-200  rounded-lg shadow-lg z-50 py-1">
                 {/* User Info Section */}
                 <div className="px-4 py-3 border-b border-gray-100">
-                  <p className="text-sm font-medium text-gray-900 dark:text-[var(--text-primary)]">{user?.name}</p>
+                  <p className="text-sm font-medium text-gray-900 ">{user?.name}</p>
                   <p className="text-xs text-gray-500 truncate mb-1">{user?.email}</p>
                   {isAdmin && (
                     <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
@@ -389,7 +389,7 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
                     navigate("/dashboard/profile");
                     setOpen(false);
                   }}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-[var(--text-secondary)] hover:bg-gray-50 dark:bg-[var(--bg-secondary)] transition-colors duration-200 flex items-center"
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700  hover:bg-gray-50 dark:bg-[var(--bg-secondary)] transition-colors duration-200 flex items-center"
                 >
                   <FaUser className="mr-3 text-gray-400" />
                   My Profile

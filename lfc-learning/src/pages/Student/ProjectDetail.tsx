@@ -286,7 +286,7 @@ export default function ProjectDetail() {
   if (!course || !project) {
     return (
       <div className="p-6">
-        <div className="bg-white p-8 rounded-lg text-center border border-yt-light-border">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] p-8 rounded-lg text-center border border-yt-light-border">
           <p className="text-yt-text-gray mb-4">Project not found.</p>
         <Link to="/dashboard/project" className="text-lfc-red hover:underline">
           Back to My Projects
@@ -344,7 +344,7 @@ export default function ProjectDetail() {
       </div>
 
       {/* Project Content */}
-      <div className="bg-white rounded-lg border border-yt-light-border shadow-sm">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-yt-light-border shadow-sm">
         {/* Instructions */}
         <div className="p-6 border-b border-yt-light-border">
           <h2 className="text-lg font-semibold mb-3">Instructions</h2>
@@ -411,7 +411,7 @@ export default function ProjectDetail() {
                 <div>
                   <h4 className="font-medium mb-2">Your Submission</h4>
                   {submission.submissionType === 'text' && submission.submission.text && (
-                    <div className="p-3 bg-white border rounded-lg">
+                    <div className="p-3 bg-white dark:bg-[var(--bg-elevated)] border rounded-lg">
                       <p className="text-yt-text-gray whitespace-pre-wrap">
                         {submission.submission.text}
                       </p>
@@ -422,13 +422,13 @@ export default function ProjectDetail() {
                       href={submission.submission.link} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="text-lfc-red hover:underline block p-3 bg-white border rounded-lg"
+                      className="text-lfc-red hover:underline block p-3 bg-white dark:bg-[var(--bg-elevated)] border rounded-lg"
                     >
                       {submission.submission.link}
                     </a>
                   )}
                   {submission.submissionType === 'file_upload' && submission.submission.file && (
-                    <div className="flex items-center p-3 bg-white border rounded-lg">
+                    <div className="flex items-center p-3 bg-white dark:bg-[var(--bg-elevated)] border rounded-lg">
                       <FaFileAlt className="text-lfc-red mr-3" />
                       <div>
                         <span className="block">{submission.submission.file.name}</span>
@@ -451,7 +451,7 @@ export default function ProjectDetail() {
                 {isGraded && (
                   <div>
                     <h4 className="font-medium mb-2">Grading & Feedback</h4>
-                    <div className="p-3 bg-white border rounded-lg">
+                    <div className="p-3 bg-white dark:bg-[var(--bg-elevated)] border rounded-lg">
                       <div className="flex items-center justify-between mb-3">
                         <span>Score:</span>
                         <span className="font-semibold text-2xl text-lfc-red">{submission.grade}%</span>

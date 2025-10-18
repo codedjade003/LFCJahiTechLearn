@@ -387,7 +387,7 @@ const validateUsername = (username: string) => {
 
     return (
       <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg p-6 max-w-2xl w-full mx-4">
           <h3 className="text-xl font-bold mb-4">Adjust Cover Photo</h3>
           <p className="text-gray-600 mb-4">Click on the image to set the visible area</p>
           
@@ -540,19 +540,19 @@ const validateUsername = (username: string) => {
 
         {/* Stats Bar */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white p-4 rounded-lg shadow text-center">
+          <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg shadow text-center">
             <div className="text-2xl font-bold text-redCustom">{user.loginCount || 0}</div>
             <div className="text-sm sm:text-base text-gray-600">Total Logins</div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow text-center">
+          <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg shadow text-center">
             <div className="text-2xl font-bold text-redCustom">{user.streak?.current || 0}</div>
             <div className="text-sm sm:text-base text-gray-600">Current Streak</div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow text-center">
+          <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg shadow text-center">
             <div className="text-2xl font-bold text-redCustom">{user.streak?.longest || 0}</div>
             <div className="text-sm sm:text-base text-gray-600">Longest Streak</div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow text-center">
+          <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg shadow text-center">
             <div className="text-lg sm:text-2xl font-bold text-redCustom break-words">
               {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : "Never"}
             </div>
@@ -1048,7 +1048,7 @@ const validateUsername = (username: string) => {
           {activeTab === "preferences" && (
             <div className="space-y-8 max-w-2xl mx-auto">
               {/* Onboarding Settings */}
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+              <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                   Onboarding & Hints
                 </h3>
@@ -1085,7 +1085,7 @@ const validateUsername = (username: string) => {
               </div>
 
               {/* Password Settings */}
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+              <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                   Change Password
                 </h3>
@@ -1099,7 +1099,7 @@ const validateUsername = (username: string) => {
                       type="password"
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
-                      className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-[var(--bg-elevated)] dark:bg-gray-700 text-gray-900 dark:text-white"
                       placeholder="Enter your current password"
                     />
                   </div>
@@ -1112,7 +1112,7 @@ const validateUsername = (username: string) => {
                       type="password"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-[var(--bg-elevated)] dark:bg-gray-700 text-gray-900 dark:text-white"
                       placeholder="Enter new password"
                     />
                   </div>
@@ -1125,7 +1125,7 @@ const validateUsername = (username: string) => {
                       type="password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-[var(--bg-elevated)] dark:bg-gray-700 text-gray-900 dark:text-white"
                       placeholder="Confirm new password"
                     />
                   </div>

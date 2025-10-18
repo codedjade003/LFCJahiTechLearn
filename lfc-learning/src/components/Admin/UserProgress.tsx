@@ -100,7 +100,7 @@ export default function UserProgress() {
 
   if (loading) {
     return (
-      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)]">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)]">
         <div className="p-6 border-b">
           <h2 className="text-lg font-semibold text-redCustom">User Progress Overview</h2>
         </div>
@@ -110,7 +110,7 @@ export default function UserProgress() {
   }
 
   return (
-    <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)]">
+    <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)]">
       <div className="p-6 border-b flex justify-between items-center">
         <div>
           <h2 className="text-lg font-semibold text-redCustom">User Progress Overview</h2>

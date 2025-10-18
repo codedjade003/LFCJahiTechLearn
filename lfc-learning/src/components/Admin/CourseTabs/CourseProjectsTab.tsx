@@ -219,7 +219,7 @@ export default function CourseProjectsTab({ courseId }: { courseId: string }) {
       {(editing || !project) && (
         <form
           onSubmit={handleSubmit}
-          className="bg-white border border-yt-light-border rounded-lg p-5 shadow-sm"
+          className="bg-white dark:bg-[var(--bg-elevated)] border border-yt-light-border rounded-lg p-5 shadow-sm"
         >
           <h3 className="text-lg font-medium text-yt-text-dark mb-4">
             {project ? "Edit Project" : "Add Project"}
@@ -327,7 +327,7 @@ export default function CourseProjectsTab({ courseId }: { courseId: string }) {
               <button
                 type="button"
                 onClick={cancelEditing}
-                className="px-4 py-2.5 border border-gray-300 text-gray-700 dark:text-[var(--text-secondary)] rounded-md hover:bg-gray-50 dark:bg-[var(--bg-secondary)] font-medium text-sm"
+                className="px-4 py-2.5 border border-gray-300 text-gray-700 dark:text-[var(--text-secondary)] dark:text-[var(--text-secondary)] rounded-md hover:bg-gray-50 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] font-medium text-sm"
               >
                 Cancel
               </button>
@@ -338,7 +338,7 @@ export default function CourseProjectsTab({ courseId }: { courseId: string }) {
 
       {/* Project View - Only show when not editing and project exists */}
       {!editing && project && (
-        <div className="bg-white border border-yt-light-border rounded-lg p-5 shadow-sm">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] border border-yt-light-border rounded-lg p-5 shadow-sm">
           <h3 className="text-lg font-medium text-yt-text-dark mb-4">
             Course Project
           </h3>
@@ -368,12 +368,12 @@ export default function CourseProjectsTab({ courseId }: { courseId: string }) {
                 <h5 className="text-sm font-medium text-yt-text-dark mb-2">Materials:</h5>
                 <div className="space-y-2">
                   {project.materials.map((material, index) => (
-                    <div key={index} className="flex items-center p-2 bg-gray-50 dark:bg-[var(--bg-secondary)] rounded-md">
+                    <div key={index} className="flex items-center p-2 bg-gray-50 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-md">
                       <div className={`p-1 rounded mr-2 ${
                         material.type === 'image' ? 'bg-blue-100 text-blue-600' :
                         material.type === 'video' ? 'bg-purple-100 text-purple-600' :
                         material.type === 'pdf' ? 'bg-red-100 text-red-600' :
-                        'bg-gray-100 dark:bg-[var(--bg-tertiary)] text-gray-600 dark:text-[var(--text-secondary)]'
+                        'bg-gray-100 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] text-gray-600 dark:text-[var(--text-secondary)]'
                       }`}>
                         {material.type === 'image' && '🖼️'}
                         {material.type === 'video' && '🎬'}

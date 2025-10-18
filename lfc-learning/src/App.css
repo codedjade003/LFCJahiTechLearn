@@ -53,10 +53,10 @@
 
 /* Dark Mode - Sophisticated & Eye-friendly */
 .dark {
-  /* Brand Colors - Slightly adjusted for dark mode */
-  --lfc-red: #C92428;
-  --lfc-red-hover: #E53E42;
-  --lfc-red-light: #DC3539;
+  /* Brand Colors - Darker, muted tones for dark mode */
+  --lfc-red: #8B1518;
+  --lfc-red-hover: #A41E21;
+  --lfc-red-light: #9A1A1D;
   --lfc-gold: #E5C758;
   --lfc-gold-hover: #F0D97A;
   --lfc-gold-light: #EDD685;

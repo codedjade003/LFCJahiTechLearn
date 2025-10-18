@@ -448,7 +448,7 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
   return (
     <div className="space-y-6">
       {/* Add Section */}
-      <div className="bg-white border border-yt-light-border rounded-lg shadow-sm p-5">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] border border-yt-light-border rounded-lg shadow-sm p-5">
         <h3 className="text-lg font-medium text-yt-text-dark mb-4">Add New Section</h3>
         <div className="space-y-4">
           <div>
@@ -492,14 +492,14 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
             ))}
           </div>
         ) : sections.length === 0 ? (
-          <div className="bg-white p-6 rounded-lg border border-yt-light-border text-center">
+          <div className="bg-white dark:bg-[var(--bg-elevated)] p-6 rounded-lg border border-yt-light-border text-center">
             <p className="text-yt-text-gray">No sections added yet. Create your first section above.</p>
           </div>
         ) : (
           sections.map((section) => (
             <div
               key={section._id}
-              className="mb-5 bg-white border border-yt-light-border rounded-lg shadow-sm overflow-hidden"
+              className="mb-5 bg-white dark:bg-[var(--bg-elevated)] border border-yt-light-border rounded-lg shadow-sm overflow-hidden"
             >
               <div className="flex justify-between items-center">
                 <button
@@ -550,7 +550,7 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
                       </button>
                       <button
                         onClick={handleCancelEditSection}
-                        className="px-3 py-1 bg-gray-50 dark:bg-[var(--bg-secondary)]0 text-white rounded-md text-sm hover:bg-gray-600"
+                        className="px-3 py-1 bg-gray-50 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]0 text-white rounded-md text-sm hover:bg-gray-600"
                         title="Cancel edit"
                       >
                         ×
@@ -597,7 +597,7 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
                               <div className="flex space-x-2 items-center">
                                 <div className="relative group">
                                   <button
-                                    className="text-yt-text-gray hover:text-blue-500 p-1 rounded hover:bg-gray-100 dark:bg-[var(--bg-tertiary)]"
+                                    className="text-yt-text-gray hover:text-blue-500 p-1 rounded hover:bg-gray-100 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)]"
                                     title="Module actions"
                                   >
                                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -605,16 +605,16 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
                                     </svg>
                                   </button>
                                   
-                                  <div className="absolute right-0 mt-1 w-32 bg-white rounded-md shadow-lg border border-gray-200 dark:border-[var(--border-primary)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+                                  <div className="absolute right-0 mt-1 w-32 bg-white dark:bg-[var(--bg-elevated)] rounded-md shadow-lg border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
                                     <div className="py-1">
                                       <button
-                                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-[var(--text-secondary)] hover:bg-gray-100 dark:bg-[var(--bg-tertiary)] flex items-center"
+                                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-[var(--text-secondary)] dark:text-[var(--text-secondary)] hover:bg-gray-100 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] flex items-center"
                                         onClick={() => handleEditModule(section._id, mod)}
                                       >
                                         <FaEdit className="mr-1" /> Edit
                                       </button>
                                       <button
-                                        className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:bg-[var(--bg-tertiary)] flex items-center"
+                                        className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] flex items-center"
                                         onClick={() => handleDeleteModule(section._id, mod._id)}
                                       >
                                         <FaTrash className="mr-1" /> Delete
@@ -631,7 +631,7 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
                   )}
                   
                   {/* Add/Edit Module Form */}
-                  <div className="bg-gray-50 dark:bg-[var(--bg-secondary)] p-4 rounded-lg" id="module-form">
+                  <div className="bg-gray-50 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] p-4 rounded-lg" id="module-form">
                     <div className="flex justify-between items-center mb-3">
                       <h4 className="text-md font-medium text-yt-text-dark">
                         {editingModule && editingModule.sectionId === section._id 
@@ -734,14 +734,14 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
                           <div className="flex border-b border-yt-light-border mb-3">
                             <button
                               type="button"
-                              className={`px-4 py-2 text-sm font-medium ${activeUploadTab === 'file' ? 'border-b-2 border-lfc-red text-lfc-red' : 'text-yt-text-gray'}`}
+                              className={`px-4 py-2 text-sm font-medium ${activeUploadTab === 'file' ? 'border-b-2 border-lfc-red dark:border-[var(--lfc-red)] text-lfc-red' : 'text-yt-text-gray'}`}
                               onClick={() => setActiveUploadTab('file')}
                             >
                               Upload File
                             </button>
                             <button
                               type="button"
-                              className={`px-4 py-2 text-sm font-medium ${activeUploadTab === 'url' ? 'border-b-2 border-lfc-red text-lfc-red' : 'text-yt-text-gray'}`}
+                              className={`px-4 py-2 text-sm font-medium ${activeUploadTab === 'url' ? 'border-b-2 border-lfc-red dark:border-[var(--lfc-red)] text-lfc-red' : 'text-yt-text-gray'}`}
                               onClick={() => setActiveUploadTab('url')}
                             >
                               Use URL
@@ -753,7 +753,7 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
                               {contentUrl.includes('youtube') || contentUrl.includes('vimeo') ? (
                                 <iframe
                                   src={contentUrl.replace('watch?v=', 'embed/').replace('vimeo.com/', 'player.vimeo.com/video/')}
-                                  className="w-full h-full"
+                                  className="w-full min-h-full"
                                   frameBorder="0"
                                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                   allowFullScreen
@@ -762,7 +762,7 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
                                 <video
                                   src={resolveMediaUrl(contentUrl)}
                                   controls
-                                  className="w-full h-full object-contain"
+                                  className="w-full min-h-full object-contain"
                                   onError={(e) => {
                                     console.error("Failed to load video:", contentUrl);
                                     e.currentTarget.style.display = 'none';
@@ -796,7 +796,7 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
                                   }
                                 }}
                               >
-                                <label className="flex flex-col items-center justify-center w-full h-full cursor-pointer">
+                                <label className="flex flex-col items-center justify-center w-full min-h-full cursor-pointer">
                                   <div className="flex flex-col items-center justify-center">
                                     <FaUpload className="w-6 h-6 mb-2 text-yt-text-gray group-hover:text-lfc-gold transition-colors" />
                                     <p className="mb-1 text-xs text-yt-text-gray"><span className="font-semibold">Click to upload or drag and drop</span></p>
@@ -847,7 +847,7 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
                           </div>
                           
                           {newModule.questions.map((q, qi) => (
-                            <div key={qi} className="p-4 border border-yt-light-border rounded-md bg-white space-y-3">
+                            <div key={qi} className="p-4 border border-yt-light-border rounded-md bg-white dark:bg-[var(--bg-elevated)] space-y-3">
                               <div className="flex justify-between items-center">
                                 <h5 className="font-medium text-yt-text-dark">Question #{qi + 1}</h5>
                                 <button
@@ -930,7 +930,7 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
                       )}
 
                       {/* Survey Configuration (Optional) */}
-                      <div className="border-t border-gray-200 dark:border-[var(--border-primary)] pt-4 mt-4">
+                      <div className="border-t border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)] pt-4 mt-4">
                         <div className="flex justify-between items-center mb-3">
                           <div>
                             <label className="block text-sm font-medium text-yt-text-dark">Post-Module Survey (Optional)</label>
@@ -956,9 +956,9 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
                         {newModule.surveyQuestions.length > 0 && (
                           <div className="space-y-3">
                             {newModule.surveyQuestions.map((sq, sqi) => (
-                              <div key={sqi} className="p-4 border border-gray-200 dark:border-[var(--border-primary)] rounded-md bg-gray-50 dark:bg-[var(--bg-secondary)] space-y-3">
+                              <div key={sqi} className="p-4 border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)] rounded-md bg-gray-50 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] space-y-3">
                                 <div className="flex justify-between items-center">
-                                  <h5 className="font-medium text-sm text-gray-900 dark:text-[var(--text-primary)]">Survey Question #{sqi + 1}</h5>
+                                  <h5 className="font-medium text-sm text-gray-900 dark:text-[var(--text-primary)] dark:text-[var(--text-primary)]">Survey Question #{sqi + 1}</h5>
                                   <button
                                     type="button"
                                     onClick={() => {
@@ -972,7 +972,7 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
                                 </div>
 
                                 <div>
-                                  <label className="block text-xs font-medium text-gray-700 dark:text-[var(--text-secondary)] mb-1">Question Text</label>
+                                  <label className="block text-xs font-medium text-gray-700 dark:text-[var(--text-secondary)] dark:text-[var(--text-secondary)] mb-1">Question Text</label>
                                   <input
                                     type="text"
                                     className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
@@ -987,7 +987,7 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
                                 </div>
 
                                 <div>
-                                  <label className="block text-xs font-medium text-gray-700 dark:text-[var(--text-secondary)] mb-1">Question Type</label>
+                                  <label className="block text-xs font-medium text-gray-700 dark:text-[var(--text-secondary)] dark:text-[var(--text-secondary)] mb-1">Question Type</label>
                                   <select
                                     className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
                                     value={sq.type}
@@ -1009,7 +1009,7 @@ export default function EditCourseContentTab({ courseId }: { courseId: string })
                                 {sq.type === "multiple-choice" && (
                                   <div>
                                     <div className="flex justify-between items-center mb-2">
-                                      <label className="block text-xs font-medium text-gray-700 dark:text-[var(--text-secondary)]">Options</label>
+                                      <label className="block text-xs font-medium text-gray-700 dark:text-[var(--text-secondary)] dark:text-[var(--text-secondary)]">Options</label>
                                       <button
                                         type="button"
                                         onClick={() => {

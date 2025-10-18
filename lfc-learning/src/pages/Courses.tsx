@@ -70,7 +70,7 @@ export default function Course() {
       <OnboardingTour tourKey="courseManagement" steps={courseManagementTour} />
       
       {/* Header */}
-      <header className="flex items-center justify-between px-4 py-3 border-b border-yt-light-border dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
+      <header className="flex items-center justify-between px-4 py-3 border-b border-yt-light-border dark:border-gray-700 bg-white dark:bg-[var(--bg-elevated)] dark:bg-gray-800 shadow-sm">
         <div className="flex items-center">
           <button 
             className="md:hidden mr-3 p-2 rounded-md text-yt-text-dark hover:bg-yt-light-hover"
@@ -135,7 +135,7 @@ export default function Course() {
         <main className="flex-1 overflow-y-auto bg-yt-light-bg p-3 md:p-6">
           <div className="max-w-4xl mx-auto">
             {/* Progress indicator */}
-            <div className="mb-6 bg-white p-4 md:p-5 rounded-lg shadow-sm border border-yt-light-border">
+            <div className="mb-6 bg-white dark:bg-[var(--bg-elevated)] p-4 md:p-5 rounded-lg shadow-sm border border-yt-light-border">
               <div className="flex justify-between items-center mb-2">
                 <span className="text-xs md:text-sm text-yt-text-gray">Step {activeIndex + 1} of {tabs.length}</span>
                 <span className="text-xs md:text-sm font-medium text-lfc-gold">{tabs[activeIndex].label}</span>
@@ -149,7 +149,7 @@ export default function Course() {
             </div>
 
             {/* Content Header */}
-            <div className="mb-6 bg-white p-4 md:p-5 rounded-lg shadow-sm border border-yt-light-border">
+            <div className="mb-6 bg-white dark:bg-[var(--bg-elevated)] p-4 md:p-5 rounded-lg shadow-sm border border-yt-light-border">
               <h2 className="text-xl md:text-2xl font-medium mb-2 text-yt-text-dark">{tabs[activeIndex].label}</h2>
               <p className="text-yt-text-gray text-xs md:text-sm">
                 {activeTab === "info" && "Add basic information about your course"}
@@ -170,7 +170,7 @@ export default function Course() {
             </div>
 
             {/* Active Tab Content */}
-            <div className="bg-white rounded-lg p-4 md:p-6 border border-yt-light-border shadow-sm">
+            <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg p-4 md:p-6 border border-yt-light-border shadow-sm">
               {renderTabContent()}
             </div>
 

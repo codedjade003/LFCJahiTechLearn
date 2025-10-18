@@ -272,7 +272,7 @@ const AccessSettingsTab = () => {
     <div className="space-y-6 p-4">
     {selectedCourseForModal && (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg p-6 max-w-md w-full mx-4">
           <h3 className="text-lg font-semibold mb-2">{selectedCourseForModal.title}</h3>
           <p className="text-sm text-gray-600 dark:text-[var(--text-secondary)] mb-4">Course Details</p>
           <div className="space-y-2 text-sm">
@@ -305,7 +305,7 @@ const AccessSettingsTab = () => {
       
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-4 text-center">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-4 text-center">
           <FaUser className="text-3xl text-green-600 mx-auto mb-2" />
           <h4 className="font-semibold">Student Access</h4>
           <p className="text-sm text-gray-600 dark:text-[var(--text-secondary)]">Basic learning platform access</p>
@@ -314,7 +314,7 @@ const AccessSettingsTab = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-4 text-center">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-4 text-center">
           <FaUserTie className="text-3xl text-purple-600 mx-auto mb-2" />
           <h4 className="font-semibold">Admin Access</h4>
           <p className="text-sm text-gray-600 dark:text-[var(--text-secondary)]">Full administrative privileges</p>
@@ -323,7 +323,7 @@ const AccessSettingsTab = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-4 text-center">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-4 text-center">
           <FaUserShield className="text-3xl text-blue-600 mx-auto mb-2" />
           <h4 className="font-semibold">Admin-Only</h4>
           <p className="text-sm text-gray-600 dark:text-[var(--text-secondary)]">Restricted admin capabilities</p>
@@ -332,7 +332,7 @@ const AccessSettingsTab = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-4 text-center">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-4 text-center">
           <FaChalkboardTeacher className="text-3xl text-orange-600 mx-auto mb-2" />
           <h4 className="font-semibold">Course Instructors</h4>
           <p className="text-sm text-gray-600 dark:text-[var(--text-secondary)]">Assigned to courses</p>
@@ -347,7 +347,7 @@ const AccessSettingsTab = () => {
       </div>
 
       {/* Tab Navigation */}
-      <div className="bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-4">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-4">
         <div className="flex space-x-4 mb-4">
           <button
             onClick={() => setActiveTab('roles')}
@@ -433,7 +433,7 @@ const AccessSettingsTab = () => {
         </div>
 
         {/* Users Table */}
-        <div className="overflow-x-auto bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
+        <div className="overflow-x-auto bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
           <table className="w-full">
             <thead className="bg-gray-50 dark:bg-[var(--bg-secondary)]">
               <tr>

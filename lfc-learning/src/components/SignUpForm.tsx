@@ -53,7 +53,7 @@ export default function SignupForm() {
   return (
     <form
       onSubmit={handleSignup}
-      className="bg-white dark:bg-[var(--bg-elevated)] p-6 rounded-lg shadow-lg dark:shadow-[var(--shadow-xl)] max-w-md w-full border dark:border-[var(--border-primary)]"
+      className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] p-6 rounded-lg shadow-lg dark:shadow-[var(--shadow-xl)] max-w-md w-full border dark:border-[var(--border-primary)]"
     >
       <h3 className="text-xl font-semibold text-redCustom dark:text-[var(--lfc-red)] mb-4">
         Create a New Account
@@ -68,7 +68,7 @@ export default function SignupForm() {
           id="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full px-3 py-2 border dark:border-[var(--border-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)] bg-white dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)]"
+          className="w-full px-3 py-2 border dark:border-[var(--border-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)] bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)]"
         />
       </div>
 
@@ -81,7 +81,7 @@ export default function SignupForm() {
           id="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full px-3 py-2 border dark:border-[var(--border-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)] bg-white dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)]"
+          className="w-full px-3 py-2 border dark:border-[var(--border-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)] bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)]"
         />
       </div>
 
@@ -94,7 +94,7 @@ export default function SignupForm() {
           id="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full px-3 py-2 border dark:border-[var(--border-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)] bg-white dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)]"
+          className="w-full px-3 py-2 border dark:border-[var(--border-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)] bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)]"
         />
       </div>
 

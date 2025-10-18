@@ -6,7 +6,7 @@ import LoginForm from "../components/LoginForm";
 export default function Landing() {
 
   return (
-    <div className="bg-white dark:bg-[var(--bg-primary)] font-sans min-h-screen">
+    <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-primary)] font-sans min-h-screen">
       <Navbar />
 
       {/* Hero Section */}

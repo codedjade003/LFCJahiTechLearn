@@ -262,7 +262,7 @@ export default function ManageCourses() {
       </div>
 
       {courses.length === 0 ? (
-        <div className="bg-white p-8 rounded-lg text-center border border-yt-light-border">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] p-8 rounded-lg text-center border border-yt-light-border">
           <p className="text-yt-text-gray mb-4">No courses found.</p>
           <button 
             onClick={handleCreate}
@@ -297,10 +297,10 @@ export default function ManageCourses() {
                     <img
                       src={resolveImageUrl(course.thumbnail)}
                       alt={course.title}
-                      className="w-full h-full object-cover"
+                      className="w-full min-h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-yt-text-gray">
+                    <div className="w-full min-h-full flex items-center justify-center text-yt-text-gray">
                       <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
                           d="M3 7h18M3 12h18M3 17h18" />

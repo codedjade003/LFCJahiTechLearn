@@ -80,7 +80,7 @@ export default function Certificate({ studentName, courseName, completionDate, s
       {/* Certificate Preview */}
       <div 
         ref={certificateRef}
-        className="bg-white border-8 border-double border-lfc-gold p-12 rounded-lg shadow-2xl"
+        className="bg-white dark:bg-[var(--bg-elevated)] border-8 border-double border-lfc-gold p-12 rounded-lg shadow-2xl"
         style={{ 
           background: 'linear-gradient(135deg, #ffffff 0%, #f9fafb 100%)',
           minHeight: '500px'

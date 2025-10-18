@@ -449,7 +449,7 @@ const StudentDashboard = () => {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-[var(--bg-primary)]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-lfc-red mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-lfc-red dark:border-[var(--lfc-red)] mx-auto mb-4"></div>
           <div className="text-lg text-gray-600">Loading your courses...</div>
         </div>
       </div>
@@ -507,7 +507,7 @@ const StudentDashboard = () => {
               placeholder="Search courses, instructors, or topics..."
               value={searchQuery}
               onChange={handleSearchChange}
-              className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-lfc-gold focus:border-transparent"
+              className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg bg-white dark:bg-[var(--bg-elevated)] shadow-sm focus:outline-none focus:ring-2 focus:ring-lfc-gold focus:border-transparent"
             />
           </div>
         </div>
@@ -538,7 +538,7 @@ const StudentDashboard = () => {
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-2 border border-gray-300 rounded-lg bg-white dark:bg-[var(--bg-elevated)] text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               Previous
             </button>
@@ -575,7 +575,7 @@ const StudentDashboard = () => {
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-2 border border-gray-300 rounded-lg bg-white dark:bg-[var(--bg-elevated)] text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               Next
             </button>

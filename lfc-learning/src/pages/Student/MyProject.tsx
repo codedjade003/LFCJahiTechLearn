@@ -197,7 +197,7 @@ export default function MyProject() {
 
       {/* Projects Grid */}
       {filteredProjects.length === 0 ? (
-        <div className="bg-white p-8 rounded-lg text-center border border-yt-light-border">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] p-8 rounded-lg text-center border border-yt-light-border">
           <FaFileAlt className="text-4xl text-yt-text-gray mx-auto mb-4" />
           <h3 className="text-xl font-semibold mb-2">No projects found</h3>
           <p className="text-yt-text-gray mb-4">
@@ -223,7 +223,7 @@ export default function MyProject() {
                 <Link
                   key={projectItem.course._id}
                   to={`/dashboard/project/${projectItem.course._id}`} // Changed from /projects/ to /project/
-                  className="bg-white rounded-lg shadow-sm border border-yt-light-border p-6 hover:shadow-md transition-shadow block"
+                  className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow-sm border border-yt-light-border p-6 hover:shadow-md transition-shadow block"
                 >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">

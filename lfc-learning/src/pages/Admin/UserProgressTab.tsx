@@ -137,7 +137,7 @@ const UserProgressTab = () => {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-lfc-red mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-lfc-red dark:border-[var(--lfc-red)] mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading progress data...</p>
         </div>
       </div>
@@ -148,7 +148,7 @@ const UserProgressTab = () => {
     <div className="space-y-6 p-6">
       {/* Header Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 p-6">
           <div className="flex items-center">
             <div className="p-3 bg-blue-100 rounded-lg">
               <FaUser className="text-blue-600 text-xl" />
@@ -162,7 +162,7 @@ const UserProgressTab = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 p-6">
           <div className="flex items-center">
             <div className="p-3 bg-green-100 rounded-lg">
               <FaCheckCircle className="text-green-600 text-xl" />
@@ -176,7 +176,7 @@ const UserProgressTab = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 p-6">
           <div className="flex items-center">
             <div className="p-3 bg-orange-100 rounded-lg">
               <FaExclamationTriangle className="text-orange-600 text-xl" />
@@ -190,7 +190,7 @@ const UserProgressTab = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 p-6">
           <div className="flex items-center">
             <div className="p-3 bg-purple-100 rounded-lg">
               <FaBook className="text-purple-600 text-xl" />
@@ -206,7 +206,7 @@ const UserProgressTab = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 p-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
             <FaSearch className="absolute left-3 top-3 text-gray-400" />
@@ -245,7 +245,7 @@ const UserProgressTab = () => {
       </div>
 
       {/* Progress Table */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50">
@@ -343,7 +343,7 @@ const UserProgressTab = () => {
       {/* Modal */}
       {selectedUser && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+          <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-bold text-gray-900">User Progress Details</h3>

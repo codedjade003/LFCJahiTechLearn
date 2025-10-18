@@ -115,7 +115,7 @@ export default function VerifyEmailPage() {
     <div className="flex justify-center items-center h-screen bg-gray-50 dark:bg-[var(--bg-primary)]">
       <form
         onSubmit={handleVerify}
-        className="bg-white dark:bg-[var(--bg-elevated)] p-6 rounded-lg shadow-md dark:shadow-[var(--shadow-xl)] w-full max-w-md border dark:border-[var(--border-primary)]"
+        className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] p-6 rounded-lg shadow-md dark:shadow-[var(--shadow-xl)] w-full max-w-md border dark:border-[var(--border-primary)]"
       >
         <h2 className="text-2xl font-semibold mb-4 text-center text-gray-900 dark:text-[var(--text-primary)]">
           Verify Your Email
@@ -146,7 +146,7 @@ export default function VerifyEmailPage() {
               value={digit}
               onChange={(e) => handleChange(e.target.value, idx)}
               onKeyDown={(e) => handleKeyDown(e, idx)}
-              className="w-12 h-12 border dark:border-[var(--border-primary)] rounded-lg text-center text-xl focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)] bg-white dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)]"
+              className="w-12 h-12 border dark:border-[var(--border-primary)] rounded-lg text-center text-xl focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)] bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)]"
             />
           ))}
         </div>

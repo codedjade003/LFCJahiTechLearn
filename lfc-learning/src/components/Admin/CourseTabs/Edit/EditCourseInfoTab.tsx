@@ -344,14 +344,14 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
             <div className="flex border-b border-yt-light-border mb-3">
               <button
                 type="button"
-                className={`px-4 py-2 text-sm font-medium ${activeAvatarTab === 'file' ? 'border-b-2 border-lfc-red text-lfc-red' : 'text-yt-text-gray'}`}
+                className={`px-4 py-2 text-sm font-medium ${activeAvatarTab === 'file' ? 'border-b-2 border-lfc-red dark:border-[var(--lfc-red)] text-lfc-red' : 'text-yt-text-gray'}`}
                 onClick={() => setActiveAvatarTab('file')}
               >
                 Upload File
               </button>
               <button
                 type="button"
-                className={`px-4 py-2 text-sm font-medium ${activeAvatarTab === 'url' ? 'border-b-2 border-lfc-red text-lfc-red' : 'text-yt-text-gray'}`}
+                className={`px-4 py-2 text-sm font-medium ${activeAvatarTab === 'url' ? 'border-b-2 border-lfc-red dark:border-[var(--lfc-red)] text-lfc-red' : 'text-yt-text-gray'}`}
                 onClick={() => setActiveAvatarTab('url')}
               >
                 Use URL
@@ -380,7 +380,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
                   accept="image/*"
                   onChange={handleAvatarChange}
                 />
-                <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 rounded-lg pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-[var(--bg-elevated)] bg-opacity-90 rounded-lg pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
                 <svg
                 className="w-8 h-8 text-lfc-gold animate-bounce"
                 xmlns="http://www.w3.org/2000/svg"
@@ -457,14 +457,14 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
             <div className="flex border-b border-yt-light-border mb-3">
               <button
                 type="button"
-                className={`px-4 py-2 text-sm font-medium ${activeThumbnailTab === 'file' ? 'border-b-2 border-lfc-red text-lfc-red' : 'text-yt-text-gray'}`}
+                className={`px-4 py-2 text-sm font-medium ${activeThumbnailTab === 'file' ? 'border-b-2 border-lfc-red dark:border-[var(--lfc-red)] text-lfc-red' : 'text-yt-text-gray'}`}
                 onClick={() => setActiveThumbnailTab('file')}
               >
                 Upload File
               </button>
               <button
                 type="button"
-                className={`px-4 py-2 text-sm font-medium ${activeThumbnailTab === 'url' ? 'border-b-2 border-lfc-red text-lfc-red' : 'text-yt-text-gray'}`}
+                className={`px-4 py-2 text-sm font-medium ${activeThumbnailTab === 'url' ? 'border-b-2 border-lfc-red dark:border-[var(--lfc-red)] text-lfc-red' : 'text-yt-text-gray'}`}
                 onClick={() => setActiveThumbnailTab('url')}
               >
                 Use URL
@@ -493,7 +493,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
                   accept="image/*"
                   onChange={handleThumbnailChange}
                 />
-                <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 rounded-lg pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-[var(--bg-elevated)] bg-opacity-90 rounded-lg pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
                   <svg className="w-8 h-8 text-lfc-gold animate-bounce" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
                   </svg>
@@ -521,14 +521,14 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
             <div className="flex border-b border-yt-light-border mb-3">
               <button
                 type="button"
-                className={`px-4 py-2 text-sm font-medium ${activeVideoTab === 'file' ? 'border-b-2 border-lfc-red text-lfc-red' : 'text-yt-text-gray'}`}
+                className={`px-4 py-2 text-sm font-medium ${activeVideoTab === 'file' ? 'border-b-2 border-lfc-red dark:border-[var(--lfc-red)] text-lfc-red' : 'text-yt-text-gray'}`}
                 onClick={() => setActiveVideoTab('file')}
               >
                 Upload File
               </button>
               <button
                 type="button"
-                className={`px-4 py-2 text-sm font-medium ${activeVideoTab === 'url' ? 'border-b-2 border-lfc-red text-lfc-red' : 'text-yt-text-gray'}`}
+                className={`px-4 py-2 text-sm font-medium ${activeVideoTab === 'url' ? 'border-b-2 border-lfc-red dark:border-[var(--lfc-red)] text-lfc-red' : 'text-yt-text-gray'}`}
                 onClick={() => setActiveVideoTab('url')}
               >
                 Use URL
@@ -572,7 +572,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
                   accept="video/*"
                   onChange={handleVideoChange}
                 />
-                <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 rounded-lg pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-[var(--bg-elevated)] bg-opacity-90 rounded-lg pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
                   <svg className="w-8 h-8 text-lfc-gold animate-bounce" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                   </svg>
@@ -592,7 +592,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
                     <video
                       src={resolveImageUrl(promoVideoUrlInput)}
                       controls
-                      className="w-full h-full object-contain"
+                      className="w-full min-h-full object-contain"
                       onError={(e) => {
                         console.error("Failed to load video from URL:", promoVideoUrlInput);
                         e.currentTarget.style.display = 'none';
@@ -603,7 +603,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
                   <div className="mt-3 aspect-video bg-black rounded-lg overflow-hidden">
                     <iframe
                       src={promoVideoUrlInput.replace('watch?v=', 'embed/').replace('vimeo.com/', 'player.vimeo.com/video/')}
-                      className="w-full h-full"
+                      className="w-full min-h-full"
                       frameBorder="0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
@@ -703,7 +703,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
               <video
                 src={URL.createObjectURL(promoVideo)}
                 controls
-                className="w-full h-full object-contain"
+                className="w-full min-h-full object-contain"
               />
             ) : promoVideoUrlInput ? (
               // URL input preview (external services)
@@ -711,7 +711,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
                 <div className="aspect-video w-full bg-black">
                   <iframe
                     src={promoVideoUrlInput.replace('watch?v=', 'embed/').replace('vimeo.com/', 'player.vimeo.com/video/')}
-                    className="w-full h-full"
+                    className="w-full min-h-full"
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
@@ -722,7 +722,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
                 <video
                   src={resolveImageUrl(promoVideoUrlInput)}
                   controls
-                  className="w-full h-full object-contain"
+                  className="w-full min-h-full object-contain"
                   onError={(e) => {
                     console.error("Failed to load video from URL input:", promoVideoUrlInput);
                     e.currentTarget.style.display = 'none';
@@ -735,7 +735,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
                 <div className="aspect-video w-full bg-black">
                   <iframe
                     src={formData.promoVideo.replace('watch?v=', 'embed/').replace('vimeo.com/', 'player.vimeo.com/video/')}
-                    className="w-full h-full"
+                    className="w-full min-h-full"
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
@@ -746,7 +746,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
                 <video
                   src={resolveImageUrl(formData.promoVideo)}
                   controls
-                  className="w-full h-full object-contain"
+                  className="w-full min-h-full object-contain"
                   onError={(e) => {
                     console.error("Failed to load existing video:", formData.promoVideo);
                     e.currentTarget.style.display = 'none';
@@ -776,7 +776,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
             <img
                 src={URL.createObjectURL(thumbnail)}
                 alt="Thumbnail preview"
-                className="w-full h-full object-cover"
+                className="w-full min-h-full object-cover"
                 key="file-preview"
             />
             ) : null}
@@ -786,7 +786,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
             <img
                 src={resolveImageUrl(thumbnailUrlInput)}
                 alt="Thumbnail preview"
-                className="w-full h-full object-cover"
+                className="w-full min-h-full object-cover"
                 key="url-input-preview"
                 onError={(e) => {
                 console.error("Failed to load URL image:", thumbnailUrlInput);
@@ -804,7 +804,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
             <img
                 src={resolveImageUrl(formData.thumbnail)}
                 alt="Thumbnail preview"
-                className="w-full h-full object-cover"
+                className="w-full min-h-full object-cover"
                 key="existing-thumbnail-preview"
                 onError={(e) => {
                 console.error("Failed to load existing thumbnail:", formData.thumbnail);

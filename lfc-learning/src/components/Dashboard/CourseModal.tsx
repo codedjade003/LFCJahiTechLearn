@@ -246,7 +246,7 @@ const CourseModal: React.FC<CourseModalProps> = ({
                     {/* Skip to Details Button */}
                     <motion.button
                       onClick={nextPage}
-                      className="absolute top-6 left-6 bg-white/20 backdrop-blur-sm text-white rounded-lg px-4 py-2 flex items-center space-x-2 hover:bg-white/30 transition-all group"
+                      className="absolute top-6 left-6 bg-white/20 backdrop-blur-sm text-white rounded-lg px-4 py-2 flex items-center space-x-2 hover:bg-white dark:bg-[var(--bg-elevated)]/30 transition-all group"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
@@ -340,7 +340,7 @@ const CourseModal: React.FC<CourseModalProps> = ({
               </motion.div>
 
               {/* Details Content - Scrollable */}
-              <div className="flex-1 flex flex-col bg-white overflow-hidden">
+              <div className="flex-1 flex flex-col bg-white dark:bg-[var(--bg-elevated)] overflow-hidden">
                 {/* Scrollable Content */}
                 <div className="flex-1 overflow-y-auto p-6">
                   <h2 className="text-3xl font-bold text-gray-900 mb-4">{course.title}</h2>
@@ -454,7 +454,7 @@ const CourseModal: React.FC<CourseModalProps> = ({
                 </div>
 
                 {/* Fixed Action Buttons */}
-                <div className="p-6 border-t border-gray-200 bg-white">
+                <div className="p-6 border-t border-gray-200 bg-white dark:bg-[var(--bg-elevated)]">
                   <div className="flex flex-col sm:flex-row gap-4">
                     <button
                       onClick={onClose}

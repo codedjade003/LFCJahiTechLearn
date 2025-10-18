@@ -432,7 +432,7 @@ const AllUsersTab: React.FC = () => {
 
       {/* Field Visibility Picker */}
       {visibleFields.showFieldPicker && (
-        <div className="bg-white p-4 rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
           <h3 className="font-medium mb-3">Visible Fields</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             {Object.entries(visibleFields).map(([field, isVisible]) => (
@@ -456,7 +456,7 @@ const AllUsersTab: React.FC = () => {
       )}
 
       {/* Users Table */}
-    <div className="overflow-x-auto bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
+    <div className="overflow-x-auto bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
       <div className="relative">
         <div className="overflow-x-auto" style={{ maxWidth: '100vw', maxHeight: '70vh' }}>
           <table className="w-full">
@@ -817,7 +817,7 @@ const AllUsersTab: React.FC = () => {
                     </td>
                   )}
                     {/* Locked Actions column */}
-                    <td className="px-4 py-3 sticky right-0 bg-white border-l border-gray-200 dark:border-[var(--border-primary)]">
+                    <td className="px-4 py-3 sticky right-0 bg-white dark:bg-[var(--bg-elevated)] border-l border-gray-200 dark:border-[var(--border-primary)]">
                       <div className="flex space-x-2">
                         {user.isEditing ? (
                           <>

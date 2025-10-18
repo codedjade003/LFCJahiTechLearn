@@ -212,7 +212,7 @@ const SupportDashboard: React.FC = () => {
 
       {/* Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white p-4 rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 dark:text-[var(--text-secondary)]">Open Tickets</p>
@@ -222,7 +222,7 @@ const SupportDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 dark:text-[var(--text-secondary)]">In Progress</p>
@@ -232,7 +232,7 @@ const SupportDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 dark:text-[var(--text-secondary)]">Resolved</p>
@@ -242,7 +242,7 @@ const SupportDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 dark:text-[var(--text-secondary)]">Total Tickets</p>
@@ -254,7 +254,7 @@ const SupportDashboard: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-4 mb-6">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-4 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <select
             value={filters.status}
@@ -303,7 +303,7 @@ const SupportDashboard: React.FC = () => {
       </div>
 
       {/* Tickets Table */}
-      <div className="bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
         <div className="p-4 border-b border-gray-200 dark:border-[var(--border-primary)]">
           <h3 className="font-semibold text-gray-900 dark:text-[var(--text-primary)]">Support Tickets</h3>
           <p className="text-sm text-gray-600 dark:text-[var(--text-secondary)] mt-1">
@@ -394,23 +394,23 @@ const SupportDashboard: React.FC = () => {
       {/* Ticket Detail Modal */}
       {selectedTicket && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-4xl w-full h-[80vh] flex flex-col">
+          <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg max-w-4xl w-full h-[80vh] flex flex-col">
             {/* Header */}
             <div className="bg-lfc-red text-white p-4 rounded-t-lg flex justify-between items-center">
               <div className="flex-1">
                 <h2 className="text-xl font-bold">{selectedTicket.title}</h2>
                 <div className="flex flex-wrap gap-2 mt-1 text-sm">
-                  <span className="bg-white bg-opacity-20 px-2 py-1 rounded">
+                  <span className="bg-white dark:bg-[var(--bg-elevated)] bg-opacity-20 px-2 py-1 rounded">
                     Status: <span className="capitalize">{selectedTicket.status}</span>
                   </span>
-                  <span className="bg-white bg-opacity-20 px-2 py-1 rounded">
+                  <span className="bg-white dark:bg-[var(--bg-elevated)] bg-opacity-20 px-2 py-1 rounded">
                     Priority: <span className="capitalize">{selectedTicket.priority}</span>
                   </span>
-                  <span className="bg-white bg-opacity-20 px-2 py-1 rounded">
+                  <span className="bg-white dark:bg-[var(--bg-elevated)] bg-opacity-20 px-2 py-1 rounded">
                     Category: <span className="capitalize">{selectedTicket.category}</span>
                   </span>
                   {selectedTicket.assignedTo && (
-                    <span className="bg-white bg-opacity-20 px-2 py-1 rounded">
+                    <span className="bg-white dark:bg-[var(--bg-elevated)] bg-opacity-20 px-2 py-1 rounded">
                       Assigned to: {selectedTicket.assignedTo.name}
                     </span>
                   )}

@@ -20,7 +20,7 @@ export default function StatCard({
   iconColorClass = "text-lfc-red dark:text-[var(--lfc-red)]",
 }: StatCardProps) {
   return (
-    <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] p-4 border dark:border-[var(--border-primary)]">
+    <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] p-4 border dark:border-[var(--border-primary)]">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm text-lfc-gray dark:text-[var(--text-secondary)]">{label}</p>

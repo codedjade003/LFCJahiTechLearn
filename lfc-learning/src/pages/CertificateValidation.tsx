@@ -152,7 +152,7 @@ export default function CertificateValidation() {
   if (error || !certificate) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-sm p-8 text-center border border-gray-100">
+        <div className="max-w-md w-full bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow-sm p-8 text-center border border-gray-100">
           <FaTimesCircle className="text-6xl text-red-400 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Invalid Certificate</h1>
           <div className="bg-red-50 border border-red-100 p-4 mb-6 rounded-lg">
@@ -189,7 +189,7 @@ export default function CertificateValidation() {
       <div className="min-h-screen bg-gray-50 py-8 px-4">
         <div className="max-w-4xl mx-auto">
           {/* Success Header */}
-          <div className="bg-white rounded-xl shadow-sm p-8 mb-6 text-center border border-gray-100 no-print">
+          <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-xl shadow-sm p-8 mb-6 text-center border border-gray-100 no-print">
             <FaCheckCircle className="text-6xl text-emerald-500 mx-auto mb-4" />
             <div className="inline-block px-4 py-2 bg-emerald-50 text-emerald-700 rounded-full text-sm font-semibold mb-4 border border-emerald-100">
               ✓ VERIFIED AUTHENTIC
@@ -200,7 +200,7 @@ export default function CertificateValidation() {
           </div>
 
           {/* Certificate Details */}
-          <div className="bg-white rounded-xl shadow-sm p-8 border border-gray-100 print-area">
+          <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-xl shadow-sm p-8 border border-gray-100 print-area">
             <div className="border-2 border-gray-100 rounded-xl p-8 bg-gradient-to-br from-gray-50 to-white">
               {/* Certificate Header */}
               <div className="text-center mb-8">
@@ -224,7 +224,7 @@ export default function CertificateValidation() {
 
               {/* Details Grid */}
               <div className="grid md:grid-cols-2 gap-6 mb-8">
-                <div className="bg-white rounded-lg p-4 border border-gray-100 shadow-sm">
+                <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg p-4 border border-gray-100 shadow-sm">
                   <div className="flex items-center gap-2 mb-2">
                     <FaCalendar className="text-gray-500" />
                     <p className="font-semibold text-gray-900">Completion Date</p>
@@ -239,7 +239,7 @@ export default function CertificateValidation() {
                 </div>
 
                 {certificate.finalScore && (
-                  <div className="bg-white rounded-lg p-4 border border-gray-100 shadow-sm">
+                  <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg p-4 border border-gray-100 shadow-sm">
                     <div className="flex items-center gap-2 mb-2">
                       <FaTrophy className="text-amber-500" />
                       <p className="font-semibold text-gray-900">Final Score</p>
@@ -249,7 +249,7 @@ export default function CertificateValidation() {
                 )}
 
                 {certificate.metadata?.courseLevel && (
-                  <div className="bg-white rounded-lg p-4 border border-gray-100 shadow-sm">
+                  <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg p-4 border border-gray-100 shadow-sm">
                     <div className="flex items-center gap-2 mb-2">
                       <FaBook className="text-gray-500" />
                       <p className="font-semibold text-gray-900">Course Level</p>
@@ -259,7 +259,7 @@ export default function CertificateValidation() {
                 )}
 
                 {certificate.metadata?.courseDuration && (
-                  <div className="bg-white rounded-lg p-4 border border-gray-100 shadow-sm">
+                  <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg p-4 border border-gray-100 shadow-sm">
                     <div className="flex items-center gap-2 mb-2">
                       <FaCalendar className="text-gray-500" />
                       <p className="font-semibold text-gray-900">Duration</p>

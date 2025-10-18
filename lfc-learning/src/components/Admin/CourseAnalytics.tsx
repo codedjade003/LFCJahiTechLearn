@@ -162,11 +162,11 @@ export default function CourseAnalytics() {
   };
 
   return (
-    <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)]">
+    <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)]">
       <div className="p-6 border-b">
-        <h2 className="text-lg font-semibold text-redCustom">Course Analytics</h2>
+        <h2 className="text-lg font-semibold text-redCustom dark:text-[var(--lfc-red)]">Course Analytics</h2>
         {error && (
-          <div className="mt-2 text-sm text-red-600 bg-red-50 p-2 rounded">
+          <div className="mt-2 text-sm text-red-600 dark:text-[var(--error)] bg-red-50 dark:bg-red-900/20 p-2 rounded">
             {error}
           </div>
         )}
@@ -174,11 +174,11 @@ export default function CourseAnalytics() {
       <div className="p-6">
         {/* Course Selection */}
         <div className="mb-6">
-          <label className="block text-gray-700 dark:text-[var(--text-secondary)] mb-2 font-medium">Select Course</label>
+          <label className="block text-gray-700 dark:text-[var(--text-secondary)] dark:text-[var(--text-secondary)] mb-2 font-medium">Select Course</label>
           <select
             value={selectedCourse}
             onChange={(e) => setSelectedCourse(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-redCustom focus:border-transparent"
+            className="w-full border border-gray-300 dark:border-[var(--border-primary)] bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)] rounded-lg p-2 focus:ring-2 focus:ring-redCustom focus:border-transparent"
           >
             <option value="all">All Courses Overview</option>
             {courses.map(course => (
@@ -193,7 +193,7 @@ export default function CourseAnalytics() {
             <div className="relative">
               <svg className="w-20 h-20" viewBox="0 0 50 50">
                 <circle 
-                  className="text-gray-200" 
+                  className="text-gray-200 dark:text-[var(--bg-tertiary)]" 
                   strokeWidth="6" 
                   stroke="currentColor" 
                   fill="transparent" 
@@ -229,7 +229,7 @@ export default function CourseAnalytics() {
             <div className="relative">
               <svg className="w-20 h-20" viewBox="0 0 50 50">
                 <circle 
-                  className="text-gray-200" 
+                  className="text-gray-200 dark:text-[var(--bg-tertiary)]" 
                   strokeWidth="6" 
                   stroke="currentColor" 
                   fill="transparent" 

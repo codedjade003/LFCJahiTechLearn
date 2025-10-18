@@ -15,7 +15,7 @@ const PlaceholderPage: React.FC<PlaceholderPageProps> = ({
 }) => {
   return (
     <div className="min-h-screen bg-yt-light-gray flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-xl border border-yt-light-border p-8 text-center shadow-sm">
+      <div className="max-w-md w-full bg-white dark:bg-[var(--bg-elevated)] rounded-xl border border-yt-light-border p-8 text-center shadow-sm">
         {/* Icon */}
         <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-lfc-gold bg-opacity-10 flex items-center justify-center">
           <FaTools className="w-10 h-10 text-lfc-gold" />

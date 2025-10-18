@@ -98,7 +98,7 @@ const Notifications = () => {
       case 'grade':
         return <FaUsers className="text-green-500" />;
       default:
-        return <FaBell className="text-blue-500" />;
+        return <FaBell className="text-blue-500 dark:text-[var(--info)]" />;
     }
   };
 
@@ -121,14 +121,14 @@ const Notifications = () => {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)] p-6 mb-6">
         <div className="animate-pulse space-y-3">
           {[1, 2, 3].map(i => (
             <div key={i} className="flex items-start p-3">
-              <div className="w-6 h-6 bg-gray-200 rounded-full mr-3"></div>
+              <div className="w-6 h-6 bg-gray-200 dark:bg-[var(--bg-tertiary)] rounded-full mr-3"></div>
               <div className="flex-1 space-y-2">
-                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                <div className="h-4 bg-gray-200 dark:bg-[var(--bg-tertiary)] rounded w-3/4"></div>
+                <div className="h-3 bg-gray-200 dark:bg-[var(--bg-tertiary)] rounded w-1/2"></div>
               </div>
             </div>
           ))}
@@ -138,12 +138,12 @@ const Notifications = () => {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow p-6 mb-6">
+    <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)] p-6 mb-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
-          <h2 className="text-lg font-semibold text-gray-800">Notifications</h2>
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-[var(--text-primary)]">Notifications</h2>
           {unreadCount > 0 && (
-            <span className="bg-lfc-red text-white text-xs px-2 py-1 rounded-full">
+            <span className="bg-lfc-red dark:bg-[var(--lfc-red)] text-white text-xs px-2 py-1 rounded-full">
               {unreadCount}
             </span>
           )}
@@ -152,7 +152,7 @@ const Notifications = () => {
           <select 
             value={filters.type}
             onChange={(e) => setFilters({...filters, type: e.target.value})}
-            className="text-sm border rounded px-2 py-1"
+            className="text-sm border dark:border-[var(--border-primary)] rounded bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)] px-2 py-1"
           >
             <option value="all">All Types</option>
             <option value="course">Courses</option>
@@ -161,7 +161,7 @@ const Notifications = () => {
           </select>
           <button 
             onClick={markAllAsRead}
-            className="text-sm text-lfc-red hover:text-lfc-gold"
+            className="text-sm text-lfc-red dark:text-[var(--lfc-red)] hover:text-lfc-gold dark:hover:text-[var(--lfc-gold)]"
           >
             Mark all read
           </button>
@@ -170,7 +170,7 @@ const Notifications = () => {
 
       <div className="space-y-3">
         {notifications.length === 0 ? (
-          <div className="text-center py-4 text-gray-500">
+          <div className="text-center py-4 text-gray-500 dark:text-[var(--text-tertiary)]">
             No notifications found
           </div>
         ) : (
@@ -192,7 +192,7 @@ const Notifications = () => {
             {notifications.length > 3 && (
               <button
                 onClick={() => setExpanded(!expanded)}
-                className="w-full text-center py-2 text-sm text-lfc-red hover:text-lfc-gold hover:bg-gray-50 rounded-lg transition-colors flex items-center justify-center gap-2"
+                className="w-full text-center py-2 text-sm text-lfc-red dark:text-[var(--lfc-red)] hover:text-lfc-gold dark:hover:text-[var(--lfc-gold)] hover:bg-gray-50 rounded-lg transition-colors flex items-center justify-center gap-2"
               >
                 {expanded ? (
                   <>

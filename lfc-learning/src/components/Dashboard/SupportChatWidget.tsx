@@ -162,7 +162,7 @@ const SupportChatWidget: React.FC = () => {
 
       {/* Chat Widget */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-96 h-[600px] bg-white rounded-lg shadow-2xl border border-gray-200 z-50 flex flex-col">
+        <div className="fixed bottom-6 right-6 w-96 h-[600px] bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow-2xl border border-gray-200 z-50 flex flex-col">
           {/* Header */}
           <div className="bg-lfc-red text-white p-4 rounded-t-lg flex justify-between items-center">
             <div className="flex items-center">

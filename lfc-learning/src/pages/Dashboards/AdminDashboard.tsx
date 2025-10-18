@@ -115,7 +115,7 @@ export default function AdminDashboard(): JSX.Element {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 space-y-6 p-3 sm:p-4 md:p-6 overflow-y-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map(i => (
-            <div key={i} className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 animate-pulse">
+            <div key={i} className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-gray-800 rounded-lg shadow p-6 animate-pulse">
               <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
               <div className="h-8 bg-gray-200 rounded w-1/3"></div>
             </div>
@@ -147,7 +147,7 @@ export default function AdminDashboard(): JSX.Element {
 
       {/* Recent Activity + Course Management */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
-        <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow" data-tour="recent-activity">
+        <div className="lg:col-span-2 bg-white dark:bg-[var(--bg-elevated)] dark:bg-gray-800 rounded-lg shadow" data-tour="recent-activity">
           <RecentActivity items={stats.recentActivity} />
         </div>
         <CourseManagement />

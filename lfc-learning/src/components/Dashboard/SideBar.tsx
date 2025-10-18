@@ -59,7 +59,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           {/* Header */}
           <div className="flex items-center justify-between h-20 px-6 border-b border-lfc-gold dark:border-[var(--lfc-gold)]/30">
             <div className="flex items-center space-x-3">
-              <div className="relative h-12 w-12 bg-white rounded-xl p-2">
+              <div className="relative h-12 w-12 bg-white dark:bg-[var(--bg-elevated)] rounded-xl p-2">
                 <img 
                   src="/logo.png" 
                   alt="LFC Jahi Tech" 
@@ -144,7 +144,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                 <p className="text-xs text-white/80 mb-3">Our support team is here to help you</p>
                 <button
                   onClick={() => setShowSupport(true)}
-                  className="w-full bg-white text-lfc-red py-2 px-3 rounded-lg text-sm font-medium hover:bg-lfc-gold transition-all duration-200 hover:scale-105"
+                  className="w-full bg-white dark:bg-[var(--bg-elevated)] text-lfc-red py-2 px-3 rounded-lg text-sm font-medium hover:bg-lfc-gold transition-all duration-200 hover:scale-105"
                 >
                   Contact Support
                 </button>

@@ -221,7 +221,7 @@ export default function SurveyResponses() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 p-4">
         <div className="flex items-center gap-2 mb-3">
           <FaFilter className="text-gray-500" />
           <h3 className="font-semibold text-gray-900">Filters</h3>
@@ -259,17 +259,17 @@ export default function SurveyResponses() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 p-4">
           <div className="text-sm text-gray-600">Total Responses</div>
           <div className="text-3xl font-bold text-gray-900 mt-1">{filteredResponses.length}</div>
         </div>
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 p-4">
           <div className="text-sm text-gray-600">Unique Students</div>
           <div className="text-3xl font-bold text-gray-900 mt-1">
             {new Set(filteredResponses.map(r => r.userId._id)).size}
           </div>
         </div>
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 p-4">
           <div className="text-sm text-gray-600">Courses Covered</div>
           <div className="text-3xl font-bold text-gray-900 mt-1">
             {new Set(filteredResponses.map(r => r.courseId._id)).size}
@@ -278,7 +278,7 @@ export default function SurveyResponses() {
       </div>
 
       {/* Responses List */}
-      <div className="bg-white rounded-lg border border-gray-200">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200">
         <div className="p-4 border-b border-gray-200">
           <h3 className="font-semibold text-gray-900">Responses ({filteredResponses.length})</h3>
         </div>

@@ -177,7 +177,7 @@ export default function MyCourses() {
       </div>
 
       {displayEnrollments.length === 0 ? (
-        <div className="bg-white p-8 rounded-lg text-center border border-yt-light-border">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] p-8 rounded-lg text-center border border-yt-light-border">
           <div className="w-16 h-16 bg-yt-light-hover rounded-full flex items-center justify-center mx-auto mb-4">
             <FaBookOpen className="text-2xl text-yt-text-gray" />
           </div>
@@ -201,7 +201,7 @@ export default function MyCourses() {
               <Link
                 key={enrollment._id}
                 to={`/dashboard/courses/${course._id}`}
-                className="bg-white rounded-lg shadow-sm border border-yt-light-border overflow-hidden hover:shadow-md transition-shadow block"
+                className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow-sm border border-yt-light-border overflow-hidden hover:shadow-md transition-shadow block"
               >
                 {/* Your existing course card JSX here */}
                 <div className="h-48 bg-yt-light-hover overflow-hidden relative">
