@@ -75,13 +75,13 @@ export default function CourseFormModal({ isOpen, onClose, onSubmit }: CourseFor
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)]-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex justify-between items-center p-6 border-b">
-          <h2 className="text-xl font-semibold text-gray-800">Create New Course</h2>
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-[var(--text-primary)]">Create New Course</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-gray-400 hover:text-gray-600 dark:text-[var(--text-secondary)] transition-colors"
           >
             <FaTimes size={20} />
           </button>
@@ -91,7 +91,7 @@ export default function CourseFormModal({ isOpen, onClose, onSubmit }: CourseFor
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {/* Title - Required */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-[var(--text-secondary)] mb-2">
               Course Title *
             </label>
             <input
@@ -107,7 +107,7 @@ export default function CourseFormModal({ isOpen, onClose, onSubmit }: CourseFor
 
           {/* Description - Required */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-[var(--text-secondary)] mb-2">
               Description *
             </label>
             <textarea
@@ -123,7 +123,7 @@ export default function CourseFormModal({ isOpen, onClose, onSubmit }: CourseFor
 
           {/* Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-[var(--text-secondary)] mb-2">
               Course Type
             </label>
             <select
@@ -144,7 +144,7 @@ export default function CourseFormModal({ isOpen, onClose, onSubmit }: CourseFor
 
           {/* Level */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-[var(--text-secondary)] mb-2">
               Difficulty Level
             </label>
             <select
@@ -161,7 +161,7 @@ export default function CourseFormModal({ isOpen, onClose, onSubmit }: CourseFor
 
           {/* Instructor Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-[var(--text-secondary)] mb-2">
               Instructor Name
             </label>
             <input
@@ -179,7 +179,7 @@ export default function CourseFormModal({ isOpen, onClose, onSubmit }: CourseFor
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium"
+              className="px-4 py-2 text-gray-600 dark:text-[var(--text-secondary)] hover:text-gray-800 dark:text-[var(--text-primary)] font-medium"
             >
               Cancel
             </button>

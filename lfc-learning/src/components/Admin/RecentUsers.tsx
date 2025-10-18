@@ -109,7 +109,7 @@ export default function RecentUsers() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)]">
         <div className="p-6 border-b">
           <h2 className="text-lg font-semibold text-redCustom">Recent Users</h2>
         </div>
@@ -131,7 +131,7 @@ export default function RecentUsers() {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow">
+    <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)]">
       <div className="p-6 border-b flex justify-between items-center">
         <h2 className="text-lg font-semibold text-redCustom">Recent Users</h2>
         <span className="text-sm text-gray-500">
@@ -144,7 +144,7 @@ export default function RecentUsers() {
         ) : (
           <>
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-50 dark:bg-[var(--bg-secondary)]">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Courses</th>
@@ -155,14 +155,14 @@ export default function RecentUsers() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {users.map((user) => (
-                  <tr key={user._id} className="hover:bg-gray-50">
+                  <tr key={user._id} className="hover:bg-gray-50 dark:bg-[var(--bg-secondary)]">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className={`flex-shrink-0 h-10 w-10 rounded-full ${getProgressColor(user.progress)} flex items-center justify-center`}>
                           <FaUser />
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">{user.name}</div>
+                          <div className="text-sm font-medium text-gray-900 dark:text-[var(--text-primary)]">{user.name}</div>
                           <div className="text-sm text-gray-500">{user.email}</div>
                         </div>
                       </div>
@@ -207,26 +207,26 @@ export default function RecentUsers() {
             
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between mt-6 px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
+              <div className="flex items-center justify-between mt-6 px-4 py-3 bg-white border-t border-gray-200 dark:border-[var(--border-primary)] sm:px-6">
                 <div className="flex justify-between flex-1 sm:hidden">
                   <button
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-[var(--text-secondary)] bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-[var(--bg-secondary)] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Previous
                   </button>
                   <button
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 dark:text-[var(--text-secondary)] bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-[var(--bg-secondary)] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Next
                   </button>
                 </div>
                 <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-sm text-gray-700">
+                    <p className="text-sm text-gray-700 dark:text-[var(--text-secondary)]">
                       Showing <span className="font-medium">{(currentPage - 1) * limit + 1}</span> to{" "}
                       <span className="font-medium">
                         {Math.min(currentPage * limit, totalUsers)}
@@ -239,7 +239,7 @@ export default function RecentUsers() {
                       <button
                         onClick={() => handlePageChange(currentPage - 1)}
                         disabled={currentPage === 1}
-                        className="relative inline-flex items-center px-2 py-2 text-gray-400 rounded-l-md border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="relative inline-flex items-center px-2 py-2 text-gray-400 rounded-l-md border border-gray-300 bg-white hover:bg-gray-50 dark:bg-[var(--bg-secondary)] disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <FaChevronLeft className="h-4 w-4" />
                       </button>
@@ -251,7 +251,7 @@ export default function RecentUsers() {
                           className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
                             currentPage === page
                               ? "z-10 bg-redCustom border-redCustom text-white"
-                              : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                              : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50 dark:bg-[var(--bg-secondary)]"
                           }`}
                         >
                           {page}
@@ -261,7 +261,7 @@ export default function RecentUsers() {
                       <button
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
-                        className="relative inline-flex items-center px-2 py-2 text-gray-400 rounded-r-md border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="relative inline-flex items-center px-2 py-2 text-gray-400 rounded-r-md border border-gray-300 bg-white hover:bg-gray-50 dark:bg-[var(--bg-secondary)] disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <FaChevronRight className="h-4 w-4" />
                       </button>

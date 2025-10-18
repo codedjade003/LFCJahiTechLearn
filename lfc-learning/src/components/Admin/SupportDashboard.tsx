@@ -2,6 +2,16 @@
 import { useState, useEffect } from 'react';
 import { FaSpinner, FaClock, FaCheckCircle, FaUser, FaExclamationTriangle, FaEye, FaTimes, FaPaperPlane } from 'react-icons/fa';
 import type { SupportTicket, TicketFilters } from '../../types/support';
+import OnboardingTour from '../shared/OnboardingTour';
+import type { Step } from 'react-joyride';
+
+const adminSupportTour: Step[] = [
+  {
+    target: "body",
+    content: "Welcome to the Support Dashboard! Here you can view and manage all user support tickets.",
+    placement: "center",
+  },
+];
 
 const SupportDashboard: React.FC = () => {
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
@@ -192,48 +202,51 @@ const SupportDashboard: React.FC = () => {
 
   return (
     <div className="p-6">
+      {/* Onboarding Tour */}
+      <OnboardingTour tourKey="adminSupport" steps={adminSupportTour} />
+      
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Support Dashboard</h1>
-        <p className="text-gray-600">Manage customer support tickets</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-[var(--text-primary)]">Support Dashboard</h1>
+        <p className="text-gray-600 dark:text-[var(--text-secondary)]">Manage customer support tickets</p>
       </div>
 
       {/* Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <div className="bg-white p-4 rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Open Tickets</p>
+              <p className="text-sm text-gray-600 dark:text-[var(--text-secondary)]">Open Tickets</p>
               <p className="text-2xl font-bold text-blue-600">{statusCounts.open}</p>
             </div>
             <FaClock className="text-blue-500 text-xl" />
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <div className="bg-white p-4 rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">In Progress</p>
+              <p className="text-sm text-gray-600 dark:text-[var(--text-secondary)]">In Progress</p>
               <p className="text-2xl font-bold text-yellow-600">{statusCounts['in-progress']}</p>
             </div>
             <FaSpinner className="text-yellow-500 text-xl" />
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <div className="bg-white p-4 rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Resolved</p>
+              <p className="text-sm text-gray-600 dark:text-[var(--text-secondary)]">Resolved</p>
               <p className="text-2xl font-bold text-green-600">{statusCounts.resolved}</p>
             </div>
             <FaCheckCircle className="text-green-500 text-xl" />
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <div className="bg-white p-4 rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Total Tickets</p>
-              <p className="text-2xl font-bold text-gray-900">{tickets.length}</p>
+              <p className="text-sm text-gray-600 dark:text-[var(--text-secondary)]">Total Tickets</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-[var(--text-primary)]">{tickets.length}</p>
             </div>
             <FaUser className="text-gray-500 text-xl" />
           </div>
@@ -241,7 +254,7 @@ const SupportDashboard: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4 mb-6">
+      <div className="bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-4 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <select
             value={filters.status}
@@ -282,7 +295,7 @@ const SupportDashboard: React.FC = () => {
 
           <button
             onClick={() => setFilters({ status: '', category: '', priority: '' })}
-            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-[var(--bg-secondary)]"
           >
             Clear Filters
           </button>
@@ -290,10 +303,10 @@ const SupportDashboard: React.FC = () => {
       </div>
 
       {/* Tickets Table */}
-      <div className="bg-white rounded-lg border border-gray-200">
-        <div className="p-4 border-b border-gray-200">
-          <h3 className="font-semibold text-gray-900">Support Tickets</h3>
-          <p className="text-sm text-gray-600 mt-1">
+      <div className="bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
+        <div className="p-4 border-b border-gray-200 dark:border-[var(--border-primary)]">
+          <h3 className="font-semibold text-gray-900 dark:text-[var(--text-primary)]">Support Tickets</h3>
+          <p className="text-sm text-gray-600 dark:text-[var(--text-secondary)] mt-1">
             Showing {tickets.length} ticket{tickets.length !== 1 ? 's' : ''}
           </p>
         </div>
@@ -301,22 +314,22 @@ const SupportDashboard: React.FC = () => {
         {tickets.length === 0 ? (
           <div className="p-8 text-center">
             <FaExclamationTriangle className="text-4xl text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No tickets found</h3>
-            <p className="text-gray-600">Adjust your filters to see more results</p>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-[var(--text-primary)] mb-2">No tickets found</h3>
+            <p className="text-gray-600 dark:text-[var(--text-secondary)]">Adjust your filters to see more results</p>
           </div>
         ) : (
           <div className="divide-y divide-gray-200">
             {tickets.map((ticket) => (
-              <div key={ticket._id} className="p-6 hover:bg-gray-50">
+              <div key={ticket._id} className="p-6 hover:bg-gray-50 dark:bg-[var(--bg-secondary)]">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
-                      <h3 className="font-semibold text-gray-900">{ticket.title}</h3>
+                      <h3 className="font-semibold text-gray-900 dark:text-[var(--text-primary)]">{ticket.title}</h3>
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                         ticket.priority === 'urgent' ? 'bg-red-100 text-red-800' :
                         ticket.priority === 'high' ? 'bg-orange-100 text-orange-800' :
                         ticket.priority === 'medium' ? 'bg-blue-100 text-blue-800' :
-                        'bg-gray-100 text-gray-800'
+                        'bg-gray-100 dark:bg-[var(--bg-tertiary)] text-gray-800 dark:text-[var(--text-primary)]'
                       }`}>
                         {ticket.priority}
                       </span>
@@ -324,13 +337,13 @@ const SupportDashboard: React.FC = () => {
                         ticket.status === 'open' ? 'bg-blue-100 text-blue-800' :
                         ticket.status === 'in-progress' ? 'bg-yellow-100 text-yellow-800' :
                         ticket.status === 'resolved' ? 'bg-green-100 text-green-800' :
-                        'bg-gray-100 text-gray-800'
+                        'bg-gray-100 dark:bg-[var(--bg-tertiary)] text-gray-800 dark:text-[var(--text-primary)]'
                       }`}>
                         {ticket.status.replace('-', ' ')}
                       </span>
                     </div>
                     
-                    <p className="text-gray-600 text-sm mb-2 line-clamp-2">{ticket.description}</p>
+                    <p className="text-gray-600 dark:text-[var(--text-secondary)] text-sm mb-2 line-clamp-2">{ticket.description}</p>
                     
                     <div className="flex items-center space-x-4 text-sm text-gray-500">
                       <span>By: {ticket.createdBy?.name}</span>
@@ -415,9 +428,9 @@ const SupportDashboard: React.FC = () => {
             </div>
 
             {/* Ticket Info */}
-            <div className="border-b p-4 bg-gray-50">
-              <p className="text-gray-700">{selectedTicket.description}</p>
-              <div className="flex justify-between items-center mt-2 text-sm text-gray-600">
+            <div className="border-b p-4 bg-gray-50 dark:bg-[var(--bg-secondary)]">
+              <p className="text-gray-700 dark:text-[var(--text-secondary)]">{selectedTicket.description}</p>
+              <div className="flex justify-between items-center mt-2 text-sm text-gray-600 dark:text-[var(--text-secondary)]">
                 <span>Created by: {selectedTicket.createdBy?.name}</span>
                 <span>Created: {new Date(selectedTicket.createdAt).toLocaleString()}</span>
               </div>
@@ -434,7 +447,7 @@ const SupportDashboard: React.FC = () => {
                     <div
                       className={`inline-block max-w-md rounded-lg p-4 ${
                         message.user.role === 'admin'
-                          ? 'bg-gray-100 text-gray-800'
+                          ? 'bg-gray-100 dark:bg-[var(--bg-tertiary)] text-gray-800 dark:text-[var(--text-primary)]'
                           : 'bg-lfc-red text-white'
                       }`}
                     >

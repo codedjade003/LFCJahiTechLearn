@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function LoginForm() {
@@ -7,10 +7,19 @@ export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { setUser, fetchUser } = useAuth();
+  const [searchParams] = useSearchParams();
 
   const navigate = useNavigate();
+
+  // Check if user just verified email
+  useEffect(() => {
+    if (searchParams.get("verified") === "true") {
+      setSuccess("✅ Email verified successfully! You can now login.");
+    }
+  }, [searchParams]);
 
   const updateStreak = async (token: string) => {
     try {
@@ -105,11 +114,11 @@ export default function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleLogin} className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-      <h3 className="text-xl font-semibold text-redCustom mb-4">Login to Your Account</h3>
+    <form onSubmit={handleLogin} className="bg-white dark:bg-[var(--bg-elevated)] p-6 rounded-lg shadow-lg dark:shadow-[var(--shadow-xl)] max-w-md w-full border dark:border-[var(--border-primary)]">
+      <h3 className="text-xl font-semibold text-redCustom dark:text-[var(--lfc-red)] mb-4">Login to Your Account</h3>
 
       <div className="mb-4">
-        <label htmlFor="email" className="block text-gray-700 mb-2">
+        <label htmlFor="email" className="block text-gray-700 dark:text-[var(--text-secondary)] mb-2">
           Email
         </label>
         <input
@@ -117,12 +126,12 @@ export default function LoginForm() {
           id="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-goldCustom"
+          className="w-full px-3 py-2 border dark:border-[var(--border-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)] bg-white dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)]"
         />
       </div>
 
       <div className="mb-2">
-        <label htmlFor="password" className="block text-gray-700 mb-2">
+        <label htmlFor="password" className="block text-gray-700 dark:text-[var(--text-secondary)] mb-2">
           Password
         </label>
         <input
@@ -130,22 +139,23 @@ export default function LoginForm() {
           id="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-goldCustom"
+          className="w-full px-3 py-2 border dark:border-[var(--border-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)] bg-white dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)]"
         />
       </div>
 
       <div className="mb-4 text-right">
-        <Link to="/forgot-password" className="text-sm text-redCustom hover:text-goldCustom">
+        <Link to="/forgot-password" className="text-sm text-redCustom dark:text-[var(--lfc-red)] hover:text-goldCustom dark:hover:text-[var(--lfc-gold)] transition-colors">
           Forgot password?
         </Link>
       </div>
 
-      {error && <p className="text-redCustom text-sm mb-4">{error}</p>}
+      {error && <p className="text-redCustom dark:text-[var(--error)] text-sm mb-4">{error}</p>}
+      {success && <p className="text-green-600 dark:text-[var(--success)] text-sm mb-4">{success}</p>}
 
       <button
         type="submit"
         disabled={loading}
-        className="bg-goldCustom w-full text-white font-semibold py-2 px-4 rounded-lg disabled:opacity-50"
+        className="bg-goldCustom dark:bg-[var(--lfc-gold)] w-full text-white font-semibold py-2 px-4 rounded-lg disabled:opacity-50 hover:bg-[var(--lfc-gold-hover)] transition-colors"
       >
         {loading ? "Signing in..." : "Sign In"}
       </button>

@@ -6,6 +6,21 @@ import AllUsersTab from "../../components/Admin/UsersTabs/AllUsersTab.tsx";
 import AddUsersTab from "../../components/Admin/UsersTabs/AddUsersTab.tsx";
 import AccessSettingsTab from "../../components/Admin/UsersTabs/AccessSettingsTab.tsx";
 import LogsTab from "../../components/Admin/UsersTabs/LogsTab.tsx";
+import OnboardingTour from "../../components/shared/OnboardingTour";
+import type { Step } from "react-joyride";
+
+const userManagementTour: Step[] = [
+  {
+    target: "body",
+    content: "Welcome to User Management! Here you can view all users, add new users, manage access settings, and view activity logs.",
+    placement: "center",
+  },
+  {
+    target: "aside",
+    content: "Use these tabs to navigate: All Users shows everyone, Add Users lets you create accounts, Access Settings manages roles, and Logs tracks user activities.",
+    placement: "right",
+  },
+];
 
 export default function Users() {
   const [activeTab, setActiveTab] = useState("all");
@@ -45,6 +60,9 @@ export default function Users() {
 
   return (
     <div className="container flex flex-col h-full bg-yt-light-gray text-yt-text-dark">
+      {/* Onboarding Tour */}
+      <OnboardingTour tourKey="userManagement" steps={userManagementTour} />
+      
       {/* Header */}
       <header className="flex items-center justify-between px-4 py-3 border-b border-yt-light-border bg-white shadow-sm">
         <div className="flex items-center">

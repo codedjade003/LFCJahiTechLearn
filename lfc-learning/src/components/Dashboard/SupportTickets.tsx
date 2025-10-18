@@ -1,6 +1,16 @@
 import { useState, useEffect } from 'react';
 import { FaPlus, FaSpinner, FaClock, FaCheckCircle, FaExclamationCircle, FaTimes, FaPaperPlane, FaArrowLeft } from 'react-icons/fa';
 import type { SupportTicket, NewTicketData } from '../../types/support';
+import OnboardingTour from '../shared/OnboardingTour';
+import type { Step } from 'react-joyride';
+
+const supportTicketsTour: Step[] = [
+  {
+    target: "body",
+    content: "Welcome to Support! Here you can create tickets, track your requests, and communicate with the support team.",
+    placement: "center",
+  },
+];
 
 const SupportTickets: React.FC = () => {
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
@@ -155,6 +165,9 @@ const SupportTickets: React.FC = () => {
 
   return (
     <div className="p-6">
+      {/* Onboarding Tour */}
+      <OnboardingTour tourKey="supportTickets" steps={supportTicketsTour} />
+      
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Support Tickets</h1>

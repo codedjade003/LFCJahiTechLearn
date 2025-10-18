@@ -91,7 +91,7 @@ export default function RecentActivity({ items: initialItems }: { items?: Activi
       'system_alert': 'bg-red-100',
       'course_created': 'bg-purple-100'
     };
-    return bgMap[type] || 'bg-gray-100';
+    return bgMap[type] || 'bg-gray-100 dark:bg-[var(--bg-tertiary)]';
   };
 
   const getIconColorClass = (type: string): string => {
@@ -101,7 +101,7 @@ export default function RecentActivity({ items: initialItems }: { items?: Activi
       'system_alert': 'text-red-600',
       'course_created': 'text-purple-600'
     };
-    return colorMap[type] || 'text-gray-600';
+    return colorMap[type] || 'text-gray-600 dark:text-[var(--text-secondary)]';
   };
 
   const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
@@ -166,7 +166,7 @@ export default function RecentActivity({ items: initialItems }: { items?: Activi
           const IconComponent = getIconComponent(it.icon);
           return (
             <div key={it.id} className="flex items-start">
-              <div className={`p-2 rounded-full mr-4 flex items-center justify-center ${it.iconBgClass ?? "bg-gray-100"}`}>
+              <div className={`p-2 rounded-full mr-4 flex items-center justify-center ${it.iconBgClass ?? "bg-gray-100 dark:bg-[var(--bg-tertiary)]"}`}>
                 <IconComponent className={it.iconColorClass ?? "text-lfc-red"} size={14} />
               </div>
 
@@ -187,7 +187,7 @@ export default function RecentActivity({ items: initialItems }: { items?: Activi
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="px-3 py-1 rounded bg-gray-100 text-sm text-lfc-gray disabled:opacity-50 hover:bg-gray-200"
+              className="px-3 py-1 rounded bg-gray-100 dark:bg-[var(--bg-tertiary)] text-sm text-lfc-gray disabled:opacity-50 hover:bg-gray-200"
             >
               Prev
             </button>
@@ -197,7 +197,7 @@ export default function RecentActivity({ items: initialItems }: { items?: Activi
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="px-3 py-1 rounded bg-gray-100 text-sm text-lfc-gray disabled:opacity-50 hover:bg-gray-200"
+              className="px-3 py-1 rounded bg-gray-100 dark:bg-[var(--bg-tertiary)] text-sm text-lfc-gray disabled:opacity-50 hover:bg-gray-200"
             >
               Next
             </button>

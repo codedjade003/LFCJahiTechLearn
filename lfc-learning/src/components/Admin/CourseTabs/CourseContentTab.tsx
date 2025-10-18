@@ -564,7 +564,7 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                       </button>
                       <button
                         onClick={handleCancelEditSection}
-                        className="px-3 py-1 bg-gray-500 text-white rounded-md text-sm hover:bg-gray-600"
+                        className="px-3 py-1 bg-gray-50 dark:bg-[var(--bg-secondary)]0 text-white rounded-md text-sm hover:bg-gray-600"
                         title="Cancel edit"
                       >
                         ×
@@ -611,7 +611,7 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                               <div className="flex space-x-2 items-center">
                                 <div className="relative group">
                                   <button
-                                    className="text-yt-text-gray hover:text-blue-500 p-1 rounded hover:bg-gray-100"
+                                    className="text-yt-text-gray hover:text-blue-500 p-1 rounded hover:bg-gray-100 dark:bg-[var(--bg-tertiary)]"
                                     title="Module actions"
                                   >
                                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -619,16 +619,16 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                                     </svg>
                                   </button>
                                   
-                                  <div className="absolute right-0 mt-1 w-32 bg-white rounded-md shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+                                  <div className="absolute right-0 mt-1 w-32 bg-white rounded-md shadow-lg border border-gray-200 dark:border-[var(--border-primary)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
                                     <div className="py-1">
                                       <button
-                                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-[var(--text-secondary)] hover:bg-gray-100 dark:bg-[var(--bg-tertiary)] flex items-center"
                                         onClick={() => handleEditModule(section._id, mod)}
                                       >
                                         <FaEdit className="mr-1" /> Edit
                                       </button>
                                       <button
-                                        className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center"
+                                        className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:bg-[var(--bg-tertiary)] flex items-center"
                                         onClick={() => handleDeleteModule(section._id, mod._id)}
                                       >
                                         <FaTrash className="mr-1" /> Delete
@@ -645,7 +645,7 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                   )}
                   
                   {/* Add/Edit Module Form */}
-                  <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="bg-gray-50 dark:bg-[var(--bg-secondary)] p-4 rounded-lg">
                     <h4 className="text-md font-medium text-yt-text-dark mb-3">
                       {editingModule && editingModule.sectionId === section._id 
                         ? "Edit Module" 
@@ -942,7 +942,7 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                       )}
 
                       {/* Survey Configuration (Optional) */}
-                      <div className="border-t border-gray-200 pt-4 mt-4">
+                      <div className="border-t border-gray-200 dark:border-[var(--border-primary)] pt-4 mt-4">
                         <div className="flex justify-between items-center mb-3">
                           <div>
                             <label className="block text-sm font-medium text-yt-text-dark">Post-Module Survey (Optional)</label>
@@ -968,9 +968,9 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                         {newModule.surveyQuestions.length > 0 && (
                           <div className="space-y-3">
                             {newModule.surveyQuestions.map((sq, sqi) => (
-                              <div key={sqi} className="p-4 border border-gray-200 rounded-md bg-gray-50 space-y-3">
+                              <div key={sqi} className="p-4 border border-gray-200 dark:border-[var(--border-primary)] rounded-md bg-gray-50 dark:bg-[var(--bg-secondary)] space-y-3">
                                 <div className="flex justify-between items-center">
-                                  <h5 className="font-medium text-sm text-gray-900">Survey Question #{sqi + 1}</h5>
+                                  <h5 className="font-medium text-sm text-gray-900 dark:text-[var(--text-primary)]">Survey Question #{sqi + 1}</h5>
                                   <button
                                     type="button"
                                     onClick={() => {
@@ -984,7 +984,7 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                                 </div>
 
                                 <div>
-                                  <label className="block text-xs font-medium text-gray-700 mb-1">Question Text</label>
+                                  <label className="block text-xs font-medium text-gray-700 dark:text-[var(--text-secondary)] mb-1">Question Text</label>
                                   <input
                                     type="text"
                                     className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
@@ -999,7 +999,7 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                                 </div>
 
                                 <div>
-                                  <label className="block text-xs font-medium text-gray-700 mb-1">Question Type</label>
+                                  <label className="block text-xs font-medium text-gray-700 dark:text-[var(--text-secondary)] mb-1">Question Type</label>
                                   <select
                                     className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
                                     value={sq.type}
@@ -1021,7 +1021,7 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                                 {sq.type === "multiple-choice" && (
                                   <div>
                                     <div className="flex justify-between items-center mb-2">
-                                      <label className="block text-xs font-medium text-gray-700">Options</label>
+                                      <label className="block text-xs font-medium text-gray-700 dark:text-[var(--text-secondary)]">Options</label>
                                       <button
                                         type="button"
                                         onClick={() => {

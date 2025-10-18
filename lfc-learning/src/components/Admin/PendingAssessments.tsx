@@ -62,7 +62,7 @@ export default function PendingAssessments() {
       case 'project': return "bg-purple-100 text-purple-600";
       case 'quiz': return "bg-green-100 text-green-600";
       case 'exam': return "bg-orange-100 text-orange-600";
-      default: return "bg-gray-100 text-gray-600";
+      default: return "bg-gray-100 dark:bg-[var(--bg-tertiary)] text-gray-600 dark:text-[var(--text-secondary)]";
     }
   };
 
@@ -90,7 +90,7 @@ export default function PendingAssessments() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)]">
         <div className="p-6 border-b">
           <h2 className="text-lg font-semibold text-redCustom">Pending Assessments</h2>
         </div>
@@ -110,7 +110,7 @@ export default function PendingAssessments() {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow">
+    <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)]">
       <div className="p-6 border-b flex justify-between items-center">
         <h2 className="text-lg font-semibold text-redCustom">Pending Assessments</h2>
         <Link to="/admin/dashboard/assessments/assignments" className="text-goldCustom hover:text-redCustom text-sm">
@@ -125,7 +125,7 @@ export default function PendingAssessments() {
             <Link 
               key={item._id} 
               to={getAssessmentLink(item.type)}
-              className="flex items-start p-3 border rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex items-start p-3 border rounded-lg hover:bg-gray-50 dark:bg-[var(--bg-secondary)] transition-colors"
             >
               <div className={`p-2 rounded-full mr-4 ${getAssessmentColor(item.type, item.status)}`}>
                 {getAssessmentIcon(item.type)}
@@ -140,7 +140,7 @@ export default function PendingAssessments() {
                 <p className="text-sm text-gray-500 mb-2">Submitted by: {item.submittedBy}</p>
                 <div className="flex space-x-2">
                   <span className="text-sm bg-goldCustom hover:bg-redCustom text-white px-3 py-1 rounded inline-block">Review</span>
-                  <span className="text-sm border border-gray-300 hover:bg-gray-100 px-3 py-1 rounded inline-block">View</span>
+                  <span className="text-sm border border-gray-300 hover:bg-gray-100 dark:bg-[var(--bg-tertiary)] px-3 py-1 rounded inline-block">View</span>
                 </div>
               </div>
             </Link>

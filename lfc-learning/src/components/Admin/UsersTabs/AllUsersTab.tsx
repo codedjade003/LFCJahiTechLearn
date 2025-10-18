@@ -400,7 +400,7 @@ const AllUsersTab: React.FC = () => {
 
           <button
             onClick={toggleFieldPicker}
-            className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+            className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-[var(--bg-secondary)]"
             title="Field visibility"
           >
             <FaFilter />
@@ -432,7 +432,7 @@ const AllUsersTab: React.FC = () => {
 
       {/* Field Visibility Picker */}
       {visibleFields.showFieldPicker && (
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <div className="bg-white p-4 rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
           <h3 className="font-medium mb-3">Visible Fields</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             {Object.entries(visibleFields).map(([field, isVisible]) => (
@@ -456,11 +456,11 @@ const AllUsersTab: React.FC = () => {
       )}
 
       {/* Users Table */}
-    <div className="overflow-x-auto bg-white rounded-lg border border-gray-200">
+    <div className="overflow-x-auto bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
       <div className="relative">
         <div className="overflow-x-auto" style={{ maxWidth: '100vw', maxHeight: '70vh' }}>
           <table className="w-full">
-            <thead className="bg-gray-50 sticky top-0 z-30">
+            <thead className="bg-gray-50 dark:bg-[var(--bg-secondary)] sticky top-0 z-30">
               <tr>
                 {/* All your existing th elements for fields */}
                 {visibleFields.name && (
@@ -590,14 +590,14 @@ const AllUsersTab: React.FC = () => {
                 )}
 
                 {/* Locked Actions column */}
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px] sticky top-0 right-0 bg-gray-50 z-30 border-l border-gray-200">
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px] sticky top-0 right-0 bg-gray-50 dark:bg-[var(--bg-secondary)] z-30 border-l border-gray-200 dark:border-[var(--border-primary)]">
                     Actions
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {filteredUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50">
+                <tr key={user.id} className="hover:bg-gray-50 dark:bg-[var(--bg-secondary)]">
                   {/* All your existing td elements for fields */}
                   {visibleFields.name && (
                     <td className="px-4 py-3">
@@ -817,7 +817,7 @@ const AllUsersTab: React.FC = () => {
                     </td>
                   )}
                     {/* Locked Actions column */}
-                    <td className="px-4 py-3 sticky right-0 bg-white border-l border-gray-200">
+                    <td className="px-4 py-3 sticky right-0 bg-white border-l border-gray-200 dark:border-[var(--border-primary)]">
                       <div className="flex space-x-2">
                         {user.isEditing ? (
                           <>

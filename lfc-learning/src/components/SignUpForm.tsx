@@ -53,14 +53,14 @@ export default function SignupForm() {
   return (
     <form
       onSubmit={handleSignup}
-      className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full"
+      className="bg-white dark:bg-[var(--bg-elevated)] p-6 rounded-lg shadow-lg dark:shadow-[var(--shadow-xl)] max-w-md w-full border dark:border-[var(--border-primary)]"
     >
-      <h3 className="text-xl font-semibold text-redCustom mb-4">
+      <h3 className="text-xl font-semibold text-redCustom dark:text-[var(--lfc-red)] mb-4">
         Create a New Account
       </h3>
 
       <div className="mb-4">
-        <label htmlFor="name" className="block text-gray-700 mb-2">
+        <label htmlFor="name" className="block text-gray-700 dark:text-[var(--text-secondary)] mb-2">
           Full Name
         </label>
         <input
@@ -68,12 +68,12 @@ export default function SignupForm() {
           id="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-goldCustom"
+          className="w-full px-3 py-2 border dark:border-[var(--border-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)] bg-white dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)]"
         />
       </div>
 
       <div className="mb-4">
-        <label htmlFor="email" className="block text-gray-700 mb-2">
+        <label htmlFor="email" className="block text-gray-700 dark:text-[var(--text-secondary)] mb-2">
           Email
         </label>
         <input
@@ -81,12 +81,12 @@ export default function SignupForm() {
           id="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-goldCustom"
+          className="w-full px-3 py-2 border dark:border-[var(--border-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)] bg-white dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)]"
         />
       </div>
 
       <div className="mb-2">
-        <label htmlFor="password" className="block text-gray-700 mb-2">
+        <label htmlFor="password" className="block text-gray-700 dark:text-[var(--text-secondary)] mb-2">
           Password
         </label>
         <input
@@ -94,23 +94,23 @@ export default function SignupForm() {
           id="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-goldCustom"
+          className="w-full px-3 py-2 border dark:border-[var(--border-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)] bg-white dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)]"
         />
       </div>
 
-      {error && <p className="text-redCustom-500 text-sm mb-4">{error}</p>}
+      {error && <p className="text-redCustom dark:text-[var(--error)] text-sm mb-4">{error}</p>}
 
       <button
         type="submit"
         disabled={loading}
-        className="bg-goldCustom w-full text-white font-semibold py-2 px-4 rounded-lg disabled:opacity-50"
+        className="bg-goldCustom dark:bg-[var(--lfc-gold)] w-full text-white font-semibold py-2 px-4 rounded-lg disabled:opacity-50 hover:bg-[var(--lfc-gold-hover)] transition-colors"
       >
         {loading ? "Signing up..." : "Sign Up"}
       </button>
 
-      <p className="text-sm text-gray-600 mt-4 text-center">
+      <p className="text-sm text-gray-600 dark:text-[var(--text-tertiary)] mt-4 text-center">
         Already have an account?{" "}
-        <Link to="/" className="text-redCustom hover:text-goldCustom">
+        <Link to="/" className="text-redCustom dark:text-[var(--lfc-red)] hover:text-goldCustom dark:hover:text-[var(--lfc-gold)] transition-colors">
           Login here
         </Link>
       </p>

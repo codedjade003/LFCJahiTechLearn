@@ -87,9 +87,9 @@ export default function AssignmentSubmissionModal({
     switch (submission.submissionType) {
       case "text":
         return (
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="bg-gray-50 dark:bg-[var(--bg-secondary)] p-4 rounded-lg">
             <h4 className="font-medium mb-2">Text Submission</h4>
-            <p className="text-gray-700 whitespace-pre-wrap">
+            <p className="text-gray-700 dark:text-[var(--text-secondary)] whitespace-pre-wrap">
               {submission.submission.text || "No text provided"}
             </p>
           </div>
@@ -97,7 +97,7 @@ export default function AssignmentSubmissionModal({
 
       case "link":
         return (
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="bg-gray-50 dark:bg-[var(--bg-secondary)] p-4 rounded-lg">
             <h4 className="font-medium mb-2">Link Submission</h4>
             <a 
               href={submission.submission.link} 
@@ -120,7 +120,7 @@ export default function AssignmentSubmissionModal({
         const isPDF = file.type === 'application/pdf';
 
         return (
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="bg-gray-50 dark:bg-[var(--bg-secondary)] p-4 rounded-lg">
             <h4 className="font-medium mb-2">File Submission</h4>
             <div className="flex items-center justify-between">
               <div className="flex items-center">
@@ -194,7 +194,7 @@ export default function AssignmentSubmissionModal({
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-400 hover:text-gray-600 dark:text-[var(--text-secondary)]"
           >
             <FaTimes size={20} />
           </button>
@@ -270,7 +270,7 @@ export default function AssignmentSubmissionModal({
                         className={`px-2 py-1 text-xs rounded ${
                           grade === points
                             ? 'bg-lfc-red text-white'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            : 'bg-gray-100 dark:bg-[var(--bg-tertiary)] text-gray-700 dark:text-[var(--text-secondary)] hover:bg-gray-200'
                         }`}
                       >
                         {points}
@@ -312,7 +312,7 @@ export default function AssignmentSubmissionModal({
             <div className="flex justify-end space-x-3 mt-6">
               <button
                 onClick={onClose}
-                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 text-gray-700 dark:text-[var(--text-secondary)] rounded-lg hover:bg-gray-50 dark:bg-[var(--bg-secondary)]"
               >
                 Cancel
               </button>

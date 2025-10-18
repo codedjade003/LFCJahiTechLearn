@@ -27,23 +27,28 @@ export const courseDetailsTour: Step[] = [
 export const adminDashboardTour: Step[] = [
   {
     target: "body",
-    content: "Welcome to the Admin Dashboard! Let's show you around.",
+    content: "Welcome to the Admin Dashboard! This is your central hub for managing the learning platform. Let's take a quick tour.",
     placement: "center",
   },
   {
     target: '[data-tour="stats"]',
-    content: "Monitor key metrics: total users, active courses, and pending assessments.",
+    content: "These cards show key metrics at a glance: total courses, active users, pending assessments, and at-risk users who need attention.",
     placement: "bottom",
   },
   {
     target: '[data-tour="recent-activity"]',
-    content: "Track recent user activities and system events here.",
+    content: "Track recent user activities and system events here. This helps you monitor what's happening across the platform in real-time.",
     placement: "top",
   },
   {
     target: '[data-tour="pending-assessments"]',
-    content: "View and manage pending assignments, projects, and quizzes that need grading.",
+    content: "View and manage pending assignments, projects, and quizzes that need grading. Click on any item to grade and provide feedback.",
     placement: "left",
+  },
+  {
+    target: "body",
+    content: "Use the sidebar to navigate to Courses, Users, Assessments, and Support sections. Each section has powerful tools to manage your platform effectively.",
+    placement: "center",
   },
 ];
 
@@ -57,11 +62,6 @@ export const courseManagementTour: Step[] = [
     target: "aside",
     content: "Use these tabs to navigate through different sections of course creation. Start with Details, then add Content, Assignments, Projects, Settings, and finally Publish.",
     placement: "right",
-  },
-  {
-    target: "main",
-    content: "This is where you'll fill in course information, add content, and configure settings. Each tab has different options to customize your course.",
-    placement: "left",
   },
 ];
 

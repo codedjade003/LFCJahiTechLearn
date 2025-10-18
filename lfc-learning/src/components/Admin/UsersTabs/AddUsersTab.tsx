@@ -157,7 +157,7 @@ const AddUsersTab = () => {
   return (
     <div className="space-y-6 p-4">
       {/* Section 1: Bulk Upload */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-6">
         <h2 className="text-xl font-semibold mb-4 flex items-center">
           <FaUpload className="mr-2 text-lfc-gold" />
           Bulk Upload Users
@@ -166,7 +166,7 @@ const AddUsersTab = () => {
         <div className="space-y-4">
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
             <FaFileExcel className="text-4xl text-green-600 mx-auto mb-3" />
-            <p className="text-gray-600 mb-3">Upload CSV or Excel file with user data</p>
+            <p className="text-gray-600 dark:text-[var(--text-secondary)] mb-3">Upload CSV or Excel file with user data</p>
             <input
               type="file"
               accept=".csv,.xlsx,.xls"
@@ -182,7 +182,7 @@ const AddUsersTab = () => {
             </label>
             {file && (
               <div className="mt-3">
-                <span className="text-sm text-gray-600">Selected: {file.name}</span>
+                <span className="text-sm text-gray-600 dark:text-[var(--text-secondary)]">Selected: {file.name}</span>
               </div>
             )}
           </div>
@@ -200,7 +200,7 @@ const AddUsersTab = () => {
       </div>
 
       {/* Section 2: Add Multiple Users */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold flex items-center">
             <FaPlus className="mr-2 text-lfc-gold" />
@@ -217,7 +217,7 @@ const AddUsersTab = () => {
 
         <div className="space-y-4">
           {userForms.map((form, index) => (
-            <div key={index} className="border border-gray-200 rounded-lg p-4">
+            <div key={index} className="border border-gray-200 dark:border-[var(--border-primary)] rounded-lg p-4">
               <div className="flex justify-between items-center mb-3">
                 <h3 className="font-medium">User #{index + 1}</h3>
                 {userForms.length > 1 && (
@@ -291,7 +291,7 @@ const AddUsersTab = () => {
       </div>
 
       {/* Section 3: Generate Admin Helper */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-6">
         <h2 className="text-xl font-semibold mb-4 flex items-center">
           <FaUserShield className="mr-2 text-lfc-red" />
           Generate Admin Helper
@@ -299,7 +299,7 @@ const AddUsersTab = () => {
         
         <div className="space-y-4">
           <div className="max-w-md">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-[var(--text-secondary)] mb-2">
               Username for Admin Helper
             </label>
             <input

@@ -17,9 +17,9 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const sendEmail = async (to, subject, html, type = "default") => {
   try {
     // Choose the correct sender address
-    let from = "hello@lfctechlearn.com"; // default
-    if (["welcome", "verification", "reset"].includes(type)) {
-      from = "noreply@lfctechlearn.com";
+    let from = "noreply@lfctechlearn.com"; // default for automated emails
+    if (type === "support") {
+      from = "hello@lfctechlearn.com"; // only for support-related emails
     }
 
     const response = await resend.emails.send({

@@ -11,6 +11,8 @@ interface OnboardingProgress {
   courseManagement: boolean;
   userManagement: boolean;
   assessmentGrading: boolean;
+  supportTickets: boolean;
+  adminSupport: boolean;
 }
 
 interface OnboardingContextType {
@@ -37,6 +39,8 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
     courseManagement: false,
     userManagement: false,
     assessmentGrading: false,
+    supportTickets: false,
+    adminSupport: false,
   });
 
   const [isFirstLogin, setIsFirstLogin] = useState(false);
@@ -146,6 +150,8 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
         courseManagement: true,
         userManagement: true,
         assessmentGrading: true,
+        supportTickets: true,
+        adminSupport: true,
       };
 
       setProgress(allCompleted);
@@ -174,6 +180,8 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
       courseManagement: false,
       userManagement: false,
       assessmentGrading: false,
+      supportTickets: false,
+      adminSupport: false,
     });
   };
 

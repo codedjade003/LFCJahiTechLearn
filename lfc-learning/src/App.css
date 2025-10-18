@@ -2,42 +2,157 @@
 @tailwind components;
 @tailwind utilities;
 
-/* YouTube-inspired light mode color scheme */
+/* ========================================
+   LFC JAHI TECH LEARN - COLOR SYSTEM
+   ======================================== */
+
+/* Light Mode - Clean & Professional */
 :root {
-  --yt-red: #ff0000;
-  --yt-red-dark: #cc0000;
-  --yt-blue: #1b72e8;
-  --yt-blue-dark: #1565c0;
-  --yt-light-bg: #f8f9fa;
-  --yt-light-gray: #f8f9fa;
-  --yt-light-border: #dadce0;
-  --yt-light-hover: #f1f3f4;
-  --yt-light-blue: #e8f0fe;
-  --yt-card: #ffffff;
-  --yt-text-dark: #202124;
-  --yt-text-gray: #5f6368;
-  --yt-text-light: #80868b;
-  --yt-progress-light-bg: #f1f3f4;
+  /* Brand Colors - Fixed across themes */
+  --lfc-red: #A41E21;
+  --lfc-red-hover: #8A1719;
+  --lfc-red-light: #C92428;
+  --lfc-gold: #D4AF37;
+  --lfc-gold-hover: #B89530;
+  --lfc-gold-light: #E5C758;
+  
+  /* Background Colors */
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F9FAFB;
+  --bg-tertiary: #F3F4F6;
+  --bg-elevated: #FFFFFF;
+  
+  /* Text Colors */
+  --text-primary: #111827;
+  --text-secondary: #4B5563;
+  --text-tertiary: #6B7280;
+  --text-muted: #9CA3AF;
+  
+  /* Border Colors */
+  --border-primary: #E5E7EB;
+  --border-secondary: #D1D5DB;
+  --border-focus: var(--lfc-gold);
+  
+  /* Interactive States */
+  --hover-bg: #F3F4F6;
+  --active-bg: #E5E7EB;
+  --focus-ring: rgba(212, 175, 55, 0.3);
+  
+  /* Semantic Colors */
+  --success: #10B981;
+  --warning: #F59E0B;
+  --error: #EF4444;
+  --info: #3B82F6;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
-/* Dark mode color scheme */
+/* Dark Mode - Sophisticated & Eye-friendly */
 .dark {
-  --yt-red: #ff0000;
-  --yt-red-dark: #cc0000;
-  --yt-blue: #3ea6ff;
-  --yt-blue-dark: #2a8fd8;
-  --yt-light-bg: #0f0f0f;
-  --yt-light-gray: #181818;
-  --yt-light-border: #3f3f3f;
-  --yt-light-hover: #272727;
-  --yt-light-blue: #263850;
-  --yt-card: #212121;
-  --yt-text-dark: #f1f1f1;
-  --yt-text-gray: #aaaaaa;
-  --yt-text-light: #717171;
-  --yt-progress-light-bg: #3f3f3f;
+  /* Brand Colors - Slightly adjusted for dark mode */
+  --lfc-red: #C92428;
+  --lfc-red-hover: #E53E42;
+  --lfc-red-light: #DC3539;
+  --lfc-gold: #E5C758;
+  --lfc-gold-hover: #F0D97A;
+  --lfc-gold-light: #EDD685;
+  
+  /* Background Colors - Rich, deep tones */
+  --bg-primary: #0F1419;
+  --bg-secondary: #16181D;
+  --bg-tertiary: #1C1F26;
+  --bg-elevated: #22252D;
+  
+  /* Text Colors - High contrast for readability */
+  --text-primary: #F9FAFB;
+  --text-secondary: #D1D5DB;
+  --text-tertiary: #9CA3AF;
+  --text-muted: #6B7280;
+  
+  /* Border Colors - Subtle but visible */
+  --border-primary: #2D3139;
+  --border-secondary: #3A3F4A;
+  --border-focus: var(--lfc-gold);
+  
+  /* Interactive States */
+  --hover-bg: #252930;
+  --active-bg: #2D3139;
+  --focus-ring: rgba(229, 199, 88, 0.3);
+  
+  /* Semantic Colors - Adjusted for dark backgrounds */
+  --success: #34D399;
+  --warning: #FBBF24;
+  --error: #F87171;
+  --info: #60A5FA;
+  
+  /* Shadows - More pronounced in dark mode */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
 }
 
+/* Legacy YouTube variables for backward compatibility */
+:root {
+  --yt-red: var(--lfc-red);
+  --yt-red-dark: var(--lfc-red-hover);
+  --yt-blue: var(--info);
+  --yt-blue-dark: #2563EB;
+  --yt-light-bg: var(--bg-secondary);
+  --yt-light-gray: var(--bg-tertiary);
+  --yt-light-border: var(--border-primary);
+  --yt-light-hover: var(--hover-bg);
+  --yt-light-blue: #DBEAFE;
+  --yt-card: var(--bg-elevated);
+  --yt-text-dark: var(--text-primary);
+  --yt-text-gray: var(--text-secondary);
+  --yt-text-light: var(--text-tertiary);
+  --yt-progress-light-bg: var(--bg-tertiary);
+}
+
+.dark {
+  --yt-light-blue: #1E3A5F;
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+
+/* Background Utilities */
+.bg-primary { background-color: var(--bg-primary); }
+.bg-secondary { background-color: var(--bg-secondary); }
+.bg-tertiary { background-color: var(--bg-tertiary); }
+.bg-elevated { background-color: var(--bg-elevated); }
+
+.bg-lfc-red { background-color: var(--lfc-red); }
+.bg-lfc-red-hover { background-color: var(--lfc-red-hover); }
+.bg-lfc-gold { background-color: var(--lfc-gold); }
+.bg-lfc-gold-hover { background-color: var(--lfc-gold-hover); }
+
+/* Text Utilities */
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-tertiary { color: var(--text-tertiary); }
+.text-muted { color: var(--text-muted); }
+
+.text-lfc-red { color: var(--lfc-red); }
+.text-lfc-gold { color: var(--lfc-gold); }
+
+/* Border Utilities */
+.border-primary { border-color: var(--border-primary); }
+.border-secondary { border-color: var(--border-secondary); }
+.border-lfc-red { border-color: var(--lfc-red); }
+.border-lfc-gold { border-color: var(--lfc-gold); }
+
+/* Interactive States */
+.hover-bg:hover { background-color: var(--hover-bg); }
+.active-bg:active { background-color: var(--active-bg); }
+
+/* Legacy YouTube classes for backward compatibility */
 .bg-yt-light-gray { background-color: var(--yt-light-gray); }
 .bg-yt-light-bg { background-color: var(--yt-light-bg); }
 .bg-yt-card { background-color: var(--yt-card); }
@@ -74,13 +189,43 @@
   scrollbar-width: none;
 }
 
-/* Ensure smooth theme transitions */
+/* ========================================
+   GLOBAL STYLES
+   ======================================== */
+
+/* Smooth theme transitions */
 * {
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
-/* Dark mode body background */
+/* Body styles */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
 .dark body {
-  background-color: var(--yt-light-bg);
-  color: var(--yt-text-dark);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Form inputs dark mode support */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-color: var(--border-primary);
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: var(--lfc-gold);
+  ring-color: var(--focus-ring);
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: var(--text-muted);
 }

@@ -190,17 +190,17 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
   }, []);
 
   return (
-    <header className="sticky top-0 z-30 bg-white border-b border-gray-200">
+    <header className="sticky top-0 z-30 bg-white dark:bg-[var(--bg-elevated)] border-b border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">
       <div className="px-3 sm:px-4 py-3 flex items-center justify-between">
         {/* Left: Menu button and Title */}
         <div className="flex items-center gap-3">
           <button
             onClick={onMenuToggle}
-            className="p-2 rounded-md text-lfc-gray hover:bg-gray-100 lg:hidden"
+            className="p-2 rounded-md text-lfc-gray hover:bg-gray-100 dark:bg-[var(--bg-tertiary)] lg:hidden"
           >
             <FaBars />
           </button>
-          <h1 className="text-lg sm:text-xl font-bold text-gray-800">Admin Dashboard</h1>
+          <h1 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-[var(--text-primary)] dark:text-[var(--text-primary)]">Admin Dashboard</h1>
         </div>
 
         {/* Right: icons + profile */}
@@ -219,11 +219,11 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
                 }
               }}
               disabled={notificationsLoading}
-              className="p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors duration-200 relative disabled:opacity-50"
+              className="p-2 text-gray-600 dark:text-[var(--text-secondary)] dark:text-[var(--text-secondary)] hover:bg-gray-100 dark:bg-[var(--bg-tertiary)] dark:hover:bg-[var(--hover-bg)] rounded-full transition-colors duration-200 relative disabled:opacity-50"
             >
               <FaBell className="text-lg" />
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-lfc-red text-white rounded-full min-w-[18px] h-[18px] flex items-center justify-center text-xs font-medium px-1">
+                <span className="absolute -top-1 -right-1 bg-lfc-red dark:bg-[var(--lfc-red)] text-white rounded-full min-w-[18px] h-[18px] flex items-center justify-center text-xs font-medium px-1">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               )}
@@ -236,10 +236,10 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
 
             {/* Notifications Dropdown */}
             {showNotifications && (
-              <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
-                <div className="p-4 border-b border-gray-200">
+              <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 dark:border-[var(--border-primary)] rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+                <div className="p-4 border-b border-gray-200 dark:border-[var(--border-primary)]">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-gray-800">Notifications</h3>
+                    <h3 className="text-lg font-semibold text-gray-800 dark:text-[var(--text-primary)] dark:text-[var(--text-primary)]">Notifications</h3>
                     <div className="flex items-center gap-2">
                       {unreadCount > 0 && (
                         <button
@@ -249,7 +249,7 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
                           Mark all read
                         </button>
                       )}
-                      <span className="bg-lfc-red text-white text-xs px-2 py-1 rounded-full">
+                      <span className="bg-lfc-red dark:bg-[var(--lfc-red)] text-white text-xs px-2 py-1 rounded-full">
                         {unreadCount} unread
                       </span>
                     </div>
@@ -273,7 +273,7 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
                           key={notification._id}
                           className={`p-3 rounded-lg mb-2 cursor-pointer transition-colors ${
                             notification.read 
-                              ? 'bg-gray-50 hover:bg-gray-100' 
+                              ? 'bg-gray-50 dark:bg-[var(--bg-secondary)] hover:bg-gray-100 dark:bg-[var(--bg-tertiary)]' 
                               : 'bg-blue-50 hover:bg-blue-100 border-l-4 border-l-blue-500'
                           }`}
                           onClick={() => markAsRead(notification._id)}
@@ -281,12 +281,12 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
                               <p className={`text-sm font-medium ${
-                                notification.read ? 'text-gray-700' : 'text-gray-900'
+                                notification.read ? 'text-gray-700 dark:text-[var(--text-secondary)]' : 'text-gray-900 dark:text-[var(--text-primary)]'
                               }`}>
                                 {notification.title || 'Notification'}
                               </p>
                               {notification.message && (
-                                <p className="text-xs text-gray-600 mt-1 line-clamp-2">
+                                <p className="text-xs text-gray-600 dark:text-[var(--text-secondary)] mt-1 line-clamp-2">
                                   {notification.message}
                                 </p>
                               )}
@@ -324,11 +324,11 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setOpen(!open)}
-              className="flex items-center space-x-2 p-1 hover:bg-gray-100 rounded-full transition-colors duration-200"
+              className="flex items-center space-x-2 p-1 hover:bg-gray-100 dark:bg-[var(--bg-tertiary)] rounded-full transition-colors duration-200"
             >
               <div className="relative">
                 <img
-                  className="h-8 w-8 rounded-full object-cover border-2 border-gray-200"
+                  className="h-8 w-8 rounded-full object-cover border-2 border-gray-200 dark:border-[var(--border-primary)]"
                   src={
                     user?.profilePicture?.url
                       ? user.profilePicture.url
@@ -347,7 +347,7 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
                 )}
               </div>
               <div className="hidden md:block text-left">
-                <span className="text-sm font-medium text-gray-700 block">
+                <span className="text-sm font-medium text-gray-700 dark:text-[var(--text-secondary)] block">
                   {user?.name || "Loading..."}
                 </span>
                 {isAdmin && (
@@ -362,10 +362,10 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
             </button>
 
             {open && (
-              <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-1">
+              <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 dark:border-[var(--border-primary)] rounded-lg shadow-lg z-50 py-1">
                 {/* User Info Section */}
                 <div className="px-4 py-3 border-b border-gray-100">
-                  <p className="text-sm font-medium text-gray-900">{user?.name}</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-[var(--text-primary)]">{user?.name}</p>
                   <p className="text-xs text-gray-500 truncate mb-1">{user?.email}</p>
                   {isAdmin && (
                     <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
@@ -389,7 +389,7 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
                     navigate("/dashboard/profile");
                     setOpen(false);
                   }}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200 flex items-center"
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-[var(--text-secondary)] hover:bg-gray-50 dark:bg-[var(--bg-secondary)] transition-colors duration-200 flex items-center"
                 >
                   <FaUser className="mr-3 text-gray-400" />
                   My Profile
@@ -401,7 +401,7 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
                     setOpen(false);
                     navigate("/");
                   }}
-                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50 transition-colors duration-200 flex items-center"
+                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50 dark:bg-[var(--bg-secondary)] transition-colors duration-200 flex items-center"
                 >
                   <FaChevronDown className="mr-3 text-red-400 transform rotate-90" />
                   Logout

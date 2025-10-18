@@ -19,11 +19,11 @@ const StatCard: React.FC<StatCardProps> = ({
   color,
 }) => {
   return (
-    <div className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow">
+    <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] p-6 hover:shadow-md dark:hover:shadow-[var(--shadow-lg)] border dark:border-[var(--border-primary)] transition-shadow">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-sm font-medium text-gray-600">{title}</h3>
-          <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
+          <h3 className="text-sm font-medium text-gray-600 dark:text-[var(--text-secondary)]">{title}</h3>
+          <p className="text-2xl font-bold text-gray-900 dark:text-[var(--text-primary)] mt-1">{value}</p>
         </div>
         <div 
           className="w-12 h-12 rounded-full flex items-center justify-center"
@@ -38,7 +38,7 @@ const StatCard: React.FC<StatCardProps> = ({
           <span>Progress</span>
           <span>{Math.round(progress)}%</span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
+        <div className="w-full bg-gray-200 dark:bg-[var(--bg-tertiary)] rounded-full h-2">
           <div 
             className="h-2 rounded-full transition-all duration-300"
             style={{ 

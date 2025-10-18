@@ -6,7 +6,7 @@ import LoginForm from "../components/LoginForm";
 export default function Landing() {
 
   return (
-    <div className="bg-white dark:bg-gray-900 font-sans">
+    <div className="bg-white dark:bg-[var(--bg-primary)] font-sans min-h-screen">
       <Navbar />
 
       {/* Hero Section */}
@@ -14,10 +14,10 @@ export default function Landing() {
         <div className="w-full max-w-screen-xl mx-auto px-4 flex flex-col md:flex-row items-center">
           {/* Left Text */}
           <div className="md:w-1/2 mb-10 md:mb-0">
-            <h2 className="text-3xl md:text-4xl font-bold text-redCustom mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-redCustom dark:text-[var(--lfc-red)] mb-4">
               Technical Unit Training Platform
             </h2>
-            <p className="text-gray-700 dark:text-gray-300 mb-6">
+            <p className="text-gray-700 dark:text-[var(--text-secondary)] mb-6">
               Access training materials, courses, and resources exclusively for
               LFC Jahi Abuja Technical Unit members.
             </p>

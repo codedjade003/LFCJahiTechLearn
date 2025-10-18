@@ -100,7 +100,7 @@ export default function UserProgress() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)]">
         <div className="p-6 border-b">
           <h2 className="text-lg font-semibold text-redCustom">User Progress Overview</h2>
         </div>
@@ -110,12 +110,12 @@ export default function UserProgress() {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow">
+    <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)]">
       <div className="p-6 border-b flex justify-between items-center">
         <div>
           <h2 className="text-lg font-semibold text-redCustom">User Progress Overview</h2>
           {userName && (
-            <div className="flex items-center mt-1 text-sm text-gray-600">
+            <div className="flex items-center mt-1 text-sm text-gray-600 dark:text-[var(--text-secondary)]">
               <FaUser className="mr-2 text-lfc-red" />
               <span>{userName}</span>
             </div>
@@ -159,7 +159,7 @@ export default function UserProgress() {
               <div key={course._id} className="border rounded-lg p-4">
                 <div className="flex justify-between items-start mb-2">
                   <div className="flex items-center space-x-2">
-                    <FaBook className="text-gray-600" />
+                    <FaBook className="text-gray-600 dark:text-[var(--text-secondary)]" />
                     <span className="text-sm font-medium truncate max-w-[200px]">
                       {course.name}
                     </span>
@@ -170,7 +170,7 @@ export default function UserProgress() {
                   </span>
                 </div>
                 
-                <div className="flex justify-between mb-1 text-sm text-gray-600">
+                <div className="flex justify-between mb-1 text-sm text-gray-600 dark:text-[var(--text-secondary)]">
                   <span>{course.percentage}% complete</span>
                   <span>{course.timeSpent}h spent</span>
                 </div>

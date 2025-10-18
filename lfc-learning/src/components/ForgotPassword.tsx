@@ -106,11 +106,11 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-50">
+    <div className="flex justify-center items-center h-screen bg-gray-50 dark:bg-[var(--bg-primary)]">
       <button
         type="button"
         onClick={() => navigate(-1)}
-        className="absolute left-4 top-4 text-gray-500 hover:text-goldCustom"
+        className="absolute left-4 top-4 text-gray-500 dark:text-[var(--text-tertiary)] hover:text-goldCustom dark:hover:text-[var(--lfc-gold)] transition-colors"
       >
         <FiArrowLeft size={20} />
       </button>
@@ -125,9 +125,9 @@ export default function ForgotPassword() {
             ? handleVerifyCode
             : handleResetPassword
         }
-        className="bg-white p-6 rounded-lg shadow-md w-full max-w-md"
+        className="bg-white dark:bg-[var(--bg-elevated)] p-6 rounded-lg shadow-md dark:shadow-[var(--shadow-xl)] w-full max-w-md border dark:border-[var(--border-primary)]"
       >
-        <h2 className="text-2xl font-semibold mb-4 text-center">
+        <h2 className="text-2xl font-semibold mb-4 text-center text-gray-900 dark:text-[var(--text-primary)]">
           {step === "request"
             ? "Forgot Password"
             : step === "code"
@@ -135,8 +135,8 @@ export default function ForgotPassword() {
             : "Set New Password"}
         </h2>
 
-        {message && <p className="text-green-600 text-sm mb-3 text-center">{message}</p>}
-        {error && <p className="text-red-500 text-sm mb-3 text-center">{error}</p>}
+        {message && <p className="text-green-600 dark:text-[var(--success)] text-sm mb-3 text-center">{message}</p>}
+        {error && <p className="text-red-500 dark:text-[var(--error)] text-sm mb-3 text-center">{error}</p>}
 
         {step === "request" && (
           <>
@@ -145,13 +145,13 @@ export default function ForgotPassword() {
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 mb-4 border rounded-lg focus:ring-2 focus:ring-goldCustom"
+              className="w-full p-3 mb-4 border dark:border-[var(--border-primary)] rounded-lg bg-white dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)] focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)]"
               required
             />
             <button
               type="submit"
               disabled={loading}
-              className="bg-goldCustom w-full text-white py-2 px-4 rounded-lg"
+              className="bg-goldCustom dark:bg-[var(--lfc-gold)] w-full text-white hover:bg-[var(--lfc-gold-hover)] transition-colors py-2 px-4 rounded-lg"
             >
               {loading ? "Sending..." : "Send Reset Code"}
             </button>
@@ -173,7 +173,7 @@ export default function ForgotPassword() {
                   value={digit}
                   onChange={(e) => handleChange(e.target.value, idx)}
                   onKeyDown={(e) => handleKeyDown(e, idx)}
-                  className="w-12 h-12 border rounded-lg text-center text-xl focus:ring-2 focus:ring-goldCustom"
+                  className="w-12 h-12 border dark:border-[var(--border-primary)] rounded-lg bg-white dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)] text-center text-xl focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)]"
                 />
               ))}
             </div>
@@ -181,7 +181,7 @@ export default function ForgotPassword() {
             <button
               type="submit"
               disabled={loading || codeStr.length < 6}
-              className="bg-goldCustom w-full text-white py-2 px-4 rounded-lg mb-2"
+              className="bg-goldCustom dark:bg-[var(--lfc-gold)] w-full text-white hover:bg-[var(--lfc-gold-hover)] transition-colors py-2 px-4 rounded-lg mb-2"
             >
               {loading ? "Verifying..." : "Verify Code"}
             </button>
@@ -192,8 +192,8 @@ export default function ForgotPassword() {
               disabled={cooldown > 0}
               className={`text-sm w-full ${
                 cooldown > 0
-                  ? "text-gray-400 cursor-not-allowed"
-                  : "text-redCustom hover:text-goldCustom"
+                  ? "text-gray-400 dark:text-[var(--text-muted)] cursor-not-allowed"
+                  : "text-redCustom dark:text-[var(--lfc-red)] hover:text-goldCustom dark:hover:text-[var(--lfc-gold)] transition-colors"
               }`}
             >
               {cooldown > 0 ? `Resend available in ${cooldown}s` : "Resend Code"}
@@ -208,7 +208,7 @@ export default function ForgotPassword() {
               placeholder="Enter new password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full p-3 mb-3 border rounded-lg focus:ring-2 focus:ring-goldCustom"
+              className="w-full p-3 mb-3 border rounded-lg focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)]"
               required
             />
             <input
@@ -216,7 +216,7 @@ export default function ForgotPassword() {
               placeholder="Confirm new password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full p-3 mb-4 border rounded-lg focus:ring-2 focus:ring-goldCustom"
+              className="w-full p-3 mb-4 border dark:border-[var(--border-primary)] rounded-lg bg-white dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)] focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)]"
               required
             />
             <button
@@ -231,7 +231,7 @@ export default function ForgotPassword() {
         <p className="text-center text-sm mt-4">
           <a
             href="/"
-            className="text-redCustom hover:text-goldCustom underline"
+            className="text-redCustom dark:text-[var(--lfc-red)] hover:text-goldCustom dark:hover:text-[var(--lfc-gold)] transition-colors underline"
           >
             Go back to homepage
           </a>

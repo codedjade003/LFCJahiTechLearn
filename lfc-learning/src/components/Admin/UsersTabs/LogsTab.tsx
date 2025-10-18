@@ -126,37 +126,37 @@ const LogsTab = () => {
   return (
     <div className="space-y-6 p-4">
       {/* Header */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-6">
         <h1 className="text-2xl font-bold mb-2">Activity Logs</h1>
-        <p className="text-gray-600">View user activity logs and login history</p>
+        <p className="text-gray-600 dark:text-[var(--text-secondary)]">View user activity logs and login history</p>
         
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="bg-gray-50 dark:bg-[var(--bg-secondary)] p-4 rounded-lg">
             <FaUser className="text-blue-600 text-xl mb-2" />
             <div className="text-2xl font-bold">{logs.length}</div>
-            <div className="text-sm text-gray-600">Total Logs</div>
+            <div className="text-sm text-gray-600 dark:text-[var(--text-secondary)]">Total Logs</div>
           </div>
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="bg-gray-50 dark:bg-[var(--bg-secondary)] p-4 rounded-lg">
             <FaSignInAlt className="text-green-600 text-xl mb-2" />
             <div className="text-2xl font-bold">{logs.filter(l => l.action === 'login').length}</div>
-            <div className="text-sm text-gray-600">Logins</div>
+            <div className="text-sm text-gray-600 dark:text-[var(--text-secondary)]">Logins</div>
           </div>
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="bg-gray-50 dark:bg-[var(--bg-secondary)] p-4 rounded-lg">
             <FaBook className="text-purple-600 text-xl mb-2" />
             <div className="text-2xl font-bold">{logs.filter(l => l.resource === 'course').length}</div>
-            <div className="text-sm text-gray-600">Course Activities</div>
+            <div className="text-sm text-gray-600 dark:text-[var(--text-secondary)]">Course Activities</div>
           </div>
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="bg-gray-50 dark:bg-[var(--bg-secondary)] p-4 rounded-lg">
             <FaClock className="text-orange-600 text-xl mb-2" />
             <div className="text-2xl font-bold">{new Set(logs.map(l => l.userId)).size}</div>
-            <div className="text-sm text-gray-600">Active Users</div>
+            <div className="text-sm text-gray-600 dark:text-[var(--text-secondary)]">Active Users</div>
           </div>
         </div>
       </div>
 
       {/* Controls */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-6">
         <div className="flex flex-col md:flex-row gap-4 mb-4">
           <div className="flex-1 relative">
             <FaSearch className="absolute left-3 top-3 text-gray-400" />
@@ -209,7 +209,7 @@ const LogsTab = () => {
         {/* Logs Table */}
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-50 dark:bg-[var(--bg-secondary)]">
               <tr>
                 <th className="px-4 py-3 text-left cursor-pointer" onClick={() => handleSort('timestamp')}>
                   <div className="flex items-center">
@@ -240,7 +240,7 @@ const LogsTab = () => {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {paginatedLogs.map((log) => (
-                <tr key={log.id} className="hover:bg-gray-50">
+                <tr key={log.id} className="hover:bg-gray-50 dark:bg-[var(--bg-secondary)]">
                   <td className="px-4 py-3 text-sm">
                     {new Date(log.timestamp).toLocaleString()}
                   </td>
@@ -274,7 +274,7 @@ const LogsTab = () => {
 
         {/* Pagination */}
         <div className="flex justify-between items-center mt-4">
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-gray-600 dark:text-[var(--text-secondary)]">
             Showing {paginatedLogs.length} of {filteredAndSortedLogs.length} logs
           </div>
           <div className="flex gap-2">

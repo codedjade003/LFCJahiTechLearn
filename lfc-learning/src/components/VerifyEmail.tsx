@@ -112,22 +112,22 @@ export default function VerifyEmailPage() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-50">
+    <div className="flex justify-center items-center h-screen bg-gray-50 dark:bg-[var(--bg-primary)]">
       <form
         onSubmit={handleVerify}
-        className="bg-white p-6 rounded-lg shadow-md w-full max-w-md"
+        className="bg-white dark:bg-[var(--bg-elevated)] p-6 rounded-lg shadow-md dark:shadow-[var(--shadow-xl)] w-full max-w-md border dark:border-[var(--border-primary)]"
       >
-        <h2 className="text-2xl font-semibold mb-4 text-center">
+        <h2 className="text-2xl font-semibold mb-4 text-center text-gray-900 dark:text-[var(--text-primary)]">
           Verify Your Email
         </h2>
-        <p className="text-gray-600 mb-4 text-center">
+        <p className="text-gray-600 dark:text-[var(--text-secondary)] mb-4 text-center">
           Enter the 6-digit code sent to your email.
           {email.includes("gmail.com") && (
             <a
               href="https://mail.google.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-redCustom ml-1 underline"
+              className="text-redCustom dark:text-[var(--lfc-red)] ml-1 underline hover:text-goldCustom dark:hover:text-[var(--lfc-gold)] transition-colors"
             >
               (Click here if you used Gmail)
             </a>
@@ -146,20 +146,20 @@ export default function VerifyEmailPage() {
               value={digit}
               onChange={(e) => handleChange(e.target.value, idx)}
               onKeyDown={(e) => handleKeyDown(e, idx)}
-              className="w-12 h-12 border rounded-lg text-center text-xl focus:ring-2 focus:ring-goldCustom"
+              className="w-12 h-12 border dark:border-[var(--border-primary)] rounded-lg text-center text-xl focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)] bg-white dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)]"
             />
           ))}
         </div>
 
-        {error && <p className="text-redCustom text-sm mb-2">{error}</p>}
+        {error && <p className="text-redCustom dark:text-[var(--error)] text-sm mb-2">{error}</p>}
         {resendMsg && (
-          <p className="text-sm text-center text-gray-600 mb-2">{resendMsg}</p>
+          <p className="text-sm text-center text-gray-600 dark:text-[var(--text-secondary)] mb-2">{resendMsg}</p>
         )}
 
         <button
           type="submit"
           disabled={loading}
-          className="bg-goldCustom w-full text-white py-2 px-4 rounded-lg mb-2"
+          className="bg-goldCustom dark:bg-[var(--lfc-gold)] w-full text-white py-2 px-4 rounded-lg mb-2 hover:bg-[var(--lfc-gold-hover)] transition-colors disabled:opacity-50"
         >
           {loading ? "Verifying..." : "Verify"}
         </button>
@@ -168,10 +168,10 @@ export default function VerifyEmailPage() {
           type="button"
           onClick={() => handleResend(false)}
           disabled={cooldown > 0}
-          className={`text-sm w-full ${
+          className={`text-sm w-full transition-colors ${
             cooldown > 0
-              ? "text-gray-400 cursor-not-allowed"
-              : "text-redCustom hover:text-goldCustom"
+              ? "text-gray-400 dark:text-[var(--text-muted)] cursor-not-allowed"
+              : "text-redCustom dark:text-[var(--lfc-red)] hover:text-goldCustom dark:hover:text-[var(--lfc-gold)]"
           }`}
         >
           {cooldown > 0 ? `Resend available in ${cooldown}s` : "Resend Code"}

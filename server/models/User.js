@@ -36,6 +36,7 @@ const userSchema = new mongoose.Schema(
     isVerified: { type: Boolean, default: false },
     verificationCode: String,
     verificationExpires: Date,
+    verificationCodeSentAt: [{ type: Number }], // Array of timestamps for rate limiting
     passwordResetExpires: Date,
 
     // First-time & onboarding flags

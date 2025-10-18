@@ -64,15 +64,15 @@ const DashboardStats: React.FC = () => {
 
   // Skeleton card
   const SkeletonCard = () => (
-    <div className="bg-white rounded-lg shadow p-6 animate-pulse">
+    <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] p-6 animate-pulse">
       <div className="flex items-center justify-between">
         <div>
-          <div className="h-4 w-28 bg-gray-300 rounded mb-2" />
-          <div className="h-8 w-20 bg-gray-300 rounded" />
+          <div className="h-4 w-28 bg-gray-300 dark:bg-[var(--bg-tertiary)] rounded mb-2" />
+          <div className="h-8 w-20 bg-gray-300 dark:bg-[var(--bg-tertiary)] rounded" />
         </div>
-        <div className="w-16 h-16 rounded-full bg-gray-300" />
+        <div className="w-16 h-16 rounded-full bg-gray-300 dark:bg-[var(--bg-tertiary)]" />
       </div>
-      <div className="h-3 w-40 bg-gray-200 rounded mt-3" />
+      <div className="h-3 w-40 bg-gray-200 dark:bg-[var(--bg-secondary)] rounded mt-3" />
     </div>
   );
 

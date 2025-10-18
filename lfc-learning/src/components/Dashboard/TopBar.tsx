@@ -117,12 +117,12 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
   };
 
   return (
-    <div className="flex items-center justify-between h-16 px-4 bg-white border-b border-gray-200 sticky top-0 z-30">
+    <div className="flex items-center justify-between h-16 px-4 bg-white dark:bg-[var(--bg-elevated)] border-b border-gray-200 dark:border-[var(--border-primary)] sticky top-0 z-30">
       {/* Left Section */}
       <div className="flex items-center flex-1">
         <button 
           onClick={onMenuClick}
-          className="p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors duration-200"
+          className="p-2 text-gray-600 dark:text-[var(--text-secondary)] hover:bg-gray-100 dark:hover:bg-[var(--hover-bg)] rounded-full transition-colors duration-200"
         >
           <FaBars className="text-lg md:hidden" />
         </button>
@@ -136,7 +136,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
           />
         </div>
         
-        <h1 className="ml-4 text-xl font-semibold text-gray-800 hidden md:block">
+        <h1 className="ml-4 text-xl font-semibold text-gray-800 dark:text-[var(--text-primary)] hidden md:block">
           Training Dashboard
         </h1>
       </div>
@@ -151,11 +151,11 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
         <div className="relative" ref={dropdownRef}>
           <button 
             onClick={() => setShowNotifications(!showNotifications)}
-            className="p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors duration-200 relative"
+            className="p-2 text-gray-600 dark:text-[var(--text-secondary)] hover:bg-gray-100 dark:hover:bg-[var(--hover-bg)] rounded-full transition-colors duration-200 relative"
           >
             <FaBell className="text-lg" />
             {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-lfc-red text-white rounded-full min-w-[18px] h-[18px] flex items-center justify-center text-xs font-medium px-1">
+              <span className="absolute -top-1 -right-1 bg-lfc-red dark:bg-[var(--lfc-red)] text-white rounded-full min-w-[18px] h-[18px] flex items-center justify-center text-xs font-medium px-1">
                 {unreadCount > 9 ? '9+' : unreadCount}
               </span>
             )}
@@ -166,9 +166,9 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
             <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
               <div className="p-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-800">Notifications</h3>
+                  <h3 className="text-lg font-semibold text-gray-800 dark:text-[var(--text-primary)]">Notifications</h3>
                   {unreadCount > 0 && (
-                    <span className="bg-lfc-red text-white text-xs px-2 py-1 rounded-full">
+                    <span className="bg-lfc-red dark:bg-[var(--lfc-red)] text-white text-xs px-2 py-1 rounded-full">
                       {unreadCount} unread
                     </span>
                   )}

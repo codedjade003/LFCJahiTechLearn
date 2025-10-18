@@ -273,7 +273,7 @@ export default function CourseManagement() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)] p-6">
         <div className="animate-pulse space-y-4">
           <div className="h-6 bg-gray-200 rounded w-1/4"></div>
           <div className="h-10 bg-gray-200 rounded"></div>
@@ -284,18 +284,18 @@ export default function CourseManagement() {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow">
+    <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)]">
       {/* Header - Mobile optimized */}
       <div className="p-4 border-b flex justify-between items-center">
-        <h2 className="text-lg font-semibold text-gray-800">Course Management</h2>
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-[var(--text-primary)]">Course Management</h2>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-gray-600 dark:text-[var(--text-secondary)]">
             {filteredCourses.length} course{filteredCourses.length !== 1 ? 's' : ''}
             {searchTerm && ` (filtered from ${courses.length})`}
           </span>
           <button
             onClick={fetchCourses}
-            className="p-2 text-gray-600 hover:text-lfc-red hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 text-gray-600 dark:text-[var(--text-secondary)] hover:text-lfc-red hover:bg-gray-100 dark:bg-[var(--bg-tertiary)] rounded-lg transition-colors"
             title="Refresh courses"
           >
             <FaSync />
@@ -314,7 +314,7 @@ export default function CourseManagement() {
           </button>
 
           <button
-            className="bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-4 rounded-lg flex items-center justify-center font-medium transition-colors text-sm"
+            className="bg-gray-100 dark:bg-[var(--bg-tertiary)] hover:bg-gray-200 text-gray-800 dark:text-[var(--text-primary)] py-3 px-4 rounded-lg flex items-center justify-center font-medium transition-colors text-sm"
             onClick={handleExportData}
             disabled={courses.length === 0}
           >
@@ -326,7 +326,7 @@ export default function CourseManagement() {
         {/* Search and Selection Header - Mobile optimized */}
         {courses.length > 0 && (
           <div className="border rounded-lg">
-            <div className="p-3 border-b bg-gray-50 space-y-3 sm:space-y-0 sm:flex sm:items-center sm:justify-between">
+            <div className="p-3 border-b bg-gray-50 dark:bg-[var(--bg-secondary)] space-y-3 sm:space-y-0 sm:flex sm:items-center sm:justify-between">
               <div className="flex items-center space-x-3">
                 <input
                   type="checkbox"
@@ -334,7 +334,7 @@ export default function CourseManagement() {
                   onChange={toggleSelectAll}
                   className="rounded border-gray-300 w-4 h-4"
                 />
-                <span className="text-sm font-medium text-gray-700 whitespace-nowrap">
+                <span className="text-sm font-medium text-gray-700 dark:text-[var(--text-secondary)] whitespace-nowrap">
                   {selectedCourses.length} selected
                 </span>
               </div>
@@ -361,7 +361,7 @@ export default function CourseManagement() {
                 currentCourses.map(course => (
                   <div
                     key={course._id}
-                    className="p-3 border-b hover:bg-gray-50 flex items-start space-x-3"
+                    className="p-3 border-b hover:bg-gray-50 dark:bg-[var(--bg-secondary)] flex items-start space-x-3"
                   >
                     <input
                       type="checkbox"
@@ -372,19 +372,19 @@ export default function CourseManagement() {
                     
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-col xs:flex-row xs:items-start xs:justify-between gap-1">
-                        <h3 className="font-medium text-gray-900 text-sm leading-tight break-words">
+                        <h3 className="font-medium text-gray-900 dark:text-[var(--text-primary)] text-sm leading-tight break-words">
                           {course.title}
                         </h3>
                         <span className={`px-2 py-1 rounded-full text-xs whitespace-nowrap flex-shrink-0 ${
                           course.isPublic 
                             ? 'bg-green-100 text-green-800' 
-                            : 'bg-gray-100 text-gray-800'
+                            : 'bg-gray-100 dark:bg-[var(--bg-tertiary)] text-gray-800 dark:text-[var(--text-primary)]'
                         }`}>
                           {course.isPublic ? 'Public' : 'Private'}
                         </span>
                       </div>
                       
-                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1 text-xs text-gray-600">
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1 text-xs text-gray-600 dark:text-[var(--text-secondary)]">
                         <span className="truncate">{course.type || 'No type'}</span>
                         <span className="hidden xs:inline">•</span>
                         <span>{course.level || 'No level'}</span>
@@ -399,24 +399,24 @@ export default function CourseManagement() {
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="p-3 border-t bg-gray-50 flex items-center justify-between">
+              <div className="p-3 border-t bg-gray-50 dark:bg-[var(--bg-secondary)] flex items-center justify-between">
                 <button
                   onClick={() => paginate(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className="flex items-center gap-2 px-3 py-1 text-sm text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2 px-3 py-1 text-sm text-gray-600 dark:text-[var(--text-secondary)] hover:text-gray-800 dark:text-[var(--text-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <FaChevronLeft className="text-xs" />
                   Previous
                 </button>
                 
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-gray-600 dark:text-[var(--text-secondary)]">
                   Page {currentPage} of {totalPages}
                 </span>
                 
                 <button
                   onClick={() => paginate(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className="flex items-center gap-2 px-3 py-1 text-sm text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2 px-3 py-1 text-sm text-gray-600 dark:text-[var(--text-secondary)] hover:text-gray-800 dark:text-[var(--text-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next
                   <FaChevronRight className="text-xs" />
@@ -452,7 +452,7 @@ export default function CourseManagement() {
                 
                 <button
                   onClick={() => setSelectedCourses([])}
-                  className="text-gray-600 hover:text-gray-800 px-3 py-2 text-sm border rounded-lg"
+                  className="text-gray-600 dark:text-[var(--text-secondary)] hover:text-gray-800 dark:text-[var(--text-primary)] px-3 py-2 text-sm border rounded-lg"
                 >
                   Clear
                 </button>
@@ -464,7 +464,7 @@ export default function CourseManagement() {
         {/* Mass Enrollment - Mobile optimized */}
         {courses.length > 0 && (
           <div className="border-t pt-4">
-            <h3 className="font-medium text-gray-900 mb-2 text-sm">Mass Enrollment</h3>
+            <h3 className="font-medium text-gray-900 dark:text-[var(--text-primary)] mb-2 text-sm">Mass Enrollment</h3>
             <div className="space-y-2 sm:space-y-0 sm:flex sm:items-center sm:space-x-2">
               <select
                 value={enrollCourseId}

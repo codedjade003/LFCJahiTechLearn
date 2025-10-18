@@ -159,7 +159,7 @@ export default function CourseEditor({ courseId, onBack, onCourseUpdated }: Cour
                         }}
                         className={`w-full flex items-center px-3 py-3 rounded-lg text-sm mb-1 transition-colors ${
                           activeTab === tab.key
-                            ? "bg-gray-100 text-lfc-gold font-medium shadow-sm"
+                            ? "bg-gray-100 dark:bg-[var(--bg-tertiary)] text-lfc-gold font-medium shadow-sm"
                             : "text-yt-text-dark hover:bg-yt-light-hover"
                         }`}
                       >
@@ -242,7 +242,7 @@ export default function CourseEditor({ courseId, onBack, onCourseUpdated }: Cour
                       }}
                       className={`w-full flex items-center px-3 py-3 rounded-lg text-sm mb-1 transition-colors ${
                         activeTab === tab.key
-                          ? "bg-gray-100 text-lfc-gold font-medium shadow-sm"
+                          ? "bg-gray-100 dark:bg-[var(--bg-tertiary)] text-lfc-gold font-medium shadow-sm"
                           : "text-yt-text-dark hover:bg-yt-light-hover"
                       }`}
                     >
@@ -312,7 +312,7 @@ export default function CourseEditor({ courseId, onBack, onCourseUpdated }: Cour
                 disabled={activeIndex === 0}
                 className={`px-4 py-2 md:px-6 md:py-2.5 rounded-md font-medium border text-sm ${
                   activeIndex === 0
-                    ? "opacity-50 cursor-not-allowed bg-gray-100 text-gray-400 border-gray-200"
+                    ? "opacity-50 cursor-not-allowed bg-gray-100 dark:bg-[var(--bg-tertiary)] text-gray-400 border-gray-200 dark:border-[var(--border-primary)]"
                     : "bg-white text-yt-text-dark border-yt-light-border hover:bg-yt-light-hover"
                 }`}
               >

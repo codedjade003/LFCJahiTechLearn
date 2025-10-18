@@ -51,13 +51,13 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       
       {/* Sidebar */}
       <div className={`
-        fixed inset-y-0 left-0 z-50 w-72 bg-gradient-to-b from-lfc-red to-lfc-red/80 text-white transform transition-transform duration-300 ease-in-out
+        fixed inset-y-0 left-0 z-50 w-72 bg-gradient-to-b from-lfc-red to-lfc-red/80 dark:from-[var(--lfc-red)] dark:to-[var(--lfc-red)]/80 text-white transform transition-transform duration-300 ease-in-out
         md:relative md:translate-x-0 md:flex md:flex-shrink-0 shadow-2xl
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="flex flex-col w-full h-full">
           {/* Header */}
-          <div className="flex items-center justify-between h-20 px-6 border-b border-lfc-gold/30">
+          <div className="flex items-center justify-between h-20 px-6 border-b border-lfc-gold dark:border-[var(--lfc-gold)]/30">
             <div className="flex items-center space-x-3">
               <div className="relative h-12 w-12 bg-white rounded-xl p-2">
                 <img 
@@ -81,11 +81,11 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           {/* User Profile */}
           <div 
             onClick={handleProfileClick}
-            className="flex items-center px-6 py-4 border-b border-lfc-gold/20 bg-lfc-red/60 cursor-pointer hover:bg-lfc-red/70 transition-all duration-200 group"
+            className="flex items-center px-6 py-4 border-b border-lfc-gold dark:border-[var(--lfc-gold)]/20 bg-lfc-red/60 dark:bg-[var(--lfc-red)]/60 cursor-pointer hover:bg-lfc-red/70 dark:bg-[var(--lfc-red)]/70 transition-all duration-200 group"
           >
             <div className="relative">
-              <div className="absolute inset-0 rounded-full border-2 border-lfc-gold animate-pulse opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <div className="h-14 w-14 rounded-full border-2 border-lfc-gold flex-shrink-0 overflow-hidden">
+              <div className="absolute inset-0 rounded-full border-2 border-lfc-gold dark:border-[var(--lfc-gold)] animate-pulse opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="h-14 w-14 rounded-full border-2 border-lfc-gold dark:border-[var(--lfc-gold)] flex-shrink-0 overflow-hidden">
                 <img
                   className={`h-full w-full object-cover ${
                     !user?.profilePicture?.url ? "filter brightness-0 invert" : ""
@@ -103,8 +103,8 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                 {user?.email || ""}
               </p>
               <div className="flex items-center mt-1">
-                <FaGraduationCap className="text-lfc-gold text-xs mr-1" />
-                <span className="text-xs text-lfc-gold">Student</span>
+                <FaGraduationCap className="text-lfc-gold dark:text-[var(--lfc-gold)] text-xs mr-1" />
+                <span className="text-xs text-lfc-gold dark:text-[var(--lfc-gold)]">Student</span>
               </div>
             </div>
           </div>
@@ -136,9 +136,9 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
             {/* Help Section */}
             <div className="mt-auto mb-6">
-              <div className="bg-lfc-red/60 rounded-2xl p-4 border border-lfc-gold/30 backdrop-blur-sm">
+              <div className="bg-lfc-red/60 dark:bg-[var(--lfc-red)]/60 rounded-2xl p-4 border border-lfc-gold dark:border-[var(--lfc-gold)]/30 backdrop-blur-sm">
                 <div className="flex items-center mb-2">
-                  <FaQuestionCircle className="text-lfc-gold mr-2 text-lg" />
+                  <FaQuestionCircle className="text-lfc-gold dark:text-[var(--lfc-gold)] mr-2 text-lg" />
                   <h3 className="text-sm font-semibold">Need help?</h3>
                 </div>
                 <p className="text-xs text-white/80 mb-3">Our support team is here to help you</p>

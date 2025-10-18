@@ -127,8 +127,9 @@ export const registerUser = async (req, res) => {
     console.log("Sending verification email to:", email);
     await sendEmail(
       email,
-      "Your Verification Code",
-      `Your verification code is: ${code}`
+      "Verify Your Email - LFC Tech Learn",
+      `Your verification code is: ${code}`,
+      "verification"
     );
     console.log("Verification email sent successfully");
 
@@ -791,17 +792,58 @@ export const resendVerification = async (req, res) => {
     return res.status(400).json({ message: "Email already verified" });
   }
 
+  // Rate limiting: 1 minute gap between requests
+  const now = Date.now();
+  const oneMinute = 60 * 1000;
+  const oneHour = 60 * 60 * 1000;
+
+  // Initialize rate limit fields if they don't exist
+  if (!user.verificationCodeSentAt) {
+    user.verificationCodeSentAt = [];
+  }
+
+  // Clean up old timestamps (older than 1 hour)
+  user.verificationCodeSentAt = user.verificationCodeSentAt.filter(
+    timestamp => now - timestamp < oneHour
+  );
+
+  // Check if last request was less than 1 minute ago
+  if (user.verificationCodeSentAt.length > 0) {
+    const lastSent = user.verificationCodeSentAt[user.verificationCodeSentAt.length - 1];
+    const timeSinceLastSent = now - lastSent;
+    
+    if (timeSinceLastSent < oneMinute) {
+      const waitTime = Math.ceil((oneMinute - timeSinceLastSent) / 1000);
+      return res.status(429).json({ 
+        message: `Please wait ${waitTime} seconds before requesting another code.` 
+      });
+    }
+  }
+
+  // Check if user has exceeded 5 requests per hour
+  if (user.verificationCodeSentAt.length >= 5) {
+    return res.status(429).json({ 
+      message: "Too many verification code requests. Please try again later." 
+    });
+  }
+
   // Generate fresh code
   const code = Math.floor(100000 + Math.random() * 900000).toString();
   const hashedCode = hashCode(code);
 
   user.verificationCode = hashedCode;
   user.verificationExpires = Date.now() + 15 * 60 * 1000; // 15 min
+  user.verificationCodeSentAt.push(now);
   await user.save();
 
   // Send the raw code to the user
   console.log("Sending verification code to:", email);
-  await sendEmail(user.email, "Verify Your Email", `Your code is: ${code}`);
+  await sendEmail(
+    user.email, 
+    "Verify Your Email - LFC Tech Learn", 
+    `Your verification code is: ${code}`,
+    "verification"
+  );
   console.log("Verification code sent successfully");
 
   res.json({ message: "Verification code resent" });

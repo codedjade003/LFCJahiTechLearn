@@ -415,7 +415,7 @@ export default function Assignments() {
         
         return (
           <div key={submission._id} className={`p-4 transition-colors ${
-            canGrade ? 'hover:bg-yt-light-hover' : 'bg-gray-50'
+            canGrade ? 'hover:bg-yt-light-hover' : 'bg-gray-50 dark:bg-[var(--bg-secondary)]'
           }`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4 flex-1">

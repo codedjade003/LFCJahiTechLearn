@@ -99,7 +99,7 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps)
       {/* Mobile header button */}
       <button
         onClick={() => setIsMobileOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-30 bg-lfc-red text-white p-2 rounded-lg"
+        className="lg:hidden fixed top-4 left-4 z-30 bg-lfc-red dark:bg-[var(--lfc-red)] text-white p-2 rounded-lg"
       >
         <FaBars className="text-lg" />
       </button>
@@ -107,12 +107,12 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps)
       <div
         className={`sidebar fixed lg:relative ${
           collapsed ? "w-20" : "w-64"
-        } bg-gradient-to-b from-lfc-red to-lfc-red/90 text-white flex flex-col transition-all duration-300 h-screen z-50 transform ${
+        } bg-gradient-to-b from-lfc-red to-lfc-red/90 dark:from-[var(--lfc-red)] dark:to-[var(--lfc-red)]/90 text-white flex flex-col transition-all duration-300 h-screen z-50 transform ${
           isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         } shadow-2xl`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-lfc-gold/30">
+        <div className="flex items-center justify-between p-4 border-b border-lfc-gold dark:border-[var(--lfc-gold)]/30">
           <div className="flex items-center space-x-3">
             <div className="relative h-10 w-10 bg-white rounded-xl p-1">
               <img 
@@ -141,15 +141,15 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps)
         {/* User Profile */}
         <div 
           onClick={handleProfileClick}
-          className="p-4 border-b border-lfc-gold/20 bg-lfc-red/50 cursor-pointer hover:bg-lfc-red/70 transition-all duration-200 group"
+          className="p-4 border-b border-lfc-gold dark:border-[var(--lfc-gold)]/20 bg-lfc-red/50 dark:bg-[var(--lfc-red)]/50 cursor-pointer hover:bg-lfc-red/70 dark:bg-[var(--lfc-red)]/70 transition-all duration-200 group"
         >
           <div className="flex items-center space-x-3">
             <div className="relative">
-              <div className="absolute inset-0 rounded-full border-2 border-lfc-gold animate-pulse opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="absolute inset-0 rounded-full border-2 border-lfc-gold dark:border-[var(--lfc-gold)] animate-pulse opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <img
                 src={user?.profilePicture?.url || "/default-avatar.png"}
                 alt="Profile"
-                className={`w-12 h-12 rounded-full object-cover border-2 border-lfc-gold ${
+                className={`w-12 h-12 rounded-full object-cover border-2 border-lfc-gold dark:border-[var(--lfc-gold)] ${
                   !user?.profilePicture?.url ? "filter brightness-0 invert" : ""
                 }`}
                 onError={(e) => {
@@ -319,7 +319,7 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps)
         </nav>
 
         {/* Footer Actions */}
-        <div className="p-4 border-t border-lfc-gold/20 space-y-2">
+        <div className="p-4 border-t border-lfc-gold dark:border-[var(--lfc-gold)]/20 space-y-2">
           {/* Switch to Student Mode */}
           <Link
             to="/dashboard"

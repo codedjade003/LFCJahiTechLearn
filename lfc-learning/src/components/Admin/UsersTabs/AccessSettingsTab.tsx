@@ -274,7 +274,7 @@ const AccessSettingsTab = () => {
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
           <h3 className="text-lg font-semibold mb-2">{selectedCourseForModal.title}</h3>
-          <p className="text-sm text-gray-600 mb-4">Course Details</p>
+          <p className="text-sm text-gray-600 dark:text-[var(--text-secondary)] mb-4">Course Details</p>
           <div className="space-y-2 text-sm">
             <p><strong>Instructors:</strong> {selectedCourseForModal.instructors.length}</p>
             <p><strong>ID:</strong> {selectedCourseForModal._id}</p>
@@ -305,37 +305,37 @@ const AccessSettingsTab = () => {
       
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
+        <div className="bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-4 text-center">
           <FaUser className="text-3xl text-green-600 mx-auto mb-2" />
           <h4 className="font-semibold">Student Access</h4>
-          <p className="text-sm text-gray-600">Basic learning platform access</p>
+          <p className="text-sm text-gray-600 dark:text-[var(--text-secondary)]">Basic learning platform access</p>
           <div className="text-2xl font-bold text-green-600 mt-2">
             {users.filter(u => u.role === 'student').length}
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
+        <div className="bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-4 text-center">
           <FaUserTie className="text-3xl text-purple-600 mx-auto mb-2" />
           <h4 className="font-semibold">Admin Access</h4>
-          <p className="text-sm text-gray-600">Full administrative privileges</p>
+          <p className="text-sm text-gray-600 dark:text-[var(--text-secondary)]">Full administrative privileges</p>
           <div className="text-2xl font-bold text-purple-600 mt-2">
             {users.filter(u => u.role === 'admin').length}
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
+        <div className="bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-4 text-center">
           <FaUserShield className="text-3xl text-blue-600 mx-auto mb-2" />
           <h4 className="font-semibold">Admin-Only</h4>
-          <p className="text-sm text-gray-600">Restricted admin capabilities</p>
+          <p className="text-sm text-gray-600 dark:text-[var(--text-secondary)]">Restricted admin capabilities</p>
           <div className="text-2xl font-bold text-blue-600 mt-2">
             {users.filter(u => u.role === 'admin-only').length}
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
+        <div className="bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-4 text-center">
           <FaChalkboardTeacher className="text-3xl text-orange-600 mx-auto mb-2" />
           <h4 className="font-semibold">Course Instructors</h4>
-          <p className="text-sm text-gray-600">Assigned to courses</p>
+          <p className="text-sm text-gray-600 dark:text-[var(--text-secondary)]">Assigned to courses</p>
           <div className="text-2xl font-bold text-orange-600 mt-2">
             {adminUsers.filter(user => 
               courses.some(course => 
@@ -347,14 +347,14 @@ const AccessSettingsTab = () => {
       </div>
 
       {/* Tab Navigation */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
+      <div className="bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-4">
         <div className="flex space-x-4 mb-4">
           <button
             onClick={() => setActiveTab('roles')}
             className={`px-4 py-2 rounded-lg font-medium ${
               activeTab === 'roles'
                 ? 'bg-lfc-gold text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                : 'bg-gray-100 dark:bg-[var(--bg-tertiary)] text-gray-700 dark:text-[var(--text-secondary)] hover:bg-gray-200'
             }`}
           >
             <FaUserTie className="inline mr-2" />
@@ -365,7 +365,7 @@ const AccessSettingsTab = () => {
             className={`px-4 py-2 rounded-lg font-medium ${
               activeTab === 'instructors'
                 ? 'bg-lfc-gold text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                : 'bg-gray-100 dark:bg-[var(--bg-tertiary)] text-gray-700 dark:text-[var(--text-secondary)] hover:bg-gray-200'
             }`}
           >
             <FaChalkboardTeacher className="inline mr-2" />
@@ -433,9 +433,9 @@ const AccessSettingsTab = () => {
         </div>
 
         {/* Users Table */}
-        <div className="overflow-x-auto bg-white rounded-lg border border-gray-200">
+        <div className="overflow-x-auto bg-white rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-50 dark:bg-[var(--bg-secondary)]">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 <input
@@ -476,7 +476,7 @@ const AccessSettingsTab = () => {
                 );
 
                 return (
-                  <tr key={`user-${user.id}-${activeTab}`} className="hover:bg-gray-50">
+                  <tr key={`user-${user.id}-${activeTab}`} className="hover:bg-gray-50 dark:bg-[var(--bg-secondary)]">
                     {/* Remove any whitespace between <tr> and <td> */}
                     <td className="px-4 py-3">
                       <input
@@ -492,7 +492,7 @@ const AccessSettingsTab = () => {
                           {getRoleIcon(user.role)}
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">{user.name}</div>
+                          <div className="text-sm font-medium text-gray-900 dark:text-[var(--text-primary)]">{user.name}</div>
                           <div className="text-sm text-gray-500">{user.email}</div>
                         </div>
                       </div>

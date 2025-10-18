@@ -379,7 +379,7 @@ const fetchQuizSubmissions = async () => {
             
             return (
               <div key={submission._id} className={`p-4 transition-colors ${
-                canView ? 'hover:bg-yt-light-hover' : 'bg-gray-50'
+                canView ? 'hover:bg-yt-light-hover' : 'bg-gray-50 dark:bg-[var(--bg-secondary)]'
               }`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4 flex-1">
@@ -403,7 +403,7 @@ const fetchQuizSubmissions = async () => {
                           {status.text}
                         </span>
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          canView ? 'bg-lfc-red text-white' : 'bg-gray-300 text-gray-600'
+                          canView ? 'bg-lfc-red text-white' : 'bg-gray-300 text-gray-600 dark:text-[var(--text-secondary)]'
                         }`}>
                           {Math.round(percentageScore)}%
                         </span>
@@ -478,7 +478,7 @@ const fetchQuizSubmissions = async () => {
 
                 <button
                   onClick={closeModal}
-                  className="p-2 text-gray-400 hover:text-gray-600"
+                  className="p-2 text-gray-400 hover:text-gray-600 dark:text-[var(--text-secondary)]"
                 >
                   <FaTimes size={20} />
                 </button>
@@ -488,7 +488,7 @@ const fetchQuizSubmissions = async () => {
             <div className="p-6">
               {/* Student and Quiz Info */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                <div className="bg-gray-50 p-4 rounded-lg border">
+                <div className="bg-gray-50 dark:bg-[var(--bg-secondary)] p-4 rounded-lg border">
                   <h3 className="font-semibold mb-3 flex items-center">
                     <FaUser className="mr-2 text-lfc-red" />
                     Student Information
@@ -497,7 +497,7 @@ const fetchQuizSubmissions = async () => {
                   <p className="text-yt-text-gray text-sm">{selectedSubmission.studentId.email}</p>
                 </div>
                 
-                <div className="bg-gray-50 p-4 rounded-lg border">
+                <div className="bg-gray-50 dark:bg-[var(--bg-secondary)] p-4 rounded-lg border">
                   <h3 className="font-semibold mb-3 flex items-center">
                     <FaBook className="mr-2 text-lfc-red" />
                     Course Information
@@ -508,7 +508,7 @@ const fetchQuizSubmissions = async () => {
                   </p>
                 </div>
                 
-                <div className="bg-gray-50 p-4 rounded-lg border">
+                <div className="bg-gray-50 dark:bg-[var(--bg-secondary)] p-4 rounded-lg border">
                   <h3 className="font-semibold mb-3 flex items-center">
                     <FaCalendar className="mr-2 text-lfc-red" />
                     Attempt Details
@@ -523,7 +523,7 @@ const fetchQuizSubmissions = async () => {
               </div>
 
               {/* Performance Summary */}
-              <div className="bg-gray-50 rounded-lg border p-6 mb-6">
+              <div className="bg-gray-50 dark:bg-[var(--bg-secondary)] rounded-lg border p-6 mb-6">
                 <h2 className="text-lg font-semibold mb-4 flex items-center">
                   <FaChartBar className="mr-2 text-lfc-red" />
                   Performance Summary
@@ -596,7 +596,7 @@ const fetchQuizSubmissions = async () => {
                                         ? 'border-green-500 bg-green-50'
                                         : option === userAnswer && !isCorrect
                                         ? 'border-red-500 bg-red-50'
-                                        : 'border-gray-200 bg-white'
+                                        : 'border-gray-200 dark:border-[var(--border-primary)] bg-white'
                                     }`}
                                   >
                                     <div className="flex items-center">

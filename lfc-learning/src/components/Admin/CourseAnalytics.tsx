@@ -162,7 +162,7 @@ export default function CourseAnalytics() {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow">
+    <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)]">
       <div className="p-6 border-b">
         <h2 className="text-lg font-semibold text-redCustom">Course Analytics</h2>
         {error && (
@@ -174,7 +174,7 @@ export default function CourseAnalytics() {
       <div className="p-6">
         {/* Course Selection */}
         <div className="mb-6">
-          <label className="block text-gray-700 mb-2 font-medium">Select Course</label>
+          <label className="block text-gray-700 dark:text-[var(--text-secondary)] mb-2 font-medium">Select Course</label>
           <select
             value={selectedCourse}
             onChange={(e) => setSelectedCourse(e.target.value)}
@@ -220,7 +220,7 @@ export default function CourseAnalytics() {
               </div>
             </div>
             <div className="ml-4">
-              <p className="text-gray-600 font-medium">Completion Rate</p>
+              <p className="text-gray-600 dark:text-[var(--text-secondary)] font-medium">Completion Rate</p>
               <p className="text-sm text-gray-500">Course completion percentage</p>
             </div>
           </div>
@@ -256,7 +256,7 @@ export default function CourseAnalytics() {
               </div>
             </div>
             <div className="ml-4">
-              <p className="text-gray-600 font-medium">Pass Rate</p>
+              <p className="text-gray-600 dark:text-[var(--text-secondary)] font-medium">Pass Rate</p>
               <p className="text-sm text-gray-500">Successful course completions</p>
             </div>
           </div>
