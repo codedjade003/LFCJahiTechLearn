@@ -50,35 +50,13 @@ export default function VerifyEmailPage() {
         return;
       }
 
-      // ✅ Check if user has pending token from signup (in sessionStorage)
-      const pendingToken = sessionStorage.getItem("pendingToken");
+      // ✅ Email verified successfully
+      // Clear any old data and send user to login page
+      localStorage.clear();
+      sessionStorage.clear();
       
-      if (pendingToken) {
-        // User just signed up - move token from sessionStorage to localStorage
-        localStorage.setItem("token", pendingToken);
-        localStorage.setItem("role", sessionStorage.getItem("pendingRole") || "student");
-        localStorage.setItem("firstLogin", sessionStorage.getItem("pendingFirstLogin") || "true");
-        localStorage.setItem("isOnboarded", sessionStorage.getItem("pendingIsOnboarded") || "false");
-        localStorage.setItem("isVerified", "true");
-        
-        // Clear pending data
-        sessionStorage.removeItem("pendingToken");
-        sessionStorage.removeItem("pendingRole");
-        sessionStorage.removeItem("pendingFirstLogin");
-        sessionStorage.removeItem("pendingIsOnboarded");
-        
-        // Navigate to appropriate dashboard
-        const role = localStorage.getItem("role");
-        if (role === "admin" || role === "admin-only") {
-          navigate("/admin/dashboard");
-        } else {
-          navigate("/dashboard");
-        }
-      } else {
-        // Existing user verifying email - just update status and send to login
-        localStorage.setItem("isVerified", "true");
-        navigate("/");
-      }
+      // Show success and redirect to login
+      navigate("/?verified=true");
     } catch (err) {
       setError("Something went wrong. Please try again.");
     } finally {

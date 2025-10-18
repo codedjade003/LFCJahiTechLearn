@@ -22,6 +22,10 @@ export default function SignupForm() {
 
     setLoading(true);
     try {
+      // Clear any existing tokens/data before signup
+      localStorage.clear();
+      sessionStorage.clear();
+      
       const res = await fetch(`${API_BASE}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -35,32 +39,9 @@ export default function SignupForm() {
         return;
       }
 
-      // Navigate after signup
-    if (!data.isVerified) {
-      // Don't store token yet - wait until after verification
-      // Store email and other data for after verification
-      sessionStorage.setItem("pendingToken", data.token);
-      sessionStorage.setItem("pendingRole", data.role || "student");
-      sessionStorage.setItem("pendingFirstLogin", JSON.stringify(data.firstLogin));
-      sessionStorage.setItem("pendingIsOnboarded", JSON.stringify(data.isOnboarded));
+      // Navigate after signup - backend doesn't return token on register
+      // User must verify email first, then login
       navigate(`/verify-email?email=${encodeURIComponent(email)}`);
-    } else {
-      // Already verified (shouldn't happen on signup, but just in case)
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("role", data.role || "student");
-      localStorage.setItem("firstLogin", JSON.stringify(data.firstLogin));
-      localStorage.setItem("isOnboarded", JSON.stringify(data.isOnboarded));
-      localStorage.setItem("isVerified", "true");
-      if (data.firstLogin) {
-        navigate("/onboarding");
-      } else if (!data.isOnboarded) {
-        navigate("/dashboard?showProgress=true");
-      } else if (data.role === "admin" || data.role === "admin-only") {
-        navigate("/admin/dashboard");
-      } else {
-        navigate("/dashboard");
-      }
-    }
     } catch (err: unknown) {
       if (err instanceof Error) setError(err.message);
       else setError("An unexpected error occurred.");

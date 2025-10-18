@@ -17,6 +17,8 @@ import CourseAssignmentsTab from "../components/Admin/CourseTabs/CourseAssignmen
 import CourseProjectsTab from "../components/Admin/CourseTabs/CourseProjectsTab.tsx";
 import CourseSettingsTab from "../components/Admin/CourseTabs/CourseSettingsTab.tsx";
 import CoursePublishTab from "../components/Admin/CourseTabs/CoursePublishTab.tsx";
+import OnboardingTour from "../components/shared/OnboardingTour";
+import { courseManagementTour } from "../config/onboardingTours";
 
 export default function Course() {
   const [activeTab, setActiveTab] = useState("info");
@@ -64,6 +66,9 @@ export default function Course() {
 
   return (
     <div className="flex flex-col h-full bg-yt-light-gray dark:bg-gray-900 text-yt-text-dark dark:text-gray-100">
+      {/* Onboarding Tour */}
+      <OnboardingTour tourKey="courseManagement" steps={courseManagementTour} />
+      
       {/* Header */}
       <header className="flex items-center justify-between px-4 py-3 border-b border-yt-light-border dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
         <div className="flex items-center">

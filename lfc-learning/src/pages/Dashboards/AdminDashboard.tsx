@@ -10,6 +10,8 @@ import UserProgress from "../../components/Admin/UserProgress";
 import CourseAnalytics from "../../components/Admin/CourseAnalytics";
 import RecentUsers from "../../components/Admin/RecentUsers";
 import PendingAssessments from "../../components/Admin/PendingAssessments";
+import OnboardingTour from "../../components/shared/OnboardingTour";
+import { adminDashboardTour } from "../../config/onboardingTours";
 
 import {
   FaBook,
@@ -126,8 +128,11 @@ export default function AdminDashboard(): JSX.Element {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 space-y-6 p-3 sm:p-4 md:p-6 overflow-y-auto">
+      {/* Onboarding Tour */}
+      <OnboardingTour tourKey="adminDashboard" steps={adminDashboardTour} />
+      
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" data-tour="stats">
         {statCards.map((s) => (
           <StatCard
             key={s.label}
@@ -142,7 +147,7 @@ export default function AdminDashboard(): JSX.Element {
 
       {/* Recent Activity + Course Management */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
-        <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow">
+        <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow" data-tour="recent-activity">
           <RecentActivity items={stats.recentActivity} />
         </div>
         <CourseManagement />
@@ -156,7 +161,9 @@ export default function AdminDashboard(): JSX.Element {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <RecentUsers />
-        <PendingAssessments />
+        <div data-tour="pending-assessments">
+          <PendingAssessments />
+        </div>
       </div>
     </div>
   );

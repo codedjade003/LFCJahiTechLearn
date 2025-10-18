@@ -4,23 +4,23 @@ import type { Step } from "react-joyride";
 export const courseDetailsTour: Step[] = [
   {
     target: "body",
-    content: "Welcome to the course details page! Let's explore what you can do here.",
+    content: "Welcome to your course! Let's take a quick tour of the course page.",
     placement: "center",
   },
   {
-    target: '[data-tour="course-info"]',
-    content: "Here you'll find the course description, instructor info, and learning objectives.",
+    target: "header",
+    content: "This is the course header. You can see the course title and navigate between Overview, Course Content, and Completion tabs.",
     placement: "bottom",
   },
   {
-    target: '[data-tour="course-content"]',
-    content: "Browse through all course modules and sections here. Click on any module to start learning.",
+    target: "aside",
+    content: "This sidebar shows all course sections and modules. Click on any module to start learning. Green checkmarks indicate completed modules.",
     placement: "right",
   },
   {
-    target: '[data-tour="enroll-button"]',
-    content: "Click here to enroll in the course and start your learning journey!",
-    placement: "bottom",
+    target: "main",
+    content: "This is the main content area where you'll watch videos, read PDFs, and take quizzes. Your progress is automatically tracked as you complete modules.",
+    placement: "left",
   },
 ];
 
@@ -49,19 +49,19 @@ export const adminDashboardTour: Step[] = [
 
 export const courseManagementTour: Step[] = [
   {
-    target: '[data-tour="create-course"]',
-    content: "Click here to create a new course.",
-    placement: "bottom",
+    target: "body",
+    content: "Welcome to the Course Creation page! Let's walk through how to create a new course.",
+    placement: "center",
   },
   {
-    target: '[data-tour="course-list"]',
-    content: "All your courses are listed here. Click on any course to edit or view details.",
-    placement: "top",
+    target: "aside",
+    content: "Use these tabs to navigate through different sections of course creation. Start with Details, then add Content, Assignments, Projects, Settings, and finally Publish.",
+    placement: "right",
   },
   {
-    target: '[data-tour="course-filters"]',
-    content: "Use filters to quickly find specific courses by status, category, or level.",
-    placement: "bottom",
+    target: "main",
+    content: "This is where you'll fill in course information, add content, and configure settings. Each tab has different options to customize your course.",
+    placement: "left",
   },
 ];
 

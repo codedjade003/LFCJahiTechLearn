@@ -23,6 +23,8 @@ import { ShareButton } from "../../components/ShareButton";
 import ModuleSurvey, { type SurveyData } from "../../components/shared/ModuleSurvey";
 import ModuleOverviewModal from "../../components/Student/ModuleOverviewModal";
 import ModuleCompletionModal from "../../components/Student/ModuleCompletionModal";
+import OnboardingTour from "../../components/shared/OnboardingTour";
+import { courseDetailsTour } from "../../config/onboardingTours";
 
 interface Module {
   _id: string;
@@ -932,6 +934,9 @@ export default function CourseDetails() {
 
   return (
     <div className="flex flex-col h-screen bg-yt-light-gray">
+      {/* Onboarding Tour */}
+      <OnboardingTour tourKey="courseDetails" steps={courseDetailsTour} />
+      
       {/* Header */}
       <header className="bg-white border-b border-yt-light-border shadow-sm">
         <div className="px-6 py-4">
