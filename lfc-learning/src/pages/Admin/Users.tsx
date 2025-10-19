@@ -59,12 +59,12 @@ export default function Users() {
   const activeIndex = tabs.findIndex((tab) => tab.key === activeTab);
 
   return (
-    <div className="container flex flex-col h-screen bg-yt-light-gray text-yt-text-dark">
+    <div className="container flex flex-col min-h-screen bg-yt-light-gray text-yt-text-dark">
       {/* Onboarding Tour */}
       <OnboardingTour tourKey="userManagement" steps={userManagementTour} />
       
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-40 flex items-center justify-between px-4 py-3 border-b border-yt-light-border bg-white dark:bg-[var(--bg-elevated)] shadow-sm">
+      {/* Header */}
+      <header className="flex items-center justify-between px-4 py-3 border-b border-yt-light-border bg-white dark:bg-[var(--bg-elevated)] shadow-sm">
         <div className="flex items-center">
           <button
             className="md:hidden mr-3 p-2 rounded-md text-yt-text-dark hover:bg-yt-light-hover"

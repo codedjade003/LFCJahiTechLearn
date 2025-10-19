@@ -118,7 +118,7 @@ const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
         <div className="border-t border-gray-200 my-4"></div>
 
         <div className="space-y-3">
-          <div className="flex items-center gap-2 text-gray-700">
+          <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
             <FaEnvelope className="text-lfc-red" />
             <a
               href="mailto:hello@lfctechlearn.com"
@@ -127,7 +127,7 @@ const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
               hello@lfctechlearn.com
             </a>
           </div>
-          <div className="flex items-center gap-2 text-gray-700">
+          <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
             <FaWhatsapp className="text-green-500" />
             <a
               href="https://wa.me/2349015845913"

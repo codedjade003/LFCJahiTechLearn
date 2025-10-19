@@ -240,7 +240,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
           >
             <div className="relative">
               <img
-                className="h-8 w-8 rounded-full object-cover border-2 border-gray-200"
+                className="h-8 w-8 rounded-full object-cover border-2 border-lfc-gold dark:border-yellow-500"
                 src={
                   user?.profilePicture?.url
                     ? user.profilePicture.url
@@ -249,7 +249,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
                 alt="User profile"
               />
               {isAdmin && (
-                <div className="absolute -bottom-1 -right-1 bg-lfc-gold rounded-full p-1">
+                <div className="absolute -bottom-1 -right-1 bg-lfc-gold dark:bg-yellow-500 rounded-full p-1">
                   {isSuperAdmin ? (
                     <FaUserCog className="text-xs text-white" />
                   ) : (

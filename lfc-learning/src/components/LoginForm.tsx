@@ -145,39 +145,34 @@ export default function LoginForm() {
         />
       </div>
 
-      <div className="mb-4 text-right">
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex flex-col space-y-2">
+          <label className="flex items-center space-x-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className="w-4 h-4 text-lfc-red border-gray-300 dark:border-gray-600 rounded focus:ring-lfc-red"
+            />
+            <span className="text-sm text-gray-600 dark:text-gray-400">
+              Remember me
+            </span>
+          </label>
+          <label className="flex items-center space-x-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={staySignedIn}
+              onChange={(e) => setStaySignedIn(e.target.checked)}
+              className="w-4 h-4 text-lfc-red border-gray-300 dark:border-gray-600 rounded focus:ring-lfc-red"
+            />
+            <span className="text-sm text-gray-600 dark:text-gray-400">
+              Stay signed in
+            </span>
+          </label>
+        </div>
         <Link to="/forgot-password" className="text-sm text-redCustom dark:text-[var(--lfc-red)] hover:text-goldCustom dark:hover:text-[var(--lfc-gold)] transition-colors">
           Forgot password?
         </Link>
-      </div>
-
-      {/* Login Preferences */}
-      <div className="mb-4 space-y-3 p-4 bg-gray-50/50 dark:bg-[var(--bg-secondary)]/50 rounded-lg border border-gray-200 dark:border-[var(--border-primary)]/50">
-        <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-400 mb-3">
-          Login Preferences
-        </h3>
-        <label className="flex items-center space-x-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={rememberMe}
-            onChange={(e) => setRememberMe(e.target.checked)}
-            className="w-4 h-4 text-lfc-red border-gray-300 dark:border-[var(--border-primary)] rounded focus:ring-lfc-red dark:bg-[var(--bg-tertiary)]"
-          />
-          <span className="text-sm text-gray-600 dark:text-gray-500">
-            Remember me
-          </span>
-        </label>
-        <label className="flex items-center space-x-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={staySignedIn}
-            onChange={(e) => setStaySignedIn(e.target.checked)}
-            className="w-4 h-4 text-lfc-red border-gray-300 dark:border-[var(--border-primary)] rounded focus:ring-lfc-red dark:bg-[var(--bg-tertiary)]"
-          />
-          <span className="text-sm text-gray-600 dark:text-gray-500">
-            Stay signed in
-          </span>
-        </label>
       </div>
 
       {error && <p className="text-redCustom dark:text-[var(--error)] text-sm mb-4">{error}</p>}

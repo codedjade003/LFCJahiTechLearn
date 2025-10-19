@@ -21,9 +21,9 @@ const typeColor: Record<string, string> = {
   Graphics: "text-lfc-red",
   Required: "text-lfc-red",
   "Content Creation": "text-lfc-gold",
-  Utility: "text-gray-600",
-  Secretariat: "text-gray-600",
-  DEFAULT: "text-gray-600",
+  Utility: "text-gray-600 dark:text-gray-400",
+  Secretariat: "text-gray-600 dark:text-gray-400",
+  DEFAULT: "text-gray-600 dark:text-gray-400",
 };
 
 // Add this function above your component

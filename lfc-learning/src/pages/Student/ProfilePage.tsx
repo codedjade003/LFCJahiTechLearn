@@ -529,9 +529,9 @@ const validateUsername = (username: string) => {
         {/* Header with Edit Toggle */}
         <div className="flex justify-between items-start mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">{user.name}</h1>
-            <p className="text-gray-600">@{user.username || user.email.split('@')[0]}</p>
-            {user.bio && <p className="text-gray-700 mt-2 max-w-2xl">{user.bio}</p>}
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{user.name}</h1>
+            <p className="text-gray-600 dark:text-gray-400">@{user.username || user.email.split('@')[0]}</p>
+            {user.bio && <p className="text-gray-700 dark:text-gray-300 mt-2 max-w-2xl">{user.bio}</p>}
           </div>
           
           <button
@@ -550,21 +550,21 @@ const validateUsername = (username: string) => {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
           <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg shadow text-center">
             <div className="text-2xl font-bold text-redCustom">{user.loginCount || 0}</div>
-            <div className="text-sm sm:text-base text-gray-600">Total Logins</div>
+            <div className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Total Logins</div>
           </div>
           <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg shadow text-center">
             <div className="text-2xl font-bold text-redCustom">{user.streak?.current || 0}</div>
-            <div className="text-sm sm:text-base text-gray-600">Current Streak</div>
+            <div className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Current Streak</div>
           </div>
           <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg shadow text-center">
             <div className="text-2xl font-bold text-redCustom">{user.streak?.longest || 0}</div>
-            <div className="text-sm sm:text-base text-gray-600">Longest Streak</div>
+            <div className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Longest Streak</div>
           </div>
           <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg shadow text-center">
             <div className="text-lg sm:text-2xl font-bold text-redCustom break-words">
               {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : "Never"}
             </div>
-            <div className="text-sm sm:text-base text-gray-600">Last Login</div>
+            <div className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Last Login</div>
           </div>
         </div>
 
@@ -578,7 +578,7 @@ const validateUsername = (username: string) => {
                 className={`py-2 px-1 border-b-2 font-medium text-sm capitalize ${
                   activeTab === tab
                     ? "border-redCustom text-redCustom"
-                    : "border-transparent text-gray-500 hover:text-gray-700"
+                    : "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-300"
                 }`}
               >
                 {tab}
@@ -641,7 +641,7 @@ const validateUsername = (username: string) => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Username
                     {isCheckingUsername && (
-                      <span className="ml-2 text-xs text-gray-500">Checking availability...</span>
+                      <span className="ml-2 text-xs text-gray-500 dark:text-gray-500">Checking availability...</span>
                     )}
                   </label>
                   <input
@@ -916,7 +916,7 @@ const validateUsername = (username: string) => {
                           disabled={!isEditing}
                           className="rounded border-gray-300 text-redCustom focus:ring-redCustom"
                         />
-                        <span className="text-sm text-gray-700">Currently studying here</span>
+                        <span className="text-sm text-gray-700 dark:text-gray-300">Currently studying here</span>
                       </label>
                       
                       {isEditing && (

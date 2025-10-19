@@ -114,7 +114,7 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps)
         {/* Header */}
         <div className="mt-1 flex items-center justify-between p-4 border-b border-lfc-gold/30 dark:border-red-700/30">
           <div className="flex items-center space-x-3">
-            <div className="relative h-10 w-10 bg-white rounded-xl p-1">
+            <div className="relative h-10 w-10 bg-gray-200 rounded-xl p-1">
               <img 
                 src="/logo.png" 
                 alt="LFC Jahi Tech"

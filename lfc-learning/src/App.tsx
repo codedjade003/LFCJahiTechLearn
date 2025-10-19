@@ -37,6 +37,10 @@ import SupportDashboard from "./components/Admin/SupportDashboard";
 import SupportTickets from "./components/Dashboard/SupportTickets";
 import CertificateValidation from "./pages/CertificateValidation";
 import SurveyResponses from "./pages/Admin/SurveyResponses";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 
 function App() {
   return (
@@ -48,6 +52,10 @@ function App() {
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/validate/:validationCode" element={<CertificateValidation />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
 
         {/* Protected Student Routes */}
         <Route

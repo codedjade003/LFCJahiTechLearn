@@ -170,8 +170,8 @@ const SupportTickets: React.FC = () => {
       
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Support Tickets</h1>
-          <p className="text-gray-600">Get help with your courses and account</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Support Tickets</h1>
+          <p className="text-gray-600 dark:text-gray-400">Get help with your courses and account</p>
         </div>
         <button
           onClick={() => setShowNewTicket(true)}
@@ -410,7 +410,7 @@ const SupportTickets: React.FC = () => {
           <div className="p-8 text-center">
             <FaExclamationCircle className="text-4xl text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 mb-2">No support tickets</h3>
-            <p className="text-gray-600">Create your first support ticket to get help</p>
+            <p className="text-gray-600 dark:text-gray-400">Create your first support ticket to get help</p>
           </div>
         ) : (
           <div className="divide-y divide-gray-200">
@@ -419,11 +419,11 @@ const SupportTickets: React.FC = () => {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
-                      <h3 className="font-semibold text-gray-900">{ticket.title}</h3>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">{ticket.title}</h3>
                       <span className={getPriorityBadge(ticket.priority)}>
                         {ticket.priority}
                       </span>
-                      <span className="flex items-center text-sm text-gray-600">
+                      <span className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                         {getStatusIcon(ticket.status)}
                         <span className="ml-1 capitalize">{ticket.status.replace('-', ' ')}</span>
                       </span>

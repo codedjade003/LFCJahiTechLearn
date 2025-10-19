@@ -360,8 +360,8 @@ const CourseModal: React.FC<CourseModalProps> = ({
                         </div>
                       )}
                       <div>
-                        <p className="font-semibold text-gray-900">{course.instructor.name}</p>
-                        <p className="text-sm text-gray-600">Course Instructor</p>
+                        <p className="font-semibold text-gray-900 dark:text-white">{course.instructor.name}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Course Instructor</p>
                       </div>
                     </div>
                   )}
@@ -401,7 +401,7 @@ const CourseModal: React.FC<CourseModalProps> = ({
                             className="flex items-start p-3 bg-green-50 rounded-lg border border-green-200"
                           >
                             <span className="text-green-500 mr-3 mt-1 flex-shrink-0">✓</span>
-                            <span className="text-gray-700">{obj}</span>
+                            <span className="text-gray-700 dark:text-gray-300">{obj}</span>
                           </motion.div>
                         ))}
                       </div>
@@ -443,7 +443,7 @@ const CourseModal: React.FC<CourseModalProps> = ({
                       <h3 className="text-xl font-semibold text-gray-900 mb-4">Prerequisites</h3>
                       <ul className="space-y-2">
                         {course.prerequisites.map((pre, idx) => (
-                          <li key={idx} className="flex items-start text-gray-700">
+                          <li key={idx} className="flex items-start text-gray-700 dark:text-gray-300">
                             <span className="text-gray-400 mr-3 mt-1 flex-shrink-0">•</span>
                             <span>{pre}</span>
                           </li>
