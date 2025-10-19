@@ -1,5 +1,5 @@
 // src/components/Sidebar.tsx
-import { FaHome, FaBookOpen, FaTasks, FaUser, FaTimes, FaQuestionCircle, FaGraduationCap, FaProjectDiagram } from "react-icons/fa";
+import { FaHome, FaBookOpen, FaTasks, FaUser, FaTimes, FaQuestionCircle, FaGraduationCap, FaProjectDiagram, FaChevronLeft, FaBars } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useState } from "react";
@@ -16,6 +16,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const location = useLocation();
   const { user } = useAuth();
   const [showSupport, setShowSupport] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
 
 
   const isActive = (path: string) => location.pathname === path;
@@ -44,35 +45,60 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       {/* Mobile Overlay */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
           onClick={onClose}
         />
       )}
+
+      {/* Mobile header button */}
+      <button
+        onClick={onClose}
+        className="lg:hidden fixed top-4 left-4 z-30 bg-lfc-red dark:bg-[var(--lfc-red)] text-white p-2 rounded-lg shadow-lg"
+      >
+        <FaBars className="text-lg" />
+      </button>
       
       {/* Sidebar */}
       <div className={`
-        fixed inset-y-0 left-0 z-50 w-72 bg-gradient-to-b from-lfc-red to-lfc-red/80 dark:from-[var(--lfc-red)] dark:to-[var(--lfc-red)]/80 text-white transform transition-transform duration-300 ease-in-out
-        md:relative md:translate-x-0 md:flex md:flex-shrink-0 shadow-2xl
-        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+        fixed lg:relative ${collapsed ? 'w-20' : 'w-64'} bg-white dark:bg-[var(--bg-elevated)] text-gray-900 dark:text-white flex flex-col transition-all duration-300 h-screen z-50 transform
+        ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        shadow-2xl border-r border-gray-200 dark:border-[var(--border-primary)]
       `}>
         <div className="flex flex-col w-full h-full">
           {/* Header */}
-          <div className="flex items-center justify-between h-20 px-6 border-b border-lfc-gold dark:border-[var(--lfc-gold)]/30">
+          <div className="mt-1 flex items-center justify-between p-4 border-b border-gray-200 dark:border-[var(--border-primary)]">
             <div className="flex items-center space-x-3">
-              <div className="relative h-12 w-12 bg-white dark:bg-[var(--bg-elevated)] rounded-xl p-2">
+              <div className="relative h-10 w-10 bg-lfc-red dark:bg-[var(--lfc-red)] rounded-xl p-1">
                 <img 
                   src="/logo.png" 
-                  alt="LFC Jahi Tech" 
+                  alt="LFC Jahi Tech"
+                  className="filter brightness-0 invert"
                 />
               </div>
-              <div>
-                <span className="text-xl font-bold block">LFC Jahi Tech</span>
-                <span className="text-xs text-white/70">Student Portal</span>
-              </div>
+              {!collapsed && (
+                <div>
+                  <span className="text-lg font-bold block text-lfc-red dark:text-[var(--lfc-red)]">LFC Jahi Tech</span>
+                  <span className="text-xs text-gray-600 dark:text-[var(--text-tertiary)]">Student Portal</span>
+                </div>
+              )}
             </div>
+            
+            {/* Collapse Button - Desktop */}
+            <button
+              onClick={() => setCollapsed(!collapsed)}
+              className="hidden lg:flex items-center justify-center w-8 h-8 rounded-lg hover:bg-gray-100 dark:hover:bg-[var(--hover-bg)] transition-colors text-gray-600 dark:text-gray-400"
+            >
+              <FaChevronLeft
+                className={`transform transition-transform duration-300 ${
+                  collapsed ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            {/* Close Button - Mobile */}
             <button 
               onClick={onClose}
-              className="md:hidden text-white hover:bg-lfc-gold/20 p-2 rounded-lg"
+              className="lg:hidden text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[var(--hover-bg)] p-2 rounded-lg"
             >
               <FaTimes className="text-lg" />
             </button>
@@ -81,37 +107,42 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           {/* User Profile */}
           <div 
             onClick={handleProfileClick}
-            className="flex items-center px-6 py-4 border-b border-lfc-gold dark:border-[var(--lfc-gold)]/20 bg-lfc-red/60 dark:bg-red-800/60 cursor-pointer hover:bg-lfc-red/70 dark:bg-red-800/70 transition-all duration-200 group"
+            className="p-4 border-b border-gray-200 dark:border-[var(--border-primary)] bg-gray-50 dark:bg-[var(--bg-tertiary)] cursor-pointer hover:bg-gray-100 dark:hover:bg-[var(--hover-bg)] transition-all duration-200 group"
           >
-            <div className="relative">
-              <div className="absolute inset-0 rounded-full border-2 border-lfc-gold dark:border-[var(--lfc-gold)] animate-pulse opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <div className="h-14 w-14 rounded-full border-2 border-lfc-gold dark:border-[var(--lfc-gold)] flex-shrink-0 overflow-hidden">
-                <img
-                  className={`h-full w-full object-cover ${
-                    !user?.profilePicture?.url ? "filter brightness-0 invert" : ""
-                  }`}
-                  src={user?.profilePicture?.url || "/default-avatar.png"}
-                  alt="User profile"
-                />
+            <div className="flex items-center space-x-3">
+              <div className="relative">
+                <div className="absolute inset-0 rounded-full border-2 border-lfc-gold dark:border-[var(--lfc-gold)] animate-pulse opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className={`${collapsed ? 'h-10 w-10' : 'h-12 w-12'} rounded-full border-2 border-lfc-gold dark:border-[var(--lfc-gold)] flex-shrink-0 overflow-hidden transition-all duration-300`}>
+                  <img
+                    className={`h-full w-full object-cover ${
+                      !user?.profilePicture?.url ? "filter brightness-0 invert" : ""
+                    }`}
+                    src={user?.profilePicture?.url || "/default-avatar.png"}
+                    alt="User profile"
+                  />
+                </div>
               </div>
-            </div>
-            <div className="ml-4 min-w-0 flex-1">
-              <p className="text-sm font-semibold truncate" title={user?.name || "User"}>
-                {user?.name || "Loading..."}
-              </p>
-              <p className="text-xs text-white/80 truncate" title={user?.email || ""}>
-                {user?.email || ""}
-              </p>
-              <div className="flex items-center mt-1">
-                <FaGraduationCap className="text-lfc-gold dark:text-[var(--lfc-gold)] text-xs mr-1" />
-                <span className="text-xs text-lfc-gold dark:text-[var(--lfc-gold)]">Student</span>
-              </div>
+              
+              {!collapsed && (
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold truncate text-gray-900 dark:text-[var(--text-primary)]" title={user?.name || "User"}>
+                    {user?.name || "Loading..."}
+                  </p>
+                  <p className="text-xs text-gray-600 dark:text-[var(--text-tertiary)] truncate" title={user?.email || ""}>
+                    {user?.email || ""}
+                  </p>
+                  <div className="flex items-center mt-1">
+                    <FaGraduationCap className="text-lfc-gold dark:text-[var(--lfc-gold)] text-xs mr-1" />
+                    <span className="text-xs text-lfc-gold dark:text-[var(--lfc-gold)]">Student</span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
           {/* Navigation */}
-          <div className="flex flex-col flex-grow px-4 py-6 overflow-y-auto scrollbar-hide">
-            <nav className="space-y-2">
+          <div className="flex flex-col flex-grow px-2 py-4 overflow-y-auto scrollbar-hide">
+            <nav className="space-y-1">
               {menuItems.map((item) => {
                 const Icon = item.icon;
                 return (
@@ -119,46 +150,51 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                     key={item.path}
                     onClick={() => handleNavigation(item.path)}
                     className={`
-                      flex items-center w-full px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200
-                      hover:bg-lfc-gold hover:text-lfc-red hover:scale-105
+                      flex items-center w-full px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200
                       ${isActive(item.path) 
-                        ? "bg-lfc-gold text-lfc-red shadow-lg scale-105" 
-                        : "text-white"
+                        ? "bg-lfc-gold text-white dark:bg-[var(--lfc-gold)] dark:text-gray-900 shadow-md" 
+                        : "text-gray-700 dark:text-[var(--text-secondary)] hover:bg-gray-100 dark:hover:bg-[var(--hover-bg)] hover:text-lfc-red dark:hover:text-[var(--lfc-red)]"
                       }
                     `}
                   >
-                    <Icon className="mr-3 text-lg flex-shrink-0" />
-                    <span className="truncate">{item.label}</span>
+                    <Icon className={`${collapsed ? '' : 'mr-3'} text-lg flex-shrink-0`} />
+                    {!collapsed && <span className="truncate">{item.label}</span>}
                   </button>
                 );
               })}
             </nav>
 
             {/* Help Section */}
-            <div className="mt-auto mb-6">
-              <div className="bg-lfc-red/60 dark:bg-red-800/60 rounded-2xl p-4 border border-lfc-gold dark:border-[var(--lfc-gold)]/30 backdrop-blur-sm">
-                <div className="flex items-center mb-2">
-                  <FaQuestionCircle className="text-lfc-gold dark:text-[var(--lfc-gold)] mr-2 text-lg" />
-                  <h3 className="text-sm font-semibold">Need help?</h3>
-                </div>
-                <p className="text-xs text-white/80 mb-3">Our support team is here to help you</p>
-                <button
-                  onClick={() => setShowSupport(true)}
-                  className="w-full bg-white dark:bg-[var(--bg-elevated)] text-lfc-red py-2 px-3 rounded-lg text-sm font-medium hover:bg-lfc-gold transition-all duration-200 hover:scale-105"
-                >
-                  Contact Support
-                </button>
+            {!collapsed && (
+              <div className="mt-auto mb-4">
+                <div className="bg-gray-50 dark:bg-[var(--bg-tertiary)] rounded-xl p-4 border border-gray-200 dark:border-[var(--border-primary)]">
+                  <div className="flex items-center mb-2">
+                    <FaQuestionCircle className="text-lfc-gold dark:text-[var(--lfc-gold)] mr-2 text-lg" />
+                    <h3 className="text-sm font-semibold text-gray-900 dark:text-[var(--text-primary)]">Need help?</h3>
+                  </div>
+                  <p className="text-xs text-gray-600 dark:text-[var(--text-tertiary)] mb-3">Our support team is here to help you</p>
+                  <button
+                    onClick={() => setShowSupport(true)}
+                    className="w-full bg-lfc-gold dark:bg-[var(--lfc-gold)] text-white dark:text-gray-900 py-2 px-3 rounded-lg text-sm font-medium hover:bg-lfc-gold-hover dark:hover:bg-[var(--lfc-gold-hover)] transition-all duration-200"
+                  >
+                    Contact Support
+                  </button>
 
-                {showSupport && (
-                  <SupportModal isOpen={showSupport} onClose={() => setShowSupport(false)} />
-                )}
+                  {showSupport && (
+                    <SupportModal isOpen={showSupport} onClose={() => setShowSupport(false)} />
+                  )}
+                </div>
               </div>
-              
-              {/* Footer */}
-              <div className="mt-4 text-center">
-                <p className="text-xs text-white/60">© 2025 LFC Jahi Tech</p>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className="p-4 border-t border-gray-200 dark:border-[var(--border-primary)] pb-safe">
+            {!collapsed && (
+              <div className="text-center">
+                <p className="text-xs text-gray-500 dark:text-[var(--text-muted)]">© 2025 LFC Jahi Tech</p>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
