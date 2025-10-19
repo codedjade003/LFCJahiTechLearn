@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaBookOpen, FaClock, FaUser, FaArrowRight } from "react-icons/fa";
 import TechyBackground from "../../components/shared/TechyBackground";
+import OnboardingTour from "../../components/shared/OnboardingTour";
+import { myCoursesTour } from "../../config/onboardingTours";
 
 interface Enrollment {
   _id: string;
@@ -170,6 +172,7 @@ export default function MyCourses() {
 
   return (
     <div className="p-6 relative min-h-screen">
+      <OnboardingTour tourKey="courses" steps={myCoursesTour} />
       <TechyBackground variant="minimal" />
       <div className="relative z-10">
         <div className="flex justify-between items-center mb-6">
@@ -205,6 +208,7 @@ export default function MyCourses() {
                 key={enrollment._id}
                 to={`/dashboard/courses/${course._id}`}
                 className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow-sm border border-yt-light-border overflow-hidden hover:shadow-md transition-shadow block"
+                data-tour="course-card"
               >
                 {/* Your existing course card JSX here */}
                 <div className="h-48 bg-yt-light-hover overflow-hidden relative">

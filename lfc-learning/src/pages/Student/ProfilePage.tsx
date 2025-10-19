@@ -44,7 +44,7 @@ const ProfilePage = () => {
   const [passwordMessage, setPasswordMessage] = useState("");
   
   // Theme and preferences
-  const { setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [onboardingEnabled, setOnboardingEnabled] = useState(true);
   const [preferencesLoading, setPreferencesLoading] = useState(false);
 
@@ -128,8 +128,10 @@ const ProfilePage = () => {
         if (res.ok) {
           const data = await res.json();
           setOnboardingEnabled(data.preferences?.onboardingEnabled !== false);
-          if (data.preferences?.theme) {
-            setTheme(data.preferences.theme);
+          // Only set theme if it's different from current theme to avoid unwanted switches
+          if (data.preferences?.theme && data.preferences.theme !== theme) {
+            // Don't override current theme on page load - user's current selection takes precedence
+            // setTheme(data.preferences.theme);
           }
         }
       } catch (err) {

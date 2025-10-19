@@ -356,7 +356,7 @@ const UserEnrollmentsTab = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-[var(--bg-secondary)] p-6">
       {/* Header */}
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center gap-4 mb-8">
@@ -364,14 +364,14 @@ const UserEnrollmentsTab = () => {
             <FaGraduationCap className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Course Enrollments</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-[var(--text-primary)]">Course Enrollments</h1>
             <p className="text-gray-600 mt-1">Manage user access to courses</p>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-2xl shadow-sm border border-gray-200 mb-6">
-          <div className="flex border-b border-gray-200">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-2xl shadow-sm border border-gray-200 dark:border-[var(--border-primary)] mb-6">
+          <div className="flex border-b border-gray-200 dark:border-[var(--border-primary)]">
             <button
               onClick={() => setActiveTab("enrollments")}
               className={`flex items-center gap-2 px-6 py-4 font-medium border-b-2 transition-colors ${
@@ -404,7 +404,7 @@ const UserEnrollmentsTab = () => {
                 <div className="space-y-4">
                   <div className="flex items-center gap-2">
                     <FaUser className="text-lfc-red" />
-                    <h3 className="font-semibold text-gray-900">Select Users</h3>
+                    <h3 className="font-semibold text-gray-900 dark:text-[var(--text-primary)]">Select Users</h3>
                     {usersLoading && (
                       <span className="text-sm text-gray-500">Loading...</span>
                     )}
@@ -412,7 +412,7 @@ const UserEnrollmentsTab = () => {
                   
                   <div className="space-y-3">
                     <div className="relative">
-                      <div className="flex items-center gap-3 bg-gray-50 border border-gray-300 rounded-xl px-4 py-3">
+                      <div className="flex items-center gap-3 bg-gray-50 dark:bg-[var(--bg-secondary)] border border-gray-300 dark:border-[var(--border-secondary)] rounded-xl px-4 py-3">
                         <FaSearch className="text-gray-400" />
                         <input
                           type="text"
@@ -423,30 +423,30 @@ const UserEnrollmentsTab = () => {
                             setShowUserSearch(true);
                           }}
                           onFocus={() => setShowUserSearch(true)}
-                          className="flex-1 bg-transparent outline-none text-gray-900 placeholder-gray-500"
+                          className="flex-1 bg-transparent outline-none text-gray-900 dark:text-[var(--text-primary)] placeholder-gray-500 dark:placeholder-[var(--text-muted)]"
                         />
                       </div>
                       
                       {showUserSearch && (
-                        <div className="absolute z-10 w-full mt-2 bg-white dark:bg-[var(--bg-elevated)] border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                        <div className="absolute z-10 w-full mt-2 bg-white dark:bg-[var(--bg-elevated)] border border-gray-300 dark:border-[var(--border-secondary)] rounded-xl shadow-lg max-h-60 overflow-y-auto">
                           {userResults.length > 0 ? (
                             userResults.map((user) => (
                               <div
                                 key={user._id}
-                                className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                                className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:bg-[var(--bg-secondary)] cursor-pointer border-b border-gray-100 dark:border-[var(--border-primary)] last:border-b-0"
                                 onClick={() => toggleUserSelection(user)}
                               >
                                 <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
                                   selectedUsers.some(u => u._id === user._id)
                                     ? "bg-lfc-red border-lfc-red"
-                                    : "border-gray-300"
+                                    : "border-gray-300 dark:border-[var(--border-secondary)]"
                                 }`}>
                                   {selectedUsers.some(u => u._id === user._id) && (
                                     <div className="w-2 h-2 bg-white dark:bg-[var(--bg-elevated)] rounded-sm" />
                                   )}
                                 </div>
                                 <div className="flex-1">
-                                  <div className="font-medium text-gray-900">{user.name}</div>
+                                  <div className="font-medium text-gray-900 dark:text-[var(--text-primary)]">{user.name}</div>
                                   <div className="text-sm text-gray-600">{user.email}</div>
                                 </div>
                               </div>
@@ -463,28 +463,28 @@ const UserEnrollmentsTab = () => {
 
                     {/* Display List - All Available Users */}
                     {!showUserSearch && allUsers.length > 0 && (
-                      <div className="border border-gray-200 rounded-xl max-h-60 overflow-y-auto">
-                        <div className="p-3 bg-gray-50 border-b border-gray-200">
-                          <h4 className="font-medium text-gray-900">Available Users ({allUsers.length})</h4>
+                      <div className="border border-gray-200 dark:border-[var(--border-primary)] rounded-xl max-h-60 overflow-y-auto">
+                        <div className="p-3 bg-gray-50 dark:bg-[var(--bg-secondary)] border-b border-gray-200 dark:border-[var(--border-primary)]">
+                          <h4 className="font-medium text-gray-900 dark:text-[var(--text-primary)]">Available Users ({allUsers.length})</h4>
                         </div>
                         <div className="divide-y divide-gray-100">
                           {allUsers.slice(0, 10).map((user) => (
                             <div
                               key={user._id}
-                              className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer"
+                              className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:bg-[var(--bg-secondary)] cursor-pointer"
                               onClick={() => toggleUserSelection(user)}
                             >
                               <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
                                 selectedUsers.some(u => u._id === user._id)
                                   ? "bg-lfc-red border-lfc-red"
-                                  : "border-gray-300"
+                                  : "border-gray-300 dark:border-[var(--border-secondary)]"
                               }`}>
                                 {selectedUsers.some(u => u._id === user._id) && (
                                   <div className="w-2 h-2 bg-white dark:bg-[var(--bg-elevated)] rounded-sm" />
                                 )}
                               </div>
                               <div className="flex-1">
-                                <div className="font-medium text-gray-900">{user.name}</div>
+                                <div className="font-medium text-gray-900 dark:text-[var(--text-primary)]">{user.name}</div>
                                 <div className="text-sm text-gray-600">{user.email}</div>
                               </div>
                             </div>
@@ -501,7 +501,7 @@ const UserEnrollmentsTab = () => {
                     {/* Selected Users */}
                     {selectedUsers.length > 0 && (
                       <div className="mt-4">
-                        <h4 className="font-medium text-gray-900 mb-2">Selected Users ({selectedUsers.length})</h4>
+                        <h4 className="font-medium text-gray-900 dark:text-[var(--text-primary)] mb-2">Selected Users ({selectedUsers.length})</h4>
                         <div className="flex flex-wrap gap-2">
                           {selectedUsers.map(user => (
                             <div
@@ -528,7 +528,7 @@ const UserEnrollmentsTab = () => {
                 <div className="space-y-4">
                   <div className="flex items-center gap-2">
                     <FaBook className="text-lfc-gold" />
-                    <h3 className="font-semibold text-gray-900">Select Courses</h3>
+                    <h3 className="font-semibold text-gray-900 dark:text-[var(--text-primary)]">Select Courses</h3>
                     {coursesLoading && (
                       <span className="text-sm text-gray-500">Loading...</span>
                     )}
@@ -536,7 +536,7 @@ const UserEnrollmentsTab = () => {
                   
                   <div className="space-y-3">
                     <div className="relative">
-                      <div className="flex items-center gap-3 bg-gray-50 border border-gray-300 rounded-xl px-4 py-3">
+                      <div className="flex items-center gap-3 bg-gray-50 dark:bg-[var(--bg-secondary)] border border-gray-300 dark:border-[var(--border-secondary)] rounded-xl px-4 py-3">
                         <FaSearch className="text-gray-400" />
                         <input
                           type="text"
@@ -547,30 +547,30 @@ const UserEnrollmentsTab = () => {
                             setShowCourseSearch(true);
                           }}
                           onFocus={() => setShowCourseSearch(true)}
-                          className="flex-1 bg-transparent outline-none text-gray-900 placeholder-gray-500"
+                          className="flex-1 bg-transparent outline-none text-gray-900 dark:text-[var(--text-primary)] placeholder-gray-500 dark:placeholder-[var(--text-muted)]"
                         />
                       </div>
                       
                       {showCourseSearch && (
-                        <div className="absolute z-10 w-full mt-2 bg-white dark:bg-[var(--bg-elevated)] border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                        <div className="absolute z-10 w-full mt-2 bg-white dark:bg-[var(--bg-elevated)] border border-gray-300 dark:border-[var(--border-secondary)] rounded-xl shadow-lg max-h-60 overflow-y-auto">
                           {courseResults.length > 0 ? (
                             courseResults.map((course) => (
                               <div
                                 key={course._id}
-                                className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                                className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:bg-[var(--bg-secondary)] cursor-pointer border-b border-gray-100 dark:border-[var(--border-primary)] last:border-b-0"
                                 onClick={() => toggleCourseSelection(course)}
                               >
                                 <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
                                   selectedCourses.some(c => c._id === course._id)
                                     ? "bg-lfc-gold border-lfc-gold"
-                                    : "border-gray-300"
+                                    : "border-gray-300 dark:border-[var(--border-secondary)]"
                                 }`}>
                                   {selectedCourses.some(c => c._id === course._id) && (
                                     <div className="w-2 h-2 bg-white dark:bg-[var(--bg-elevated)] rounded-sm" />
                                   )}
                                 </div>
                                 <div className="flex-1">
-                                  <div className="font-medium text-gray-900">{course.title}</div>
+                                  <div className="font-medium text-gray-900 dark:text-[var(--text-primary)]">{course.title}</div>
                                   {course.description && (
                                     <div className="text-sm text-gray-600 line-clamp-1">
                                       {course.description}
@@ -591,28 +591,28 @@ const UserEnrollmentsTab = () => {
 
                     {/* Display List - All Available Courses */}
                     {!showCourseSearch && allCourses.length > 0 && (
-                      <div className="border border-gray-200 rounded-xl max-h-60 overflow-y-auto">
-                        <div className="p-3 bg-gray-50 border-b border-gray-200">
-                          <h4 className="font-medium text-gray-900">Available Courses ({allCourses.length})</h4>
+                      <div className="border border-gray-200 dark:border-[var(--border-primary)] rounded-xl max-h-60 overflow-y-auto">
+                        <div className="p-3 bg-gray-50 dark:bg-[var(--bg-secondary)] border-b border-gray-200 dark:border-[var(--border-primary)]">
+                          <h4 className="font-medium text-gray-900 dark:text-[var(--text-primary)]">Available Courses ({allCourses.length})</h4>
                         </div>
                         <div className="divide-y divide-gray-100">
                           {allCourses.slice(0, 10).map((course) => (
                             <div
                               key={course._id}
-                              className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer"
+                              className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:bg-[var(--bg-secondary)] cursor-pointer"
                               onClick={() => toggleCourseSelection(course)}
                             >
                               <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
                                 selectedCourses.some(c => c._id === course._id)
                                   ? "bg-lfc-gold border-lfc-gold"
-                                  : "border-gray-300"
+                                  : "border-gray-300 dark:border-[var(--border-secondary)]"
                               }`}>
                                 {selectedCourses.some(c => c._id === course._id) && (
                                   <div className="w-2 h-2 bg-white dark:bg-[var(--bg-elevated)] rounded-sm" />
                                 )}
                               </div>
                               <div className="flex-1">
-                                <div className="font-medium text-gray-900">{course.title}</div>
+                                <div className="font-medium text-gray-900 dark:text-[var(--text-primary)]">{course.title}</div>
                                 {course.description && (
                                   <div className="text-sm text-gray-600 line-clamp-1">
                                     {course.description}
@@ -633,7 +633,7 @@ const UserEnrollmentsTab = () => {
                     {/* Selected Courses */}
                     {selectedCourses.length > 0 && (
                       <div className="mt-4">
-                        <h4 className="font-medium text-gray-900 mb-2">Selected Courses ({selectedCourses.length})</h4>
+                        <h4 className="font-medium text-gray-900 dark:text-[var(--text-primary)] mb-2">Selected Courses ({selectedCourses.length})</h4>
                         <div className="flex flex-wrap gap-2">
                           {selectedCourses.map(course => (
                             <div
@@ -701,7 +701,7 @@ const UserEnrollmentsTab = () => {
                     placeholder="Search enrollments by user, email, or course..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-lfc-red focus:border-transparent outline-none transition-colors"
+                    className="w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-[var(--bg-secondary)] border border-gray-300 dark:border-[var(--border-secondary)] rounded-xl focus:ring-2 focus:ring-lfc-red focus:border-transparent outline-none transition-colors"
                   />
                 </div>
                 
@@ -726,9 +726,9 @@ const UserEnrollmentsTab = () => {
                   const allSelected = courseEnrollments.every(e => selectedEnrollments.has(e._id));
 
                   return (
-                    <div key={courseId} className="bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 rounded-xl overflow-hidden">
+                    <div key={courseId} className="bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 dark:border-[var(--border-primary)] rounded-xl overflow-hidden">
                       {/* Course Header */}
-                      <div className="flex items-center gap-4 p-4 bg-gray-50 border-b border-gray-200">
+                      <div className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-[var(--bg-secondary)] border-b border-gray-200 dark:border-[var(--border-primary)]">
                         <div className={`w-5 h-5 rounded border-2 flex items-center justify-center cursor-pointer ${
                           allSelected ? "bg-lfc-red border-lfc-red" : "border-gray-400"
                         }`}
@@ -738,7 +738,7 @@ const UserEnrollmentsTab = () => {
                         </div>
                         
                         <div className="flex-1">
-                          <h3 className="font-semibold text-gray-900 text-lg">{course.title}</h3>
+                          <h3 className="font-semibold text-gray-900 dark:text-[var(--text-primary)] text-lg">{course.title}</h3>
                           {course.description && (
                             <p className="text-gray-600 text-sm mt-1">{course.description}</p>
                           )}
@@ -762,7 +762,7 @@ const UserEnrollmentsTab = () => {
                       {isExpanded && (
                         <div className="divide-y divide-gray-100">
                           {courseEnrollments.map((enrollment) => (
-                            <div key={enrollment._id} className="flex items-center gap-4 p-4 hover:bg-gray-50">
+                            <div key={enrollment._id} className="flex items-center gap-4 p-4 hover:bg-gray-50 dark:bg-[var(--bg-secondary)]">
                               <div className={`w-5 h-5 rounded border-2 flex items-center justify-center cursor-pointer ${
                                 selectedEnrollments.has(enrollment._id) 
                                   ? "bg-lfc-red border-lfc-red" 
@@ -776,7 +776,7 @@ const UserEnrollmentsTab = () => {
                               </div>
                               
                               <div className="flex-1">
-                                <div className="font-medium text-gray-900">
+                                <div className="font-medium text-gray-900 dark:text-[var(--text-primary)]">
                                   {enrollment.user?.name || 'Unknown User'}
                                 </div>
                                 <div className="text-sm text-gray-600">
@@ -809,7 +809,7 @@ const UserEnrollmentsTab = () => {
                 {filteredEnrollments.length === 0 && (
                   <div className="text-center py-12">
                     <FaUsers className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">No enrollments found</h3>
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-[var(--text-primary)] mb-2">No enrollments found</h3>
                     <p className="text-gray-600">
                       {searchTerm ? "Try adjusting your search terms" : "Get started by enrolling users in courses"}
                     </p>

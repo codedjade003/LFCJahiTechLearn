@@ -10,6 +10,8 @@ import {
   FaArrowRight,
   FaBook
 } from "react-icons/fa";
+import OnboardingTour from "../../components/shared/OnboardingTour";
+import { assignmentsTour } from "../../config/onboardingTours";
 
 interface Assignment {
   _id: string;
@@ -158,6 +160,7 @@ export default function MyAssignments() {
 
   return (
     <div className="p-6">
+      <OnboardingTour tourKey="assessments" steps={assignmentsTour} />
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div>
@@ -170,7 +173,7 @@ export default function MyAssignments() {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex space-x-4 mb-6 border-b">
+      <div className="flex space-x-4 mb-6 border-b" data-tour="assignment-filters">
         {[
           { key: 'all', label: 'All Assignments', count: assignments.length },
           { key: 'pending', label: 'Pending', count: assignments.filter(a => !a.progress.submitted).length },
@@ -222,6 +225,7 @@ export default function MyAssignments() {
                 key={assignment._id}
                 to={`/dashboard/assignments/${assignment._id}`}
                 className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow-sm border border-yt-light-border p-6 hover:shadow-md transition-shadow block"
+                data-tour="assignment-card"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">

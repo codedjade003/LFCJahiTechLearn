@@ -100,10 +100,15 @@ export default function OnboardingTour({
       }}
       floaterProps={{
         disableAnimation: false,
+        disableFlip: false,
+        hideArrow: false,
       }}
       disableOverlayClose
       disableCloseOnEsc
       spotlightClicks
+      disableScrolling={false}
+      scrollToFirstStep={false}
+      scrollOffset={100}
     />
   );
 }

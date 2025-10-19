@@ -13,6 +13,7 @@ interface OnboardingProgress {
   assessmentGrading: boolean;
   supportTickets: boolean;
   adminSupport: boolean;
+  surveyResponses: boolean;
 }
 
 interface OnboardingContextType {
@@ -41,6 +42,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
     assessmentGrading: false,
     supportTickets: false,
     adminSupport: false,
+    surveyResponses: false,
   });
 
   const [isFirstLogin, setIsFirstLogin] = useState(false);
