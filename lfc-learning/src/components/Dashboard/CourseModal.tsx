@@ -315,7 +315,7 @@ const CourseModal: React.FC<CourseModalProps> = ({
             >
               {/* Back to Video Panel */}
               <motion.div 
-                className="w-16 bg-gray-900 border-r border-gray-700 flex flex-col items-center py-6 cursor-pointer group"
+                className="w-16 bg-[var(--bg-elevated)] border-r border-[var(--border-primary)] flex flex-col items-center py-6 cursor-pointer group"
                 onClick={prevPage}
                 whileHover={{ width: 120 }}
                 transition={{ duration: 0.3 }}

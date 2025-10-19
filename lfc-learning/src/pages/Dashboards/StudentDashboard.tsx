@@ -458,7 +458,7 @@ const StudentDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 relative">
+    <div className="min-h-screen bg-gray-50 dark:bg-[var(--bg-primary)] relative">
       {/* Techy Background */}
       <TechyBackground variant="subtle" />
       

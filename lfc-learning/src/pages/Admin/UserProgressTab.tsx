@@ -148,7 +148,7 @@ const UserProgressTab = () => {
     <div className="space-y-6 p-6">
       {/* Header Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-6">
+        <div className="bg-white dark:bg-[var(--bg-secondary)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-6">
           <div className="flex items-center">
             <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
               <FaUser className="text-blue-600 text-xl" />

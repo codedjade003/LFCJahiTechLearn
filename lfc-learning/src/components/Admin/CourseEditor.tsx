@@ -117,8 +117,8 @@ export default function CourseEditor({ courseId, onBack, onCourseUpdated }: Cour
 
   if (loading) {
     return (
-      <div className="flex flex-col min-min-h-full bg-yt-light-gray dark:bg-[var(--bg-primary)] text-yt-text-dark dark:text-[var(--text-primary)]">
-        <header className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-primary)] bg-white dark:bg-[var(--bg-elevated)] shadow-sm">
+      <div className="flex flex-col h-screen bg-yt-light-gray dark:bg-[var(--bg-primary)] text-yt-text-dark dark:text-[var(--text-primary)]">
+        <header className="sticky top-0 z-40 flex items-center justify-between px-4 py-3 border-b border-[var(--border-primary)] bg-white dark:bg-[var(--bg-elevated)] shadow-sm">
           <div className="flex items-center">
             <button 
               onClick={onBack}
@@ -200,9 +200,9 @@ export default function CourseEditor({ courseId, onBack, onCourseUpdated }: Cour
   }
 
   return (
-    <div className="flex flex-col min-min-h-full bg-yt-light-gray dark:bg-[var(--bg-primary)] text-yt-text-dark dark:text-[var(--text-primary)]">
-      {/* Header */}
-      <header className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-primary)] bg-white dark:bg-[var(--bg-elevated)] shadow-sm">
+    <div className="flex flex-col h-screen bg-yt-light-gray dark:bg-[var(--bg-primary)] text-yt-text-dark dark:text-[var(--text-primary)]">
+      {/* Sticky Header */}
+      <header className="sticky top-0 z-40 flex items-center justify-between px-4 py-3 border-b border-[var(--border-primary)] bg-white dark:bg-[var(--bg-elevated)] shadow-sm">
         <div className="flex items-center">
           <button 
             onClick={onBack}

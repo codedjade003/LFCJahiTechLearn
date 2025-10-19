@@ -236,7 +236,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex items-center space-x-2 p-1 hover:bg-gray-100 rounded-full transition-colors duration-200"
+            className="flex items-center space-x-2 p-2 rounded-lg bg-gray-100 dark:bg-[var(--bg-tertiary)] hover:bg-gray-200 dark:hover:bg-[var(--bg-secondary)] transition-colors duration-200"
           >
             <div className="relative">
               <img
@@ -259,26 +259,26 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
               )}
             </div>
             <div className="hidden md:block text-left">
-              <span className="text-sm font-medium text-gray-700 block">
+              <span className="text-sm font-medium text-gray-900 dark:text-white block">
                 {user?.name || "Loading..."}
               </span>
               {isAdmin && (
                 <span className={`text-xs font-medium ${
-                  isSuperAdmin ? 'text-lfc-red' : 'text-lfc-gold'
+                  isSuperAdmin ? 'text-lfc-red dark:text-red-400' : 'text-lfc-gold dark:text-yellow-400'
                 }`}>
                   {isSuperAdmin ? 'Super Admin' : 'Admin'}
                 </span>
               )}
             </div>
-            <FaChevronDown className={`hidden md:block text-gray-400 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
+            <FaChevronDown className={`hidden md:block text-gray-600 dark:text-gray-400 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
           </button>
 
           {dropdownOpen && (
-            <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 dark:border-[var(--border-primary)] rounded-lg shadow-lg z-50 py-1">
+            <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 dark:border-[var(--border-primary)] rounded-lg shadow-xl z-50 py-1">
               {/* User Info Section */}
               <div className="px-4 py-3 border-b border-gray-100 dark:border-[var(--border-primary)]">
-                <p className="text-sm font-medium text-gray-900 dark:text-[var(--text-primary)]">{user?.name}</p>
-                <p className="text-xs text-gray-500 dark:text-[var(--text-tertiary)] truncate mb-1">{user?.email}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.name}</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 truncate mb-1">{user?.email}</p>
                 {isAdmin && (
                   <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                     isSuperAdmin 
@@ -299,7 +299,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
               {isAdmin && (
                 <button
                   onClick={handleAdminMode}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-[var(--text-secondary)] hover:bg-gray-50 dark:hover:bg-[var(--hover-bg)] transition-colors duration-200 flex items-center"
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[var(--bg-secondary)] transition-colors duration-200 flex items-center"
                 >
                   <FaUserShield className="mr-3 text-lfc-gold dark:text-[var(--lfc-gold)]" />
                   Switch to Admin Mode
@@ -312,7 +312,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
                   navigate("/dashboard/profile");
                   setDropdownOpen(false);
                 }}
-                className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-[var(--text-secondary)] hover:bg-gray-50 dark:hover:bg-[var(--hover-bg)] transition-colors duration-200 flex items-center"
+                className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[var(--bg-secondary)] transition-colors duration-200 flex items-center"
               >
                 <FaUser className="mr-3 text-gray-400 dark:text-gray-500" />
                 My Profile
@@ -323,7 +323,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
                   logout();
                   setDropdownOpen(false);
                 }}
-                className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-50 dark:hover:bg-[var(--hover-bg)] transition-colors duration-200 flex items-center"
+                className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200 flex items-center border-t border-gray-200 dark:border-[var(--border-primary)] mt-2 pt-2"
               >
                 <FaChevronDown className="mr-3 text-red-400 transform rotate-90" />
                 Logout
