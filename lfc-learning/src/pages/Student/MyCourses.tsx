@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaBookOpen, FaClock, FaUser, FaArrowRight } from "react-icons/fa";
+import TechyBackground from "../../components/shared/TechyBackground";
 
 interface Enrollment {
   _id: string;
@@ -168,8 +169,10 @@ export default function MyCourses() {
   });
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
+    <div className="p-6 relative min-h-screen">
+      <TechyBackground variant="minimal" />
+      <div className="relative z-10">
+        <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-yt-text-dark">My Courses</h1>
         <span className="text-yt-text-gray">
           {displayEnrollments.length} {displayEnrollments.length === 1 ? 'course' : 'courses'} enrolled
@@ -279,6 +282,7 @@ export default function MyCourses() {
           })}
         </div>
       )}
+      </div>
     </div>
   );
 }

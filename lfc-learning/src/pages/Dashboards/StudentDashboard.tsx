@@ -9,6 +9,7 @@ import DashboardStats from "../../components/Dashboard/DashboardStats";
 import ProfileCompletionBanner from "../../components/Dashboard/ProfileCompletionBanner";
 import OnboardingModal from "../../components/Dashboard/OnboardingModal";
 import OnboardingTour from "../../components/shared/OnboardingTour";
+import TechyBackground from "../../components/shared/TechyBackground";
 import type { Course } from "../../types/course";
 import type { Step } from "react-joyride";
 
@@ -457,9 +458,14 @@ const StudentDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Onboarding Tour - Shows BEFORE profile completion */}
-      <OnboardingTour tourKey="dashboard" steps={dashboardTourSteps} />
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 relative">
+      {/* Techy Background */}
+      <TechyBackground variant="subtle" />
+      
+      {/* Content */}
+      <div className="relative z-10">
+        {/* Onboarding Tour - Shows BEFORE profile completion */}
+        <OnboardingTour tourKey="dashboard" steps={dashboardTourSteps} />
 
       {/* Profile completion banner */}
       {showBanner && (
@@ -581,6 +587,7 @@ const StudentDashboard = () => {
             </button>
           </div>
         )}
+      </div>
       </div>
     </div>
   );

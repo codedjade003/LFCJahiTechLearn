@@ -11,6 +11,7 @@ import CourseAnalytics from "../../components/Admin/CourseAnalytics";
 import RecentUsers from "../../components/Admin/RecentUsers";
 import PendingAssessments from "../../components/Admin/PendingAssessments";
 import OnboardingTour from "../../components/shared/OnboardingTour";
+import TechyBackground from "../../components/shared/TechyBackground";
 import { adminDashboardTour } from "../../config/onboardingTours";
 
 import {
@@ -127,9 +128,14 @@ export default function AdminDashboard(): JSX.Element {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[var(--bg-primary)] space-y-6 p-3 sm:p-4 md:p-6 overflow-y-auto">
-      {/* Onboarding Tour */}
-      <OnboardingTour tourKey="adminDashboard" steps={adminDashboardTour} />
+    <div className="min-h-screen bg-gray-50 dark:bg-[var(--bg-primary)] relative">
+      {/* Techy Background */}
+      <TechyBackground variant="minimal" />
+      
+      {/* Content */}
+      <div className="relative z-10 space-y-6 p-3 sm:p-4 md:p-6 overflow-y-auto">
+        {/* Onboarding Tour */}
+        <OnboardingTour tourKey="adminDashboard" steps={adminDashboardTour} />
       
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" data-tour="stats">
@@ -164,6 +170,7 @@ export default function AdminDashboard(): JSX.Element {
         <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)]" data-tour="pending-assessments">
           <PendingAssessments />
         </div>
+      </div>
       </div>
     </div>
   );

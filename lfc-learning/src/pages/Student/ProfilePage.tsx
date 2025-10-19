@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
+import TechyBackground from "../../components/shared/TechyBackground";
 import { 
   FaUser, FaEnvelope, FaCalendar, FaPhone, FaBriefcase, 
   FaBuilding, FaGlobe, FaLink, FaSave,
@@ -450,8 +451,13 @@ const validateUsername = (username: string) => {
 
   // YouTube-inspired layout with banner
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Cover Photo Banner */}
+    <div className="min-h-screen bg-gray-50 dark:bg-[var(--bg-primary)] relative">
+      {/* Techy Background */}
+      <TechyBackground variant="minimal" />
+      
+      {/* Content */}
+      <div className="relative z-10">
+        {/* Cover Photo Banner */}
       <div className="relative h-64 bg-gradient-to-r from-redCustom to-goldCustom">
         {(coverPhotoPreview || user.coverPhoto?.url) ? (
           <div className="w-full h-full overflow-hidden">
@@ -1172,6 +1178,7 @@ const validateUsername = (username: string) => {
       </div>
     {/* Cover Photo Editor Modal */}
     <CoverPhotoEditor />
+      </div>
     </div>
   );
 };
