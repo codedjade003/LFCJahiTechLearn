@@ -186,7 +186,7 @@ export default function CourseFormModal({ isOpen, onClose, onSubmit }: CourseFor
             <button
               type="submit"
               disabled={saving || !formData.title.trim() || !formData.description.trim()}
-              className="bg-lfc-red hover:bg-red-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+              className="bg-lfc-red dark:bg-red-800 hover:bg-red-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-medium transition-colors"
             >
               {saving ? (
                 <span className="flex items-center">

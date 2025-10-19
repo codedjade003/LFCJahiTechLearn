@@ -61,7 +61,7 @@ export const courseManagementTour: Step[] = [
   {
     target: "aside",
     content: "Use these tabs to navigate through different sections of course creation. Start with Details, then add Content, Assignments, Projects, Settings, and finally Publish.",
-    placement: "right",
+    placement: "top",
   },
 ];
 

@@ -19,7 +19,7 @@ const NotificationCard = ({
 }: NotificationCardProps) => {
   return (
     <div className={`flex items-start p-3 rounded-lg border ${
-      highlight ? 'bg-lfc-red/10 dark:bg-[var(--lfc-red)]/20 border-lfc-red/20 dark:border-[var(--lfc-red)]/30' : 'hover:bg-gray-50 dark:hover:bg-[var(--hover-bg)] border-gray-100 dark:border-[var(--border-primary)]'
+      highlight ? 'bg-lfc-red/10 dark:bg-red-800/20 border-lfc-red/20 dark:border-[var(--lfc-red)]/30' : 'hover:bg-gray-50 dark:hover:bg-[var(--hover-bg)] border-gray-100 dark:border-[var(--border-primary)]'
     }`}>
       <div className="flex-shrink-0 pt-1">{icon}</div>
       <div className="ml-3 flex-1">

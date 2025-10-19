@@ -143,7 +143,7 @@ const Notifications = () => {
         <div className="flex items-center space-x-2">
           <h2 className="text-lg font-semibold text-gray-800 dark:text-[var(--text-primary)]">Notifications</h2>
           {unreadCount > 0 && (
-            <span className="bg-lfc-red dark:bg-[var(--lfc-red)] text-white text-xs px-2 py-1 rounded-full">
+            <span className="bg-lfc-red dark:bg-red-800 text-white text-xs px-2 py-1 rounded-full">
               {unreadCount}
             </span>
           )}

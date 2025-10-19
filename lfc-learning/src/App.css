@@ -51,52 +51,58 @@
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
-/* Dark Mode - Sophisticated & Eye-friendly */
+/* ========================================
+   DARK MODE — PREMIUM REVAMP (Gold Intact)
+   ======================================== */
+
 .dark {
-  /* Brand Colors - Darker, muted tones for dark mode */
-  --lfc-red: #8B1518;
-  --lfc-red-hover: #A41E21;
-  --lfc-red-light: #9A1A1D;
-  --lfc-gold: #E5C758;
-  --lfc-gold-hover: #F0D97A;
-  --lfc-gold-light: #EDD685;
-  
-  /* Background Colors - Rich, deep tones */
-  --bg-primary: #0F1419;
-  --bg-secondary: #16181D;
-  --bg-tertiary: #1C1F26;
-  --bg-elevated: #22252D;
-  
-  /* Text Colors - High contrast for readability */
-  --text-primary: #F9FAFB;
-  --text-secondary: #D1D5DB;
-  --text-tertiary: #9CA3AF;
-  --text-muted: #6B7280;
-  
-  /* Border Colors - Subtle but visible */
-  --border-primary: #2D3139;
-  --border-secondary: #3A3F4A;
+  /* === Brand Colors (Gold stays the same) === */
+  --lfc-red: #E03A3E;           /* Refined vibrant red for accent */
+  --lfc-red-hover: #C32C2F;     /* Deep, confident hover red */
+  --lfc-red-light: #F2575A;     /* Lighter tint for subtle UI use */
+  --lfc-gold: #D4AF37;          /* Signature gold */
+  --lfc-gold-hover: #B89530;
+  --lfc-gold-light: #E5C758;
+
+  /* === Backgrounds — Layered, Luxurious Depth === */
+  --bg-primary: #191c20; ;        /* Pure deep charcoal (base) */
+  --bg-secondary: #141619;      /* Slightly lifted secondary layer */
+  --bg-tertiary: #1C1F23;       /* For cards, hover zones */
+  --bg-elevated: #22262B;       /* Elevated panels or modals */
+
+  /* === Text — Sharp Contrast, Softer Secondary === */
+  --text-primary: #F9FAFB;      /* Crisp white */
+  --text-secondary: #D1D5DB;    /* Light gray for normal text */
+  --text-tertiary: #9CA3AF;     /* Muted labels */
+  --text-muted: #6B7280;        /* Even softer hints */
+
+  /* === Borders — Visible but Polished === */
+  --border-primary: #2E3238;    /* Subtle, low-glare */
+  --border-secondary: #3B4047;  /* For dividers */
   --border-focus: var(--lfc-gold);
-  
-  /* Interactive States */
-  --hover-bg: #252930;
-  --active-bg: #2D3139;
-  --focus-ring: rgba(229, 199, 88, 0.3);
-  
-  /* Semantic Colors - Adjusted for dark backgrounds */
-  --success: #34D399;
-  --warning: #FBBF24;
-  --error: #F87171;
-  --info: #60A5FA;
-  
-  /* Shadows - More pronounced in dark mode */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+
+  /* === Interactive States — Smooth & Elegant === */
+  --hover-bg: #1A1E22;          /* Gentle lift effect */
+  --active-bg: #2A2F35;         /* Subtle active press */
+  --focus-ring: rgba(212, 175, 55, 0.3);
+
+  /* === Semantic Colors — Refined for Contrast === */
+  --success: #3ECF8E;           /* Emerald-like success */
+  --warning: #E9B949;           /* Balanced yellow */
+  --error: #F85149;             /* Bright red */
+  --info: #58A6FF;              /* Azure info blue */
+
+  /* === Shadows — Depth Without Noise === */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.45);
+  --shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.6);
 }
 
-/* Legacy YouTube variables for backward compatibility */
+/* ========================================
+   LEGACY YOUTUBE VARIABLES (Compatibility)
+   ======================================== */
+
 :root {
   --yt-red: var(--lfc-red);
   --yt-red-dark: var(--lfc-red-hover);
@@ -171,7 +177,6 @@
 .text-yt-text-light { color: var(--yt-text-light); }
 .text-yt-blue { color: var(--yt-blue); }
 
-
 .thumbnail-fallback {
   display: flex;
   flex-direction: column;
@@ -205,7 +210,7 @@ body {
 }
 
 .dark body {
-  background-color: var(--bg-primary);
+  background-color: #22262B; ;
   color: var(--text-primary);
 }
 
@@ -228,4 +233,9 @@ body {
 .dark input::placeholder,
 .dark textarea::placeholder {
   color: var(--text-muted);
+}
+
+.dark input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(1.2);
+  opacity: 0.8;
 }

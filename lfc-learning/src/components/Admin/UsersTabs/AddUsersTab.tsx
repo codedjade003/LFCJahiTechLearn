@@ -283,7 +283,7 @@ const AddUsersTab = () => {
         <button
           onClick={registerUsers}
           disabled={loading}
-          className="mt-4 bg-lfc-red text-white px-6 py-2 rounded-lg hover:bg-lfc-red/90 disabled:opacity-50 flex items-center"
+          className="mt-4 bg-lfc-red dark:bg-red-800 text-white px-6 py-2 rounded-lg hover:bg-lfc-red/90 disabled:opacity-50 flex items-center"
         >
           <FaSave className="mr-2" />
           {loading ? 'Registering...' : 'Register Users'}
@@ -314,7 +314,7 @@ const AddUsersTab = () => {
           <button
             onClick={generateAdminHelper}
             disabled={loading || !adminForm.username}
-            className="bg-lfc-red text-white px-6 py-2 rounded-lg hover:bg-lfc-red/90 disabled:opacity-50"
+            className="bg-lfc-red dark:bg-red-800 text-white px-6 py-2 rounded-lg hover:bg-lfc-red/90 disabled:opacity-50"
           >
             {loading ? 'Generating...' : 'Generate Admin Helper'}
           </button>

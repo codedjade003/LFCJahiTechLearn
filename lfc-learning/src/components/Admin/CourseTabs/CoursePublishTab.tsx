@@ -248,9 +248,9 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
     return (
       <div className="p-6">
         <div className="animate-pulse space-y-4">
-          <div className="h-6 bg-yt-light-hover rounded w-3/4" />
-          <div className="h-4 bg-yt-light-hover rounded w-1/2" />
-          <div className="h-40 bg-yt-light-hover rounded" />
+          <div className="h-6 bg-gray-200 dark:bg-[var(--bg-tertiary)] rounded w-3/4" />
+          <div className="h-4 bg-gray-200 dark:bg-[var(--bg-tertiary)] rounded w-1/2" />
+          <div className="h-40 bg-gray-200 dark:bg-[var(--bg-tertiary)] rounded" />
         </div>
       </div>
     );
@@ -259,7 +259,7 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
   if (error) {
     return (
       <div className="p-6">
-        <div className="bg-red-100 border border-red-300 text-red-700 p-4 rounded-md">{error}</div>
+        <div className="bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-700 text-red-800 dark:text-red-200 p-4 rounded-md">{error}</div>
       </div>
     );
   }
@@ -267,7 +267,7 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
   if (!course) {
     return (
       <div className="p-6">
-        <div className="bg-yt-light-hover p-6 rounded-md text-yt-text-gray">No course data available.</div>
+        <div className="bg-gray-200 dark:bg-[var(--bg-tertiary)] p-6 rounded-md text-[var(--text-secondary)]">No course data available.</div>
       </div>
     );
   }
@@ -278,7 +278,7 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-4">
           {/* Thumbnail */}
-          <div className="w-40 h-24 bg-gray-100 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] rounded-md overflow-hidden flex-shrink-0 border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">
+          <div className="w-40 h-24 bg-gray-200 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] rounded-md overflow-hidden flex-shrink-0 border border-[var(--border-primary)] dark:border-[var(--border-primary)]">
             {course.thumbnail ? (
               // resolve to absolute URL if necessary
               <img
@@ -287,7 +287,7 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
                 className="w-full min-h-full object-cover"
               />
             ) : (
-              <div className="w-full min-h-full flex items-center justify-center text-yt-text-gray bg-gray-50 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]">
+              <div className="w-full min-h-full flex items-center justify-center text-[var(--text-secondary)] bg-gray-200 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]">
                 <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
@@ -296,16 +296,16 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
           </div>
 
           <div>
-            <h2 className="text-2xl font-bold text-yt-text-dark">{course.title}</h2>
-            <p className="text-sm text-yt-text-gray mt-1 max-w-2xl">{course.description}</p>
+            <h2 className="text-2xl font-bold text-[var(--text-primary)]">{course.title}</h2>
+            <p className="text-sm text-[var(--text-secondary)] mt-1 max-w-2xl">{course.description}</p>
 
             <div className="mt-3 flex flex-wrap gap-2 items-center">
-              <span className="px-2 py-1 bg-gray-100 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] rounded-md text-xs text-yt-text-dark font-medium">{course.level}</span>
+              <span className="px-2 py-1 bg-gray-200 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] rounded-md text-xs text-[var(--text-primary)] font-medium">{course.level}</span>
               {toArray(course.categories).map((c, idx) => (
-                <span key={idx} className="px-2 py-1 bg-gray-100 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] rounded-md text-xs text-yt-text-dark font-medium">{c}</span>
+                <span key={idx} className="px-2 py-1 bg-gray-200 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] rounded-md text-xs text-[var(--text-primary)] font-medium">{c}</span>
               ))}
               {toArray(course.tags).map((t, idx) => (
-                <span key={`tag-${idx}`} className="px-2 py-1 bg-gray-100 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] rounded-md text-xs text-yt-text-dark font-medium">#{t}</span>
+                <span key={`tag-${idx}`} className="px-2 py-1 bg-gray-200 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] rounded-md text-xs text-[var(--text-primary)] font-medium">#{t}</span>
               ))}
             </div>
 
@@ -315,15 +315,15 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
                 disabled={togglingPublic}
                 className={`px-4 py-2 rounded-md font-medium flex items-center gap-2 transition ${
                   course.isPublic 
-                    ? "bg-red-600 text-white hover:bg-red-700" 
-                    : "bg-white border border-gray-300 text-yt-text-dark hover:bg-gray-50 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]"
+                    ? "bg-lfc-red dark:bg-red-800 text-gray-200 hover:bg-lfc-red-hover dark:hover:bg-red-700" 
+                    : "bg-gray-200 border border-gray-300 text-[var(--text-primary)] hover:bg-gray-200 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]"
                 }`}
                 title={course.isPublic ? "Make private" : "Make public"}
               >
                 {course.isPublic ? <FaEye /> : <FaEyeSlash />} {course.isPublic ? "Public" : "Private"}
               </button>
 
-              <label className="flex items-center gap-2 text-sm text-yt-text-gray">
+              <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
                 <input type="checkbox" checked={notifyAll} onChange={(e) => setNotifyAll(e.target.checked)} className="rounded" />
                 <span>Notify all users on publish</span>
               </label>
@@ -333,12 +333,12 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
 
         {/* promo video preview */}
         <div className="w-80">
-          <h4 className="text-sm font-medium text-yt-text-dark mb-2">Promo Video</h4>
-          <div className="w-full aspect-video bg-gray-50 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-md overflow-hidden border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">
+          <h4 className="text-sm font-medium text-[var(--text-primary)] mb-2">Promo Video</h4>
+          <div className="w-full aspect-video bg-gray-200 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-md overflow-hidden border border-[var(--border-primary)] dark:border-[var(--border-primary)]">
             {course.promoVideo ? (
               <video src={course.promoVideo.startsWith("http") ? course.promoVideo : `${API_BASE}${course.promoVideo}`} controls className="w-full min-h-full object-contain" />
             ) : (
-              <div className="w-full min-h-full flex items-center justify-center text-yt-text-gray p-4 bg-gray-50 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]">
+              <div className="w-full min-h-full flex items-center justify-center text-[var(--text-secondary)] p-4 bg-gray-200 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]">
                 <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
@@ -353,9 +353,9 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Left: overview */}
         <div className="flex-1 space-y-4 min-w-0">
-          <section className="bg-white dark:bg-[var(--bg-elevated)] p-5 rounded-lg shadow-sm border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">
-            <h3 className="text-lg font-semibold text-yt-text-dark mb-3">Overview</h3>
-            <div className="grid grid-cols-2 gap-4 text-sm text-yt-text-dark">
+          <section className="bg-gray-200 dark:bg-[var(--bg-elevated)] p-5 rounded-lg shadow-sm border border-[var(--border-primary)] dark:border-[var(--border-primary)]">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">Overview</h3>
+            <div className="grid grid-cols-2 gap-4 text-sm text-[var(--text-primary)]">
               <div><span className="font-medium">Duration:</span> {course.duration || "—"}</div>
               <div><span className="font-medium">Created:</span> {course.createdAt ? new Date(course.createdAt).toLocaleString() : "—"}</div>
               <div><span className="font-medium">Instructor:</span> {course.instructor?.name || "Unknown"}</div>
@@ -367,61 +367,61 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
               <div>
                 <h4 className="font-medium mb-2">Objectives</h4>
                 {toArray(course.objectives).length ? (
-                  <ul className="list-disc pl-5 text-yt-text-dark space-y-1">
+                  <ul className="list-disc pl-5 text-[var(--text-primary)] space-y-1">
                     {toArray(course.objectives).map((o, i) => <li key={i}>{o}</li>)}
                   </ul>
-                ) : <div className="text-yt-text-gray">No objectives provided.</div>}
+                ) : <div className="text-[var(--text-secondary)]">No objectives provided.</div>}
               </div>
               <div>
                 <h4 className="font-medium mb-2">Prerequisites</h4>
                 {toArray(course.prerequisites).length ? (
-                  <ul className="list-disc pl-5 text-yt-text-dark space-y-1">
+                  <ul className="list-disc pl-5 text-[var(--text-primary)] space-y-1">
                     {toArray(course.prerequisites).map((p, i) => <li key={i}>{p}</li>)}
                   </ul>
-                ) : <div className="text-yt-text-gray">No prerequisites provided.</div>}
+                ) : <div className="text-[var(--text-secondary)]">No prerequisites provided.</div>}
               </div>
             </div>
           </section>
 
           {/* Sections -> modules */}
-          <section className="bg-white dark:bg-[var(--bg-elevated)] p-5 rounded-lg shadow-sm border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-yt-text-dark">Sections & Modules</h3>
-              <div className="text-sm text-yt-text-gray">{(course.sections || []).length} sections</div>
+          <section className="bg-gray-200 dark:bg-[var(--bg-elevated)] p-5 rounded-lg shadow-sm border border-[var(--border-primary)] dark:border-[var(--border-primary)]">            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-[var(--text-primary)]">Sections & Modules</h3>
+              <div className="text-sm text-[var(--text-secondary)]">{(course.sections || []).length} sections</div>
             </div>
 
             {(course.sections || []).length === 0 ? (
-              <div className="text-yt-text-gray">No sections added yet.</div>
+              <div className="text-[var(--text-secondary)]">No sections added yet.</div>
             ) : (
               <div className="space-y-4">
                 {(course.sections || []).map((section, si) => {
                   const sid = section._id || `sec-${si}`;
                   return (
-                    <div key={sid} className="border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)] rounded-md overflow-hidden">
+                    <div key={sid} className="border border-[var(--border-primary)] dark:border-[var(--border-primary)] rounded-md overflow-hidden">
                       <button
                         type="button"
                         onClick={() => setSectionsOpen((s) => ({ ...s, [sid]: !s[sid] }))}
-                        className="w-full text-left px-4 py-3 flex items-center justify-between bg-gray-50 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] hover:bg-gray-100 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] transition-colors"
+                        className="w-full text-left px-4 py-3 flex items-center justify-between bg-gray-200 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] hover:bg-gray-200 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] transition-colors"
                       >
                         <div>
-                          <div className="font-medium text-yt-text-dark">{section.title}</div>
-                          {section.description && <div className="text-xs text-yt-text-gray mt-1">{section.description}</div>}
+                          <div className="font-medium text-[var(--text-primary)]">{section.title}</div>
+                          {section.description && <div className="text-xs text-[var(--text-secondary)] mt-1">{section.description}</div>}
                         </div>
-                        <div className="text-xs text-yt-text-gray">{sectionsOpen[sid] ? "Collapse" : "Expand"}</div>
+                        <div className="text-xs text-[var(--text-secondary)]">{sectionsOpen[sid] ? "Collapse" : "Expand"}</div>
                       </button>
 
                       {sectionsOpen[sid] && (
-                        <div className="p-4 bg-white dark:bg-[var(--bg-elevated)]">
+                        <div className="p-4 bg-gray-200 dark:bg-[var(--bg-elevated)]">
                           {section.modules && section.modules.length ? (
                             <ul className="space-y-3">
                               {section.modules.map((m, mi) => (
-                                <li key={m._id || `m-${mi}`} className="p-3 border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)] rounded-md">
+                                <li key={m._id || `m-${mi}`} className="p-3 border border-[var(--border-primary)] dark:border-[var(--border-primary)] rounded-md">
                                   <div className="flex items-start gap-4">
-                                    <div className="w-12 h-12 bg-gray-100 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] rounded-md flex items-center justify-center text-sm font-medium">
+                                    <div className="w-12 h-12 bg-gray-200 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] rounded-md flex items-center justify-center text-sm font-medium">
                                       {m.type?.toUpperCase?.() || m.type}
                                     </div>
                                     <div className="flex-1">
                                       <div className="font-medium">{m.title}</div>
-                                      {m.duration && <div className="text-xs text-yt-text-gray mt-1">Duration: {m.duration}</div>}
+                                      {m.duration && <div className="text-xs text-[var(--text-secondary)] mt-1">Duration: {m.duration}</div>}
                                       {m.contentUrl && (
                                         <div className="mt-2">
                                           {m.type === "video" ? (
@@ -435,17 +435,17 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
                                               href={m.contentUrl.startsWith("http") ? m.contentUrl : `${API_BASE}${m.contentUrl}`} 
                                               target="_blank" 
                                               rel="noreferrer" 
-                                              className="text-sm text-red-600 hover:text-red-700 underline inline-flex items-center gap-2"
+                                              className="text-sm text-red-600 hover:text-red-800 dark:text-red-200 underline inline-flex items-center gap-2"
                                             >
                                               <FaDownload /> View PDF
                                             </a>
                                           ) : (
-                                            <div className="text-xs text-yt-text-gray">Content URL: {m.contentUrl}</div>
+                                            <div className="text-xs text-[var(--text-secondary)]">Content URL: {m.contentUrl}</div>
                                           )}
                                         </div>
                                       )}
                                       {m.questions && m.questions.length > 0 && (
-                                        <div className="mt-2 text-xs text-yt-text-gray">
+                                        <div className="mt-2 text-xs text-[var(--text-secondary)]">
                                           {m.questions.length} question(s)
                                         </div>
                                       )}
@@ -455,7 +455,7 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
                               ))}
                             </ul>
                           ) : (
-                            <div className="text-yt-text-gray">No modules in this section.</div>
+                            <div className="text-[var(--text-secondary)]">No modules in this section.</div>
                           )}
                         </div>
                       )}
@@ -467,23 +467,23 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
           </section>
 
           {/* Assignments */}
-          <section className="bg-white dark:bg-[var(--bg-elevated)] p-5 rounded-lg shadow-sm border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-yt-text-dark">Assignments</h3>
-              <div className="text-sm text-yt-text-gray">{(course.assignments || []).length}</div>
+          <section className="bg-gray-200 dark:bg-[var(--bg-elevated)] p-5 rounded-lg shadow-sm border border-[var(--border-primary)] dark:border-[var(--border-primary)]">            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-[var(--text-primary)]">Assignments</h3>
+              <div className="text-sm text-[var(--text-secondary)]">{(course.assignments || []).length}</div>
             </div>
 
             {(course.assignments || []).length === 0 ? (
-              <div className="text-yt-text-gray">No assignments added.</div>
+              <div className="text-[var(--text-secondary)]">No assignments added.</div>
             ) : (
               <div className="space-y-3">
                 {(course.assignments || []).map((a, i) => (
-                  <div key={a._id || `a-${i}`} className="p-3 border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)] rounded-md">
+                  <div key={a._id || `a-${i}`} className="p-3 border border-[var(--border-primary)] dark:border-[var(--border-primary)] rounded-md">
                     <div className="flex justify-between items-start">
                       <div>
                         <div className="font-medium">{a.title}</div>
-                        {a.instructions && <div className="text-sm text-yt-text-gray mt-1">{a.instructions}</div>}
+                        {a.instructions && <div className="text-sm text-[var(--text-secondary)] mt-1">{a.instructions}</div>}
                       </div>
-                      <div className="text-xs text-yt-text-gray whitespace-nowrap">
+                      <div className="text-xs text-[var(--text-secondary)] whitespace-nowrap">
                         Due: {a.dueDate ? new Date(a.dueDate).toLocaleDateString() : "—"}
                       </div>
                     </div>
@@ -494,43 +494,43 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
           </section>
 
           {/* Project */}
-          <section className="bg-white dark:bg-[var(--bg-elevated)] p-5 rounded-lg shadow-sm border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">            <h3 className="text-lg font-semibold text-yt-text-dark mb-3">Project</h3>
+          <section className="bg-gray-200 dark:bg-[var(--bg-elevated)] p-5 rounded-lg shadow-sm border border-[var(--border-primary)] dark:border-[var(--border-primary)]">            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">Project</h3>
             {course.project ? (
               <div>
                 <div className="font-medium">{course.project.title}</div>
-                <p className="text-sm text-yt-text-gray mt-1">{course.project.instructions}</p>
-                <div className="mt-2 text-xs text-yt-text-gray">
+                <p className="text-sm text-[var(--text-secondary)] mt-1">{course.project.instructions}</p>
+                <div className="mt-2 text-xs text-[var(--text-secondary)]">
                   Submission: {course.project.submissionType || "file_upload"} • Due: {course.project.dueDate ? new Date(course.project.dueDate).toLocaleDateString() : "—"}
                 </div>
               </div>
             ) : (
-              <div className="text-yt-text-gray">No project configured.</div>
+              <div className="text-[var(--text-secondary)]">No project configured.</div>
             )}
           </section>
         </div>
 
         {/* Right: controls / preview */}
         <aside className="w-full lg:w-96 space-y-4 flex-shrink-0">
-          <div className="bg-white dark:bg-[var(--bg-elevated)] p-5 rounded-lg shadow-sm border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">
-            <h4 className="text-sm font-semibold text-yt-text-dark mb-3">Instructor</h4>
+          <div className="bg-gray-200 dark:bg-[var(--bg-elevated)] p-5 rounded-lg shadow-sm border border-[var(--border-primary)] dark:border-[var(--border-primary)]">
+            <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Instructor</h4>
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">
+              <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] border border-[var(--border-primary)] dark:border-[var(--border-primary)]">
                 {course.instructor?.avatar ? (
                   <img src={course.instructor.avatar.startsWith("http") ? course.instructor.avatar : `${API_BASE}${course.instructor.avatar}`} alt={course.instructor?.name} className="w-full min-h-full object-cover" />
                 ) : (
-                  <div className="w-full min-h-full flex items-center justify-center bg-yellow-500 text-white font-bold">{(course.instructor?.name?.charAt(0) || "?").toUpperCase()}</div>
+                  <div className="w-full min-h-full flex items-center justify-center bg-yellow-500 dark:bg-yellow-600 text-gray-200 font-bold">{(course.instructor?.name?.charAt(0) || "?").toUpperCase()}</div>
                 )}
               </div>
               <div>
                 <div className="text-sm font-medium">{course.instructor?.name || "Unknown Instructor"}</div>
-                <div className="text-xs text-yt-text-gray">Sub Unit: {course.type}</div>
+                <div className="text-xs text-[var(--text-secondary)]">Sub Unit: {course.type}</div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-[var(--bg-elevated)] p-5 rounded-lg shadow-sm border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">
+          <div className="bg-gray-200 dark:bg-[var(--bg-elevated)] p-5 rounded-lg shadow-sm border border-[var(--border-primary)] dark:border-[var(--border-primary)]">
             <div className="flex items-center justify-between mb-2">
-              <div className="font-semibold text-yt-text-dark">Course Data</div>
+              <div className="font-semibold text-[var(--text-primary)]">Course Data</div>
               <button
                 onClick={() => {
                   const dataStr = JSON.stringify(course, null, 2);
@@ -542,20 +542,20 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
                   linkElement.setAttribute('download', exportFileDefaultName);
                   linkElement.click();
                 }}
-                className="px-3 py-1.5 bg-gray-100 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] hover:bg-gray-200 text-yt-text-dark rounded-md text-sm font-medium transition-colors flex items-center gap-2"
+                className="px-3 py-1.5 bg-gray-200 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] hover:bg-gray-200 text-[var(--text-primary)] rounded-md text-sm font-medium transition-colors flex items-center gap-2"
               >
                 <FaDownload className="text-sm" />
                 Download JSON
               </button>
             </div>
-            <div className="text-xs text-yt-text-gray">
+            <div className="text-xs text-[var(--text-secondary)]">
               Download the complete course data as a JSON file for backup or analysis.
             </div>
           </div>
 
-                    <div className="bg-white dark:bg-[var(--bg-elevated)] p-5 rounded-lg shadow-sm border border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">
-            <h4 className="text-sm font-semibold text-yt-text-dark mb-3">Preview & Publish</h4>
-            <div className="text-sm text-yt-text-gray mb-4">
+                    <div className="bg-gray-200 dark:bg-[var(--bg-elevated)] p-5 rounded-lg shadow-sm border border-[var(--border-primary)] dark:border-[var(--border-primary)]">
+            <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Preview & Publish</h4>
+            <div className="text-sm text-[var(--text-secondary)] mb-4">
               Look through the course contents above. Use the controls to change visibility, enroll users, or publish.
             </div>
 
@@ -568,7 +568,7 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
               <button
                 onClick={publishCourse}
                 disabled={publishing}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-red-600 text-white rounded-md hover:bg-red-700 transition font-medium"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-lfc-red dark:bg-red-800 text-gray-200 rounded-md hover:bg-lfc-red-hover dark:hover:bg-red-700 transition font-medium"
               >
                 <FaPaperPlane /> {publishing ? "Publishing..." : "Publish Course"}
               </button>
@@ -576,7 +576,7 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
               <button
                 onClick={enrollAllUsers}
                 disabled={enrollingAll}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-white dark:bg-[var(--bg-elevated)] border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] transition font-medium"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-200 dark:bg-[var(--bg-elevated)] border border-gray-300 rounded-md hover:bg-gray-200 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] transition font-medium"
                 title="Enroll all users (admin endpoint required)"
               >
                 <FaUsers /> {enrollingAll ? "Enrolling..." : "Enroll all users"}
@@ -584,12 +584,12 @@ export default function CoursePublishTab({ courseId }: { courseId: string }) {
 
               <button
                 onClick={enrollSomeUsersPrompt}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-white dark:bg-[var(--bg-elevated)] border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] transition font-medium"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-200 dark:bg-[var(--bg-elevated)] border border-gray-300 rounded-md hover:bg-gray-200 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] transition font-medium"
               >
                 <FaUsers /> Enroll specific users
               </button>
 
-              <div className="mt-2 flex items-center gap-2 text-sm text-yt-text-gray">
+              <div className="mt-2 flex items-center gap-2 text-sm text-[var(--text-secondary)]">
                 <input
                   id="notifyOnPublish"
                   type="checkbox"

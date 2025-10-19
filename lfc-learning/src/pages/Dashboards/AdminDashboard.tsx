@@ -84,38 +84,38 @@ export default function AdminDashboard(): JSX.Element {
       label: "Total Courses", 
       value: stats.totalCourses, 
       Icon: FaBook, 
-      iconBgClass: "bg-lfc-gold/20", 
-      iconColorClass: "text-lfc-red" 
+      iconBgClass: "bg-lfc-gold/20 dark:bg-lfc-gold", 
+      iconColorClass: "text-lfc-red dark:text-red-800" 
     },
     { 
       label: "Active Users", 
       value: stats.activeUsers, 
       Icon: FaUsers, 
-      iconBgClass: "bg-green-100", 
-      iconColorClass: "text-green-600" 
+      iconBgClass: "bg-green-100 dark:bg-green-900", 
+      iconColorClass: "text-green-600 dark:text-green-400" 
     },
     { 
       label: "Pending Assessments", 
       value: stats.pendingAssessments, 
       Icon: FaClipboardList, 
-      iconBgClass: "bg-yellow-100", 
-      iconColorClass: "text-yellow-600" 
+      iconBgClass: "bg-yellow-100 dark:bg-yellow-900", 
+      iconColorClass: "text-yellow-600 dark:text-yellow-400" 
     },
     { 
       label: "Potential Abscondees", 
       value: stats.atRiskUsers, 
       Icon: FaExclamationTriangle, 
-      iconBgClass: "bg-red-100", 
-      iconColorClass: "text-red-600" 
+      iconBgClass: "bg-red-100 dark:bg-red-800", 
+      iconColorClass: "text-red-600 dark:text-red-300" 
     },
   ];
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 space-y-6 p-3 sm:p-4 md:p-6 overflow-y-auto">
+      <div className="min-h-screen bg-gray-50 dark:bg-[var(--bg-primary)] space-y-6 p-3 sm:p-4 md:p-6 overflow-y-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map(i => (
-            <div key={i} className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-gray-800 rounded-lg shadow p-6 animate-pulse">
+            <div key={i} className="bg-white dark:bg-[var(--bg-secondary)] rounded-lg shadow p-6 animate-pulse">
               <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
               <div className="h-8 bg-gray-200 rounded w-1/3"></div>
             </div>
@@ -127,7 +127,7 @@ export default function AdminDashboard(): JSX.Element {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 space-y-6 p-3 sm:p-4 md:p-6 overflow-y-auto">
+    <div className="min-h-screen bg-gray-50 dark:bg-[var(--bg-primary)] space-y-6 p-3 sm:p-4 md:p-6 overflow-y-auto">
       {/* Onboarding Tour */}
       <OnboardingTour tourKey="adminDashboard" steps={adminDashboardTour} />
       
@@ -147,7 +147,7 @@ export default function AdminDashboard(): JSX.Element {
 
       {/* Recent Activity + Course Management */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
-        <div className="lg:col-span-2 bg-white dark:bg-[var(--bg-elevated)] dark:bg-gray-800 rounded-lg shadow" data-tour="recent-activity">
+        <div className="lg:col-span-2 bg-white dark:bg-[var(--bg-elevated)] border dark:border-[var(--border-primary)] rounded-lg shadow" data-tour="recent-activity">
           <RecentActivity items={stats.recentActivity} />
         </div>
         <CourseManagement />
@@ -161,7 +161,7 @@ export default function AdminDashboard(): JSX.Element {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <RecentUsers />
-        <div data-tour="pending-assessments">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)]" data-tour="pending-assessments">
           <PendingAssessments />
         </div>
       </div>

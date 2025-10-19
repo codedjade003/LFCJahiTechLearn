@@ -99,22 +99,22 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps)
       {/* Mobile header button */}
       <button
         onClick={() => setIsMobileOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-30 bg-lfc-red dark:bg-[var(--lfc-red)] text-white p-2 rounded-lg"
+        className="lg:hidden fixed top-4 left-4 z-30 bg-lfc-red dark:bg-red-800 text-white p-2 rounded-lg"
       >
         <FaBars className="text-lg" />
       </button>
 
-      <div
-        className={`sidebar fixed lg:relative ${
-          collapsed ? "w-20" : "w-64"
-        } bg-gradient-to-b from-lfc-red to-lfc-red/90 dark:from-[var(--lfc-red)] dark:to-[var(--lfc-red)]/90 text-white flex flex-col transition-all duration-300 h-screen z-50 transform ${
-          isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-        } shadow-2xl`}
-      >
+        <div
+          className={`sidebar fixed lg:relative ${
+            collapsed ? "w-20" : "w-64"
+          } bg-gradient-to-b from-lfc-red to-lfc-red/90 dark:from-red-800 dark:to-[var(--lfc-red)]/90 text-white flex flex-col transition-all duration-300 h-screen z-50 transform ${
+            isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+          } shadow-2xl border-r border-white/30 dark:border-lfc-gold/10 lg:bg-gradient-to-b lg:from-lfc-red lg:to-lfc-red/90 lg:dark:from-red-800 lg:dark:to-[var(--lfc-red)]/90 bg-white dark:bg-[var(--elevated)]`}
+        >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-lfc-gold dark:border-[var(--lfc-gold)]/30">
+        <div className="mt-1 flex items-center justify-between p-4 border-b border-lfc-gold dark:border-gray-200">
           <div className="flex items-center space-x-3">
-            <div className="relative h-10 w-10 bg-white dark:bg-[var(--bg-elevated)] rounded-xl p-1">
+            <div className="relative h-10 w-10 bg-white rounded-xl p-1">
               <img 
                 src="/logo.png" 
                 alt="LFC Jahi Tech" 
@@ -141,7 +141,7 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps)
         {/* User Profile */}
         <div 
           onClick={handleProfileClick}
-          className="p-4 border-b border-lfc-gold dark:border-[var(--lfc-gold)]/20 bg-lfc-red/50 dark:bg-[var(--lfc-red)]/50 cursor-pointer hover:bg-lfc-red/70 dark:bg-[var(--lfc-red)]/70 transition-all duration-200 group"
+          className="p-4 border-b border-lfc-gold dark:dark:border-gray-200 bg-lfc-red/50 dark:bg-red-800/50 cursor-pointer hover:bg-lfc-red/70 dark:hover:bg-red-700/50 transition-all duration-200 group"
         >
           <div className="flex items-center space-x-3">
             <div className="relative">
@@ -319,7 +319,7 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps)
         </nav>
 
         {/* Footer Actions */}
-        <div className="p-4 border-t border-lfc-gold dark:border-[var(--lfc-gold)]/20 space-y-2">
+        <div className="p-4 border-t border-lfc-gold dark:dark:border-gray-200 space-y-2">
           {/* Switch to Student Mode */}
           <Link
             to="/dashboard"

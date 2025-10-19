@@ -228,10 +228,10 @@ export default function ManageCourses() {
 
   if (loading) {
     return (
-      <div className="p-6">
+      <div className="p-6 bg-gradient-to-b dark:from-[var(--bg-primary)] dark:to-[var(--bg-elevated)]">
         <div className="animate-pulse space-y-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-32 bg-yt-light-hover rounded-lg"></div>
+            <div key={i} className="h-32 bg-gray-200 dark:bg-[var(--bg-tertiary)] rounded-lg"></div>
           ))}
         </div>
       </div>
@@ -239,7 +239,7 @@ export default function ManageCourses() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6 bg-gradient-to-b dark:from-[var(--bg-primary)] dark:to-[var(--bg-elevated)]">
       {/* Notification */}
       {notification.visible && (
         <Notification
@@ -249,12 +249,12 @@ export default function ManageCourses() {
         />
       )}
 
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-yt-text-dark">Manage Courses</h1>
+      <div className="flex justify-between items-center mb-6 ">
+        <h1 className="text-2xl font-bold text-[var(--text-primary)]">Manage Courses</h1>
         <button
           onClick={saveVisibilityChanges}
           disabled={saving}
-          className="flex items-center px-4 py-2 bg-lfc-red text-white rounded-md hover:bg-lfc-gold-dark disabled:opacity-50"
+          className="flex items-center px-4 py-2 bg-lfc-red dark:bg-red-800 text-gray-200 rounded-md hover:bg-lfc-red-hover dark:hover:bg-red-700 disabled:opacity-50"
         >
           <FaSave className="mr-2" />
           {saving ? "Saving..." : "Save Visibility Changes"}
@@ -262,11 +262,11 @@ export default function ManageCourses() {
       </div>
 
       {courses.length === 0 ? (
-        <div className="bg-white dark:bg-[var(--bg-elevated)] p-8 rounded-lg text-center border border-yt-light-border">
-          <p className="text-yt-text-gray mb-4">No courses found.</p>
+        <div className=" bg-gray-200 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-primary)] p-8 rounded-lg text-center border border-[var(--border-primary)]">
+          <p className="text-[var(--text-secondary)] mb-4">No courses found.</p>
           <button 
             onClick={handleCreate}
-            className="px-4 py-2 bg-lfc-red text-white rounded-md hover:bg-lfc-gold-dark"
+            className="px-4 py-2 bg-lfc-red dark:bg-red-800 text-gray-200 rounded-md hover:bg-lfc-red-hover dark:hover:bg-red-700"
           >
             Create Your First Course
           </button>
@@ -279,20 +279,20 @@ export default function ManageCourses() {
             return (
               <div
                 key={course._id}
-                className={`bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-shadow ${
-                  !canManage ? 'border-yellow-300 bg-yellow-50' : 'border-yt-light-border'
+                className={` bg-gray-300 dark:bg-[var(--bg-secondary)] rounded-lg shadow-sm border overflow-hidden hover:shadow-md dark:hover:shadow-lg transition-shadow ${
+                  !canManage ? 'border-yellow-300 dark:border-yellow-600 bg-yellow-50 dark:bg-yellow-900/20' : 'border-lfc-gold/20 dark:border-red-700/10'
                 }`}
               >
                 {/* Permission Indicator */}
                 {!canManage && (
-                  <div className="bg-yellow-100 border-b border-yellow-300 px-4 py-2 flex items-center text-yellow-800 text-sm">
+                  <div className="bg-yellow-100 dark:bg-yellow-900/30 border-b border-yellow-300 dark:border-yellow-700 px-4 py-2 flex items-center text-yellow-800 dark:text-yellow-200 text-sm">
                     <FaLock className="mr-2" />
                     Read Only
                   </div>
                 )}
 
                 {/* Thumbnail */}
-                <div className="h-48 bg-yt-light-hover overflow-hidden">
+                <div className="h-48 bg-gray-200 dark:bg-[var(--bg-tertiary)] overflow-hidden">
                   {course.thumbnail ? (
                     <img
                       src={resolveImageUrl(course.thumbnail)}
@@ -300,7 +300,7 @@ export default function ManageCourses() {
                       className="w-full min-h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full min-h-full flex items-center justify-center text-yt-text-gray">
+                    <div className="w-full min-h-full flex items-center justify-center text-[var(--text-secondary)]">
                       <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
                           d="M3 7h18M3 12h18M3 17h18" />
@@ -312,13 +312,13 @@ export default function ManageCourses() {
                 {/* Content */}
                 <div className="p-4">
                   <div className="flex items-start justify-between mb-3">
-                    <h3 className="font-semibold text-lg text-yt-text-dark line-clamp-2">
+                    <h3 className="font-semibold text-lg text-[var(--text-primary)] line-clamp-2">
                       {course.title}
                     </h3>
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => handleEditCourse(course._id)}
-                        className={`${canManage ? 'text-yt-text-gray hover:text-blue-500' : 'text-gray-300 cursor-not-allowed'}`}
+                        className={`${canManage ? 'text-[var(--text-secondary)] hover:text-blue-500' : 'text-[var(--text-muted)] cursor-not-allowed opacity-50'}`}
                         title={canManage ? "Edit course" : "No permission to edit"}
                         disabled={!canManage}
                       >
@@ -326,7 +326,7 @@ export default function ManageCourses() {
                       </button>
                       <button
                         onClick={() => handleDeleteCourse(course._id)}
-                        className={`${canManage ? 'text-yt-text-gray hover:text-lfc-red' : 'text-gray-300 cursor-not-allowed'}`}
+                        className={`${canManage ? 'text-[var(--text-secondary)] hover:text-lfc-red' : 'text-[var(--text-muted)] cursor-not-allowed opacity-50'}`}
                         title={canManage ? "Delete course" : "No permission to delete"}
                         disabled={!canManage}
                       >
@@ -335,15 +335,15 @@ export default function ManageCourses() {
                     </div>
                   </div>
 
-                  <p className="text-yt-text-gray text-sm mb-3 line-clamp-3">
+                  <p className="text-[var(--text-secondary)] text-sm mb-3 line-clamp-3">
                     {course.description}
                   </p>
 
                   <div className="flex items-center justify-between mb-3">
-                    <span className="inline-block bg-yt-light-hover px-2 py-1 rounded text-xs text-yt-text-dark">
+                    <span className="inline-block bg-gray-200 dark:bg-[var(--bg-tertiary)] px-2 py-1 rounded text-xs text-[var(--text-primary)]">
                       {course.categories[0]}
                     </span>
-                    <span className="inline-block bg-yt-light-hover px-2 py-1 rounded text-xs text-yt-text-dark">
+                    <span className="inline-block bg-gray-200 dark:bg-[var(--bg-tertiary)] px-2 py-1 rounded text-xs text-[var(--text-primary)]">
                       {course.level}
                     </span>
                   </div>
@@ -357,19 +357,19 @@ export default function ManageCourses() {
                         className="w-8 h-8 rounded-full mr-2 object-cover"
                       />
                     ) : (
-                      <div className="w-8 h-8 rounded-full bg-lfc-gold flex items-center justify-center mr-2">
+                      <div className="w-8 h-8 rounded-full bg-lfc-gold dark:bg-lfc-gold/80 flex items-center justify-center mr-2">
                         <span className="text-white text-sm font-medium">
                           {course.instructor?.name?.charAt(0)?.toUpperCase() || '?'}
                         </span>
                       </div>
                     )}
-                    <span className="text-sm text-yt-text-dark">
+                    <span className="text-sm text-[var(--text-primary)]">
                       {course.instructor?.name || 'Unknown Instructor'}
                     </span>
                   </div>
 
                   {/* Visibility Toggle */}
-                  <div className="flex items-center justify-between pt-3 border-t border-yt-light-border">
+                  <div className="flex items-center justify-between pt-3 border-t border-[var(--border-primary)]">
                     <label className={`flex items-center ${canManage ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}>
                       <div className="relative">
                         <input
@@ -380,13 +380,13 @@ export default function ManageCourses() {
                           disabled={!canManage}
                         />
                         <div className={`block w-10 h-6 rounded-full transition-colors ${
-                          visibilityUpdates[course._id] ? 'bg-lfc-red' : 'bg-gray-300'
+                          visibilityUpdates[course._id] ? 'bg-lfc-red' : 'bg-gray-400 dark:bg-[var(--bg-tertiary)]'
                         }`}></div>
-                        <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${
+                        <div className={`absolute left-1 top-1  bg-gray-200 dark:bg-[var(--bg-secondary)] w-4 h-4 rounded-full transition-transform ${
                           visibilityUpdates[course._id] ? 'transform translate-x-4' : ''
                         }`}></div>
                       </div>
-                      <span className="ml-2 text-sm font-medium text-yt-text-dark">
+                      <span className="ml-2 text-sm font-medium text-[var(--text-primary)]">
                         {visibilityUpdates[course._id] ? <FaEye /> : <FaEyeSlash />}
                         {visibilityUpdates[course._id] ? ' Public' : ' Private'}
                       </span>

@@ -17,14 +17,14 @@ export default function StatCard({
   value,
   Icon,
   iconBgClass = "bg-lfc-gold/20",
-  iconColorClass = "text-lfc-red dark:text-[var(--lfc-red)]",
+  iconColorClass = "text-lfc-red dark:text-red-800",
 }: StatCardProps) {
   return (
     <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] p-4 border dark:border-[var(--border-primary)]">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm text-lfc-gray dark:text-[var(--text-secondary)]">{label}</p>
-          <h3 className="text-2xl font-bold text-lfc-red dark:text-[var(--lfc-red)]">{value}</h3>
+          <h3 className="text-2xl font-bold text-lfc-red dark:text-red-800">{value}</h3>
         </div>
 
         <div className={`p-3 rounded-full ${iconBgClass} ${iconColorClass} flex items-center justify-center`}>

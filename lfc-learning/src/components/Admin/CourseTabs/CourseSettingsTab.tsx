@@ -110,7 +110,7 @@ export default function CourseSettingsTab({ courseId }: CourseSettingsTabProps) 
   if (loading) {
     return (
       <div className="p-6">
-        <p className="text-yt-text-gray">Loading settings...</p>
+        <p className="text-[var(--text-secondary)]">Loading settings...</p>
       </div>
     );
   }
@@ -127,13 +127,13 @@ export default function CourseSettingsTab({ courseId }: CourseSettingsTabProps) 
 
   return (
     <div className="p-6 space-y-6">
-      <h2 className="text-2xl font-bold text-yt-text-dark mb-4">Course Settings</h2>
+      <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-4">Course Settings</h2>
 
     {/* Duration Input - Dual Purpose */}
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* Display Duration (Student-facing) */}
       <div>
-        <label className="block text-sm font-medium text-yt-text-dark mb-2">
+        <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
           Display Duration
         </label>
         <input
@@ -141,14 +141,14 @@ export default function CourseSettingsTab({ courseId }: CourseSettingsTabProps) 
           value={settings.duration}
           onChange={(e) => setSettings({ ...settings, duration: e.target.value })}
           placeholder="e.g. 3 weeks, 2 months"
-          className="w-full px-3 py-2 border border-yt-light-border rounded-md"
+          className="w-full px-3 py-2 border border-[var(--border-primary)] rounded-md"
         />
-        <p className="text-xs text-gray-500 mt-1">Shown to students</p>
+        <p className="text-xs text-[var(--text-muted)] mt-1">Shown to students</p>
       </div>
 
       {/* Calculation Duration (Admin-only) */}
       <div>
-        <label className="block text-sm font-medium text-yt-text-dark mb-2">
+        <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
           Calculation Duration *
         </label>
         <div className="flex gap-2">
@@ -164,7 +164,7 @@ export default function CourseSettingsTab({ courseId }: CourseSettingsTabProps) 
               }
             })}
             placeholder="e.g. 21"
-            className="w-1/2 px-3 py-2 border border-yt-light-border rounded-md"
+            className="w-1/2 px-3 py-2 border border-[var(--border-primary)] rounded-md"
           />
           <select
             value={settings.estimatedDuration?.unit || "days"}
@@ -175,14 +175,14 @@ export default function CourseSettingsTab({ courseId }: CourseSettingsTabProps) 
                 unit: e.target.value as "days" | "weeks" | "months" // Add type assertion
               }
             })}
-            className="w-1/2 px-3 py-2 border border-yt-light-border rounded-md"
+            className="w-1/2 px-3 py-2 border border-[var(--border-primary)] rounded-md"
           >
             <option value="days">Days</option>
             <option value="weeks">Weeks</option>
             <option value="months">Months</option>
           </select>
         </div>
-        <p className="text-xs text-gray-500 mt-1">
+        <p className="text-xs text-[var(--text-muted)] mt-1">
           Used for progress tracking and alerts
         </p>
       </div>
@@ -190,8 +190,8 @@ export default function CourseSettingsTab({ courseId }: CourseSettingsTabProps) 
 
     {/* Helper text showing the conversion */}
     {settings.estimatedDuration?.value && (
-      <div className="bg-blue-50 p-3 rounded-md">
-        <p className="text-sm text-blue-700">
+      <div className="bg-blue-100 dark:bg-blue-900/20 p-3 rounded-md">
+        <p className="text-sm text-blue-800 dark:text-blue-200">
           <strong>Calculation:</strong> {settings.estimatedDuration.value} {settings.estimatedDuration.unit} = 
           {" "}{calculateTotalDays(settings.estimatedDuration)} days for progress tracking
         </p>
@@ -200,11 +200,11 @@ export default function CourseSettingsTab({ courseId }: CourseSettingsTabProps) 
 
       {/* Type */}
       <div>
-        <label className="block text-sm font-medium text-yt-text-dark mb-2">Course Type</label>
+        <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Course Type</label>
         <select
           value={settings.type}
           onChange={(e) => setSettings({ ...settings, type: e.target.value })}
-          className="w-full px-3 py-2 border border-yt-light-border rounded-md focus:ring-lfc-red focus:border-lfc-red"
+          className="w-full px-3 py-2 border border-[var(--border-primary)] rounded-md focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold"
         >
           <option>Video</option>
           <option>Audio</option>
@@ -219,7 +219,7 @@ export default function CourseSettingsTab({ courseId }: CourseSettingsTabProps) 
       {/* Dynamic fields */}
       {(["prerequisites", "objectives", "tags"] as const).map((field) => (
         <div key={field}>
-          <label className="block text-sm font-medium text-yt-text-dark mb-2 capitalize">{field}</label>
+          <label className="block text-sm font-medium text-[var(--text-primary)] mb-2 capitalize">{field}</label>
           {settings[field].map((item: string, i: number) => (
             <input
               key={i}
@@ -227,13 +227,13 @@ export default function CourseSettingsTab({ courseId }: CourseSettingsTabProps) 
               value={item}
               onChange={(e) => handleArrayChange(field, i, e.target.value)}
               placeholder={`Enter ${field.slice(0, -1)}...`}
-              className="w-full px-3 py-2 mb-2 border border-yt-light-border rounded-md focus:ring-lfc-red focus:border-lfc-red"
+              className="w-full px-3 py-2 mb-2 border border-[var(--border-primary)] rounded-md focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold"
             />
           ))}
           <button
             type="button"
             onClick={() => handleAddField(field)}
-            className="text-sm text-blue-500 hover:underline"
+            className="text-sm text-blue-600 dark:text-blue-400 hover:underline hover:text-blue-800 dark:hover:text-blue-300"
           >
             + Add {field.slice(0, -1)}
           </button>
@@ -244,7 +244,7 @@ export default function CourseSettingsTab({ courseId }: CourseSettingsTabProps) 
       <button
         onClick={handleSave}
         disabled={saving}
-        className="flex items-center px-4 py-2 bg-lfc-red text-white rounded-md hover:bg-lfc-gold-dark disabled:opacity-50"
+        className="flex items-center px-4 py-2 bg-lfc-red dark:bg-red-800 text-gray-200 rounded-md hover:bg-lfc-red-hover dark:hover:bg-red-700 disabled:opacity-50"
       >
         <FaSave className="mr-2" />
         {saving ? "Saving..." : "Save Settings"}

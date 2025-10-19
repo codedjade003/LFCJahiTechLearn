@@ -92,7 +92,7 @@ export default function PendingAssessments() {
     return (
       <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)]">
         <div className="p-6 border-b">
-          <h2 className="text-lg font-semibold text-redCustom">Pending Assessments</h2>
+          <h2 className="text-lg font-semibold text-redCustom dark:text-gray-200">Pending Assessments</h2>
         </div>
         <div className="p-6 space-y-4">
           {[1, 2, 3].map(i => (
@@ -110,9 +110,9 @@ export default function PendingAssessments() {
   }
 
   return (
-    <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)]">
+    <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg">
       <div className="p-6 border-b flex justify-between items-center">
-        <h2 className="text-lg font-semibold text-redCustom">Pending Assessments</h2>
+        <h2 className="text-lg font-semibold text-redCustom dark:text-gray-200">Pending Assessments</h2>
         <Link to="/admin/dashboard/assessments/assignments" className="text-goldCustom hover:text-redCustom text-sm">
           View All
         </Link>

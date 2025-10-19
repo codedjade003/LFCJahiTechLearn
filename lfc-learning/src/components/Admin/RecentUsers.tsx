@@ -109,9 +109,9 @@ export default function RecentUsers() {
 
   if (loading) {
     return (
-      <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)]">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)]">
         <div className="p-6 border-b">
-          <h2 className="text-lg font-semibold text-redCustom">Recent Users</h2>
+          <h2 className="text-lg font-semibold text-redCustom dark:text-gray-200">Recent Users</h2>
         </div>
         <div className="p-6">
           <div className="animate-pulse space-y-4">
@@ -131,20 +131,20 @@ export default function RecentUsers() {
   }
 
   return (
-    <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)]">
+    <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)]">
       <div className="p-6 border-b flex justify-between items-center">
-        <h2 className="text-lg font-semibold text-redCustom">Recent Users</h2>
+        <h2 className="text-lg font-semibold text-redCustom dark:text-gray-200">Recent Users</h2>
         <span className="text-sm text-gray-500">
           {totalUsers} total users
         </span>
       </div>
-      <div className="p-6 overflow-x-auto">
+      <div className="p-6 dark:bg-[var(--bg-elevated)] overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
         {users.length === 0 ? (
           <div className="text-center py-4 text-gray-500">No users found</div>
         ) : (
           <>
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50 dark:bg-[var(--bg-secondary)]">
+              <thead className="bg-gray-50 dark:bg-black/10">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Courses</th>
@@ -155,25 +155,25 @@ export default function RecentUsers() {
               </thead>
               <tbody className="bg-white dark:bg-[var(--bg-elevated)] divide-y divide-gray-200">
                 {users.map((user) => (
-                  <tr key={user._id} className="hover:bg-gray-50 dark:bg-[var(--bg-secondary)]">
+                  <tr key={user._id} className="hover:bg-gray-50 dark:bg-black/10">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className={`flex-shrink-0 h-10 w-10 rounded-full ${getProgressColor(user.progress)} flex items-center justify-center`}>
+                        <div className={`flex-shrink-0 h-10 w-10 rounded-full dark:bg-red-800 dark:text-red-300 ${getProgressColor(user.progress)} flex items-center justify-center`}>
                           <FaUser />
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900 dark:text-[var(--text-primary)]">{user.name}</div>
+                          <div className="text-sm font-medium text-gray-900 dark:text-gray-200">{user.name}</div>
                           <div className="text-sm text-gray-500">{user.email}</div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-400">
                         {user.courses}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="w-24 bg-gray-200 rounded-full h-2">
+                      <div className="w-24 bg-gray-200 dark:bg-gray-400 rounded-full h-2">
                         <div
                           className="bg-goldCustom h-2 rounded-full"
                           style={{ width: `${user.progress}%` }}
@@ -212,14 +212,14 @@ export default function RecentUsers() {
                   <button
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-[var(--text-secondary)] bg-white dark:bg-[var(--bg-elevated)] border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-[var(--bg-secondary)] disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-[var(--text-secondary)] bg-white dark:bg-[var(--bg-elevated)] border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-black/10 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Previous
                   </button>
                   <button
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 dark:text-[var(--text-secondary)] bg-white dark:bg-[var(--bg-elevated)] border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-[var(--bg-secondary)] disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 dark:text-[var(--text-secondary)] bg-white dark:bg-[var(--bg-elevated)] border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-black/10 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Next
                   </button>
@@ -239,7 +239,7 @@ export default function RecentUsers() {
                       <button
                         onClick={() => handlePageChange(currentPage - 1)}
                         disabled={currentPage === 1}
-                        className="relative inline-flex items-center px-2 py-2 text-gray-400 rounded-l-md border border-gray-300 bg-white dark:bg-[var(--bg-elevated)] hover:bg-gray-50 dark:bg-[var(--bg-secondary)] disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="relative inline-flex items-center px-2 py-2 text-gray-400 rounded-l-md border border-gray-300 bg-white dark:bg-[var(--bg-elevated)] hover:bg-gray-50 dark:bg-black/10 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <FaChevronLeft className="h-4 w-4" />
                       </button>
@@ -250,8 +250,8 @@ export default function RecentUsers() {
                           onClick={() => handlePageChange(page)}
                           className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
                             currentPage === page
-                              ? "z-10 bg-redCustom border-redCustom text-white"
-                              : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50 dark:bg-[var(--bg-secondary)]"
+                              ? "z-10 bg-redCustom border-redCustom text-white dark:text-gray-200"
+                              : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50 dark:bg-black/10"
                           }`}
                         >
                           {page}
@@ -261,7 +261,7 @@ export default function RecentUsers() {
                       <button
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
-                        className="relative inline-flex items-center px-2 py-2 text-gray-400 rounded-r-md border border-gray-300 bg-white dark:bg-[var(--bg-elevated)] hover:bg-gray-50 dark:bg-[var(--bg-secondary)] disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="relative inline-flex items-center px-2 py-2 text-gray-400 rounded-r-md border border-gray-300 bg-white dark:bg-[var(--bg-elevated)] hover:bg-gray-50 dark:bg-black/10 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <FaChevronRight className="h-4 w-4" />
                       </button>

@@ -82,7 +82,7 @@ export default function Users() {
       <div className="flex flex-1 relative">
         {/* Sidebar */}
         <aside
-          className={`absolute md:static inset-y-0 left-0 z-30 w-64 bg-white border-r border-yt-light-border flex-shrink-0 overflow-y-auto shadow-sm transform transition-transform duration-300 ease-in-out ${
+          className={`absolute md:static inset-y-0 left-0 z-30 w-64 bg-white dark:bg-[var(--bg-elevated)] border-r border-yt-light-border flex-shrink-0 overflow-y-auto shadow-sm transform transition-transform duration-300 ease-in-out ${
             isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
           }`}
         >
@@ -101,7 +101,7 @@ export default function Users() {
                       }}
                       className={`w-full flex items-center px-3 py-3 rounded-lg text-sm mb-1 transition-colors ${
                         activeTab === tab.key
-                          ? "bg-gray-100 text-lfc-gold font-medium shadow-sm"
+                          ? "bg-gray-100 dark:bg-gray-700 text-lfc-gold font-medium shadow-sm"
                           : "text-yt-text-dark hover:bg-yt-light-hover"
                       }`}
                     >

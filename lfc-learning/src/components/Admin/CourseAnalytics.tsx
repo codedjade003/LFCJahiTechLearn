@@ -164,7 +164,7 @@ export default function CourseAnalytics() {
   return (
     <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)]">
       <div className="p-6 border-b">
-        <h2 className="text-lg font-semibold text-redCustom dark:text-[var(--lfc-red)]">Course Analytics</h2>
+        <h2 className="text-lg font-semibold text-redCustom dark:text-gray-200">Course Analytics</h2>
         {error && (
           <div className="mt-2 text-sm text-red-600 dark:text-[var(--error)] bg-red-50 dark:bg-red-900/20 p-2 rounded">
             {error}
@@ -264,23 +264,23 @@ export default function CourseAnalytics() {
 
         {/* Additional Metrics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-          <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
-            <p className="text-sm text-blue-600 font-medium">Avg. Time to Complete</p>
-            <p className="font-bold text-lg text-blue-800">{formatTime(analytics.averageTime)}</p>
+          <div className="bg-blue-50 dark:bg-blue-900 p-4 rounded-lg border border-blue-100">
+            <p className="text-sm text-blue-600 dark:text-blue-200 font-medium">Avg. Time to Complete</p>
+            <p className="font-bold text-lg text-blue-800 dark:text-blue-200">{formatTime(analytics.averageTime)}</p>
           </div>
-          <div className="bg-green-50 p-4 rounded-lg border border-green-100">
-            <p className="text-sm text-green-600 font-medium">Avg. Score</p>
-            <p className="font-bold text-lg text-green-800">{analytics.averageScore}%</p>
+          <div className="bg-green-50 dark:bg-green-900 p-4 rounded-lg border border-green-100 dark:border-green-300">
+            <p className="text-sm text-green-600 dark:text-green-200 font-medium">Avg. Score</p>
+            <p className="font-bold text-lg text-green-800 dark:text-green-200">{analytics.averageScore}%</p>
           </div>
-          <div className="bg-purple-50 p-4 rounded-lg border border-purple-100">
-            <p className="text-sm text-purple-600 font-medium">Dropout Rate</p>
-            <p className="font-bold text-lg text-purple-800">{analytics.dropoutRate}%</p>
+          <div className="bg-purple-50 dark:bg-purple-900 p-4 rounded-lg border border-purple-100 dark:border-purple-300">
+            <p className="text-sm text-purple-600 dark:text-purple-300 font-medium">Dropout Rate</p>
+            <p className="font-bold text-lg text-purple-800 dark:text-purple-300">{analytics.dropoutRate}%</p>
           </div>
-          <div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
-            <p className="text-sm text-orange-600 font-medium">
+          <div className="bg-orange-50 dark:bg-orange-900 p-4 rounded-lg border border-orange-100 dark:border-orange-300">
+            <p className="text-sm text-orange-600 dark:text-orange-300 font-medium">
               {selectedCourse === 'all' ? 'Total Enrollments' : 'Enrollments'}
             </p>
-            <p className="font-bold text-lg text-orange-800">{analytics.totalEnrollments || 0}</p>
+            <p className="font-bold text-lg text-orange-800 dark:text-orange-300">{analytics.totalEnrollments || 0}</p>
           </div>
         </div>
 

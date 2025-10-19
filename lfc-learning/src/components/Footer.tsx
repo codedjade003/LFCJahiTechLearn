@@ -1,14 +1,14 @@
 export default function Footer() {
   return (
-    <footer className="bg-redCustom text-white py-8">
+    <footer className="bg-redCustom dark:bg-red-800 text-white dark:text-gray-200 py-8">
       <div className="w-full max-w-screen-xl mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0">
             <div className="flex items-center space-x-2">
               <i className="fas fa-church text-2xl text-goldCustom"></i>
-              <h2 className="text-xl px-5 md:px-0 font-bold">LFC Jahi Abuja</h2>
+              <h2 className="text-xl px-5 md:px-14 font-bold">LFC Jahi Abuja</h2>
             </div>
-            <p className="text-sm mt-2">Technical Unit Training Platform</p>
+            <p className="text-sm mt-2 md:px-14 text-white dark:text-gray-200">Technical Unit Training Platform</p>
           </div>
           <div className="flex space-x-4">
             <a href="#" className="hover:text-goldCustom transition">

@@ -236,20 +236,32 @@ export default function Assignments() {
     setSelectedSubmission(null);
   };
 
-  const getStatusBadge = (submission: AssignmentSubmission) => {
-    if (submission.grade !== undefined) {
-      return { color: 'bg-green-100 text-green-800', text: 'Graded', icon: FaCheckCircle };
-    }
-    
-    const submittedDate = new Date(submission.createdAt);
-    const dueDate = submission.assignmentId ? new Date(submission.assignmentId.dueDate) : null;
-    
-    if (dueDate && submittedDate > dueDate) {
-      return { color: 'bg-red-100 text-red-800', text: 'Late', icon: FaExclamationTriangle };
-    }
-    
-    return { color: 'bg-yellow-100 text-yellow-800', text: 'Pending Review', icon: FaClock };
+const getStatusBadge = (submission: AssignmentSubmission) => {
+  if (submission.grade !== undefined) {
+    return { 
+      color: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300', 
+      text: 'Graded', 
+      icon: FaCheckCircle 
+    };
+  }
+  
+  const submittedDate = new Date(submission.createdAt);
+  const dueDate = submission.assignmentId ? new Date(submission.assignmentId.dueDate) : null;
+  
+  if (dueDate && submittedDate > dueDate) {
+    return { 
+      color: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300', 
+      text: 'Late', 
+      icon: FaExclamationTriangle 
+    };
+  }
+  
+  return { 
+    color: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300', 
+    text: 'Pending Review', 
+    icon: FaClock 
   };
+};
 
   const getFileTypeIcon = (submission: AssignmentSubmission) => {
     if (submission.submission.file) {
@@ -284,7 +296,7 @@ export default function Assignments() {
       <div className="p-6">
         <div className="animate-pulse space-y-4">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-20 bg-yt-light-hover rounded-lg"></div>
+            <div key={i} className="h-20 bg-gray-200 dark:bg-[var(--bg-tertiary)] rounded-lg"></div>
           ))}
         </div>
       </div>
@@ -303,7 +315,7 @@ export default function Assignments() {
           <span className="text-yt-text-gray">
             {filteredSubmissions.length} submissions
           </span>
-          <button className="px-4 py-2 bg-lfc-red text-white rounded-lg hover:bg-lfc-gold-dark flex items-center">
+          <button className="px-4 py-2 bg-lfc-red text-gray-200 rounded-lg hover:bg-lfc-red-hover flex items-center">
             <FaDownload className="mr-2" />
             Export
           </button>
@@ -311,21 +323,21 @@ export default function Assignments() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-yt-light-border p-4 mb-6">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-[var(--border-primary)] p-4 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="relative">
             <FaSearch className="absolute left-3 top-3 text-yt-text-gray" />
             <input
               type="text"
               placeholder="Search students, courses, or assignments..."
-              className="w-full pl-10 pr-4 py-2 border border-yt-light-border rounded-lg focus:outline-none focus:border-lfc-red"
+              className="w-full pl-10 pr-4 py-2 border border-[var(--border-primary)] rounded-lg focus:outline-none focus:border-lfc-red"
               value={filters.search}
               onChange={(e) => setFilters({...filters, search: e.target.value})}
             />
           </div>
           
           <select
-            className="border border-yt-light-border rounded-lg px-3 py-2 focus:outline-none focus:border-lfc-red"
+            className="border border-[var(--border-primary)] rounded-lg px-3 py-2 focus:outline-none focus:border-lfc-red"
             value={filters.status}
             onChange={(e) => setFilters({...filters, status: e.target.value})}
           >
@@ -336,7 +348,7 @@ export default function Assignments() {
           </select>
 
           <select
-            className="border border-yt-light-border rounded-lg px-3 py-2 focus:outline-none focus:border-lfc-red"
+            className="border border-[var(--border-primary)] rounded-lg px-3 py-2 focus:outline-none focus:border-lfc-red"
             value={filters.course}
             onChange={(e) => setFilters({...filters, course: e.target.value})}
           >
@@ -347,7 +359,7 @@ export default function Assignments() {
             ))}
           </select>
 
-          <button className="px-4 py-2 border border-yt-light-border rounded-lg hover:bg-yt-light-hover flex items-center justify-center">
+          <button className="px-4 py-2 border border-[var(--border-primary)] rounded-lg hover:bg-[var(--hover-bg)] flex items-center justify-center text-[var(--text-primary)]">
             <FaFilter className="mr-2" />
             More Filters
           </button>
@@ -356,7 +368,7 @@ export default function Assignments() {
 
       {/* Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-yt-light-border">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-[var(--border-primary)]">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-yt-text-gray">Total Assignments</p>
@@ -366,7 +378,7 @@ export default function Assignments() {
           </div>
         </div>
         
-        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-yt-light-border">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-[var(--border-primary)]">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-yt-text-gray">Pending Review</p>
@@ -378,7 +390,7 @@ export default function Assignments() {
           </div>
         </div>
         
-        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-yt-light-border">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-[var(--border-primary)]">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-yt-text-gray">Graded</p>
@@ -390,7 +402,7 @@ export default function Assignments() {
           </div>
         </div>
         
-        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-yt-light-border">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-[var(--border-primary)]">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-yt-text-gray">Average Grade</p>
@@ -406,81 +418,96 @@ export default function Assignments() {
       </div>
 
       {/* Submissions List */}
-      <div className="divide-y divide-yt-light-border">
-      {filteredSubmissions.map((submission) => {
-        const status = getStatusBadge(submission);
-        const StatusIcon = status.icon;
-        const FileTypeIcon = getFileTypeIcon(submission);
-        const canGrade = canGradeCourse(submission.courseId._id);
-        
-        return (
-          <div key={submission._id} className={`p-4 transition-colors ${
-            canGrade ? 'hover:bg-yt-light-hover' : 'bg-gray-50 dark:bg-[var(--bg-secondary)]'
-          }`}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4 flex-1">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white ${
-                  canGrade ? 'bg-lfc-red' : 'bg-gray-400'
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-[var(--border-primary)]">
+        <div className="p-4 border-b border-yt-light-border">
+          <h3 className="font-semibold text-yt-text-dark">Assignment Submissions</h3>
+        </div>
+
+        <div className="divide-y divide-yt-light-border">
+          {filteredSubmissions.length === 0 ? (
+            <div className="p-8 text-center text-yt-text-gray">
+              {submissions.length === 0 
+                ? "No assignment submissions found." 
+                : "No submissions match your current filters."
+              }
+            </div>
+          ) : (
+            filteredSubmissions.map((submission) => {
+              const status = getStatusBadge(submission);
+              const StatusIcon = status.icon;
+              const FileTypeIcon = getFileTypeIcon(submission);
+              const canGrade = canGradeCourse(submission.courseId._id);
+              
+              return (
+                <div key={submission._id} className={`p-4 transition-colors ${
+                  canGrade ? 'hover:bg-yt-light-hover' : 'bg-gray-50 dark:bg-[var(--bg-secondary)]'
                 }`}>
-                  <FileTypeIcon />
-                </div>
-                
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center space-x-2 mb-1">
-                    <h4 className="font-medium text-yt-text-dark truncate">
-                      {submission.studentId.name}
-                      {!canGrade && (
-                        <FaLock className="inline ml-2 text-gray-400" size={12} />
-                      )}
-                    </h4>
-                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${status.color}`}>
-                      <StatusIcon className="mr-1" size={10} />
-                      {status.text}
-                    </span>
-                    {submission.grade && (
-                      <span className="bg-lfc-red text-white px-2 py-1 rounded-full text-xs font-medium">
-                        {submission.grade}%
-                      </span>
-                    )}
-                  </div>
-                  
-                  <p className="text-sm text-yt-text-gray truncate">
-                    {submission.courseId.title} • {submission.assignmentId?.title || 'Assignment'}
-                    {!canGrade && (
-                      <span className="text-xs text-gray-500 ml-2">(Read Only)</span>
-                    )}
-                  </p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4 flex-1">
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white ${
+                        canGrade ? 'bg-lfc-red' : 'bg-gray-400'
+                      }`}>
+                        <FileTypeIcon />
+                      </div>
+                      
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <h4 className="font-medium text-yt-text-dark truncate">
+                            {submission.studentId.name}
+                            {!canGrade && (
+                              <FaLock className="inline ml-2 text-gray-400" size={12} />
+                            )}
+                          </h4>
+                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${status.color}`}>
+                            <StatusIcon className="mr-1" size={10} />
+                            {status.text}
+                          </span>
+                          {submission.grade && (
+                            <span className="bg-lfc-red text-white px-2 py-1 rounded-full text-xs font-medium">
+                              {submission.grade}%
+                            </span>
+                          )}
+                        </div>
+                        
+                        <p className="text-sm text-yt-text-gray truncate">
+                          {submission.courseId.title} • {submission.assignmentId?.title || 'Assignment'}
+                          {!canGrade && (
+                            <span className="text-xs text-gray-500 ml-2">(Read Only)</span>
+                          )}
+                        </p>
+                          
+                        <div className="flex items-center space-x-4 text-xs text-yt-text-gray mt-1">
+                          <span>Submitted: {new Date(submission.createdAt).toLocaleDateString()}</span>
+                          {submission.assignmentId?.dueDate && (
+                            <span>Due: {new Date(submission.assignmentId.dueDate).toLocaleDateString()}</span>
+                          )}
+                          {submission.submission.file && (
+                            <span>{submission.submission.file.name} ({(submission.submission.file.size / 1024 / 1024).toFixed(1)}MB)</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                     
-                    <div className="flex items-center space-x-4 text-xs text-yt-text-gray mt-1">
-                      <span>Submitted: {new Date(submission.createdAt).toLocaleDateString()}</span>
-                      {submission.assignmentId?.dueDate && (
-                        <span>Due: {new Date(submission.assignmentId.dueDate).toLocaleDateString()}</span>
-                      )}
-                      {submission.submission.file && (
-                        <span>{submission.submission.file.name} ({(submission.submission.file.size / 1024 / 1024).toFixed(1)}MB)</span>
-                      )}
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => openSubmission(submission)}
+                        className={`p-2 rounded-lg transition-colors ${
+                          canGrade 
+                            ? 'text-yt-text-gray hover:text-lfc-red hover:bg-red-50' 
+                            : 'text-gray-300 cursor-not-allowed'
+                        }`}
+                        title={canGrade ? "View and Grade Assignment" : "No permission to grade"}
+                        disabled={!canGrade}
+                      >
+                        <FaEdit />
+                      </button>
                     </div>
                   </div>
                 </div>
-                
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => openSubmission(submission)}
-                    className={`p-2 rounded-lg transition-colors ${
-                      canGrade 
-                        ? 'text-yt-text-gray hover:text-lfc-red hover:bg-red-50' 
-                        : 'text-gray-300 cursor-not-allowed'
-                    }`}
-                    title={canGrade ? "View and Grade Assignment" : "No permission to grade"}
-                    disabled={!canGrade}
-                  >
-                    <FaEdit />
-                  </button>
-                </div>
-              </div>
-            </div>
-          );
-        })}
+              );
+            })
+          )}
+        </div>
       </div>
 
       {/* Add the modal */}

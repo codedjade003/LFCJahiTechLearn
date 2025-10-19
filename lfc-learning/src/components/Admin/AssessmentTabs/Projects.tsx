@@ -272,17 +272,17 @@ export default function Projects() {
 
   const getStatusBadge = (submission: ProjectSubmission) => {
     if (submission.grade !== undefined) {
-      return { color: 'bg-green-100 text-green-800', text: 'Reviewed', icon: FaCheckCircle };
+      return { color: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300', text: 'Reviewed', icon: FaCheckCircle };
     }
     
     const submittedDate = new Date(submission.createdAt);
     const dueDate = submission.courseId.project?.dueDate ? new Date(submission.courseId.project.dueDate) : null;
     
     if (dueDate && submittedDate > dueDate) {
-      return { color: 'bg-red-100 text-red-800', text: 'Late', icon: FaExclamationTriangle };
+      return { color: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300', text: 'Late', icon: FaExclamationTriangle };
     }
     
-    return { color: 'bg-yellow-100 text-yellow-800', text: 'Pending Review', icon: FaClock };
+    return { color: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300', text: 'Pending Review', icon: FaClock };
   };
 
   const getFileTypeIcon = (submission: ProjectSubmission) => {
@@ -353,7 +353,7 @@ export default function Projects() {
       <div className="p-6">
         <div className="animate-pulse space-y-4">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-20 bg-yt-light-hover rounded-lg"></div>
+            <div key={i} className="h-20 bg-gray-200 dark:bg-[var(--bg-tertiary)] rounded-lg"></div>
           ))}
         </div>
       </div>
@@ -365,16 +365,16 @@ export default function Projects() {
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-yt-text-dark">Project Submissions</h1>
-          <p className="text-yt-text-gray">Review and grade student projects</p>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Project Submissions</h1>
+          <p className="text-[var(--text-secondary)]">Review and grade student projects</p>
         </div>
         <div className="flex items-center space-x-4">
-          <span className="text-yt-text-gray">
+          <span className="text-[var(--text-secondary)]">
             {filteredSubmissions.length} projects
           </span>
           <button 
             onClick={handleExportSubmissions}
-            className="px-4 py-2 bg-lfc-red text-white rounded-lg hover:bg-lfc-gold-dark flex items-center"
+            className="px-4 py-2 bg-lfc-red text-gray-200 rounded-lg hover:bg-lfc-red-hover flex items-center"
           >
             <FaDownload className="mr-2" />
             Export
@@ -384,10 +384,10 @@ export default function Projects() {
 
       {/* Bulk Actions */}
       {selectedSubmissions.length > 0 && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+        <div className="bg-blue-100 dark:bg-blue-900/20 border border-blue-300 dark:border-blue-700 rounded-lg p-4 mb-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <span className="text-blue-800 font-medium">
+              <span className="text-blue-800 dark:text-blue-200 font-medium">
                 {selectedSubmissions.length} submissions selected
               </span>
               <div className="flex space-x-2">
@@ -419,7 +419,7 @@ export default function Projects() {
             </div>
             <button
               onClick={() => setSelectedSubmissions([])}
-              className="text-blue-800 hover:text-blue-900 text-sm"
+              className="text-blue-800 dark:text-blue-200 hover:text-blue-900 dark:hover:text-blue-100 text-sm"
             >
               Clear selection
             </button>
@@ -428,21 +428,21 @@ export default function Projects() {
       )}
 
       {/* Filters */}
-      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-yt-light-border p-4 mb-6">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-[var(--border-primary)] p-4 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="relative">
-            <FaSearch className="absolute left-3 top-3 text-yt-text-gray" />
+            <FaSearch className="absolute left-3 top-3 text-[var(--text-secondary)]" />
             <input
               type="text"
               placeholder="Search students or courses..."
-              className="w-full pl-10 pr-4 py-2 border border-yt-light-border rounded-lg focus:outline-none focus:border-lfc-red"
+              className="w-full pl-10 pr-4 py-2 border border-[var(--border-primary)] rounded-lg focus:outline-none focus:border-lfc-red"
               value={filters.search}
               onChange={(e) => setFilters({...filters, search: e.target.value})}
             />
           </div>
           
           <select
-            className="border border-yt-light-border rounded-lg px-3 py-2 focus:outline-none focus:border-lfc-red"
+            className="border border-[var(--border-primary)] rounded-lg px-3 py-2 focus:outline-none focus:border-lfc-red"
             value={filters.status}
             onChange={(e) => setFilters({...filters, status: e.target.value})}
           >
@@ -453,7 +453,7 @@ export default function Projects() {
           </select>
 
           <select
-            className="border border-yt-light-border rounded-lg px-3 py-2 focus:outline-none focus:border-lfc-red"
+            className="border border-[var(--border-primary)] rounded-lg px-3 py-2 focus:outline-none focus:border-lfc-red"
             value={filters.course}
             onChange={(e) => setFilters({...filters, course: e.target.value})}
           >
@@ -463,7 +463,7 @@ export default function Projects() {
             ))}
           </select>
 
-          <button className="px-4 py-2 border border-yt-light-border rounded-lg hover:bg-yt-light-hover flex items-center justify-center">
+          <button className="px-4 py-2 border border-[var(--border-primary)] rounded-lg hover:bg-[var(--hover-bg)] flex items-center justify-center">
             <FaFilter className="mr-2" />
             More Filters
           </button>
@@ -472,20 +472,20 @@ export default function Projects() {
 
       {/* Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-yt-light-border">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-[var(--border-primary)]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-yt-text-gray">Total Projects</p>
-              <p className="text-2xl font-bold text-yt-text-dark">{submissions.length}</p>
+              <p className="text-sm text-[var(--text-secondary)]">Total Projects</p>
+              <p className="text-2xl font-bold text-[var(--text-primary)]">{submissions.length}</p>
             </div>
             <FaFileAlt className="text-lfc-red text-xl" />
           </div>
         </div>
         
-        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-yt-light-border">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-[var(--border-primary)]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-yt-text-gray">Pending Review</p>
+              <p className="text-sm text-[var(--text-secondary)]">Pending Review</p>
               <p className="text-2xl font-bold text-yellow-600">
                 {submissions.filter(s => s.grade === undefined).length}
               </p>
@@ -494,10 +494,10 @@ export default function Projects() {
           </div>
         </div>
         
-        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-yt-light-border">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-[var(--border-primary)]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-yt-text-gray">Reviewed</p>
+              <p className="text-sm text-[var(--text-secondary)]">Reviewed</p>
               <p className="text-2xl font-bold text-green-600">
                 {submissions.filter(s => s.grade !== undefined).length}
               </p>
@@ -506,10 +506,10 @@ export default function Projects() {
           </div>
         </div>
         
-        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-yt-light-border">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-[var(--border-primary)]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-yt-text-gray">Average Score</p>
+              <p className="text-sm text-[var(--text-secondary)]">Average Score</p>
               <p className="text-2xl font-bold text-lfc-red">
                 {submissions.filter(s => s.grade).length > 0 
                   ? Math.round(submissions.filter(s => s.grade).reduce((acc, s) => acc + (s.grade || 0), 0) / submissions.filter(s => s.grade).length)
@@ -522,12 +522,12 @@ export default function Projects() {
       </div>
 
       {/* Projects List */}
-      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-yt-light-border">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-[var(--border-primary)]">
         <div className="p-4 border-b border-yt-light-border">
           <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-yt-text-dark">Project Submissions</h3>
+            <h3 className="font-semibold text-[var(--text-primary)]">Project Submissions</h3>
             <div className="flex items-center space-x-4">
-              <label className="flex items-center space-x-2 text-sm text-yt-text-gray">
+              <label className="flex items-center space-x-2 text-sm text-[var(--text-secondary)]">
                 <input
                   type="checkbox"
                   checked={selectedSubmissions.length === filteredSubmissions.length && filteredSubmissions.length > 0}
@@ -542,7 +542,7 @@ export default function Projects() {
 
         <div className="divide-y divide-yt-light-border">
           {filteredSubmissions.length === 0 ? (
-            <div className="p-8 text-center text-yt-text-gray">
+            <div className="p-8 text-center text-[var(--text-secondary)]">
               No project submissions found matching your filters.
             </div>
           ) : (
@@ -552,7 +552,7 @@ export default function Projects() {
               const FileTypeIcon = getFileTypeIcon(submission);
               
               return (
-                <div key={submission._id} className="p-4 hover:bg-yt-light-hover transition-colors">
+                <div key={submission._id} className="p-4 hover:bg-[var(--hover-bg)] transition-colors">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4 flex-1">
                       <input
@@ -568,7 +568,7 @@ export default function Projects() {
                       
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center space-x-2 mb-1">
-                          <h4 className="font-medium text-yt-text-dark truncate">
+                          <h4 className="font-medium text-[var(--text-primary)] truncate">
                             {submission.studentId.name}
                           </h4>
                           <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${status.color}`}>
@@ -582,11 +582,11 @@ export default function Projects() {
                           )}
                         </div>
                         
-                        <p className="text-sm text-yt-text-gray truncate">
+                        <p className="text-sm text-[var(--text-secondary)] truncate">
                           {submission.courseId.title} • {submission.courseId.project?.title || 'Course Project'}
                         </p>
                         
-                        <div className="flex items-center space-x-4 text-xs text-yt-text-gray mt-1">
+                        <div className="flex items-center space-x-4 text-xs text-[var(--text-secondary)] mt-1">
                           <span>Submitted: {new Date(submission.createdAt).toLocaleDateString()}</span>
                           {submission.courseId.project?.dueDate && (
                             <span>Due: {new Date(submission.courseId.project.dueDate).toLocaleDateString()}</span>
@@ -601,7 +601,7 @@ export default function Projects() {
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => openSubmission(submission)}
-                        className="p-2 text-yt-text-gray hover:text-lfc-red hover:bg-red-50 rounded-lg transition-colors"
+                        className="p-2 text-[var(--text-secondary)] hover:text-lfc-red hover:bg-red-50 rounded-lg transition-colors"
                         title="Grade Project"
                       >
                         <FaEdit />

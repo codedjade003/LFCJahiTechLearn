@@ -124,9 +124,9 @@ export default function RecentActivity({ items: initialItems }: { items?: Activi
 
   if (loading) {
     return (
-      <div>
+    <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)]">
         <div className="p-4 border-b">
-          <h2 className="text-lg font-semibold text-lfc-gray">Recent Activity</h2>
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-[var(--text-primary)]">Recent Activity</h2>
         </div>
         <div className="p-6 space-y-3">
           {[...Array(3)].map((_, i) => (
@@ -144,9 +144,9 @@ export default function RecentActivity({ items: initialItems }: { items?: Activi
   }
 
   return (
-    <div>
+    <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] ">
       <div className="p-4 border-b flex justify-between items-center">
-        <h2 className="text-lg font-semibold text-lfc-gray">Recent Activity</h2>
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-[var(--text-primary)]">Recent Activity</h2>
         <button 
           onClick={handleViewAll}
           className="text-sm text-lfc-red hover:text-lfc-gold-dark flex items-center gap-1"

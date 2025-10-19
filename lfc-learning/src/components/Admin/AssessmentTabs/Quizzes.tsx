@@ -199,9 +199,9 @@ const fetchQuizSubmissions = async () => {
 
   const getPassFailBadge = (submission: QuizSubmission) => {
     if (submission.submission.passed) {
-      return { color: 'bg-green-100 text-green-800', text: 'Passed', icon: FaCheckCircle };
+      return { color: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300', text: 'Passed', icon: FaCheckCircle };
     } else {
-      return { color: 'bg-red-100 text-red-800', text: 'Failed', icon: FaTimesCircle };
+      return { color: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300', text: 'Failed', icon: FaTimesCircle };
     }
   };
 
@@ -245,7 +245,7 @@ const fetchQuizSubmissions = async () => {
       <div className="p-6">
         <div className="animate-pulse space-y-4">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-20 bg-yt-light-hover rounded-lg"></div>
+            <div key={i} className="h-20 bg-gray-200 dark:bg-[var(--bg-tertiary)] rounded-lg"></div>
           ))}
         </div>
       </div>
@@ -257,14 +257,14 @@ const fetchQuizSubmissions = async () => {
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-yt-text-dark">Quiz Results</h1>
-          <p className="text-yt-text-gray">Monitor student quiz performance and analytics</p>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Quiz Results</h1>
+          <p className="text-[var(--text-secondary)]">Monitor student quiz performance and analytics</p>
         </div>
         <div className="flex items-center space-x-4">
-          <span className="text-yt-text-gray">
+          <span className="text-[var(--text-secondary)]">
             {filteredSubmissions.length} attempts
           </span>
-          <button className="px-4 py-2 bg-lfc-red text-white rounded-lg hover:bg-lfc-gold-dark flex items-center">
+          <button className="px-4 py-2 bg-lfc-red text-gray-200 rounded-lg hover:bg-lfc-red-hover flex items-center">
             <FaDownload className="mr-2" />
             Export Results
           </button>
@@ -272,21 +272,21 @@ const fetchQuizSubmissions = async () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-yt-light-border p-4 mb-6">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] rounded-lg border border-[var(--border-primary)] p-4 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="relative">
-            <FaSearch className="absolute left-3 top-3 text-yt-text-gray" />
+            <FaSearch className="absolute left-3 top-3 text-[var(--text-secondary)]" />
             <input
               type="text"
               placeholder="Search students or courses..."
-              className="w-full pl-10 pr-4 py-2 border border-yt-light-border rounded-lg focus:outline-none focus:border-lfc-red"
+              className="w-full pl-10 pr-4 py-2 border border-[var(--border-primary)] rounded-lg focus:outline-none focus:border-lfc-red"
               value={filters.search}
               onChange={(e) => setFilters({...filters, search: e.target.value})}
             />
           </div>
           
           <select
-            className="border border-yt-light-border rounded-lg px-3 py-2 focus:outline-none focus:border-lfc-red"
+            className="border border-[var(--border-primary)] rounded-lg px-3 py-2 focus:outline-none focus:border-lfc-red"
             value={filters.status}
             onChange={(e) => setFilters({...filters, status: e.target.value})}
           >
@@ -296,14 +296,14 @@ const fetchQuizSubmissions = async () => {
           </select>
 
           <select
-            className="border border-yt-light-border rounded-lg px-3 py-2 focus:outline-none focus:border-lfc-red"
+            className="border border-[var(--border-primary)] rounded-lg px-3 py-2 focus:outline-none focus:border-lfc-red"
             value={filters.course}
             onChange={(e) => setFilters({...filters, course: e.target.value})}
           >
             <option value="all">All Courses</option>
           </select>
 
-          <button className="px-4 py-2 border border-yt-light-border rounded-lg hover:bg-yt-light-hover flex items-center justify-center">
+          <button className="px-4 py-2 border border-[var(--border-primary)] rounded-lg hover:bg-[var(--hover-bg)] flex items-center justify-center">
             <FaFilter className="mr-2" />
             More Filters
           </button>
@@ -312,20 +312,20 @@ const fetchQuizSubmissions = async () => {
 
       {/* Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-yt-light-border">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-[var(--border-primary)]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-yt-text-gray">Total Attempts</p>
-              <p className="text-2xl font-bold text-yt-text-dark">{totalAttempts}</p>
+              <p className="text-sm text-[var(--text-secondary)]">Total Attempts</p>
+              <p className="text-2xl font-bold text-[var(--text-primary)]">{totalAttempts}</p>
             </div>
             <FaBrain className="text-lfc-red text-xl" />
           </div>
         </div>
         
-        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-yt-light-border">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-[var(--border-primary)]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-yt-text-gray">Pass Rate</p>
+              <p className="text-sm text-[var(--text-secondary)]">Pass Rate</p>
               <p className="text-2xl font-bold text-green-600">
                 {totalAttempts > 0 ? Math.round((passedAttempts / totalAttempts) * 100) : 0}%
               </p>
@@ -334,11 +334,11 @@ const fetchQuizSubmissions = async () => {
           </div>
         </div>
         
-        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-yt-light-border">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-[var(--border-primary)]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-yt-text-gray">Average Score</p>
-              <p className="text-2xl font-bold text-yt-text-dark">
+              <p className="text-sm text-[var(--text-secondary)]">Average Score</p>
+              <p className="text-2xl font-bold text-[var(--text-primary)]">
                 {totalAttempts > 0 ? Math.round(averageScore) : 0}%
               </p>
             </div>
@@ -346,11 +346,11 @@ const fetchQuizSubmissions = async () => {
           </div>
         </div>
         
-        <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-yt-light-border">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-[var(--border-primary)]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-yt-text-gray">Unique Students</p>
-              <p className="text-2xl font-bold text-yt-text-dark">{uniqueStudents}</p>
+              <p className="text-sm text-[var(--text-secondary)]">Unique Students</p>
+              <p className="text-2xl font-bold text-[var(--text-primary)]">{uniqueStudents}</p>
             </div>
             <FaUser className="text-lfc-red text-xl" />
           </div>
@@ -358,16 +358,16 @@ const fetchQuizSubmissions = async () => {
       </div>
 
       {/* Quiz Results List */}
-      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-yt-light-border">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] rounded-lg border border-[var(--border-primary)]">
         <div className="p-4 border-b border-yt-light-border">
-          <h3 className="font-semibold text-yt-text-dark">Quiz Attempts</h3>
+          <h3 className="font-semibold text-[var(--text-primary)]">Quiz Attempts</h3>
         </div>
         
         {filteredSubmissions.length === 0 ? (
           <div className="p-8 text-center">
-            <FaBrain className="text-4xl text-yt-text-gray mx-auto mb-4" />
+            <FaBrain className="text-4xl text-[var(--text-secondary)] mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">No quiz attempts found</h3>
-            <p className="text-yt-text-gray">Adjust your filters to see more results</p>
+            <p className="text-[var(--text-secondary)]">Adjust your filters to see more results</p>
           </div>
         ) : (
           <div className="divide-y divide-yt-light-border">
@@ -379,7 +379,7 @@ const fetchQuizSubmissions = async () => {
             
             return (
               <div key={submission._id} className={`p-4 transition-colors ${
-                canView ? 'hover:bg-yt-light-hover' : 'bg-gray-50 dark:bg-[var(--bg-secondary)]'
+                canView ? 'hover:bg-[var(--hover-bg)]' : 'bg-gray-200 dark:bg-[var(--bg-secondary)]'
               }`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4 flex-1">
@@ -392,7 +392,7 @@ const fetchQuizSubmissions = async () => {
                     
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center space-x-2 mb-1">
-                        <h4 className="font-medium text-yt-text-dark truncate">
+                        <h4 className="font-medium text-[var(--text-primary)] truncate">
                           {submission.studentId.name}
                           {!canView && (
                             <FaLock className="inline ml-2 text-gray-400" size={12} />
@@ -409,7 +409,7 @@ const fetchQuizSubmissions = async () => {
                         </span>
                       </div>
                       
-                      <p className="text-sm text-yt-text-gray truncate">
+                      <p className="text-sm text-[var(--text-secondary)] truncate">
                         {submission.courseId.title} • Quiz Attempt
                         {!canView && (
                           <span className="text-xs text-gray-500 ml-2">(Restricted Access)</span>
@@ -423,7 +423,7 @@ const fetchQuizSubmissions = async () => {
                       onClick={() => openQuizDetails(submission)}
                       className={`p-2 rounded-lg transition-colors ${
                         canView 
-                          ? 'text-yt-text-gray hover:text-lfc-red hover:bg-yt-light-hover' 
+                          ? 'text-[var(--text-secondary)] hover:text-lfc-red hover:bg-[var(--hover-bg)]' 
                           : 'text-gray-300 cursor-not-allowed'
                       }`}
                       title={canView ? "View Details" : "No permission to view quiz results"}
@@ -443,19 +443,19 @@ const fetchQuizSubmissions = async () => {
       {/* Quiz Details Modal */}
       {isModalOpen && selectedSubmission && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] rounded-lg max-w-6xl w-full max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="flex justify-between items-center p-6 border-b">
               <div className="flex items-center">
                 <button 
                   onClick={closeModal}
-                  className="mr-4 p-2 rounded-md text-yt-text-dark hover:bg-yt-light-hover"
+                  className="mr-4 p-2 rounded-md text-[var(--text-primary)] hover:bg-[var(--hover-bg)]"
                 >
                   <FaArrowLeft />
                 </button>
                 <div>
-                  <h2 className="text-xl font-bold text-yt-text-dark">Quiz Attempt Details</h2>
-                  <p className="text-yt-text-gray">
+                  <h2 className="text-xl font-bold text-[var(--text-primary)]">Quiz Attempt Details</h2>
+                  <p className="text-[var(--text-secondary)]">
                     {quizDetails?.title || 'Quiz Submission'} • {selectedSubmission.courseId.title}
                   </p>
                 </div>
@@ -464,14 +464,14 @@ const fetchQuizSubmissions = async () => {
               <div className="flex items-center space-x-4">
                 <span className={`px-3 py-1 rounded-full text-sm font-medium ${
                   selectedSubmission.submission.passed 
-                    ? 'bg-green-100 text-green-800' 
-                    : 'bg-red-100 text-red-800'
+                    ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' 
+                    : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300'
                 } flex items-center`}>
                   {selectedSubmission.submission.passed ? <FaCheckCircle className="mr-1" size={14} /> : <FaTimesCircle className="mr-1" size={14} />}
                   {selectedSubmission.submission.passed ? 'Passed' : 'Failed'}
                 </span>
                 
-                <span className="flex items-center text-sm text-yt-text-gray">
+                <span className="flex items-center text-sm text-[var(--text-secondary)]">
                   <FaPercentage className="mr-1" />
                   Score: {Math.round(calculatePercentageScore(selectedSubmission))}%
                 </span>
@@ -488,83 +488,83 @@ const fetchQuizSubmissions = async () => {
             <div className="p-6">
               {/* Student and Quiz Info */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                <div className="bg-gray-50 dark:bg-[var(--bg-secondary)] p-4 rounded-lg border">
+                <div className="bg-gray-200 dark:bg-[var(--bg-secondary)] p-4 rounded-lg border">
                   <h3 className="font-semibold mb-3 flex items-center">
                     <FaUser className="mr-2 text-lfc-red" />
                     Student Information
                   </h3>
-                  <p className="text-yt-text-dark font-medium">{selectedSubmission.studentId.name}</p>
-                  <p className="text-yt-text-gray text-sm">{selectedSubmission.studentId.email}</p>
+                  <p className="text-[var(--text-primary)] font-medium">{selectedSubmission.studentId.name}</p>
+                  <p className="text-[var(--text-secondary)] text-sm">{selectedSubmission.studentId.email}</p>
                 </div>
                 
-                <div className="bg-gray-50 dark:bg-[var(--bg-secondary)] p-4 rounded-lg border">
+                <div className="bg-gray-200 dark:bg-[var(--bg-secondary)] p-4 rounded-lg border">
                   <h3 className="font-semibold mb-3 flex items-center">
                     <FaBook className="mr-2 text-lfc-red" />
                     Course Information
                   </h3>
-                  <p className="text-yt-text-dark font-medium">{selectedSubmission.courseId.title}</p>
-                  <p className="text-yt-text-gray text-sm">
+                  <p className="text-[var(--text-primary)] font-medium">{selectedSubmission.courseId.title}</p>
+                  <p className="text-[var(--text-secondary)] text-sm">
                     Instructor: {selectedSubmission.courseId.instructor?.name || 'N/A'}
                   </p>
                 </div>
                 
-                <div className="bg-gray-50 dark:bg-[var(--bg-secondary)] p-4 rounded-lg border">
+                <div className="bg-gray-200 dark:bg-[var(--bg-secondary)] p-4 rounded-lg border">
                   <h3 className="font-semibold mb-3 flex items-center">
                     <FaCalendar className="mr-2 text-lfc-red" />
                     Attempt Details
                   </h3>
-                  <p className="text-yt-text-dark">
+                  <p className="text-[var(--text-primary)]">
                     Submitted: {new Date(selectedSubmission.createdAt).toLocaleString()}
                   </p>
-                  <p className="text-yt-text-gray text-sm">
+                  <p className="text-[var(--text-secondary)] text-sm">
                     Passing Score: {quizDetails?.passingScore || 70}%
                   </p>
                 </div>
               </div>
 
               {/* Performance Summary */}
-              <div className="bg-gray-50 dark:bg-[var(--bg-secondary)] rounded-lg border p-6 mb-6">
+              <div className="bg-gray-200 dark:bg-[var(--bg-secondary)] rounded-lg border p-6 mb-6">
                 <h2 className="text-lg font-semibold mb-4 flex items-center">
                   <FaChartBar className="mr-2 text-lfc-red" />
                   Performance Summary
                 </h2>
                 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="text-center p-4 bg-white dark:bg-[var(--bg-elevated)] rounded-lg">
+                  <div className="text-center p-4 bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] rounded-lg">
                     <p className="text-2xl font-bold text-lfc-red">
                       {Math.round(calculatePercentageScore(selectedSubmission))}%
                     </p>
-                    <p className="text-sm text-yt-text-gray">Final Score</p>
+                    <p className="text-sm text-[var(--text-secondary)]">Final Score</p>
                   </div>
                   
-                  <div className="text-center p-4 bg-white dark:bg-[var(--bg-elevated)] rounded-lg">
-                    <p className="text-2xl font-bold text-yt-text-dark">
+                  <div className="text-center p-4 bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] rounded-lg">
+                    <p className="text-2xl font-bold text-[var(--text-primary)]">
                       {quizDetails?.questions.length || 0}
                     </p>
-                    <p className="text-sm text-yt-text-gray">Total Questions</p>
+                    <p className="text-sm text-[var(--text-secondary)]">Total Questions</p>
                   </div>
                   
-                  <div className="text-center p-4 bg-white dark:bg-[var(--bg-elevated)] rounded-lg">
+                  <div className="text-center p-4 bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] rounded-lg">
                     <p className="text-2xl font-bold text-green-600">
                       {selectedSubmission.submission.answers.filter((answer, index) => 
                         answer === quizDetails?.questions[index]?.correctAnswer
                       ).length}
                     </p>
-                    <p className="text-sm text-yt-text-gray">Correct Answers</p>
+                    <p className="text-sm text-[var(--text-secondary)]">Correct Answers</p>
                   </div>
                   
-                  <div className="text-center p-4 bg-white dark:bg-[var(--bg-elevated)] rounded-lg">
-                    <p className="text-2xl font-bold text-yt-text-dark">
+                  <div className="text-center p-4 bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] rounded-lg">
+                    <p className="text-2xl font-bold text-[var(--text-primary)]">
                       {quizDetails?.passingScore || 70}%
                     </p>
-                    <p className="text-sm text-yt-text-gray">Passing Score</p>
+                    <p className="text-sm text-[var(--text-secondary)]">Passing Score</p>
                   </div>
                 </div>
               </div>
 
               {/* Questions and Answers */}
               {quizDetails && (
-                <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border">
+                <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] rounded-lg border">
                   <div className="p-6 border-b">
                     <h2 className="text-lg font-semibold flex items-center">
                       <FaListOl className="mr-2 text-lfc-red" />
@@ -572,7 +572,7 @@ const fetchQuizSubmissions = async () => {
                     </h2>
                   </div>
                   
-                  <div className="divide-y divide-gray-200">
+                  <div className="divide-y divide-[var(--border-primary)]">
                     {quizDetails.questions.map((question, index) => {
                       const userAnswer = selectedSubmission.submission.answers[index];
                       const correctAnswer = question.correctAnswer;
@@ -583,7 +583,7 @@ const fetchQuizSubmissions = async () => {
                         <div key={index} className={`p-6 ${bgColor}`}>
                           <div className="flex items-start justify-between mb-4">
                             <div className="flex-1">
-                              <h3 className="font-medium text-yt-text-dark mb-3">
+                              <h3 className="font-medium text-[var(--text-primary)] mb-3">
                                 {index + 1}. {question.question}
                               </h3>
                               
@@ -593,10 +593,10 @@ const fetchQuizSubmissions = async () => {
                                     key={optIndex}
                                     className={`p-3 border rounded-lg ${
                                       option === correctAnswer
-                                        ? 'border-green-500 bg-green-50'
+                                        ? 'border-green-500 bg-green-100 dark:bg-green-900/20'
                                         : option === userAnswer && !isCorrect
-                                        ? 'border-red-500 bg-red-50'
-                                        : 'border-gray-200 dark:border-[var(--border-primary)] bg-white'
+                                        ? 'border-red-500 bg-red-100 dark:bg-red-900/20'
+                                        : 'border-[var(--border-primary)] bg-white dark:bg-[var(--bg-elevated)]'
                                     }`}
                                   >
                                     <div className="flex items-center">
@@ -627,8 +627,8 @@ const fetchQuizSubmissions = async () => {
                               </div>
                               
                               {question.explanation && (
-                                <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                                  <p className="text-sm text-blue-800">
+                                <div className="mt-3 p-3 bg-blue-100 dark:bg-blue-900/20 border border-blue-300 dark:border-blue-700 rounded-lg">
+                                  <p className="text-sm text-blue-800 dark:text-blue-200">
                                     <strong>Explanation:</strong> {question.explanation}
                                   </p>
                                 </div>

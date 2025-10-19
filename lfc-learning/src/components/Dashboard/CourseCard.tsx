@@ -171,7 +171,7 @@ const CourseCard: React.FC<Props> = ({
 
   const buttonClass = enrolled
     ? "bg-blue-600 hover:bg-blue-700 text-white"
-    : "bg-lfc-red dark:bg-[var(--lfc-red)] hover:bg-red-700 dark:hover:bg-[var(--lfc-red-hover)] text-white";
+    : "bg-lfc-red dark:bg-red-800 hover:bg-red-700 dark:hover:bg-[var(--lfc-red-hover)] text-white";
 
   const displayInstructor =
     instructor?.name || instructors[0]?.name || "Unknown Instructor";

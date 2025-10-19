@@ -307,7 +307,7 @@ export default function CourseManagement() {
         {/* Quick Actions - Stack on mobile */}
         <div className="flex flex-col sm:flex-row gap-3">
           <button
-            className="bg-lfc-red hover:bg-red-700 text-white py-3 px-4 rounded-lg flex items-center justify-center font-medium transition-colors text-sm"
+            className="bg-lfc-red dark:bg-red-700 hover:bg-red-700 dark:hover:bg-red-600 text-white dark:text-gray-200 py-3 px-4 rounded-lg flex items-center justify-center font-medium transition-colors text-sm"
             onClick={() => setIsModalOpen(true)}
           >
             <FaPlus className="mr-2" /> New Course
@@ -445,7 +445,7 @@ export default function CourseManagement() {
               <div className="flex space-x-2">
                 <button
                   onClick={handleBulkAction}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-medium text-sm flex-1"
+                  className="bg-blue-600 hover:bg-blue-700 text-white dark:text-gray-200 px-3 py-2 rounded-lg font-medium text-sm flex-1"
                 >
                   Apply ({selectedCourses.length})
                 </button>

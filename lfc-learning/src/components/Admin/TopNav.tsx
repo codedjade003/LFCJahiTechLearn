@@ -190,7 +190,7 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
   }, []);
 
   return (
-    <header className="sticky top-0 z-30 bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] border-b border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">
+    <header className="sticky top-0 z-30 bg-white dark:bg-[var(--bg-elevated)] border-b border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">
       <div className="px-3 sm:px-4 py-3 flex items-center justify-between">
         {/* Left: Menu button and Title */}
         <div className="flex items-center gap-3">
@@ -223,7 +223,7 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
             >
               <FaBell className="text-lg" />
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-lfc-red dark:bg-[var(--lfc-red)] text-white rounded-full min-w-[18px] h-[18px] flex items-center justify-center text-xs font-medium px-1">
+                <span className="absolute -top-1 -right-1 bg-lfc-red dark:bg-red-800 text-white rounded-full min-w-[18px] h-[18px] flex items-center justify-center text-xs font-medium px-1">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               )}
@@ -249,7 +249,7 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
                           Mark all read
                         </button>
                       )}
-                      <span className="bg-lfc-red dark:bg-[var(--lfc-red)] text-white text-xs px-2 py-1 rounded-full">
+                      <span className="bg-lfc-red dark:bg-red-800 text-white text-xs px-2 py-1 rounded-full">
                         {unreadCount} unread
                       </span>
                     </div>
@@ -362,15 +362,15 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
             </button>
 
             {open && (
-              <div className="absolute right-0 mt-2 w-56 bg-white  border border-gray-200  rounded-lg shadow-lg z-50 py-1">
+              <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-200 border border-gray-200 dark:border-gray-300 rounded-lg shadow-lg z-50 py-1">
                 {/* User Info Section */}
-                <div className="px-4 py-3 border-b border-gray-100">
+                <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-300">
                   <p className="text-sm font-medium text-gray-900 ">{user?.name}</p>
                   <p className="text-xs text-gray-500 truncate mb-1">{user?.email}</p>
                   {isAdmin && (
                     <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                       isSuperAdmin 
-                        ? 'bg-lfc-red/10 text-lfc-red' 
+                        ? 'bg-lfc-red/10 dark:bg-red-800/10 text-lfc-red dark:text-red-800' 
                         : 'bg-lfc-gold/10 text-lfc-gold'
                     }`}>
                       {isSuperAdmin ? (
@@ -389,7 +389,7 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
                     navigate("/dashboard/profile");
                     setOpen(false);
                   }}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700  hover:bg-gray-50 dark:bg-[var(--bg-secondary)] transition-colors duration-200 flex items-center"
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:bg-gray-200 transition-colors duration-200 flex items-center"
                 >
                   <FaUser className="mr-3 text-gray-400" />
                   My Profile
@@ -401,7 +401,7 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
                     setOpen(false);
                     navigate("/");
                   }}
-                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50 dark:bg-[var(--bg-secondary)] transition-colors duration-200 flex items-center"
+                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50 dark:bg-gray-200 transition-colors duration-200 flex items-center"
                 >
                   <FaChevronDown className="mr-3 text-red-400 transform rotate-90" />
                   Logout

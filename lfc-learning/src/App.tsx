@@ -40,7 +40,7 @@ import SurveyResponses from "./pages/Admin/SurveyResponses";
 
 function App() {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <div className="min-h-screen bg-white dark:bg-[var(--bg-elevated)] text-gray-900 dark:text-gray-100">
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />

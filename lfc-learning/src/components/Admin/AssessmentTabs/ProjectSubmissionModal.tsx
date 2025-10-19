@@ -81,7 +81,7 @@ export default function ProjectSubmissionModal({
     switch (submission.submissionType) {
       case "text":
         return (
-          <div className="bg-gray-50 dark:bg-[var(--bg-secondary)] p-4 rounded-lg">
+          <div className="bg-gray-200 dark:bg-[var(--bg-secondary)] p-4 rounded-lg">
             <h4 className="font-medium mb-2">Text Submission</h4>
             <p className="text-gray-700 dark:text-[var(--text-secondary)] whitespace-pre-wrap">
               {submission.submission.text || "No text provided"}
@@ -91,7 +91,7 @@ export default function ProjectSubmissionModal({
 
       case "link":
         return (
-          <div className="bg-gray-50 dark:bg-[var(--bg-secondary)] p-4 rounded-lg">
+          <div className="bg-gray-200 dark:bg-[var(--bg-secondary)] p-4 rounded-lg">
             <h4 className="font-medium mb-2">Link Submission</h4>
             <a 
               href={submission.submission.link} 
@@ -114,7 +114,7 @@ export default function ProjectSubmissionModal({
         const isPDF = file.type === 'application/pdf';
 
         return (
-          <div className="bg-gray-50 dark:bg-[var(--bg-secondary)] p-4 rounded-lg">
+          <div className="bg-gray-200 dark:bg-[var(--bg-secondary)] p-4 rounded-lg">
             <h4 className="font-medium mb-2">File Submission</h4>
             <div className="flex items-center justify-between">
               <div className="flex items-center">
@@ -177,10 +177,10 @@ export default function ProjectSubmissionModal({
         {/* Header */}
         <div className="flex justify-between items-center p-6 border-b">
           <div>
-            <h2 className="text-xl font-bold text-yt-text-dark">
+            <h2 className="text-xl font-bold text-[var(--text-primary)]">
               Project Submission Review
             </h2>
-            <p className="text-yt-text-gray">
+            <p className="text-[var(--text-secondary)]">
               {submission.courseId.title} • {submission.courseId.project?.title || 'Course Project'}
             </p>
           </div>
@@ -196,17 +196,17 @@ export default function ProjectSubmissionModal({
           {/* Student Information */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <h3 className="font-medium text-yt-text-dark mb-2">Student Information</h3>
-              <p className="text-yt-text-gray">{submission.studentId.name}</p>
-              <p className="text-yt-text-gray text-sm">{submission.studentId.email}</p>
+              <h3 className="font-medium text-[var(--text-primary)] mb-2">Student Information</h3>
+              <p className="text-[var(--text-secondary)]">{submission.studentId.name}</p>
+              <p className="text-[var(--text-secondary)] text-sm">{submission.studentId.email}</p>
             </div>
             <div>
-              <h3 className="font-medium text-yt-text-dark mb-2">Submission Details</h3>
-              <p className="text-yt-text-gray">
+              <h3 className="font-medium text-[var(--text-primary)] mb-2">Submission Details</h3>
+              <p className="text-[var(--text-secondary)]">
                 Submitted: {new Date(submission.createdAt).toLocaleString()}
               </p>
               {submission.courseId.project?.dueDate && (
-                <p className="text-yt-text-gray">
+                <p className="text-[var(--text-secondary)]">
                   Due: {new Date(submission.courseId.project.dueDate).toLocaleString()}
                 </p>
               )}
@@ -216,8 +216,8 @@ export default function ProjectSubmissionModal({
           {/* Project Instructions */}
           {submission.courseId.project?.instructions && (
             <div>
-              <h3 className="font-medium text-yt-text-dark mb-2">Project Instructions</h3>
-              <p className="text-yt-text-gray whitespace-pre-wrap">
+              <h3 className="font-medium text-[var(--text-primary)] mb-2">Project Instructions</h3>
+              <p className="text-[var(--text-secondary)] whitespace-pre-wrap">
                 {submission.courseId.project.instructions}
               </p>
             </div>
@@ -225,18 +225,18 @@ export default function ProjectSubmissionModal({
 
           {/* Submission Content */}
           <div>
-            <h3 className="font-medium text-yt-text-dark mb-2">Student Submission</h3>
+            <h3 className="font-medium text-[var(--text-primary)] mb-2">Student Submission</h3>
             {renderSubmissionContent()}
           </div>
 
           {/* Grading Section */}
           <div className="border-t pt-6">
-            <h3 className="font-medium text-yt-text-dark mb-4">Grade Submission</h3>
+            <h3 className="font-medium text-[var(--text-primary)] mb-4">Grade Submission</h3>
             
             {/* Grade Input */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-yt-text-dark mb-2">
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                   Grade (0-100)
                 </label>
                 <div className="flex items-center space-x-4">
@@ -246,7 +246,7 @@ export default function ProjectSubmissionModal({
                     max="100"
                     value={grade}
                     onChange={(e) => setGrade(Number(e.target.value))}
-                    className="w-24 px-3 py-2 border border-yt-light-border rounded-lg focus:outline-none focus:border-lfc-red"
+                    className="w-24 px-3 py-2 border border-[var(--border-primary)] rounded-lg focus:outline-none focus:border-lfc-red"
                   />
                   <div className="flex items-center space-x-1">
                     {[0, 25, 50, 75, 100].map((points) => (
@@ -257,7 +257,7 @@ export default function ProjectSubmissionModal({
                         className={`px-2 py-1 text-xs rounded ${
                           grade === points
                             ? 'bg-lfc-red text-white'
-                            : 'bg-gray-100 dark:bg-[var(--bg-tertiary)] text-gray-700 dark:text-[var(--text-secondary)] hover:bg-gray-200'
+                            : 'bg-gray-200 dark:bg-[var(--bg-tertiary)] text-gray-700 dark:text-[var(--text-secondary)] hover:bg-[var(--hover-bg)]'
                         }`}
                       >
                         {points}
@@ -268,13 +268,13 @@ export default function ProjectSubmissionModal({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-yt-text-dark mb-2">
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                   Current Status
                 </label>
                 <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
                   submission.grade !== undefined
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-yellow-100 text-yellow-800'
+                    ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300'
+                    : 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300'
                 }`}>
                   {submission.grade !== undefined ? 'Graded' : 'Pending Review'}
                 </div>
@@ -283,7 +283,7 @@ export default function ProjectSubmissionModal({
 
             {/* Feedback */}
             <div className="mt-4">
-              <label className="block text-sm font-medium text-yt-text-dark mb-2">
+              <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                 Feedback
               </label>
               <textarea
@@ -291,7 +291,7 @@ export default function ProjectSubmissionModal({
                 onChange={(e) => setFeedback(e.target.value)}
                 rows={4}
                 placeholder="Provide constructive feedback for the student..."
-                className="w-full px-3 py-2 border border-yt-light-border rounded-lg focus:outline-none focus:border-lfc-red"
+                className="w-full px-3 py-2 border border-[var(--border-primary)] rounded-lg focus:outline-none focus:border-lfc-red"
               />
             </div>
 
@@ -299,14 +299,14 @@ export default function ProjectSubmissionModal({
             <div className="flex justify-end space-x-3 mt-6">
               <button
                 onClick={onClose}
-                className="px-4 py-2 border border-gray-300 text-gray-700 dark:text-[var(--text-secondary)] rounded-lg hover:bg-gray-50 dark:bg-[var(--bg-secondary)]"
+                className="px-4 py-2 border text-[var(--text-secondary)] border-[var(--border-primary)] text-gray-700 dark:text-[var(--text-secondary)] rounded-lg hover:bg-[var(--hover-bg)] dark:bg-[var(--bg-secondary)]"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSubmitGrade}
                 disabled={isGrading}
-                className="px-4 py-2 bg-lfc-red text-white rounded-lg hover:bg-lfc-gold-dark disabled:opacity-50 flex items-center"
+                className="px-4 py-2 bg-lfc-red text-gray-200 rounded-lg hover:bg-lfc-red-hover disabled:opacity-50 flex items-center"
               >
                 {isGrading ? (
                   <>

@@ -165,9 +165,9 @@ export default function CourseAssignmentsTab({ courseId }: { courseId: string | 
 
   if (!courseId) {
     return (
-      <div className="bg-white dark:bg-[var(--bg-elevated)] p-6 rounded-lg border border-yt-light-border shadow-sm">
-        <h3 className="text-lg font-medium text-yt-text-dark mb-4">Course Assignments</h3>
-        <p className="text-yt-text-gray">Please save the course first to add assignments.</p>
+      <div className="bg-white dark:bg-[var(--bg-elevated)] p-6 rounded-lg border border-[var(--border-primary)] shadow-sm">
+        <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Course Assignments</h3>
+        <p className="text-[var(--text-secondary)]">Please save the course first to add assignments.</p>
       </div>
     );
   }
@@ -175,24 +175,24 @@ export default function CourseAssignmentsTab({ courseId }: { courseId: string | 
   return (
     <div className="space-y-6">
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
+        <div className="bg-red-50 border border-red-300 dark:border-red-700 text-red-700 px-4 py-3 rounded-md">
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="bg-white dark:bg-[var(--bg-elevated)] border border-yt-light-border rounded-lg p-5 shadow-sm">
-        <h3 className="text-lg font-medium text-yt-text-dark mb-4">
+      <form onSubmit={handleSubmit} className="bg-white dark:bg-[var(--bg-elevated)] border border-[var(--border-primary)] rounded-lg p-5 shadow-sm">
+        <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">
           {editingId ? "Edit Assignment" : "Add New Assignment"}
         </h3>
         
         {editingId && (
-          <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-            <p className="text-sm text-blue-700">
+          <div className="mb-4 p-3 bg-blue-100 dark:bg-blue-900/20 border border-blue-300 dark:border-blue-700 rounded-md">
+            <p className="text-sm text-blue-800 dark:text-blue-200">
               You are editing an assignment.{" "}
               <button 
                 type="button"
                 onClick={resetForm}
-                className="text-blue-600 underline hover:text-blue-800"
+                className="text-blue-600 dark:text-blue-300 underline hover:text-blue-800 dark:hover:text-blue-100"
               >
                 Cancel edit
               </button>
@@ -202,20 +202,20 @@ export default function CourseAssignmentsTab({ courseId }: { courseId: string | 
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
-            <label className="block text-sm font-medium text-yt-text-dark mb-2">Title</label>
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Title</label>
             <input
               type="text"
-              className="w-full border border-yt-light-border rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
+              className="w-full border border-[var(--border-primary)] rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-yt-text-dark mb-2">Due Date</label>
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Due Date</label>
             <input
               type="date"
-              className="w-full border border-yt-light-border rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
+              className="w-full border border-[var(--border-primary)] rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
               required
@@ -224,10 +224,10 @@ export default function CourseAssignmentsTab({ courseId }: { courseId: string | 
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-yt-text-dark mb-2">Instructions</label>
+          <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Instructions</label>
           <textarea
             rows={3}
-            className="w-full border border-yt-light-border rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
+            className="w-full border border-[var(--border-primary)] rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
             value={instructions}
             onChange={(e) => setInstructions(e.target.value)}
             placeholder="Provide detailed instructions for this assignment"
@@ -235,14 +235,14 @@ export default function CourseAssignmentsTab({ courseId }: { courseId: string | 
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-yt-text-dark mb-2">
+          <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
             Materials
           </label>
           <MaterialsUploader materials={materials} setMaterials={setMaterials} />
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-yt-text-dark mb-2">Submission Types</label>
+          <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Submission Types</label>
           <div className="grid grid-cols-3 gap-2">
             {["text", "file_upload", "link"].map((type) => (
               <button
@@ -250,8 +250,8 @@ export default function CourseAssignmentsTab({ courseId }: { courseId: string | 
                 type="button"
                 className={`px-3 py-2 rounded-md text-sm font-medium capitalize transition-colors ${
                   submissionTypes.includes(type)
-                    ? "bg-lfc-red text-white border-lfc-red"
-                    : "bg-yt-light-hover text-yt-text-dark hover:bg-gray-200 border border-yt-light-border"
+                    ? "bg-lfc-red dark:bg-red-800 text-gray-200 border-lfc-red"
+                    : "bg-yt-light-hover text-[var(--text-primary)] hover:bg-gray-200 dark:hover:bg-[var(--bg-tertiary)]"
                 }`}
                 onClick={() => {
                   setSubmissionTypes(prev => 
@@ -269,35 +269,35 @@ export default function CourseAssignmentsTab({ courseId }: { courseId: string | 
 
         <button
           type="submit"
-          className="px-4 py-2.5 bg-lfc-red text-white rounded-md hover:bg-lfc-gold-dark flex items-center font-medium text-sm"
+          className="px-4 py-2.5 bg-lfc-red dark:bg-red-800 text-gray-200 rounded-md hover:bg-lfc-red-hover dark:hover:bg-red-700 flex items-center font-medium text-sm"
           disabled={!title.trim() || !dueDate}
         >
           <FaSave className="mr-2" /> {editingId ? "Update Assignment" : "Add Assignment"}
         </button>
       </form>
 
-      <div className="bg-white dark:bg-[var(--bg-elevated)] border border-yt-light-border rounded-lg p-5 shadow-sm">
-        <h3 className="text-lg font-medium text-yt-text-dark mb-4">Course Assignments</h3>
+      <div className="bg-white dark:bg-[var(--bg-elevated)] border border-[var(--border-primary)] rounded-lg p-5 shadow-sm">
+        <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Course Assignments</h3>
         
         {loading ? (
           <div className="animate-pulse space-y-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-16 bg-yt-light-hover rounded-lg"></div>
+              <div key={i} className="h-16 bg-gray-200 dark:bg-[var(--bg-tertiary)] rounded-lg"></div>
             ))}
           </div>
         ) : assignments.length === 0 ? (
-          <p className="text-sm text-yt-text-gray text-center py-4">No assignments added yet.</p>
+          <p className="text-sm text-[var(--text-secondary)] text-center py-4">No assignments added yet.</p>
         ) : (
-          <ul className="divide-y divide-yt-light-border">
+          <ul className="divide-y divide-[var(--border-primary)]">
             {assignments.map((assignment) => {
              if (!assignment || !assignment.title) return null;
              return (
               <li key={assignment._id} className="py-4">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
-                    <h4 className="font-medium text-yt-text-dark">{assignment.title}</h4>
-                    <p className="text-sm text-yt-text-gray mt-1">{assignment.instructions}</p>
-                    <div className="flex items-center mt-2 text-xs text-yt-text-gray">
+                    <h4 className="font-medium text-[var(--text-primary)]">{assignment.title}</h4>
+                    <p className="text-sm text-[var(--text-secondary)] mt-1">{assignment.instructions}</p>
+                    <div className="flex items-center mt-2 text-xs text-[var(--text-secondary)]">
                       <span className="bg-lfc-gold text-white px-2 py-1 rounded-full mr-2 capitalize">
                         {Array.isArray(assignment.submissionTypes) 
                           ? assignment.submissionTypes.join(', ').replace(/_/g, ' ')
@@ -309,13 +309,13 @@ export default function CourseAssignmentsTab({ courseId }: { courseId: string | 
                   <div className="flex space-x-2 ml-4">
                     <button
                       onClick={() => handleEdit(assignment)}
-                      className="text-blue-600 hover:text-blue-800 text-sm px-3 py-1 border border-blue-200 rounded-md"
+                      className="text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-100 text-sm px-3 py-1 border border-blue-300 dark:border-blue-700 rounded-md"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(assignment._id)}
-                      className="text-red-600 hover:text-red-800 text-sm px-3 py-1 border border-red-200 rounded-md flex items-center"
+                      className="text-red-600 dark:text-red-300 hover:text-red-800 dark:hover:text-red-100 text-sm px-3 py-1 border border-red-300 dark:border-red-700 rounded-md flex items-center"
                     >
                       <FaTrash className="mr-1" /> Delete
                     </button>

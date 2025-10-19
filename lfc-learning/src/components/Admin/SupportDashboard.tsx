@@ -359,7 +359,7 @@ const SupportDashboard: React.FC = () => {
                     {!ticket.assignedTo && (
                       <button
                         onClick={() => assignToMe(ticket._id)}
-                        className="px-3 py-1 bg-lfc-red text-white rounded-lg hover:bg-red-700 text-sm"
+                        className="px-3 py-1 bg-lfc-red dark:bg-red-800 text-white rounded-lg hover:bg-red-700 text-sm"
                       >
                         Assign to Me
                       </button>
@@ -396,7 +396,7 @@ const SupportDashboard: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg max-w-4xl w-full h-[80vh] flex flex-col">
             {/* Header */}
-            <div className="bg-lfc-red text-white p-4 rounded-t-lg flex justify-between items-center">
+            <div className="bg-lfc-red dark:bg-red-800 text-white p-4 rounded-t-lg flex justify-between items-center">
               <div className="flex-1">
                 <h2 className="text-xl font-bold">{selectedTicket.title}</h2>
                 <div className="flex flex-wrap gap-2 mt-1 text-sm">
@@ -448,7 +448,7 @@ const SupportDashboard: React.FC = () => {
                       className={`inline-block max-w-md rounded-lg p-4 ${
                         message.user.role === 'admin'
                           ? 'bg-gray-100 dark:bg-[var(--bg-tertiary)] text-gray-800 dark:text-[var(--text-primary)]'
-                          : 'bg-lfc-red text-white'
+                          : 'bg-lfc-red dark:bg-red-800 text-white'
                       }`}
                     >
                       <p className="text-sm">{message.message}</p>
@@ -479,7 +479,7 @@ const SupportDashboard: React.FC = () => {
                 <button
                   onClick={() => sendMessage(selectedTicket._id, newMessage)}
                   disabled={!newMessage.trim()}
-                  className="bg-lfc-red text-white px-6 py-3 rounded-lg hover:bg-red-700 disabled:opacity-50 flex items-center"
+                  className="bg-lfc-red dark:bg-red-800 text-white px-6 py-3 rounded-lg hover:bg-red-700 disabled:opacity-50 flex items-center"
                 >
                   <FaPaperPlane className="mr-2" />
                   Send

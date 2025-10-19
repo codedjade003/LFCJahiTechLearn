@@ -95,19 +95,19 @@ export default function MaterialsUploader({ materials, setMaterials }: Materials
         {...getRootProps()}
         className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
           isDragActive 
-            ? 'border-blue-500 bg-blue-50' 
-            : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
+            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-400' 
+            : 'border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-[var(--bg-tertiary)] hover:bg-gray-100 dark:hover:bg-gray-700'
         }`}
       >
         <input {...getInputProps()} />
         <div className="space-y-2">
-          <svg className="w-8 h-8 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-8 h-8 mx-auto text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
           </svg>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             {uploading ? "Uploading..." : "Drag & drop files here or click to upload"}
           </p>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-500 dark:text-gray-500">
             Supports images, videos, PDFs, documents, and more
           </p>
         </div>
@@ -116,15 +116,15 @@ export default function MaterialsUploader({ materials, setMaterials }: Materials
       {/* Uploaded Files List */}
       {materials.length > 0 && (
         <div className="space-y-2">
-          <h4 className="text-sm font-medium text-gray-700">Uploaded Files:</h4>
+          <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Uploaded Files:</h4>
           {materials.map((material, index) => (
-            <div key={index} className="flex items-center justify-between p-3 bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 rounded-lg">
+            <div key={index} className="flex items-center justify-between p-3 bg-white dark:bg-[var(--bg-tertiary)] border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
               <div className="flex items-center space-x-3">
                 <div className={`p-2 rounded ${
-                  material.type === 'image' ? 'bg-blue-100 text-blue-600' :
-                  material.type === 'video' ? 'bg-purple-100 text-purple-600' :
-                  material.type === 'pdf' ? 'bg-red-100 text-red-600' :
-                  'bg-gray-100 text-gray-600'
+                  material.type === 'image' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' :
+                  material.type === 'video' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400' :
+                  material.type === 'pdf' ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400' :
+                  'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
                 }`}>
                   {material.type === 'image' && '🖼️'}
                   {material.type === 'video' && '🎬'}
@@ -132,16 +132,16 @@ export default function MaterialsUploader({ materials, setMaterials }: Materials
                   {!['image', 'video', 'pdf'].includes(material.type) && '📎'}
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-900 truncate max-w-xs">
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate max-w-xs">
                     {material.name}
                   </p>
-                  <p className="text-xs text-gray-500 capitalize">{material.type}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{material.type}</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => removeMaterial(index)}
-                className="text-red-600 hover:text-red-800 p-1 rounded transition-colors"
+                className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 p-1 rounded transition-colors"
                 title="Remove file"
               >
                 <FaTrash size={14} />

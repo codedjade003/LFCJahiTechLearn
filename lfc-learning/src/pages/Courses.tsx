@@ -70,7 +70,7 @@ export default function Course() {
       <OnboardingTour tourKey="courseManagement" steps={courseManagementTour} />
       
       {/* Header */}
-      <header className="flex items-center justify-between px-4 py-3 border-b border-yt-light-border dark:border-gray-700 bg-white dark:bg-[var(--bg-elevated)] dark:bg-gray-800 shadow-sm">
+      <header className="flex items-center justify-between px-4 py-3 border-b border-yt-light-border dark:border-gray-700 bg-white dark:bg-[var(--bg-elevated)] shadow-sm">
         <div className="flex items-center">
           <button 
             className="md:hidden mr-3 p-2 rounded-md text-yt-text-dark hover:bg-yt-light-hover"
@@ -78,7 +78,7 @@ export default function Course() {
           >
             <FaBars />
           </button>
-          <div className="p-2 rounded-full bg-lfc-red text-white mr-3">
+          <div className="p-2 rounded-full bg-lfc-red dark:bg-red-800 text-white mr-3">
             <svg viewBox="0 0 24 24" className="w-5 h-5">
               <path
                 fill="currentColor"
@@ -92,7 +92,7 @@ export default function Course() {
 
       <div className="flex flex-1 overflow-hidden relative">
         {/* Sidebar */}
-        <aside className={`absolute md:static inset-y-0 left-0 z-30 w-64 bg-white dark:bg-gray-800 border-r border-yt-light-border dark:border-gray-700 flex-shrink-0 overflow-y-auto shadow-sm transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+        <aside className={`absolute md:static inset-y-0 left-0 z-30 w-64 bg-white dark:bg-[var(--bg-elevated)] border-r border-yt-light-border dark:border-gray-700 flex-shrink-0 overflow-y-auto shadow-sm transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
           <nav className="p-3">
             <div className="mb-6">
               <h2 className="px-3 py-2 text-xs font-medium text-yt-text-light uppercase tracking-wider">Course Setup</h2>
@@ -106,7 +106,7 @@ export default function Course() {
                       }}
                       className={`w-full flex items-center px-3 py-3 rounded-lg text-sm mb-1 transition-colors ${
                         activeTab === tab.key
-                          ? "bg-gray-100 text-lfc-gold font-medium shadow-sm"
+                          ? "bg-gray-100 dark:bg-gray-700 text-lfc-gold font-medium shadow-sm"
                           : "text-yt-text-dark hover:bg-yt-light-hover"
                       }`}
                     >
@@ -184,8 +184,8 @@ export default function Course() {
                 disabled={activeIndex === 0}
                 className={`px-4 py-2 md:px-6 md:py-2.5 rounded-md font-medium border text-sm ${
                   activeIndex === 0
-                    ? "opacity-50 cursor-not-allowed bg-gray-100 text-gray-400 border-gray-200"
-                    : "bg-white text-yt-text-dark border-yt-light-border hover:bg-yt-light-hover"
+                    ? "opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-600 text-gray-300 border-gray-200"
+                    : "bg-white text-yt-text-dark border-yt-light-border hover:bg-yt-light-hover dark:bg-[var(--bg-elevated)] dark:hover:bg-lfc-gold"
                 }`}
               >
                 Previous

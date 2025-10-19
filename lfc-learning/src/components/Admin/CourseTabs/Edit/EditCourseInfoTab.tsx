@@ -135,17 +135,17 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    e.currentTarget.classList.add("border-lfc-gold", "bg-blue-50");
+    e.currentTarget.classList.add("border-lfc-gold", "bg-blue-100 dark:bg-blue-900/20");
   };
 
   const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    e.currentTarget.classList.remove("border-lfc-gold", "bg-blue-50");
+    e.currentTarget.classList.remove("border-lfc-gold", "bg-blue-100 dark:bg-blue-900/20");
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>, field: string, fileType: string) => {
     e.preventDefault();
-    e.currentTarget.classList.remove("border-lfc-gold", "bg-blue-50");
+    e.currentTarget.classList.remove("border-lfc-gold", "bg-blue-100 dark:bg-blue-900/20");
     const files = e.dataTransfer.files;
     if (files.length > 0 && files[0].type.startsWith(`${fileType}/`)) {
       const file = files[0];
@@ -292,18 +292,18 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
       {/* Left Column - Form */}
       <form className="space-y-6" onSubmit={handleSubmit}>
         <div>
-          <h3 className="text-lg font-medium text-yt-text-dark mb-1">Basic Information</h3>
-          <p className="text-sm text-yt-text-gray">
+          <h3 className="text-lg font-medium text-[var(--text-primary)] mb-1">Basic Information</h3>
+          <p className="text-sm text-[var(--text-secondary)]">
             Edit details like title, description, category, and type.
           </p>
 
           {/* Title */}
           <div className="mt-4">
-            <label className="block text-sm font-medium text-yt-text-dark mb-2">Title</label>
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Title</label>
             <input
               type="text"
               name="title"
-              className="w-full border border-yt-light-border rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm md:text-base"
+              className="w-full border border-[var(--border-primary)] rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm md:text-base"
               value={formData.title}
               onChange={handleInputChange}
               required
@@ -313,11 +313,11 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
 
           {/* Description */}
           <div className="mt-4">
-            <label className="block text-sm font-medium text-yt-text-dark mb-2">Description</label>
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Description</label>
             <textarea
               name="description"
               rows={4}
-              className="w-full border border-yt-light-border rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm md:text-base"
+              className="w-full border border-[var(--border-primary)] rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm md:text-base"
               value={formData.description}
               onChange={handleInputChange}
               required
@@ -327,11 +327,11 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
 
           {/* Instructor Name */}
           <div className="mt-4">
-            <label className="block text-sm font-medium text-yt-text-dark mb-2">Instructor Name</label>
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Instructor Name</label>
             <input
               type="text"
               name="instructorName"
-              className="w-full border border-yt-light-border rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm md:text-base"
+              className="w-full border border-[var(--border-primary)] rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm md:text-base"
               value={formData.instructorName}
               onChange={handleInputChange}
               placeholder="Enter instructor's name"
@@ -340,18 +340,18 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
 
           {/* Instructor Avatar Upload */}
           <div className="mt-4">
-            <label className="block text-sm font-medium text-yt-text-dark mb-2">Instructor Avatar</label>
-            <div className="flex border-b border-yt-light-border mb-3">
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Instructor Avatar</label>
+            <div className="flex border-b border-[var(--border-primary)] mb-3">
               <button
                 type="button"
-                className={`px-4 py-2 text-sm font-medium ${activeAvatarTab === 'file' ? 'border-b-2 border-lfc-red dark:border-[var(--lfc-red)] text-lfc-red' : 'text-yt-text-gray'}`}
+                className={`px-4 py-2 text-sm font-medium ${activeAvatarTab === 'file' ? 'border-b-2 border-lfc-red dark:border-red-800 text-lfc-red dark:text-red-800' : 'text-[var(--text-secondary)]'}`}
                 onClick={() => setActiveAvatarTab('file')}
               >
                 Upload File
               </button>
               <button
                 type="button"
-                className={`px-4 py-2 text-sm font-medium ${activeAvatarTab === 'url' ? 'border-b-2 border-lfc-red dark:border-[var(--lfc-red)] text-lfc-red' : 'text-yt-text-gray'}`}
+                className={`px-4 py-2 text-sm font-medium ${activeAvatarTab === 'url' ? 'border-b-2 border-lfc-red dark:border-red-800 text-lfc-red dark:text-red-800' : 'text-[var(--text-secondary)]'}`}
                 onClick={() => setActiveAvatarTab('url')}
               >
                 Use URL
@@ -360,18 +360,18 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
 
             {activeAvatarTab === 'file' ? (
               <div 
-                className="relative flex items-center justify-center w-full h-28 border-2 border-dashed border-yt-light-border rounded-lg cursor-pointer hover:bg-yt-light-hover hover:border-lfc-gold transition-colors group"
+                className="relative flex items-center justify-center w-full h-28 border-2 border-dashed border-[var(--border-primary)] rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] hover:border-lfc-gold transition-colors group"
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={(e) => handleDrop(e, "instructorAvatarFile", "image")}
                 onClick={() => avatarFileInputRef.current?.click()}
               >
                 <div className="flex flex-col items-center justify-center">
-                  <svg className="w-6 h-6 mb-2 text-yt-text-gray group-hover:text-lfc-gold transition-colors" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                  <svg className="w-6 h-6 mb-2 text-[var(--text-secondary)] group-hover:text-lfc-gold transition-colors" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
                   </svg>
-                  <p className="mb-1 text-xs text-yt-text-gray"><span className="font-semibold">Click to upload or drag and drop</span></p>
-                  <p className="text-xs text-yt-text-gray">PNG, JPG (MAX. 2MB)</p>
+                  <p className="mb-1 text-xs text-[var(--text-secondary)]"><span className="font-semibold">Click to upload or drag and drop</span></p>
+                  <p className="text-xs text-[var(--text-secondary)]">PNG, JPG (MAX. 2MB)</p>
                 </div>
                 <input 
                   ref={avatarFileInputRef}
@@ -402,7 +402,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
               <div>
                 <input
                   type="url"
-                  className="w-full border border-yt-light-border rounded-md px-3 py-2 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
+                  className="w-full border border-[var(--border-primary)] rounded-md px-3 py-2 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
                   placeholder="Enter avatar image URL"
                   value={avatarUrlInput}
                   onChange={(e) => setAvatarUrlInput(e.target.value)}
@@ -410,7 +410,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
               </div>
             )}
             {instructorAvatar && (
-              <p className="text-xs text-yt-text-gray mt-2">Selected: {instructorAvatar.name}</p>
+              <p className="text-xs text-[var(--text-secondary)] mt-2">Selected: {instructorAvatar.name}</p>
             )}
           </div>
 
@@ -420,7 +420,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
               <label className="block text-sm font-medium">Category</label>
               <select
                 name="category"
-                className="w-full border border-yt-light-border rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm md:text-base"
+                className="w-full border border-[var(--border-primary)] rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm md:text-base"
                 value={formData.category}
                 onChange={handleInputChange}
                 required
@@ -437,10 +437,10 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
 
           {/* Level */}
           <div className="mt-4">
-            <label className="block text-sm font-medium text-yt-text-dark mb-2">Level</label>
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Level</label>
             <select
               name="level"
-              className="w-full border border-yt-light-border rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm md:text-base"
+              className="w-full border border-[var(--border-primary)] rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm md:text-base"
               value={formData.level}
               onChange={handleInputChange}
               required
@@ -453,18 +453,18 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
 
           {/* Thumbnail Upload */}
           <div className="mt-4">
-            <label className="block text-sm font-medium text-yt-text-dark mb-2">Thumbnail</label>
-            <div className="flex border-b border-yt-light-border mb-3">
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Thumbnail</label>
+            <div className="flex border-b border-[var(--border-primary)] mb-3">
               <button
                 type="button"
-                className={`px-4 py-2 text-sm font-medium ${activeThumbnailTab === 'file' ? 'border-b-2 border-lfc-red dark:border-[var(--lfc-red)] text-lfc-red' : 'text-yt-text-gray'}`}
+                className={`px-4 py-2 text-sm font-medium ${activeThumbnailTab === 'file' ? 'border-b-2 border-lfc-red dark:border-red-800 text-lfc-red dark:text-red-800' : 'text-[var(--text-secondary)]'}`}
                 onClick={() => setActiveThumbnailTab('file')}
               >
                 Upload File
               </button>
               <button
                 type="button"
-                className={`px-4 py-2 text-sm font-medium ${activeThumbnailTab === 'url' ? 'border-b-2 border-lfc-red dark:border-[var(--lfc-red)] text-lfc-red' : 'text-yt-text-gray'}`}
+                className={`px-4 py-2 text-sm font-medium ${activeThumbnailTab === 'url' ? 'border-b-2 border-lfc-red dark:border-red-800 text-lfc-red dark:text-red-800' : 'text-[var(--text-secondary)]'}`}
                 onClick={() => setActiveThumbnailTab('url')}
               >
                 Use URL
@@ -473,18 +473,18 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
 
             {activeThumbnailTab === 'file' ? (
               <div 
-                className="relative flex items-center justify-center w-full h-28 border-2 border-dashed border-yt-light-border rounded-lg cursor-pointer hover:bg-yt-light-hover hover:border-lfc-gold transition-colors group"
+                className="relative flex items-center justify-center w-full h-28 border-2 border-dashed border-[var(--border-primary)] rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] hover:border-lfc-gold transition-colors group"
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={(e) => handleDrop(e, "thumbnailFile", "image")}
                 onClick={() => thumbnailFileInputRef.current?.click()}
               >
                 <div className="flex flex-col items-center justify-center">
-                  <svg className="w-6 h-6 mb-2 text-yt-text-gray group-hover:text-lfc-gold transition-colors" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                  <svg className="w-6 h-6 mb-2 text-[var(--text-secondary)] group-hover:text-lfc-gold transition-colors" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
                   </svg>
-                  <p className="mb-1 text-xs text-yt-text-gray"><span className="font-semibold">Click to upload or drag and drop</span></p>
-                  <p className="text-xs text-yt-text-gray">PNG, JPG, GIF (MAX. 5MB)</p>
+                  <p className="mb-1 text-xs text-[var(--text-secondary)]"><span className="font-semibold">Click to upload or drag and drop</span></p>
+                  <p className="text-xs text-[var(--text-secondary)]">PNG, JPG, GIF (MAX. 5MB)</p>
                 </div>
                 <input 
                   ref={thumbnailFileInputRef}
@@ -503,7 +503,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
               <div>
                 <input
                   type="url"
-                  className="w-full border border-yt-light-border rounded-md px-3 py-2 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
+                  className="w-full border border-[var(--border-primary)] rounded-md px-3 py-2 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
                   placeholder="Enter thumbnail image URL"
                   value={thumbnailUrlInput}
                   onChange={(e) => setThumbnailUrlInput(e.target.value)}
@@ -511,24 +511,24 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
               </div>
             )}
             {thumbnail && (
-              <p className="text-xs text-yt-text-gray mt-2">Selected: {thumbnail.name}</p>
+              <p className="text-xs text-[var(--text-secondary)] mt-2">Selected: {thumbnail.name}</p>
             )}
           </div>
 
           {/* Promo Video Upload */}
           <div className="mt-4">
-            <label className="block text-sm font-medium text-yt-text-dark mb-2">Promo Video</label>
-            <div className="flex border-b border-yt-light-border mb-3">
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Promo Video</label>
+            <div className="flex border-b border-[var(--border-primary)] mb-3">
               <button
                 type="button"
-                className={`px-4 py-2 text-sm font-medium ${activeVideoTab === 'file' ? 'border-b-2 border-lfc-red dark:border-[var(--lfc-red)] text-lfc-red' : 'text-yt-text-gray'}`}
+                className={`px-4 py-2 text-sm font-medium ${activeVideoTab === 'file' ? 'border-b-2 border-lfc-red dark:border-red-800 text-lfc-red dark:text-red-800' : 'text-[var(--text-secondary)]'}`}
                 onClick={() => setActiveVideoTab('file')}
               >
                 Upload File
               </button>
               <button
                 type="button"
-                className={`px-4 py-2 text-sm font-medium ${activeVideoTab === 'url' ? 'border-b-2 border-lfc-red dark:border-[var(--lfc-red)] text-lfc-red' : 'text-yt-text-gray'}`}
+                className={`px-4 py-2 text-sm font-medium ${activeVideoTab === 'url' ? 'border-b-2 border-lfc-red dark:border-red-800 text-lfc-red dark:text-red-800' : 'text-[var(--text-secondary)]'}`}
                 onClick={() => setActiveVideoTab('url')}
               >
                 Use URL
@@ -537,18 +537,18 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
 
             {activeVideoTab === 'file' ? (
               <div 
-                className="relative flex items-center justify-center w-full h-28 border-2 border-dashed border-yt-light-border rounded-lg cursor-pointer hover:bg-yt-light-hover hover:border-lfc-gold transition-colors group"
+                className="relative flex items-center justify-center w-full h-28 border-2 border-dashed border-[var(--border-primary)] rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] hover:border-lfc-gold transition-colors group"
                 onDragOver={(e) => {
                   e.preventDefault();
-                  e.currentTarget.classList.add('border-lfc-gold', 'bg-blue-50');
+                  e.currentTarget.classList.add('border-lfc-gold', 'bg-blue-100 dark:bg-blue-900/20');
                 }}
                 onDragLeave={(e) => {
                   e.preventDefault();
-                  e.currentTarget.classList.remove('border-lfc-gold', 'bg-blue-50');
+                  e.currentTarget.classList.remove('border-lfc-gold', 'bg-blue-100 dark:bg-blue-900/20');
                 }}
                 onDrop={(e) => {
                   e.preventDefault();
-                  e.currentTarget.classList.remove('border-lfc-gold', 'bg-blue-50');
+                  e.currentTarget.classList.remove('border-lfc-gold', 'bg-blue-100 dark:bg-blue-900/20');
                   const files = e.dataTransfer.files;
                   if (files.length > 0 && files[0].type.startsWith('video/')) {
                     const file = files[0];
@@ -559,11 +559,11 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
                 onClick={() => document.getElementById('video-upload')?.click()}
               >
                 <div className="flex flex-col items-center justify-center">
-                  <svg className="w-6 h-6 mb-2 text-yt-text-gray group-hover:text-lfc-gold transition-colors" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                  <svg className="w-6 h-6 mb-2 text-[var(--text-secondary)] group-hover:text-lfc-gold transition-colors" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                   </svg>
-                  <p className="mb-1 text-xs text-yt-text-gray"><span className="font-semibold">Click to upload or drag and drop</span></p>
-                  <p className="text-xs text-yt-text-gray">MP4, MOV (MAX. 100MB)</p>
+                  <p className="mb-1 text-xs text-[var(--text-secondary)]"><span className="font-semibold">Click to upload or drag and drop</span></p>
+                  <p className="text-xs text-[var(--text-secondary)]">MP4, MOV (MAX. 100MB)</p>
                 </div>
                 <input 
                   id="video-upload"
@@ -582,7 +582,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
               <div>
                 <input
                   type="url"
-                  className="w-full border border-yt-light-border rounded-md px-3 py-2 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
+                  className="w-full border border-[var(--border-primary)] rounded-md px-3 py-2 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
                   placeholder="Enter video URL (YouTube, Vimeo, etc.)"
                   value={promoVideoUrlInput}
                   onChange={(e) => setPromoVideoUrlInput(e.target.value)}
@@ -613,7 +613,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
               </div>
             )}
             {promoVideo && (
-              <p className="text-xs text-yt-text-gray mt-2">Selected: {promoVideo.name}</p>
+              <p className="text-xs text-[var(--text-secondary)] mt-2">Selected: {promoVideo.name}</p>
             )}
           </div>
 
@@ -622,7 +622,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
             <button
               type="submit"
               disabled={saving}
-              className="bg-lfc-red text-white px-4 py-2.5 rounded-md hover:bg-lfc-gold-dark disabled:opacity-50 font-medium text-sm md:text-base flex items-center"
+              className="bg-lfc-red dark:bg-red-800 text-gray-200 px-4 py-2.5 rounded-md hover:bg-lfc-red-hover dark:hover:bg-red-700 disabled:opacity-50 font-medium text-sm md:text-base flex items-center"
             >
               <FaSave className="inline mr-2" />
               {saving ? "Saving..." : "Save Changes"}
@@ -631,7 +631,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
               <button
                 type="button"
                 onClick={onBack}
-                className="px-4 py-2.5 border border-yt-light-border rounded-md text-yt-text-dark hover:bg-yt-light-hover font-medium text-sm md:text-base"
+                className="px-4 py-2.5 border border-[var(--border-primary)] rounded-md text-[var(--text-primary)] hover:bg-[var(--hover-bg)] font-medium text-sm md:text-base"
               >
                 Cancel
               </button>
@@ -644,7 +644,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
       <div className="lg:hidden">
         <button 
           onClick={() => setIsPreviewExpanded(!isPreviewExpanded)}
-          className="w-full bg-yt-light-hover p-3 rounded-lg flex items-center justify-between font-medium text-yt-text-dark"
+          className="w-full bg-gray-200 dark:bg-[var(--bg-tertiary)] p-3 rounded-lg flex items-center justify-between font-medium text-[var(--text-primary)]"
         >
           <span>Preview</span>
           <svg 
@@ -659,14 +659,14 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
         </button>
       </div>
       
-      <div className={`${isPreviewExpanded ? 'block' : 'hidden'} lg:block bg-white p-4 md:p-5 rounded-lg border border-yt-light-border shadow-sm`}>
-        <h3 className="text-lg font-medium text-yt-text-dark mb-4">Preview</h3>
+      <div className={`${isPreviewExpanded ? 'block' : 'hidden'} lg:block bg-white dark:bg-[var(--bg-elevated)] p-4 md:p-5 rounded-lg border border-[var(--border-primary)] shadow-sm`}>
+        <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Preview</h3>
         
         {/* Instructor Preview */}
         {(formData.instructorName || instructorAvatar || avatarUrlInput) && (
         <div className="mb-4 md:mb-6">
-            <h4 className="text-sm font-medium text-yt-text-dark mb-2">Instructor</h4>
-            <div className="flex items-center p-3 bg-yt-light-hover rounded-lg">
+            <h4 className="text-sm font-medium text-[var(--text-primary)] mb-2">Instructor</h4>
+            <div className="flex items-center p-3 bg-gray-200 dark:bg-[var(--bg-tertiary)] rounded-lg">
             {activeAvatarTab === 'file' && instructorAvatar ? (
                 <img
                 src={URL.createObjectURL(instructorAvatar)}
@@ -696,8 +696,8 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
         
         {/* Promo Video Preview */}
         <div className="mb-4 md:mb-6">
-          <h4 className="text-sm font-medium text-yt-text-dark mb-2">Promo Video</h4>
-          <div className="w-full h-40 md:h-48 bg-yt-light-hover rounded-lg flex items-center justify-center overflow-hidden">
+          <h4 className="text-sm font-medium text-[var(--text-primary)] mb-2">Promo Video</h4>
+          <div className="w-full h-40 md:h-48 bg-gray-200 dark:bg-[var(--bg-tertiary)] rounded-lg flex items-center justify-center overflow-hidden">
             {promoVideo ? (
               // Newly uploaded file preview
               <video
@@ -757,7 +757,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
               )
             ) : (
               // Fallback when no video
-              <div className="text-center text-yt-text-gray p-4 video-fallback">
+              <div className="text-center text-[var(--text-secondary)] p-4 video-fallback">
                 <svg className="w-8 h-8 md:w-12 md:h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                 </svg>
@@ -769,8 +769,8 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
 
         {/* Thumbnail Preview */}
         <div className="mb-4 md:mb-6">
-        <h4 className="text-sm font-medium text-yt-text-dark mb-2">Thumbnail</h4>
-        <div className="w-full h-40 md:h-48 bg-yt-light-hover rounded-lg flex items-center justify-center overflow-hidden">
+        <h4 className="text-sm font-medium text-[var(--text-primary)] mb-2">Thumbnail</h4>
+        <div className="w-full h-40 md:h-48 bg-gray-200 dark:bg-[var(--bg-tertiary)] rounded-lg flex items-center justify-center overflow-hidden">
             {/* Show uploaded file preview (highest priority) */}
             {thumbnail ? (
             <img
@@ -823,7 +823,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
             
             {/* Fallback when no thumbnail is available or images fail to load */}
             <div 
-            className="text-center text-yt-text-gray p-4 thumbnail-fallback" 
+            className="text-center text-[var(--text-secondary)] p-4 thumbnail-fallback" 
             style={{ 
                 display: (!thumbnail && !thumbnailUrlInput && !formData.thumbnail) ? 'flex' : 'none' 
             }}
@@ -837,8 +837,8 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
         </div>
         
         {/* Course Info Preview */}
-        <div className="mt-4 md:mt-6 pt-4 border-t border-yt-light-border">
-          <h4 className="text-sm font-medium text-yt-text-dark mb-2">Course Info Preview</h4>
+        <div className="mt-4 md:mt-6 pt-4 border-t border-[var(--border-primary)]">
+          <h4 className="text-sm font-medium text-[var(--text-primary)] mb-2">Course Info Preview</h4>
           <div className="space-y-2">
             <p className="text-xs md:text-sm"><span className="font-medium">Title:</span> {formData.title || "No title set"}</p>
             <p className="text-xs md:text-sm"><span className="font-medium">Category:</span> {formData.category || "No type selected"}</p>

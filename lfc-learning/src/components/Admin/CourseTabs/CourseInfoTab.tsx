@@ -227,17 +227,17 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
       {/* Left Column - Form */}
       <form className="space-y-6" onSubmit={handleSubmit}>
         <div>
-          <h3 className="text-lg font-medium text-yt-text-dark mb-1">Basic Information</h3>
-          <p className="text-sm text-yt-text-gray">
+          <h3 className="text-lg font-medium text-[var(--text-primary)] mb-1">Basic Information</h3>
+          <p className="text-sm text-[var(--text-secondary)]">
             Add details like title, description, category, and type.
           </p>
 
           {/* Title */}
           <div className="mt-4">
-            <label className="block text-sm font-medium text-yt-text-dark mb-2">Title</label>
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Title</label>
             <input
               type="text"
-              className="w-full border border-yt-light-border rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm md:text-base"
+              className="w-full border border-[var(--border-primary)] rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm md:text-base"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
@@ -247,10 +247,10 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
 
           {/* Description */}
           <div className="mt-4">
-            <label className="block text-sm font-medium text-yt-text-dark mb-2">Description</label>
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Description</label>
             <textarea
               rows={4}
-              className="w-full border border-yt-light-border rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm md:text-base"
+              className="w-full border border-[var(--border-primary)] rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm md:text-base"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               required
@@ -260,10 +260,10 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
 
           {/* Instructor Name */}
           <div className="mt-4">
-            <label className="block text-sm font-medium text-yt-text-dark mb-2">Instructor Name</label>
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Instructor Name</label>
             <input
               type="text"
-              className="w-full border border-yt-light-border rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm md:text-base"
+              className="w-full border border-[var(--border-primary)] rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm md:text-base"
               value={instructorName}
               onChange={(e) => setInstructorName(e.target.value)}
               placeholder="Enter instructor's name"
@@ -272,18 +272,18 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
 
           {/* Instructor Avatar Upload */}
           <div className="mt-4">
-            <label className="block text-sm font-medium text-yt-text-dark mb-2">Instructor Avatar</label>
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Instructor Avatar</label>
             <div className="flex border-b border-yt-light-border mb-3">
               <button
                 type="button"
-                className={`px-4 py-2 text-sm font-medium ${activeAvatarTab === 'file' ? 'border-b-2 border-lfc-red dark:border-[var(--lfc-red)] text-lfc-red' : 'text-yt-text-gray'}`}
+                className={`px-4 py-2 text-sm font-medium ${activeAvatarTab === 'file' ? 'border-b-2 border-lfc-red dark:border-red-800 text-lfc-red dark:text-red-800' : 'text-[var(--text-secondary)]'}`}
                 onClick={() => setActiveAvatarTab('file')}
               >
                 Upload File
               </button>
               <button
                 type="button"
-                className={`px-4 py-2 text-sm font-medium ${activeAvatarTab === 'url' ? 'border-b-2 border-lfc-red dark:border-[var(--lfc-red)] text-lfc-red' : 'text-yt-text-gray'}`}
+                className={`px-4 py-2 text-sm font-medium ${activeAvatarTab === 'url' ? 'border-b-2 border-lfc-red dark:border-red-800 text-lfc-red dark:text-red-800' : 'text-[var(--text-secondary)]'}`}
                 onClick={() => setActiveAvatarTab('url')}
               >
                 Use URL
@@ -292,18 +292,18 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
 
             {activeAvatarTab === 'file' ? (
               <div 
-                className="relative flex items-center justify-center w-full h-28 border-2 border-dashed border-yt-light-border rounded-lg cursor-pointer hover:bg-yt-light-hover hover:border-lfc-gold transition-colors group"
+                className="relative flex items-center justify-center w-full h-28 border-2 border-dashed border-yt-light-border rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] hover:border-lfc-gold transition-colors group"
                 onDragOver={(e) => {
                   e.preventDefault();
-                  e.currentTarget.classList.add('border-lfc-gold', 'bg-blue-50');
+                  e.currentTarget.classList.add('border-lfc-gold', 'bg-blue-100 dark:bg-blue-900/20');
                 }}
                 onDragLeave={(e) => {
                   e.preventDefault();
-                  e.currentTarget.classList.remove('border-lfc-gold', 'bg-blue-50');
+                  e.currentTarget.classList.remove('border-lfc-gold', 'bg-blue-100 dark:bg-blue-900/20');
                 }}
                 onDrop={(e) => {
                   e.preventDefault();
-                  e.currentTarget.classList.remove('border-lfc-gold', 'bg-blue-50');
+                  e.currentTarget.classList.remove('border-lfc-gold', 'bg-blue-100 dark:bg-blue-900/20');
                   const files = e.dataTransfer.files;
                   if (files.length > 0 && files[0].type.startsWith('image/')) {
                     setInstructorAvatar(files[0]);
@@ -312,11 +312,11 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
               >
                 <label className="flex flex-col items-center justify-center w-full min-h-full cursor-pointer">
                   <div className="flex flex-col items-center justify-center">
-                    <svg className="w-6 h-6 mb-2 text-yt-text-gray group-hover:text-lfc-gold transition-colors" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                    <svg className="w-6 h-6 mb-2 text-[var(--text-secondary)] group-hover:text-lfc-gold transition-colors" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
                       <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
                     </svg>
-                    <p className="mb-1 text-xs text-yt-text-gray"><span className="font-semibold">Click to upload or drag and drop</span></p>
-                    <p className="text-xs text-yt-text-gray">PNG, JPG (MAX. 2MB)</p>
+                    <p className="mb-1 text-xs text-[var(--text-secondary)]"><span className="font-semibold">Click to upload or drag and drop</span></p>
+                    <p className="text-xs text-[var(--text-secondary)]">PNG, JPG (MAX. 2MB)</p>
                   </div>
                   <input 
                     id="avatar-upload" 
@@ -336,7 +336,7 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
               <div>
                 <input
                   type="url"
-                  className="w-full border border-yt-light-border rounded-md px-3 py-2 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
+                  className="w-full border border-[var(--border-primary)] rounded-md px-3 py-2 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
                   placeholder="Enter avatar image URL"
                   value={avatarUrl}
                   onChange={(e) => setAvatarUrl(e.target.value)}
@@ -344,7 +344,7 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
               </div>
             )}
             {instructorAvatar && (
-              <p className="text-xs text-yt-text-gray mt-2">Selected: {instructorAvatar.name}</p>
+              <p className="text-xs text-[var(--text-secondary)] mt-2">Selected: {instructorAvatar.name}</p>
             )}
           </div>
 
@@ -352,7 +352,7 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
           <div className="mt-4">
             <label className="block text-sm font-medium mb-2">Category</label>
             <select
-              className="w-full border rounded-md px-3 py-2 focus:ring-lfc-red focus:border-lfc-red text-sm md:text-base"
+              className="w-full border border-[var(--border-primary)] rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm md:text-base text-sm md:text-base"
               value={selectedCategory}
               onChange={handleCategoryChange}
               required
@@ -368,9 +368,9 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
 
           {/* Level */}
           <div className="mt-4">
-            <label className="block text-sm font-medium text-yt-text-dark mb-2">Level</label>
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Level</label>
             <select
-              className="w-full border border-yt-light-border rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm md:text-base"
+              className="w-full border border-[var(--border-primary)] rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm md:text-base"
               value={level}
               onChange={(e) => setLevel(e.target.value)}
               required
@@ -385,18 +385,18 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
 
           {/* Thumbnail Upload */}
           <div className="mt-4">
-            <label className="block text-sm font-medium text-yt-text-dark mb-2">Thumbnail</label>
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Thumbnail</label>
             <div className="flex border-b border-yt-light-border mb-3">
               <button
                 type="button"
-                className={`px-4 py-2 text-sm font-medium ${activeThumbnailTab === 'file' ? 'border-b-2 border-lfc-red dark:border-[var(--lfc-red)] text-lfc-red' : 'text-yt-text-gray'}`}
+                className={`px-4 py-2 text-sm font-medium ${activeThumbnailTab === 'file' ? 'border-b-2 border-lfc-red dark:border-red-800 text-lfc-red dark:text-red-800' : 'text-[var(--text-secondary)]'}`}
                 onClick={() => setActiveThumbnailTab('file')}
               >
                 Upload File
               </button>
               <button
                 type="button"
-                className={`px-4 py-2 text-sm font-medium ${activeThumbnailTab === 'url' ? 'border-b-2 border-lfc-red dark:border-[var(--lfc-red)] text-lfc-red' : 'text-yt-text-gray'}`}
+                className={`px-4 py-2 text-sm font-medium ${activeThumbnailTab === 'url' ? 'border-b-2 border-lfc-red dark:border-red-800 text-lfc-red dark:text-red-800' : 'text-[var(--text-secondary)]'}`}
                 onClick={() => setActiveThumbnailTab('url')}
               >
                 Use URL
@@ -405,18 +405,18 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
 
             {activeThumbnailTab === 'file' ? (
               <div 
-                className="relative flex items-center justify-center w-full h-28 border-2 border-dashed border-yt-light-border rounded-lg cursor-pointer hover:bg-yt-light-hover hover:border-lfc-gold transition-colors group"
+                className="relative flex items-center justify-center w-full h-28 border-2 border-dashed border-yt-light-border rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] hover:border-lfc-gold transition-colors group"
                 onDragOver={(e) => {
                   e.preventDefault();
-                  e.currentTarget.classList.add('border-lfc-gold', 'bg-blue-50');
+                  e.currentTarget.classList.add('border-lfc-gold', 'bg-blue-100 dark:bg-blue-900/20');
                 }}
                 onDragLeave={(e) => {
                   e.preventDefault();
-                  e.currentTarget.classList.remove('border-lfc-gold', 'bg-blue-50');
+                  e.currentTarget.classList.remove('border-lfc-gold', 'bg-blue-100 dark:bg-blue-900/20');
                 }}
                 onDrop={(e) => {
                   e.preventDefault();
-                  e.currentTarget.classList.remove('border-lfc-gold', 'bg-blue-50');
+                  e.currentTarget.classList.remove('border-lfc-gold', 'bg-blue-100 dark:bg-blue-900/20');
                   const files = e.dataTransfer.files;
                   if (files.length > 0 && files[0].type.startsWith('image/')) {
                     setThumbnail(files[0]);
@@ -425,11 +425,11 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
               >
                 <label className="flex flex-col items-center justify-center w-full min-h-full cursor-pointer">
                   <div className="flex flex-col items-center justify-center">
-                    <svg className="w-6 h-6 mb-2 text-yt-text-gray group-hover:text-lfc-gold transition-colors" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                    <svg className="w-6 h-6 mb-2 text-[var(--text-secondary)] group-hover:text-lfc-gold transition-colors" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
                       <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
                     </svg>
-                    <p className="mb-1 text-xs text-yt-text-gray"><span className="font-semibold">Click to upload or drag and drop</span></p>
-                    <p className="text-xs text-yt-text-gray">PNG, JPG, GIF (MAX. 5MB)</p>
+                    <p className="mb-1 text-xs text-[var(--text-secondary)]"><span className="font-semibold">Click to upload or drag and drop</span></p>
+                    <p className="text-xs text-[var(--text-secondary)]">PNG, JPG, GIF (MAX. 5MB)</p>
                   </div>
                   <input 
                     id="thumbnail-upload" 
@@ -449,7 +449,7 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
               <div>
                 <input
                   type="url"
-                  className="w-full border border-yt-light-border rounded-md px-3 py-2 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
+                  className="w-full border border-[var(--border-primary)] rounded-md px-3 py-2 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
                   placeholder="Enter thumbnail image URL"
                   value={thumbnailUrlInput}
                   onChange={(e) => setThumbnailUrlInput(e.target.value)}
@@ -457,24 +457,24 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
               </div>
             )}
             {thumbnail && (
-              <p className="text-xs text-yt-text-gray mt-2">Selected: {thumbnail.name}</p>
+              <p className="text-xs text-[var(--text-secondary)] mt-2">Selected: {thumbnail.name}</p>
             )}
           </div>
 
           {/* Promo Video Upload */}
           <div className="mt-4">
-            <label className="block text-sm font-medium text-yt-text-dark mb-2">Promo Video</label>
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Promo Video</label>
             <div className="flex border-b border-yt-light-border mb-3">
               <button
                 type="button"
-                className={`px-4 py-2 text-sm font-medium ${activeVideoTab === 'file' ? 'border-b-2 border-lfc-red dark:border-[var(--lfc-red)] text-lfc-red' : 'text-yt-text-gray'}`}
+                className={`px-4 py-2 text-sm font-medium ${activeVideoTab === 'file' ? 'border-b-2 border-lfc-red dark:border-red-800 text-lfc-red dark:text-red-800' : 'text-[var(--text-secondary)]'}`}
                 onClick={() => setActiveVideoTab('file')}
               >
                 Upload File
               </button>
               <button
                 type="button"
-                className={`px-4 py-2 text-sm font-medium ${activeVideoTab === 'url' ? 'border-b-2 border-lfc-red dark:border-[var(--lfc-red)] text-lfc-red' : 'text-yt-text-gray'}`}
+                className={`px-4 py-2 text-sm font-medium ${activeVideoTab === 'url' ? 'border-b-2 border-lfc-red dark:border-red-800 text-lfc-red dark:text-red-800' : 'text-[var(--text-secondary)]'}`}
                 onClick={() => setActiveVideoTab('url')}
               >
                 Use URL
@@ -483,18 +483,18 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
 
             {activeVideoTab === 'file' ? (
               <div 
-                className="relative flex items-center justify-center w-full h-28 border-2 border-dashed border-yt-light-border rounded-lg cursor-pointer hover:bg-yt-light-hover hover:border-lfc-gold transition-colors group"
+                className="relative flex items-center justify-center w-full h-28 border-2 border-dashed border-yt-light-border rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] hover:border-lfc-gold transition-colors group"
                 onDragOver={(e) => {
                   e.preventDefault();
-                  e.currentTarget.classList.add('border-lfc-gold', 'bg-blue-50');
+                  e.currentTarget.classList.add('border-lfc-gold', 'bg-blue-100 dark:bg-blue-900/20');
                 }}
                 onDragLeave={(e) => {
                   e.preventDefault();
-                  e.currentTarget.classList.remove('border-lfc-gold', 'bg-blue-50');
+                  e.currentTarget.classList.remove('border-lfc-gold', 'bg-blue-100 dark:bg-blue-900/20');
                 }}
                 onDrop={(e) => {
                   e.preventDefault();
-                  e.currentTarget.classList.remove('border-lfc-gold', 'bg-blue-50');
+                  e.currentTarget.classList.remove('border-lfc-gold', 'bg-blue-100 dark:bg-blue-900/20');
                   const files = e.dataTransfer.files;
                   if (files.length > 0 && files[0].type.startsWith('video/')) {
                     setPromoVideo(files[0]);
@@ -503,11 +503,11 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
               >
                 <label className="flex flex-col items-center justify-center w-full min-h-full cursor-pointer">
                   <div className="flex flex-col items-center justify-center">
-                    <svg className="w-6 h-6 mb-2 text-yt-text-gray group-hover:text-lfc-gold transition-colors" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                    <svg className="w-6 h-6 mb-2 text-[var(--text-secondary)] group-hover:text-lfc-gold transition-colors" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
                       <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                     </svg>
-                    <p className="mb-1 text-xs text-yt-text-gray"><span className="font-semibold">Click to upload or drag and drop</span></p>
-                    <p className="text-xs text-yt-text-gray">MP4, MOV (MAX. 100MB)</p>
+                    <p className="mb-1 text-xs text-[var(--text-secondary)]"><span className="font-semibold">Click to upload or drag and drop</span></p>
+                    <p className="text-xs text-[var(--text-secondary)]">MP4, MOV (MAX. 100MB)</p>
                   </div>
                   <input 
                     id="video-upload" 
@@ -527,7 +527,7 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
               <div>
                 <input
                   type="url"
-                  className="w-full border border-yt-light-border rounded-md px-3 py-2 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
+                  className="w-full border border-[var(--border-primary)] rounded-md px-3 py-2 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
                   placeholder="Enter video URL (YouTube, Vimeo, etc.)"
                   value={promoVideoUrlInput}
                   onChange={(e) => setPromoVideoUrlInput(e.target.value)}
@@ -546,7 +546,7 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
               </div>
             )}
             {promoVideo && (
-              <p className="text-xs text-yt-text-gray mt-2">Selected: {promoVideo.name}</p>
+              <p className="text-xs text-[var(--text-secondary)] mt-2">Selected: {promoVideo.name}</p>
             )}
           </div>
 
@@ -555,11 +555,11 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
           <button
             type="submit"
             disabled={saving}
-            className="w-full bg-lfc-red text-white px-4 py-2.5 rounded-md hover:bg-lfc-gold-dark disabled:opacity-50 font-medium text-sm md:text-base"
+            className="w-full bg-lfc-red dark:bg-red-800 text-gray-200 px-4 py-2.5 rounded-md hover:bg-lfc-red-hover dark:hover:bg-red-700 disabled:opacity-50 font-medium text-sm md:text-base"
           >
             {saving ? (
               <span className="flex items-center justify-center">
-                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white dark:text-gray-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
@@ -575,7 +575,7 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
       <div className="lg:hidden">
         <button 
           onClick={() => setIsPreviewExpanded(!isPreviewExpanded)}
-          className="w-full bg-yt-light-hover p-3 rounded-lg flex items-center justify-between font-medium text-yt-text-dark"
+          className="w-full bg-gray-200 dark:bg-[var(--bg-tertiary)] p-3 rounded-lg flex items-center justify-between font-medium text-[var(--text-primary)]"
         >
           <span>Preview</span>
           <svg 
@@ -590,14 +590,14 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
         </button>
       </div>
       
-      <div className={`${isPreviewExpanded ? 'block' : 'hidden'} lg:block bg-white p-4 md:p-5 rounded-lg border border-yt-light-border shadow-sm`}>
-        <h3 className="text-lg font-medium text-yt-text-dark mb-4">Preview</h3>
+      <div className={`${isPreviewExpanded ? 'block' : 'hidden'} lg:block bg-white dark:bg-[var(--bg-elevated)] p-4 md:p-5 rounded-lg border border-[var(--border-primary)] shadow-sm`}>
+        <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Preview</h3>
         
         {/* Instructor Preview */}
         {(instructorName || instructorAvatar || instructorAvatarUrl) && (
           <div className="mb-4 md:mb-6">
-            <h4 className="text-sm font-medium text-yt-text-dark mb-2">Instructor</h4>
-            <div className="flex items-center p-3 bg-yt-light-hover rounded-lg">
+            <h4 className="text-sm font-medium text-[var(--text-primary)] mb-2">Instructor</h4>
+            <div className="flex items-center p-3 bg-gray-200 dark:bg-[var(--bg-tertiary)] rounded-lg">
               {instructorAvatar ? (
                 <img
                   src={URL.createObjectURL(instructorAvatar)}
@@ -612,7 +612,7 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
                 />
               ) : (
                 <div className="w-12 h-12 rounded-full bg-lfc-gold flex items-center justify-center mr-3">
-                  <span className="text-white font-medium text-lg">
+                  <span className="text-white dark:text-gray-200 font-medium text-lg">
                     {instructorName ? instructorName.charAt(0).toUpperCase() : '?'}
                   </span>
                 </div>
@@ -624,8 +624,8 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
         
         {/* Promo Video Preview */}
         <div className="mb-4 md:mb-6">
-          <h4 className="text-sm font-medium text-yt-text-dark mb-2">Promo Video</h4>
-          <div className="w-full h-40 md:h-48 bg-yt-light-hover rounded-lg flex items-center justify-center overflow-hidden">
+          <h4 className="text-sm font-medium text-[var(--text-primary)] mb-2">Promo Video</h4>
+          <div className="w-full h-40 md:h-48 bg-gray-200 dark:bg-[var(--bg-tertiary)] rounded-lg flex items-center justify-center overflow-hidden">
             {promoVideo ? (
               <video
                 src={URL.createObjectURL(promoVideo)}
@@ -643,7 +643,7 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
                 />
               </div>
             ) : (
-              <div className="text-center text-yt-text-gray p-4">
+              <div className="text-center text-[var(--text-secondary)] p-4">
                 {/* For video icon */}
                 <svg className="w-8 h-8 md:w-12 md:h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
@@ -656,8 +656,8 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
 
         {/* Thumbnail Preview */}
         <div className="mb-4 md:mb-6">
-          <h4 className="text-sm font-medium text-yt-text-dark mb-2">Thumbnail</h4>
-          <div className="w-full h-40 md:h-48 bg-yt-light-hover rounded-lg flex items-center justify-center overflow-hidden">
+          <h4 className="text-sm font-medium text-[var(--text-primary)] mb-2">Thumbnail</h4>
+          <div className="w-full h-40 md:h-48 bg-gray-200 dark:bg-[var(--bg-tertiary)] rounded-lg flex items-center justify-center overflow-hidden">
             {thumbnail ? (
               <img
                 src={URL.createObjectURL(thumbnail)}
@@ -676,7 +676,7 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
               />
             ) : null}
             {(!thumbnail && !thumbnailUrlInput) && (
-              <div className="text-center text-yt-text-gray p-4 thumbnail-fallback">
+              <div className="text-center text-[var(--text-secondary)] p-4 thumbnail-fallback">
                 <svg className="w-8 h-8 md:w-12 md:h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 20m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                 </svg>
@@ -688,10 +688,10 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
         
         {/* Course Info Preview */}
         <div className="mt-4 md:mt-6 pt-4 border-t border-yt-light-border">
-          <h4 className="text-sm font-medium text-yt-text-dark mb-2">Course Info Preview</h4>
+          <h4 className="text-sm font-medium text-[var(--text-primary)] mb-2">Course Info Preview</h4>
           <div className="space-y-2">
             <p className="text-xs md:text-sm"><span className="font-medium">Title:</span> {title || "No title set"}</p>
-            <p className="text-xs md:text-sm"><span className="font-medium">Category:</span> {categories || "No Category selected"}</p>
+            <p className="text-xs md:text-sm"><span className="font-medium">Category:</span> {selectedCategory || "No category selected"}</p>
             <p className="text-xs md:text-sm"><span className="font-medium">Level:</span> {level.charAt(0).toUpperCase() + level.slice(1) || "Not set"}</p>
             <p className="text-xs md:text-sm"><span className="font-medium">Description:</span> {description ? `${description.substring(0, 80)}${description.length > 80 ? '...' : ''}` : "No description provided"}</p>
           </div>

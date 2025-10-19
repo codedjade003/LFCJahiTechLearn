@@ -81,7 +81,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           {/* User Profile */}
           <div 
             onClick={handleProfileClick}
-            className="flex items-center px-6 py-4 border-b border-lfc-gold dark:border-[var(--lfc-gold)]/20 bg-lfc-red/60 dark:bg-[var(--lfc-red)]/60 cursor-pointer hover:bg-lfc-red/70 dark:bg-[var(--lfc-red)]/70 transition-all duration-200 group"
+            className="flex items-center px-6 py-4 border-b border-lfc-gold dark:border-[var(--lfc-gold)]/20 bg-lfc-red/60 dark:bg-red-800/60 cursor-pointer hover:bg-lfc-red/70 dark:bg-red-800/70 transition-all duration-200 group"
           >
             <div className="relative">
               <div className="absolute inset-0 rounded-full border-2 border-lfc-gold dark:border-[var(--lfc-gold)] animate-pulse opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -136,7 +136,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
             {/* Help Section */}
             <div className="mt-auto mb-6">
-              <div className="bg-lfc-red/60 dark:bg-[var(--lfc-red)]/60 rounded-2xl p-4 border border-lfc-gold dark:border-[var(--lfc-gold)]/30 backdrop-blur-sm">
+              <div className="bg-lfc-red/60 dark:bg-red-800/60 rounded-2xl p-4 border border-lfc-gold dark:border-[var(--lfc-gold)]/30 backdrop-blur-sm">
                 <div className="flex items-center mb-2">
                   <FaQuestionCircle className="text-lfc-gold dark:text-[var(--lfc-gold)] mr-2 text-lg" />
                   <h3 className="text-sm font-semibold">Need help?</h3>

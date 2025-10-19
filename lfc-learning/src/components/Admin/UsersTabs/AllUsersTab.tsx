@@ -400,7 +400,7 @@ const AllUsersTab: React.FC = () => {
 
           <button
             onClick={toggleFieldPicker}
-            className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-[var(--bg-secondary)]"
+            className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-[var(--bg-tertiary)]"
             title="Field visibility"
           >
             <FaFilter />
@@ -460,7 +460,7 @@ const AllUsersTab: React.FC = () => {
       <div className="relative">
         <div className="overflow-x-auto" style={{ maxWidth: '100vw', maxHeight: '70vh' }}>
           <table className="w-full">
-            <thead className="bg-gray-50 dark:bg-[var(--bg-secondary)] sticky top-0 z-30">
+            <thead className="bg-gray-50 dark:bg-[var(--bg-tertiary)] sticky top-0 z-10">
               <tr>
                 {/* All your existing th elements for fields */}
                 {visibleFields.name && (
@@ -590,14 +590,14 @@ const AllUsersTab: React.FC = () => {
                 )}
 
                 {/* Locked Actions column */}
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px] sticky top-0 right-0 bg-gray-50 dark:bg-[var(--bg-secondary)] z-30 border-l border-gray-200 dark:border-[var(--border-primary)]">
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px] sticky top-0 right-0 bg-gray-50 dark:bg-[var(--bg-tertiary)] z-30 border-l border-gray-200 dark:border-[var(--border-primary)]">
                     Actions
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {filteredUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50 dark:bg-[var(--bg-secondary)]">
+                <tr key={user.id} className="hover:bg-gray-50 dark:bg-[var(--bg-tertiary)]">
                   {/* All your existing td elements for fields */}
                   {visibleFields.name && (
                     <td className="px-4 py-3">
@@ -609,7 +609,7 @@ const AllUsersTab: React.FC = () => {
                           className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                         />
                       ) : (
-                        <div className="font-medium text-sm">{user.name || 'N/A'}</div>
+                        <div className="font-medium text-sm dark:text-gray-300">{user.name || 'N/A'}</div>
                       )}
                     </td>
                   )}
@@ -623,7 +623,7 @@ const AllUsersTab: React.FC = () => {
                           className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                         />
                       ) : (
-                        <div className="text-sm">{user.email}</div>
+                        <div className="text-sm dark:text-gray-200">{user.email}</div>
                       )}
                     </td>
                   )}
@@ -637,7 +637,7 @@ const AllUsersTab: React.FC = () => {
                           className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                         />
                       ) : (
-                        <div className="text-sm">{user.username || 'N/A'}</div>
+                        <div className="text-sm dark:text-gray-200">{user.username || 'N/A'}</div>
                       )}
                     </td>
                   )}
@@ -674,27 +674,27 @@ const AllUsersTab: React.FC = () => {
                           className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                         />
                       ) : (
-                        <div className="text-sm">{user.phoneNumber || 'N/A'}</div>
+                        <div className="text-sm dark:text-gray-200">{user.phoneNumber || 'N/A'}</div>
                       )}
                     </td>
                   )}
                   {visibleFields.dateOfBirth && (
-                    <td className="px-4 py-3 text-sm">
+                    <td className="px-4 py-3 text-sm dark:text-gray-200">
                       {user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString() : 'N/A'}
                     </td>
                   )}
                   {visibleFields.maritalStatus && (
-                    <td className="px-4 py-3 text-sm">
+                    <td className="px-4 py-3 text-sm dark:text-gray-200">
                       {user.maritalStatus || 'N/A'}
                     </td>
                   )}
                   {visibleFields.technicalUnit && (
-                    <td className="px-4 py-3 text-sm">
+                    <td className="px-4 py-3 text-sm dark:text-gray-200">
                       {user.technicalUnit || 'N/A'}
                     </td>
                   )}
                   {visibleFields.address && (
-                    <td className="px-4 py-3 text-sm">
+                    <td className="px-4 py-3 text-sm dark:text-gray-200">
                       {user.address ? `${user.address.street || ''} ${user.address.city || ''}`.trim() || 'N/A' : 'N/A'}
                     </td>
                   )}
@@ -735,17 +735,17 @@ const AllUsersTab: React.FC = () => {
                     </td>
                   )}
                   {visibleFields.lastLogin && (
-                    <td className="px-4 py-3 text-sm">
+                    <td className="px-4 py-3 text-sm dark:text-gray-200">
                       {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Never'}
                     </td>
                   )}
                   {visibleFields.loginCount && (
-                    <td className="px-4 py-3 text-sm">
+                    <td className="px-4 py-3 text-sm dark:text-gray-200">
                       {user.loginCount}
                     </td>
                   )}
                   {visibleFields.streak && (
-                    <td className="px-4 py-3 text-sm">
+                    <td className="px-4 py-3 text-sm dark:text-gray-200">
                       {user.streak ? `${user.streak.current} (Longest: ${user.streak.longest})` : 'N/A'}
                     </td>
                   )}
@@ -759,22 +759,22 @@ const AllUsersTab: React.FC = () => {
                     </td>
                   )}
                   {visibleFields.createdAt && (
-                    <td className="px-4 py-3 text-sm">
+                    <td className="px-4 py-3 text-sm dark:text-gray-200">
                       {new Date(user.createdAt).toLocaleDateString()}
                     </td>
                   )}
                   {visibleFields.updatedAt && (
-                    <td className="px-4 py-3 text-sm">
+                    <td className="px-4 py-3 text-sm dark:text-gray-200">
                       {new Date(user.updatedAt).toLocaleDateString()}
                     </td>
                   )}
                   {visibleFields.skills && (
-                    <td className="px-4 py-3 text-sm">
+                    <td className="px-4 py-3 text-sm dark:text-gray-200">
                       {user.skills && user.skills.length > 0 ? user.skills.join(', ') : 'N/A'}
                     </td>
                   )}
                   {visibleFields.socialLinks && (
-                    <td className="px-4 py-3 text-sm">
+                    <td className="px-4 py-3 text-sm dark:text-gray-200">
                       {user.socialLinks ? (
                         Object.entries(user.socialLinks)
                           .filter(([_, url]) => url)
@@ -793,7 +793,7 @@ const AllUsersTab: React.FC = () => {
                     </td>
                   )}
                   {visibleFields.preferences && (
-                    <td className="px-4 py-3 text-sm">
+                    <td className="px-4 py-3 text-sm dark:text-gray-200">
                       {user.preferences ? (
                         <>
                           Email: {user.preferences.emailNotifications ? 'Yes' : 'No'}, Push: {user.preferences.pushNotifications ? 'Yes' : 'No'}, Theme: {user.preferences.theme || 'Default'}, Language: {user.preferences.language || 'N/A'}
@@ -802,22 +802,22 @@ const AllUsersTab: React.FC = () => {
                     </td>
                   )}
                   {visibleFields.bio && (
-                    <td className="px-4 py-3 text-sm">
+                    <td className="px-4 py-3 text-sm dark:text-gray-200">
                       {user.bio || 'N/A'}
                     </td>
                   )}
                   {visibleFields.occupation && (
-                    <td className="px-4 py-3 text-sm">
+                    <td className="px-4 py-3 text-sm dark:text-gray-200">
                       {user.occupation || 'N/A'}
                     </td>
                   )}
                   {visibleFields.company && (
-                    <td className="px-4 py-3 text-sm">
+                    <td className="px-4 py-3 text-sm dark:text-gray-200">
                       {user.company || 'N/A'}
                     </td>
                   )}
                     {/* Locked Actions column */}
-                    <td className="px-4 py-3 sticky right-0 bg-white dark:bg-[var(--bg-elevated)] border-l border-gray-200 dark:border-[var(--border-primary)]">
+                    <td className="px-4 py-3 sticky right-0 bg-white dark:bg-[var(--bg-tertiary)] border-l border-gray-200 dark:border-[var(--border-primary)]">
                       <div className="flex space-x-2">
                         {user.isEditing ? (
                           <>

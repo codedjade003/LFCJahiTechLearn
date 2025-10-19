@@ -487,7 +487,7 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
           </div>
           <button
             onClick={handleAddSection}
-            className="px-4 py-2.5 bg-lfc-red text-white rounded-md hover:bg-lfc-gold-dark flex items-center font-medium text-sm"
+            className="px-4 py-2.5 bg-lfc-red dark:bg-red-800 text-white dark:text-gray-200 rounded-md hover:bg-lfc-gold-dark flex items-center font-medium text-sm"
             disabled={!newSection.title.trim()}
           >
             <FaPlus className="mr-2" /> Add Section
@@ -557,14 +557,14 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                     <div className="flex space-x-2 mr-2">
                       <button
                         onClick={() => handleSaveSection(section._id)}
-                        className="px-3 py-1 bg-green-600 text-white rounded-md text-sm hover:bg-green-700"
+                        className="px-3 py-1 bg-green-600 text-white dark:text-gray-200 rounded-md text-sm hover:bg-green-700"
                         title="Save section"
                       >
                         <FaSave size={12} />
                       </button>
                       <button
                         onClick={handleCancelEditSection}
-                        className="px-3 py-1 bg-gray-50 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]0 text-white rounded-md text-sm hover:bg-gray-600"
+                        className="px-3 py-1 bg-gray-50 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]0 text-white dark:text-gray-200 rounded-md text-sm hover:bg-gray-600"
                         title="Cancel edit"
                       >
                         ×
@@ -581,7 +581,7 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                   )}
                   <button
                     onClick={() => handleDeleteSection(section._id)}
-                    className="px-4 text-yt-text-gray hover:text-lfc-red"
+                    className="px-4 text-yt-text-gray hover:text-lfc-red dark:hover:text-red-800"
                     title="Delete section"
                   >
                     <FaTrash size={14} />
@@ -604,7 +604,7 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                             <div className="flex justify-between items-center">
                               <div>
                                 <span className="font-medium text-yt-text-dark">{mod.title}</span>
-                                <span className="text-xs bg-lfc-gold text-white px-2 py-1 rounded-full ml-2 capitalize">
+                                <span className="text-xs bg-lfc-gold text-white dark:text-gray-200 px-2 py-1 rounded-full ml-2 capitalize">
                                   {mod.type}
                                 </span>
                               </div>
@@ -645,7 +645,7 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                   )}
                   
                   {/* Add/Edit Module Form */}
-                  <div className="bg-gray-50 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] p-4 rounded-lg">
+                  <div className="bg-gray-50 dark:bg-[var(--bg-secondary)] p-4 rounded-lg">
                     <h4 className="text-md font-medium text-yt-text-dark mb-3">
                       {editingModule && editingModule.sectionId === section._id 
                         ? "Edit Module" 
@@ -711,7 +711,7 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                                   const newObjectives = newModule.objectives.filter((_, i) => i !== idx);
                                   setNewModule({ ...newModule, objectives: newObjectives });
                                 }}
-                                className="px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 text-sm"
+                                className="px-3 py-2 bg-red-500 text-white dark:text-gray-200 rounded-md hover:bg-red-600 text-sm"
                               >
                                 <FaTrash />
                               </button>
@@ -720,7 +720,7 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                           <button
                             type="button"
                             onClick={() => setNewModule({ ...newModule, objectives: [...newModule.objectives, ""] })}
-                            className="px-3 py-2 bg-lfc-gold text-white rounded-md hover:bg-lfc-gold/90 text-sm flex items-center gap-2"
+                            className="px-3 py-2 bg-lfc-gold text-white dark:text-gray-200 rounded-md hover:bg-lfc-gold/90 text-sm flex items-center gap-2"
                           >
                             <FaPlus /> Add Objective
                           </button>
@@ -736,7 +736,7 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                               type="button"
                               className={`px-3 py-2 rounded-md text-sm font-medium capitalize ${
                                 newModule.type === type
-                                  ? "bg-lfc-red text-white"
+                                  ? "bg-lfc-red dark:bg-red-800 text-white dark:text-gray-200"
                                   : "bg-yt-light-hover text-yt-text-dark hover:bg-gray-200"
                               }`}
                               onClick={() => setNewModule({ ...newModule, type, questions: [] })}
@@ -752,14 +752,14 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                           <div className="flex border-b border-yt-light-border mb-3">
                             <button
                               type="button"
-                              className={`px-4 py-2 text-sm font-medium ${activeUploadTab === 'file' ? 'border-b-2 border-lfc-red dark:border-[var(--lfc-red)] text-lfc-red' : 'text-yt-text-gray'}`}
+                              className={`px-4 py-2 text-sm font-medium ${activeUploadTab === 'file' ? 'border-b-2 border-lfc-red dark:border-red-800 text-lfc-red dark:text-red-800' : 'text-yt-text-gray'}`}
                               onClick={() => setActiveUploadTab('file')}
                             >
                               Upload File
                             </button>
                             <button
                               type="button"
-                              className={`px-4 py-2 text-sm font-medium ${activeUploadTab === 'url' ? 'border-b-2 border-lfc-red dark:border-[var(--lfc-red)] text-lfc-red' : 'text-yt-text-gray'}`}
+                              className={`px-4 py-2 text-sm font-medium ${activeUploadTab === 'url' ? 'border-b-2 border-lfc-red dark:border-red-800 text-lfc-red dark:text-red-800' : 'text-yt-text-gray'}`}
                               onClick={() => setActiveUploadTab('url')}
                             >
                               Use URL
@@ -857,7 +857,7 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                             <button
                               type="button"
                               onClick={handleAddQuizQuestion}
-                              className="px-3 py-1 bg-lfc-red text-white rounded-md text-sm flex items-center"
+                              className="px-3 py-1 bg-lfc-red dark:bg-red-800 text-white dark:text-gray-200 rounded-md text-sm flex items-center"
                             >
                               <FaPlus size={10} className="mr-1" /> Add Question
                             </button>
@@ -870,7 +870,7 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                                 <button
                                   type="button"
                                   onClick={() => handleRemoveQuizQuestion(qi)}
-                                  className="text-yt-text-gray hover:text-lfc-red"
+                                  className="text-yt-text-gray hover:text-lfc-red dark:hover:text-red-800"
                                 >
                                   <FaTrash size={14} />
                                 </button>
@@ -893,7 +893,7 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                                   <button
                                     type="button"
                                     onClick={() => handleAddOption(qi)}
-                                    className="text-xs text-lfc-red hover:text-lfc-gold-dark"
+                                    className="text-xs text-lfc-red dark:text-red-800 hover:text-lfc-gold-dark"
                                   >
                                     + Add Option
                                   </button>
@@ -912,7 +912,7 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                                         <button
                                           type="button"
                                           onClick={() => handleRemoveOption(qi, oi)}
-                                          className="ml-2 text-yt-text-gray hover:text-lfc-red"
+                                          className="ml-2 text-yt-text-gray hover:text-lfc-red dark:text-red-800"
                                         >
                                           <FaTrash size={12} />
                                         </button>
@@ -959,7 +959,7 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                                 ]
                               });
                             }}
-                            className="px-3 py-1 bg-lfc-gold text-white rounded-md text-sm flex items-center hover:bg-lfc-gold/90"
+                            className="px-3 py-1 bg-lfc-gold text-white dark:text-gray-200 rounded-md text-sm flex items-center hover:bg-lfc-gold/90"
                           >
                             <FaPlus size={10} className="mr-1" /> Add Survey Question
                           </button>
@@ -1078,7 +1078,7 @@ export default function CourseContentTab({ courseId }: { courseId: string | null
                           ((newModule.type === "video" || newModule.type === "pdf") && 
                           ((activeUploadTab === 'file' && !newModule.file) || 
                           (activeUploadTab === 'url' && !contentUrl.trim())))}
-                        className="w-full px-4 py-2.5 bg-lfc-red text-white rounded-md hover:bg-lfc-gold-dark disabled:opacity-50 flex items-center justify-center font-medium text-sm"
+                        className="w-full px-4 py-2.5 bg-lfc-red dark:bg-red-800 text-white dark:text-gray-200 rounded-md hover:bg-lfc-gold-dark disabled:opacity-50 flex items-center justify-center font-medium text-sm"
                       >
                         <FaSave className="mr-2" /> {editingModule ? "Update Module" : "Add Module"}
                       </button>

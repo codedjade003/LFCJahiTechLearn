@@ -210,7 +210,7 @@ export default function CourseProjectsTab({ courseId }: { courseId: string }) {
   return (
     <div className="space-y-6">
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
+        <div className="bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-700 text-red-800 dark:text-red-200 px-4 py-3 rounded-md">
           {error}
         </div>
       )}
@@ -219,20 +219,20 @@ export default function CourseProjectsTab({ courseId }: { courseId: string }) {
       {(editing || !project) && (
         <form
           onSubmit={handleSubmit}
-          className="bg-white dark:bg-[var(--bg-elevated)] border border-yt-light-border rounded-lg p-5 shadow-sm"
+          className="bg-white dark:bg-[var(--bg-elevated)] border border-[var(--border-primary)] rounded-lg p-5 shadow-sm"
         >
-          <h3 className="text-lg font-medium text-yt-text-dark mb-4">
+          <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">
             {project ? "Edit Project" : "Add Project"}
           </h3>
 
           {project && editing && (
-            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-              <p className="text-sm text-blue-700">
+            <div className="mb-4 p-3 bg-blue-100 dark:bg-blue-900/20 border border-blue-300 dark:border-blue-700 rounded-md">
+              <p className="text-sm text-blue-800 dark:text-blue-200">
                 You are editing the project.{" "}
                 <button 
                   type="button"
                   onClick={cancelEditing}
-                  className="text-blue-600 underline hover:text-blue-800"
+                  className="text-blue-600 dark:text-blue-300 underline hover:text-blue-800 dark:hover:text-blue-100"
                 >
                   Cancel edit
                 </button>
@@ -242,24 +242,24 @@ export default function CourseProjectsTab({ courseId }: { courseId: string }) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-yt-text-dark mb-2">
+              <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                 Title
               </label>
               <input
                 type="text"
-                className="w-full border border-yt-light-border rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
+                className="w-full border border-[var(--border-primary)] rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-yt-text-dark mb-2">
+              <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                 Due Date
               </label>
               <input
                 type="date"
-                className="w-full border border-yt-light-border rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
+                className="w-full border border-[var(--border-primary)] rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
                 required
@@ -268,12 +268,12 @@ export default function CourseProjectsTab({ courseId }: { courseId: string }) {
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-yt-text-dark mb-2">
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
               Instructions
             </label>
             <textarea
               rows={3}
-              className="w-full border border-yt-light-border rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
+              className="w-full border border-[var(--border-primary)] rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm"
               value={instructions}
               onChange={(e) => setInstructions(e.target.value)}
               placeholder="Provide detailed instructions for the project"
@@ -282,14 +282,14 @@ export default function CourseProjectsTab({ courseId }: { courseId: string }) {
 
           {/* Materials Section */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-yt-text-dark mb-2">
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
               Materials
             </label>
             <MaterialsUploader materials={materials} setMaterials={setMaterials} />
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-yt-text-dark mb-2">
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
               Submission Types (Select multiple)
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -299,8 +299,8 @@ export default function CourseProjectsTab({ courseId }: { courseId: string }) {
                   type="button"
                   className={`px-3 py-2 rounded-md text-sm font-medium capitalize transition-colors ${
                     submissionTypes.includes(type)
-                      ? "bg-lfc-red text-white border-lfc-red"
-                      : "bg-yt-light-hover text-yt-text-dark hover:bg-gray-200 border border-yt-light-border"
+                      ? "bg-lfc-red dark:bg-red-800 text-gray-200 border-lfc-red"
+                      : "bg-yt-light-hover text-[var(--text-primary)] hover:bg-gray-200 dark:hover:bg-[var(--bg-tertiary)]"
                   }`}
                   onClick={() => toggleSubmissionType(type)}
                 >
@@ -308,7 +308,7 @@ export default function CourseProjectsTab({ courseId }: { courseId: string }) {
                 </button>
               ))}
             </div>
-            <p className="text-xs text-yt-text-gray mt-2">
+            <p className="text-xs text-[var(--text-secondary)] mt-2">
               Selected: {submissionTypes.map(t => t.replace('_', ' ')).join(', ')}
             </p>
           </div>
@@ -316,7 +316,7 @@ export default function CourseProjectsTab({ courseId }: { courseId: string }) {
           <div className="flex space-x-3">
             <button
               type="submit"
-              className="px-4 py-2.5 bg-lfc-red text-white rounded-md hover:bg-lfc-gold-dark flex items-center font-medium text-sm"
+              className="px-4 py-2.5 bg-lfc-red dark:bg-red-800 text-gray-200 rounded-md hover:bg-lfc-red-hover dark:hover:bg-red-700 flex items-center font-medium text-sm"
               disabled={!title.trim() || !dueDate || submissionTypes.length === 0}
             >
               <FaSave className="mr-2" />{" "}
@@ -327,7 +327,7 @@ export default function CourseProjectsTab({ courseId }: { courseId: string }) {
               <button
                 type="button"
                 onClick={cancelEditing}
-                className="px-4 py-2.5 border border-gray-300 text-gray-700 dark:text-[var(--text-secondary)] dark:text-[var(--text-secondary)] rounded-md hover:bg-gray-50 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] font-medium text-sm"
+                className="px-4 py-2.5 border border-[var(--border-primary)] text-gray-700 dark:text-[var(--text-secondary)] dark:text-[var(--text-secondary)] rounded-md hover:bg-[var(--hover-bg)] dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] font-medium text-sm"
               >
                 Cancel
               </button>
@@ -338,22 +338,22 @@ export default function CourseProjectsTab({ courseId }: { courseId: string }) {
 
       {/* Project View - Only show when not editing and project exists */}
       {!editing && project && (
-        <div className="bg-white dark:bg-[var(--bg-elevated)] border border-yt-light-border rounded-lg p-5 shadow-sm">
-          <h3 className="text-lg font-medium text-yt-text-dark mb-4">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] border border-[var(--border-primary)] rounded-lg p-5 shadow-sm">
+          <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">
             Course Project
           </h3>
           
           <div className="space-y-4">
             <div>
-              <h4 className="font-medium text-yt-text-dark text-lg">
+              <h4 className="font-medium text-[var(--text-primary)] text-lg">
                 {project.title}
               </h4>
-              <p className="text-sm text-yt-text-gray mt-2 whitespace-pre-wrap">
+              <p className="text-sm text-[var(--text-secondary)] mt-2 whitespace-pre-wrap">
                 {project.instructions}
               </p>
             </div>
 
-            <div className="flex items-center text-sm text-yt-text-gray">
+            <div className="flex items-center text-sm text-[var(--text-secondary)]">
               <span className="bg-lfc-gold text-white px-2 py-1 rounded-full mr-3 capitalize">
                 {project.submissionTypes.map(t => t.replace('_', ' ')).join(', ')}
               </span>
@@ -365,14 +365,14 @@ export default function CourseProjectsTab({ courseId }: { courseId: string }) {
             {/* Display materials if they exist */}
             {project.materials && project.materials.length > 0 && (
               <div>
-                <h5 className="text-sm font-medium text-yt-text-dark mb-2">Materials:</h5>
+                <h5 className="text-sm font-medium text-[var(--text-primary)] mb-2">Materials:</h5>
                 <div className="space-y-2">
                   {project.materials.map((material, index) => (
-                    <div key={index} className="flex items-center p-2 bg-gray-50 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-md">
+                    <div key={index} className="flex items-center p-2 bg-gray-200 dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-md">
                       <div className={`p-1 rounded mr-2 ${
-                        material.type === 'image' ? 'bg-blue-100 text-blue-600' :
-                        material.type === 'video' ? 'bg-purple-100 text-purple-600' :
-                        material.type === 'pdf' ? 'bg-red-100 text-red-600' :
+                        material.type === 'image' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 dark:text-blue-300' :
+                        material.type === 'video' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-300' :
+                        material.type === 'pdf' ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-300' :
                         'bg-gray-100 dark:bg-[var(--bg-tertiary)] dark:bg-[var(--bg-tertiary)] text-gray-600 dark:text-[var(--text-secondary)]'
                       }`}>
                         {material.type === 'image' && '🖼️'}
@@ -380,7 +380,7 @@ export default function CourseProjectsTab({ courseId }: { courseId: string }) {
                         {material.type === 'pdf' && '📄'}
                         {!['image', 'video', 'pdf'].includes(material.type) && '📎'}
                       </div>
-                      <span className="text-sm text-yt-text-dark">{material.name}</span>
+                      <span className="text-sm text-[var(--text-primary)]">{material.name}</span>
                     </div>
                   ))}
                 </div>
@@ -390,13 +390,13 @@ export default function CourseProjectsTab({ courseId }: { courseId: string }) {
             <div className="flex space-x-2 pt-2">
               <button
                 onClick={startEditing}
-                className="text-blue-600 hover:text-blue-800 text-sm px-3 py-1 border border-blue-200 rounded-md"
+                className="text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-100 text-sm px-3 py-1 border border-blue-300 dark:border-blue-700 rounded-md"
               >
                 Edit
               </button>
               <button
                 onClick={handleDelete}
-                className="text-red-600 hover:text-red-800 text-sm px-3 py-1 border border-red-200 rounded-md flex items-center"
+                className="text-red-600 dark:text-red-800 hover:text-red-800 dark:hover:text-red-700 text-sm px-3 py-1 border border-red-300 dark:border-red-700 rounded-md flex items-center"
               >
                 <FaTrash className="mr-1" /> Delete
               </button>
@@ -406,7 +406,7 @@ export default function CourseProjectsTab({ courseId }: { courseId: string }) {
       )}
 
       {loading && (
-        <div className="text-sm text-yt-text-gray">Loading project...</div>
+        <div className="text-sm text-[var(--text-secondary)]">Loading project...</div>
       )}
     </div>
   );

@@ -155,7 +155,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
           >
             <FaBell className="text-lg" />
             {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-lfc-red dark:bg-[var(--lfc-red)] text-white rounded-full min-w-[18px] h-[18px] flex items-center justify-center text-xs font-medium px-1">
+              <span className="absolute -top-1 -right-1 bg-lfc-red dark:bg-red-800 text-white rounded-full min-w-[18px] h-[18px] flex items-center justify-center text-xs font-medium px-1">
                 {unreadCount > 9 ? '9+' : unreadCount}
               </span>
             )}
@@ -168,7 +168,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-gray-800 dark:text-[var(--text-primary)]">Notifications</h3>
                   {unreadCount > 0 && (
-                    <span className="bg-lfc-red dark:bg-[var(--lfc-red)] text-white text-xs px-2 py-1 rounded-full">
+                    <span className="bg-lfc-red dark:bg-red-800 text-white text-xs px-2 py-1 rounded-full">
                       {unreadCount} unread
                     </span>
                   )}
