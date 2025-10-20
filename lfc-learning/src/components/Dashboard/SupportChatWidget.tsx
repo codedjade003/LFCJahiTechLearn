@@ -155,7 +155,7 @@ const SupportChatWidget: React.FC = () => {
       {/* Floating Chat Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 bg-lfc-red text-white p-4 rounded-full shadow-lg hover:bg-red-700 transition-all z-50"
+        className="fixed bottom-6 right-6 bg-lfc-red dark:bg-red-800 text-white p-4 rounded-full shadow-lg hover:bg-red-700 dark:hover:bg-lfc-red transition-all z-50"
       >
         <FaComments size={24} />
       </button>
@@ -164,7 +164,7 @@ const SupportChatWidget: React.FC = () => {
       {isOpen && (
         <div className="fixed bottom-6 right-6 w-96 h-[600px] bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow-2xl border border-gray-200 z-50 flex flex-col">
           {/* Header */}
-          <div className="bg-lfc-red text-white p-4 rounded-t-lg flex justify-between items-center">
+          <div className="bg-lfc-red dark:bg-red-800 text-white p-4 rounded-t-lg flex justify-between items-center">
             <div className="flex items-center">
               {activeTicket && (
                 <button
@@ -229,7 +229,7 @@ const SupportChatWidget: React.FC = () => {
                     </button>
                     <button
                       type="submit"
-                      className="flex-1 bg-lfc-red text-white rounded p-2 text-sm hover:bg-red-700"
+                      className="flex-1 bg-lfc-red dark:bg-red-800 text-white rounded p-2 text-sm hover:bg-red-700 dark:hover:bg-lfc-red"
                     >
                       Create
                     </button>
@@ -250,7 +250,7 @@ const SupportChatWidget: React.FC = () => {
                     </div>
                     <button
                       onClick={() => setShowNewTicketForm(true)}
-                      className="text-lfc-red hover:text-red-700 text-sm flex items-center"
+                      className="text-lfc-red dark:text-red-800 hover:text-red-700 text-sm flex items-center"
                     >
                       <FaPlus className="mr-1" size={12} />
                       New
@@ -270,7 +270,7 @@ const SupportChatWidget: React.FC = () => {
                       <div
                         className={`inline-block max-w-xs rounded-lg p-3 ${
                           message.user._id === currentUserId
-                            ? 'bg-lfc-red text-white'
+                            ? 'bg-lfc-red dark:bg-red-800 text-white dark:text-gray-200'
                             : 'bg-gray-100 text-gray-800'
                         }`}
                       >
@@ -299,7 +299,7 @@ const SupportChatWidget: React.FC = () => {
                     <button
                       onClick={sendMessage}
                       disabled={!newMessage.trim()}
-                      className="bg-lfc-red text-white p-2 rounded hover:bg-red-700 disabled:opacity-50"
+                      className="bg-lfc-red dark:bg-red-800 text-white p-2 rounded hover:bg-red-700 dark:hover:bg-lfc-red disabled:opacity-50"
                     >
                       <FaPaperPlane />
                     </button>
@@ -313,7 +313,7 @@ const SupportChatWidget: React.FC = () => {
                   <h4 className="font-semibold">Your Tickets</h4>
                   <button
                     onClick={() => setShowNewTicketForm(true)}
-                    className="bg-lfc-red text-white px-3 py-1 rounded text-sm hover:bg-red-700 flex items-center"
+                    className="bg-lfc-red dark:bg-red-800 text-white px-3 py-1 rounded text-sm hover:bg-red-700 dark:hover:bg-lfc-red flex items-center"
                   >
                     <FaPlus className="mr-1" />
                     New Ticket
@@ -347,7 +347,7 @@ const SupportChatWidget: React.FC = () => {
                     
                     <button
                         onClick={() => setFilters({ status: '', category: '', priority: '' })}
-                        className="text-xs border border-gray-300 rounded p-1 hover:bg-gray-50"
+                        className="text-xs border border-gray-300 rounded p-1 hover:bg-gray-50 dark:hover:bg-gray-200 dark:hover:text-gray-900"
                     >
                         Clear
                     </button>

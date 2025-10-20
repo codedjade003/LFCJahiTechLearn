@@ -449,12 +449,12 @@ const QuizComponent = ({
     const passed = percentage >= 70;
 
     return (
-      <div className="text-center p-8 bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-[var(--border-primary)]">
+      <div className="text-center p-8 bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200">
         <div className={`mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4 ${
           passed ? 'bg-green-100' : 'bg-red-100'
         }`}>
           {passed ? (
-            <FaTrophy className="text-3xl text-green-700 dark:text-green-300" />
+            <FaTrophy className="text-3xl text-green-600" />
           ) : (
             <FaClock className="text-3xl text-red-600" />
           )}
@@ -470,16 +470,16 @@ const QuizComponent = ({
         
         {/* Proctoring Summary */}
         {proctoring.violations > 0 && (
-          <div className="bg-yellow-100 dark:bg-yellow-900/20 border border-yellow-300 dark:border-yellow-700 rounded-lg p-4 mb-6">
-            <p className="text-yellow-900 dark:text-yellow-200 text-sm">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+            <p className="text-yellow-800 text-sm">
               Note: {proctoring.violations} proctoring violation(s) were recorded during this attempt.
             </p>
           </div>
         )}
         
         {!passed && (
-          <div className="bg-yellow-100 dark:bg-yellow-900/20 border border-yellow-300 dark:border-yellow-700 rounded-lg p-4 mb-6">
-            <p className="text-yellow-900 dark:text-yellow-200">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+            <p className="text-yellow-800">
               You can retake the quiz after reviewing the course material.
             </p>
           </div>
@@ -488,7 +488,7 @@ const QuizComponent = ({
         <button 
           onClick={handleQuizCompletion}
           disabled={quizState.submitted}
-          className="px-8 py-3 bg-lfc-red dark:bg-red-800 text-gray-200 rounded-lg hover:bg-lfc-red-hover dark:hover:bg-red-700 disabled:opacity-50 text-lg font-semibold"
+          className="px-8 py-3 bg-lfc-red text-white rounded-lg hover:bg-lfc-gold-dark disabled:opacity-50 text-lg font-semibold"
         >
           {quizState.submitted ? 'Submitting...' : 'Continue'}
         </button>
@@ -496,7 +496,7 @@ const QuizComponent = ({
         {!passed && (
           <button 
             onClick={() => window.location.reload()}
-            className="ml-4 px-8 py-3 border border-[var(--border-primary)] rounded-lg hover:bg-gray-200 dark:bg-[var(--bg-secondary)] text-lg font-semibold"
+            className="ml-4 px-8 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 text-lg font-semibold"
           >
             Retry Quiz
           </button>
@@ -509,13 +509,13 @@ const QuizComponent = ({
   if (!question) return null;
 
   return (
-    <div className="p-6 bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-[var(--border-primary)]">
+    <div className="p-6 bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200">
       {/* Enhanced Quiz Header with Proctoring Info */}
-      <div className="bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-700 rounded-lg p-4 mb-6">
+      <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <FaClock className="text-red-500 mr-2" />
-            <span className="text-red-800 dark:text-red-200 font-semibold">Secure Quiz Mode Active</span>
+            <span className="text-red-700 font-semibold">Secure Quiz Mode Active</span>
           </div>
           <div className="text-red-600 font-bold">
             Time: {formatTime(proctoring.timeLeft)}
@@ -536,7 +536,7 @@ const QuizComponent = ({
           <h3 className="text-xl font-semibold">Question {quizState.currentQuestion + 1} of {module.quiz?.questions.length}</h3>
         </div>
         <div className="flex items-center space-x-4">
-          <div className="bg-gray-200 dark:bg-[var(--bg-tertiary)] px-3 py-1 rounded-full text-sm">
+          <div className="bg-gray-100 px-3 py-1 rounded-full text-sm">
             Score: {quizState.score}
           </div>
           <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
@@ -547,7 +547,7 @@ const QuizComponent = ({
         </div>
       </div>
       
-      <p className="text-lg mb-6 bg-gray-200 dark:bg-[var(--bg-secondary)] p-4 rounded-lg border">{question.question}</p>
+      <p className="text-lg mb-6 bg-gray-50 p-4 rounded-lg border">{question.question}</p>
       
       <div className="space-y-3">
         {question.options.map((option, index) => (
@@ -556,14 +556,14 @@ const QuizComponent = ({
             onClick={() => handleAnswerSelect(option)}
             className={`w-full text-left p-4 rounded-lg border transition-all ${
               quizState.selectedAnswer === option 
-                ? 'border-lfc-red dark:border-red-800 bg-red-100 dark:bg-red-900/20 transform scale-105' 
-                : 'border-[var(--border-primary)] hover:border-[var(--border-secondary)] hover:bg-gray-200 dark:bg-[var(--bg-secondary)]'
+                ? 'border-lfc-red bg-red-50 transform scale-105' 
+                : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
             }`}
           >
             <div className="flex items-center">
               <div className={`w-6 h-6 rounded-full border mr-3 flex items-center justify-center ${
                 quizState.selectedAnswer === option 
-                  ? 'border-lfc-red dark:border-red-800 bg-lfc-red dark:bg-red-800 text-gray-200' 
+                  ? 'border-lfc-red bg-lfc-red text-white' 
                   : 'border-gray-400'
               }`}>
                 {quizState.selectedAnswer === option && '✓'}
@@ -581,7 +581,7 @@ const QuizComponent = ({
         <button
           onClick={handleNextQuestion}
           disabled={!quizState.selectedAnswer}
-          className="px-8 py-3 bg-lfc-red dark:bg-red-800 text-gray-200 rounded-lg hover:bg-lfc-red-hover dark:hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+          className="px-8 py-3 bg-lfc-red text-white rounded-lg hover:bg-lfc-gold-dark disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
         >
           {quizState.currentQuestion + 1 === module.quiz?.questions.length ? 'Finish Quiz' : 'Next Question'}
         </button>
@@ -589,8 +589,8 @@ const QuizComponent = ({
 
       {/* Time warning */}
       {proctoring.timeLeft < 300 && ( // 5 minutes warning
-        <div className="mt-4 bg-orange-100 dark:bg-orange-900/20 border border-orange-300 dark:border-orange-700 rounded-lg p-3">
-          <p className="text-orange-800 dark:text-orange-200 text-sm font-semibold">
+        <div className="mt-4 bg-orange-50 border border-orange-200 rounded-lg p-3">
+          <p className="text-orange-700 text-sm font-semibold">
             ⏰ Time warning: {formatTime(proctoring.timeLeft)} remaining
           </p>
         </div>
@@ -905,7 +905,7 @@ export default function CourseDetails() {
 
   if (loading) {
     return (
-      <div className="flex flex-col h-screen bg-gray-200 dark:bg-[var(--bg-primary)]">
+      <div className="flex flex-col h-screen bg-yt-light-gray">
         <div className="p-6">
           <div className="animate-pulse space-y-4">
             <div className="h-8 bg-yt-light-hover rounded w-1/3"></div>
@@ -919,10 +919,10 @@ export default function CourseDetails() {
 
   if (!course) {
     return (
-      <div className="flex flex-col h-screen bg-gray-200 dark:bg-[var(--bg-primary)]">
+      <div className="flex flex-col h-screen bg-yt-light-gray">
         <div className="p-6">
-          <div className="bg-white dark:bg-[var(--bg-elevated)] p-8 rounded-lg text-center border border-[var(--border-primary)]">
-            <p className="text-[var(--text-secondary)] mb-4">Course not found.</p>
+          <div className="bg-white dark:bg-[var(--bg-elevated)] p-8 rounded-lg text-center border border-yt-light-border">
+            <p className="text-yt-text-gray mb-4">Course not found.</p>
             <Link to="/dashboard/courses" className="text-lfc-red hover:underline">
               Back to My Courses
             </Link>
@@ -933,35 +933,35 @@ export default function CourseDetails() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-200 dark:bg-[var(--bg-primary)]">
+    <div className="flex flex-col h-screen bg-yt-light-gray">
       {/* Onboarding Tour */}
       <OnboardingTour tourKey="courseDetails" steps={courseDetailsTour} />
       
       {/* Header */}
-      <header className="bg-white dark:bg-[var(--bg-elevated)] border-b border-[var(--border-primary)] shadow-sm">
+      <header className="bg-white dark:bg-[var(--bg-elevated)] border-b border-yt-light-border shadow-sm">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <button 
                 onClick={() => navigate('/dashboard/courses')}
-                className="mr-4 p-2 rounded-md text-[var(--text-primary)] hover:bg-[var(--hover-bg)] dark:hover:bg-[var(--hover-bg)]"
+                className="mr-4 p-2 rounded-md text-yt-text-dark hover:bg-yt-light-hover"
               >
                 <FaArrowLeft />
               </button>
-              <h1 className="text-2xl font-bold text-[var(--text-primary)]">{course.title}</h1>
+              <h1 className="text-2xl font-bold text-yt-text-dark">{course.title}</h1>
             </div>
             
             {enrollment && (
               <div className="text-right">
-                <div className="text-sm text-[var(--text-secondary)] mb-1">Overall Progress</div>
+                <div className="text-sm text-yt-text-gray mb-1">Overall Progress</div>
                 <div className="flex items-center">
-                  <div className="w-32 h-2 bg-[var(--bg-tertiary)] rounded-full mr-3">
+                  <div className="w-32 h-2 bg-yt-progress-light-bg rounded-full mr-3">
                     <div 
                       className="h-2 bg-lfc-gold rounded-full transition-all duration-300"
                       style={{ width: `${enrollment.progress}%` }}
                     ></div>
                   </div>
-                  <span className="text-lg font-semibold text-[var(--text-primary)]">
+                  <span className="text-lg font-semibold text-yt-text-dark">
                     {enrollment.progress}%
                   </span>
                 </div>
@@ -977,8 +977,8 @@ export default function CourseDetails() {
                 onClick={() => setActivePage(page)}
                 className={`pb-3 px-1 font-medium transition-colors ${
                   activePage === page
-                    ? 'text-lfc-red border-b-2 border-lfc-red dark:border-red-800 dark:border-[var(--lfc-red)]'
-                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                    ? 'text-lfc-red border-b-2 border-lfc-red dark:border-[var(--lfc-red)]'
+                    : 'text-yt-text-gray hover:text-yt-text-dark'
                 }`}
               >
                 {page === 'overview' && 'Overview'}
@@ -991,8 +991,8 @@ export default function CourseDetails() {
                 onClick={() => setActivePage('completion')}
                 className={`pb-3 px-1 font-medium transition-colors ${
                   activePage === 'completion'
-                    ? 'text-lfc-red border-b-2 border-lfc-red dark:border-red-800 dark:border-[var(--lfc-red)]'
-                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                    ? 'text-lfc-red border-b-2 border-lfc-red dark:border-[var(--lfc-red)]'
+                    : 'text-yt-text-gray hover:text-yt-text-dark'
                 }`}
               >
                 Completion
@@ -1005,9 +1005,9 @@ export default function CourseDetails() {
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar - Course Outline */}
-        <aside className="w-80 bg-white dark:bg-[var(--bg-elevated)] border-r border-[var(--border-primary)] overflow-y-auto">
+        <aside className="w-80 bg-white dark:bg-[var(--bg-elevated)] border-r border-yt-light-border overflow-y-auto">
           <div className="p-4">
-            <h2 className="font-semibold text-[var(--text-primary)] mb-4">Course Content</h2>
+            <h2 className="font-semibold text-yt-text-dark mb-4">Course Content</h2>
             <div className="space-y-2">
               {course.sections.map((section) => {
                 const sectionProgress = enrollment?.sectionProgress?.find(sp => 
@@ -1017,17 +1017,17 @@ export default function CourseDetails() {
                 const isExpanded = expandedSections.has(section._id);
 
                 return (
-                  <div key={section._id} className="border border-[var(--border-primary)] rounded-lg">
+                  <div key={section._id} className="border border-yt-light-border rounded-lg">
                     <button
                       onClick={() => toggleSection(section._id)}
-                      className="w-full text-left p-3 rounded-lg hover:bg-[var(--hover-bg)] dark:hover:bg-[var(--hover-bg)] transition-colors"
+                      className="w-full text-left p-3 rounded-lg hover:bg-yt-light-hover transition-colors"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
                           {isExpanded ? <FaChevronDown /> : <FaChevronRight />}
-                          <h3 className="font-medium text-[var(--text-primary)]">{section.title}</h3>
+                          <h3 className="font-medium text-yt-text-dark">{section.title}</h3>
                         </div>
-                        <div className="flex items-center space-x-2 text-xs text-[var(--text-secondary)]">
+                        <div className="flex items-center space-x-2 text-xs text-yt-text-gray">
                           <span>{sectionProgress.modulesCompleted}/{sectionProgress.totalModules}</span>
                           {sectionProgress.completed && <FaCheckCircle className="text-green-500" />}
                         </div>
@@ -1076,8 +1076,8 @@ export default function CourseDetails() {
                                   }}
                                   className={`w-full text-left p-2 rounded text-sm transition-colors ${
                                     isCompleted
-                                      ? 'text-green-700 dark:text-green-300 bg-green-100 dark:bg-green-900/20'
-                                      : 'text-[var(--text-primary)] hover:bg-[var(--hover-bg)] dark:hover:bg-[var(--hover-bg)]'
+                                      ? 'text-green-600 bg-green-50'
+                                      : 'text-yt-text-dark hover:bg-yt-light-hover'
                                   } ${
                                     activeModule === module._id ? 'bg-lfc-red bg-opacity-10' : ''
                                   }`}
@@ -1086,7 +1086,7 @@ export default function CourseDetails() {
                                     {getModuleIcon(module.type)}
                                     <span className="flex-1 truncate">{module.title}</span>
                                     {module.duration && (
-                                      <span className="text-xs text-[var(--text-secondary)]">{module.duration}</span>
+                                      <span className="text-xs text-yt-text-gray">{module.duration}</span>
                                     )}
                                   </div>
                                 </button>
@@ -1116,17 +1116,17 @@ export default function CourseDetails() {
               >
                 {/* Course Info Badges */}
                 <div className="flex flex-wrap gap-3 mb-6">
-                  <span className="px-3 py-1 bg-lfc-red dark:bg-red-800 bg-opacity-10 text-red-300 rounded-full text-sm">
+                  <span className="px-3 py-1 bg-lfc-red bg-opacity-10 text-lfc-red rounded-full text-sm">
                     {course.type}
                   </span>
-                  <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 rounded-full text-sm">
+                  <span className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm">
                     {course.level}
                   </span>
-                  <span className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 dark:text-green-300 rounded-full text-sm">
+                  <span className="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm">
                     {course.duration}
                   </span>
                   {course.categories.map((category, index) => (
-                    <span key={index} className="px-3 py-1 bg-gray-200 dark:bg-[var(--bg-tertiary)] text-[var(--text-secondary)] rounded-full text-sm">
+                    <span key={index} className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">
                       {category}
                     </span>
                   ))}
@@ -1135,7 +1135,7 @@ export default function CourseDetails() {
                 {/* Description */}
                 <section className="mb-8">
                   <h2 className="text-xl font-semibold mb-3">Description</h2>
-                  <p className="text-[var(--text-secondary)] leading-relaxed">{course.description}</p>
+                  <p className="text-yt-text-gray leading-relaxed">{course.description}</p>
                 </section>
 
                 {/* Objectives */}
@@ -1145,7 +1145,7 @@ export default function CourseDetails() {
                     {course.objectives.map((objective, index) => (
                       <li key={index} className="flex items-start">
                         <FaCheckCircle className="text-green-500 mt-1 mr-3 flex-shrink-0" />
-                        <span className="text-[var(--text-secondary)]">{objective}</span>
+                        <span className="text-yt-text-gray">{objective}</span>
                       </li>
                     ))}
                   </ul>
@@ -1159,7 +1159,7 @@ export default function CourseDetails() {
                       {course.prerequisites.map((prereq, index) => (
                         <li key={index} className="flex items-start">
                           <FaBook className="text-lfc-red mt-1 mr-3 flex-shrink-0" />
-                          <span className="text-[var(--text-secondary)]">{prereq}</span>
+                          <span className="text-yt-text-gray">{prereq}</span>
                         </li>
                       ))}
                     </ul>
@@ -1175,7 +1175,7 @@ export default function CourseDetails() {
                     </div>
                     <div>
                       <h3 className="font-semibold">{course.instructor.name}</h3>
-                      <p className="text-[var(--text-secondary)]">Course Instructor</p>
+                      <p className="text-yt-text-gray">Course Instructor</p>
                     </div>
                   </div>
                 </section>
@@ -1217,7 +1217,7 @@ export default function CourseDetails() {
                       <div className="flex items-center justify-between mb-6">
                         <div>
                           <h2 className="text-2xl font-bold mb-2">{module.title}</h2>
-                          <div className="flex items-center space-x-4 text-[var(--text-secondary)]">
+                          <div className="flex items-center space-x-4 text-yt-text-gray">
                             <span className="flex items-center">
                               {getModuleIcon(module.type)}
                               <span className="ml-2 capitalize">{module.type}</span>
@@ -1240,7 +1240,7 @@ export default function CourseDetails() {
                                 console.error("Failed to mark complete:", error);
                               }
                             }}
-                            className="px-6 py-2 bg-lfc-red dark:bg-red-800 text-gray-200 rounded-md hover:bg-lfc-red-hover dark:hover:bg-red-700"
+                            className="px-6 py-2 bg-lfc-red text-white rounded-md hover:bg-lfc-gold-dark"
                           >
                             Mark Complete
                           </button>
@@ -1248,11 +1248,11 @@ export default function CourseDetails() {
                       </div>
 
                       {module.description && (
-                        <p className="text-[var(--text-secondary)] mb-6">{module.description}</p>
+                        <p className="text-yt-text-gray mb-6">{module.description}</p>
                       )}
 
                       {module.type === 'video' && module.contentUrl && (
-                        <div className="bg-black dark:bg-gray-900 rounded-lg overflow-hidden mb-6">
+                        <div className="bg-black rounded-lg overflow-hidden mb-6">
                           <video 
                             controls 
                             className="w-full h-auto max-h-96"
@@ -1283,11 +1283,11 @@ export default function CourseDetails() {
                       {module.type === 'pdf' && module.contentUrl && (
                         <div className="border rounded-lg p-6 text-center">
                           <FaFilePdf className="text-4xl text-red-500 mx-auto mb-4" />
-                          <p className="text-[var(--text-secondary)] mb-4">PDF Document</p>
+                          <p className="text-yt-text-gray mb-4">PDF Document</p>
                           <a
                             href={resolveMediaUrl(module.contentUrl)}
                             download
-                            className="px-6 py-2 bg-lfc-red dark:bg-red-800 text-gray-200 rounded-md hover:bg-lfc-red-hover dark:hover:bg-red-700 inline-flex items-center"
+                            className="px-6 py-2 bg-lfc-red text-white rounded-md hover:bg-lfc-gold-dark inline-flex items-center"
                             target="_blank"
                             rel="noopener noreferrer"
                           >
@@ -1298,8 +1298,8 @@ export default function CourseDetails() {
                       )}
 
                       {isModuleCompleted(module._id) && (
-                        <div className="bg-green-100 dark:bg-green-900/20 border border-green-300 dark:border-green-700 rounded-lg p-4 mt-6">
-                          <div className="flex items-center text-green-700 dark:text-green-300">
+                        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-6">
+                          <div className="flex items-center text-green-600">
                             <FaCheckCircle className="mr-2" />
                             <span>Module completed</span>
                           </div>
@@ -1309,9 +1309,9 @@ export default function CourseDetails() {
                   );
                 })() : (
                   <div className="text-center py-12">
-                    <FaBook className="text-4xl text-[var(--text-secondary)] mx-auto mb-4" />
+                    <FaBook className="text-4xl text-yt-text-gray mx-auto mb-4" />
                     <h3 className="text-xl font-semibold mb-2">Select a module to begin</h3>
-                    <p className="text-[var(--text-secondary)]">Choose a module from the sidebar to start learning</p>
+                    <p className="text-yt-text-gray">Choose a module from the sidebar to start learning</p>
                   </div>
                 )}
               </motion.div>
@@ -1337,32 +1337,32 @@ export default function CourseDetails() {
                   if (passed) {
                     return (
                       <div>
-                        <div className="bg-gradient-to-br from-lfc-red to-lfc-gold dark:from-red-800 dark:to-lfc-gold p-1 rounded-full w-32 h-32 mx-auto mb-6">
+                        <div className="bg-gradient-to-br from-lfc-red to-lfc-gold p-1 rounded-full w-32 h-32 mx-auto mb-6">
                           <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-full w-full h-full flex items-center justify-center">
                             <FaTrophy className="text-4xl text-yellow-500" />
                           </div>
                         </div>
                         
                         <h2 className="text-3xl font-bold mb-4">Congratulations! 🎉</h2>
-                        <p className="text-xl text-[var(--text-secondary)] mb-8">
+                        <p className="text-xl text-yt-text-gray mb-8">
                           You've successfully completed <strong>{course.title}</strong> with flying colors!
                         </p>
 
-                        <div className="bg-gray-200 dark:bg-[var(--bg-secondary)] rounded-lg p-6 mb-8">
+                        <div className="bg-gray-50 rounded-lg p-6 mb-8">
                           <h3 className="font-semibold mb-4">Course Completion Details</h3>
                           <div className="grid grid-cols-2 gap-4 text-sm">
                             <div>
-                              <span className="text-[var(--text-secondary)]">Final Score</span>
-                              <div className="font-semibold text-2xl text-green-700 dark:text-green-300">{progressPercentage}%</div>
+                              <span className="text-yt-text-gray">Final Score</span>
+                              <div className="font-semibold text-2xl text-green-600">{progressPercentage}%</div>
                             </div>
                             <div>
-                              <span className="text-[var(--text-secondary)]">Modules Completed</span>
+                              <span className="text-yt-text-gray">Modules Completed</span>
                               <div className="font-semibold text-2xl">
                                 {completedModules}/{totalModules}
                               </div>
                             </div>
                           </div>
-                          <div className="mt-4 text-sm text-green-700 dark:text-green-300 font-semibold">
+                          <div className="mt-4 text-sm text-green-600 font-semibold">
                             ✅ Passed with excellence!
                           </div>
                         </div>
@@ -1371,22 +1371,22 @@ export default function CourseDetails() {
                         <div className="mb-8 text-center">
                           <button
                             onClick={downloadCertificate}
-                            className="px-8 py-4 bg-gradient-to-r from-lfc-red to-lfc-gold dark:from-red-800 dark:to-lfc-gold text-gray-200 rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition-all inline-flex items-center gap-3 text-lg"
+                            className="px-8 py-4 bg-gradient-to-r from-lfc-red to-lfc-gold text-white rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition-all inline-flex items-center gap-3 text-lg"
                           >
                             <FaDownload className="text-xl" />
                             Download Your Certificate
                           </button>
-                          <p className="text-sm text-[var(--text-secondary)] mt-2">
+                          <p className="text-sm text-gray-600 mt-2">
                             Get your official certificate of completion
                           </p>
                         </div>
 
                         {/* Share Section */}
-                        <div className="mb-8 p-6 bg-blue-100 dark:bg-blue-900/20 rounded-lg border border-blue-300 dark:border-blue-700">
+                        <div className="mb-8 p-6 bg-blue-50 rounded-lg border border-blue-200">
                           <h3 className="font-semibold mb-4 text-blue-800">
                             {passed ? 'Share Your Achievement!' : 'Share Your Progress!'}
                           </h3>
-                          <p className="text-blue-800 dark:text-blue-200 mb-4">
+                          <p className="text-blue-700 mb-4">
                             {passed 
                               ? 'Celebrate your success and inspire others!'
                               : 'Let people know about your learning journey!'
@@ -1430,7 +1430,7 @@ export default function CourseDetails() {
                             value={feedback}
                             onChange={(e) => setFeedback(e.target.value)}
                             placeholder="What did you think of this course? Share your experience..."
-                            className="w-full h-32 p-3 border border-[var(--border-primary)] rounded-lg resize-none focus:outline-none focus:border-lfc-red dark:border-red-800"
+                            className="w-full h-32 p-3 border border-yt-light-border rounded-lg resize-none focus:outline-none focus:border-lfc-red"
                           />
                           <div className="mb-4">
                             <label className="block text-sm font-medium mb-2">Rating</label>
@@ -1450,7 +1450,7 @@ export default function CourseDetails() {
                           <button
                             onClick={submitFeedback}
                             disabled={submittingFeedback || !feedback.trim()}
-                            className="mt-3 px-6 py-2 bg-lfc-red dark:bg-red-800 text-gray-200 rounded-md hover:bg-lfc-red-hover dark:hover:bg-red-700 disabled:opacity-50"
+                            className="mt-3 px-6 py-2 bg-lfc-red text-white rounded-md hover:bg-lfc-gold-dark disabled:opacity-50"
                           >
                             {submittingFeedback ? 'Submitting...' : 'Submit Feedback'}
                           </button>
@@ -1459,13 +1459,13 @@ export default function CourseDetails() {
                         <div className="flex justify-center space-x-4">
                           <button
                             onClick={() => navigate('/dashboard/courses')}
-                            className="px-6 py-2 border border-[var(--border-primary)] rounded-md hover:bg-[var(--hover-bg)] dark:hover:bg-[var(--hover-bg)]"
+                            className="px-6 py-2 border border-yt-light-border rounded-md hover:bg-yt-light-hover"
                           >
                             Back to Courses
                           </button>
                           <button
                             onClick={() => setActivePage('overview')}
-                            className="px-6 py-2 bg-lfc-red dark:bg-red-800 text-gray-200 rounded-md hover:bg-lfc-red-hover dark:hover:bg-red-700"
+                            className="px-6 py-2 bg-lfc-red text-white rounded-md hover:bg-lfc-gold-dark"
                           >
                             Review Course
                           </button>
@@ -1476,26 +1476,26 @@ export default function CourseDetails() {
                     // Show progress instead of completion
                     return (
                       <div>
-                        <div className="bg-gradient-to-br from-blue-500 to-purple-600 dark:from-blue-700 dark:to-purple-800 p-1 rounded-full w-32 h-32 mx-auto mb-6">
+                        <div className="bg-gradient-to-br from-blue-500 to-purple-600 p-1 rounded-full w-32 h-32 mx-auto mb-6">
                           <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-full w-full h-full flex items-center justify-center">
                             <FaClock className="text-4xl text-blue-500" />
                           </div>
                         </div>
                         
                         <h2 className="text-3xl font-bold mb-4">Keep Going! 💪</h2>
-                        <p className="text-xl text-[var(--text-secondary)] mb-8">
+                        <p className="text-xl text-yt-text-gray mb-8">
                           You're making great progress in <strong>{course.title}</strong>
                         </p>
 
-                        <div className="bg-gray-200 dark:bg-[var(--bg-secondary)] rounded-lg p-6 mb-8">
+                        <div className="bg-gray-50 rounded-lg p-6 mb-8">
                           <h3 className="font-semibold mb-4">Your Progress</h3>
                           <div className="grid grid-cols-2 gap-4 text-sm">
                             <div>
-                              <span className="text-[var(--text-secondary)]">Overall Progress</span>
+                              <span className="text-yt-text-gray">Overall Progress</span>
                               <div className="font-semibold text-2xl">{progressPercentage}%</div>
                             </div>
                             <div>
-                              <span className="text-[var(--text-secondary)]">Modules Completed</span>
+                              <span className="text-yt-text-gray">Modules Completed</span>
                               <div className="font-semibold text-2xl">
                                 {completedModules}/{totalModules}
                               </div>
@@ -1514,13 +1514,13 @@ export default function CourseDetails() {
                         <div className="flex justify-center space-x-4">
                           <button
                             onClick={() => setActivePage('modules')}
-                            className="px-6 py-2 bg-lfc-red dark:bg-red-800 text-gray-200 rounded-md hover:bg-lfc-red-hover dark:hover:bg-red-700"
+                            className="px-6 py-2 bg-lfc-red text-white rounded-md hover:bg-lfc-gold-dark"
                           >
                             Continue Learning
                           </button>
                           <button
                             onClick={() => navigate('/dashboard/courses')}
-                            className="px-6 py-2 border border-[var(--border-primary)] rounded-md hover:bg-[var(--hover-bg)] dark:hover:bg-[var(--hover-bg)]"
+                            className="px-6 py-2 border border-yt-light-border rounded-md hover:bg-yt-light-hover"
                           >
                             Back to Courses
                           </button>

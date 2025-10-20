@@ -60,7 +60,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       
       {/* Sidebar */}
       <div className={`
-        fixed lg:relative ${collapsed ? 'w-20' : 'w-64'} bg-gradient-to-b from-lfc-red to-lfc-red/90 dark:from-red-800 dark:to-red-900 text-white flex flex-col transition-all duration-300 h-screen z-50 transform
+        fixed lg:relative ${collapsed ? 'w-20' : 'w-64'} bg-gradient-to-b from-lfc-red to-lfc-red/90 dark:from-red-800 dark:to-red-900 text-white flex flex-col transition-all duration-300 h-screen transform
         ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         shadow-2xl border-r border-lfc-gold/30 dark:border-red-700/30
       `}>

@@ -21,7 +21,7 @@ import AdminLayout from "./layouts/AdminLayout";
 import AdminDashboard from "./pages/Dashboards/AdminDashboard";
 
 // Placeholder admin pages
-import Courses from "./pages/Courses";
+import Courses from "./pages/Admin/Courses";
 import Users from "./pages/Admin/Users";
 import ForbiddenPage from "./pages/ForbiddenPage";
 import ManageCourses from "./pages/Admin/ManageCourses";

@@ -295,7 +295,7 @@ export default function AssignmentDetail() {
       <div className="p-6">
         <div className="bg-white dark:bg-[var(--bg-elevated)] p-8 rounded-lg text-center border border-yt-light-border">
           <p className="text-yt-text-gray mb-4">Assignment not found.</p>
-          <Link to="/dashboard/assignments" className="text-lfc-red hover:underline">
+          <Link to="/dashboard/assignments" className="text-lfc-red dark:text-red-800 hover:underline">
             Back to My Assignments
           </Link>
         </div>
@@ -322,7 +322,7 @@ export default function AssignmentDetail() {
             <h1 className="text-2xl font-bold text-yt-text-dark">{assignment.title}</h1>
             <Link 
               to={`/dashboard/courses/${assignment.course._id}`}
-              className="text-lfc-red hover:underline"
+              className="text-lfc-red dark:text-red-800 hover:underline"
             >
               {assignment.course.title}
             </Link>
@@ -391,7 +391,7 @@ export default function AssignmentDetail() {
                     rel="noopener noreferrer"
                     className="flex items-center p-3 border border-yt-light-border rounded-lg hover:bg-yt-light-hover transition-colors"
                   >
-                    <FaDownload className="text-lfc-red mr-3" />
+                    <FaDownload className="text-lfc-red dark:text-red-800 mr-3" />
                     <div className="flex-1">
                       <span className="text-yt-text-dark">{parsedMaterial.name || 'Unnamed file'}</span>
                       {parsedMaterial.type && <span className="text-xs text-gray-500 ml-2 capitalize">({parsedMaterial.type})</span>}
@@ -427,19 +427,19 @@ export default function AssignmentDetail() {
                       href={submission.submission.link} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="text-lfc-red hover:underline block p-3 bg-white dark:bg-[var(--bg-elevated)] border rounded-lg"
+                      className="text-lfc-red dark:text-red-800 hover:underline block p-3 bg-white dark:bg-[var(--bg-elevated)] border rounded-lg"
                     >
                       {submission.submission.link}
                     </a>
                   )}
                   {submission.submissionType === 'file_upload' && submission.submission.file && (
                     <div className="flex items-center p-3 bg-white dark:bg-[var(--bg-elevated)] border rounded-lg">
-                      <FaFileAlt className="text-lfc-red mr-3" />
+                      <FaFileAlt className="text-lfc-red dark:text-red-800 mr-3" />
                       <span>{submission.submission.file.name}</span>
                       <a 
                         href={`${API_BASE}${submission.submission.file.url}`}
                         download
-                        className="ml-auto text-lfc-red hover:underline"
+                        className="ml-auto text-lfc-red dark:text-red-800 hover:underline"
                       >
                         Download
                       </a>
@@ -457,7 +457,7 @@ export default function AssignmentDetail() {
                     <div className="p-3 bg-white dark:bg-[var(--bg-elevated)] border rounded-lg">
                       <div className="flex items-center justify-between mb-3">
                         <span>Score:</span>
-                        <span className="font-semibold text-2xl text-lfc-red">{submission.grade}%</span>
+                        <span className="font-semibold text-2xl text-lfc-red dark:text-red-800">{submission.grade}%</span>
                       </div>
                       
                       {submission.feedback && (
@@ -492,7 +492,7 @@ export default function AssignmentDetail() {
                       onClick={() => setSubmissionData(prev => ({ ...prev, type: type as SubmissionType }))}
                       className={`p-3 border rounded-lg text-center transition-colors ${
                         submissionData.type === type
-                          ? 'border-lfc-red bg-red-50 text-lfc-red'
+                          ? 'border-lfc-red bg-red-50 dark:bg-red-800 text-lfc-red dark:text-red-800'
                           : 'border-yt-light-border hover:border-lfc-red'
                       }`}
                     >
@@ -557,7 +557,7 @@ export default function AssignmentDetail() {
                     (submissionData.type === 'link' && !submissionData.link.trim()) ||
                     (submissionData.type === 'file_upload' && !submissionData.file)
                   }
-                  className="px-6 py-3 bg-lfc-red text-white rounded-lg hover:bg-lfc-gold-dark disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-3 bg-lfc-red dark:bg-red-800 text-white rounded-lg hover:bg-lfc-gold-dark disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Submit Assignment
                 </button>

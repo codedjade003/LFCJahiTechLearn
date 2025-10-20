@@ -206,7 +206,7 @@ export default function MyAssignments() {
           </p>
           <Link 
             to="/dashboard/courses"
-            className="px-4 py-2 bg-lfc-red text-white rounded-md hover:bg-lfc-gold-dark inline-flex items-center"
+            className="px-4 py-2 bg-lfc-red dark:bg-red-800 text-white dark:text-gray-200 rounded-md hover:bg-lfc-gold inline-flex items-center"
           >
             <FaBook className="mr-2" />
             Browse Courses

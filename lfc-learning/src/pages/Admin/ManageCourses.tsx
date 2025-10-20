@@ -292,7 +292,7 @@ export default function ManageCourses() {
                 )}
 
                 {/* Thumbnail */}
-                <div className="h-48 bg-gray-200 dark:bg-[var(--bg-tertiary)] overflow-hidden">
+                <div className="h-48 bg-gray-200 dark:bg-[var(--bg-primary)] overflow-hidden">
                   {course.thumbnail ? (
                     <img
                       src={resolveImageUrl(course.thumbnail)}
@@ -380,7 +380,7 @@ export default function ManageCourses() {
                           disabled={!canManage}
                         />
                         <div className={`block w-10 h-6 rounded-full transition-colors ${
-                          visibilityUpdates[course._id] ? 'bg-lfc-red' : 'bg-gray-400 dark:bg-[var(--bg-tertiary)]'
+                          visibilityUpdates[course._id] ? 'bg-lfc-red dark:bg-red-700' : 'bg-gray-400 dark:bg-[var(--bg-tertiary)]'
                         }`}></div>
                         <div className={`absolute left-1 top-1  bg-gray-200 dark:bg-[var(--bg-secondary)] w-4 h-4 rounded-full transition-transform ${
                           visibilityUpdates[course._id] ? 'transform translate-x-4' : ''

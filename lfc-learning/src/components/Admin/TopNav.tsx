@@ -324,7 +324,7 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setOpen(!open)}
-              className="flex items-center space-x-2 p-1 hover:bg-gray-100 dark:bg-[var(--bg-tertiary)] rounded-full transition-colors duration-200"
+              className="flex items-center space-x-2 p-1 hover:bg-gray-100 dark:hover:bg-[var(--bg-secondary)] dark:bg-[var(--bg-tertiary)] rounded-full transition-colors duration-200"
             >
               <div className="relative">
                 <img
@@ -352,7 +352,7 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
                 </span>
                 {isAdmin && (
                   <span className={`text-xs font-medium ${
-                    isSuperAdmin ? 'text-lfc-red' : 'text-lfc-gold'
+                    isSuperAdmin ? 'text-lfc-red dark:text-red-700' : 'text-lfc-gold'
                   }`}>
                     {isSuperAdmin ? 'Super Admin' : 'Admin'}
                   </span>
@@ -362,16 +362,16 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
             </button>
 
             {open && (
-              <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-200 border border-gray-200 dark:border-gray-300 rounded-lg shadow-lg z-50 py-1">
+              <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 dark:border-[var(--border-primary)] rounded-lg shadow-xl z-50 py-1">
                 {/* User Info Section */}
-                <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-300">
-                  <p className="text-sm font-medium text-gray-900 ">{user?.name}</p>
-                  <p className="text-xs text-gray-500 truncate mb-1">{user?.email}</p>
+                <div className="px-4 py-3 border-b border-gray-100 dark:border-[var(--border-primary)]">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.name}</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 truncate mb-1">{user?.email}</p>
                   {isAdmin && (
                     <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                       isSuperAdmin 
-                        ? 'bg-lfc-red/10 dark:bg-red-800/10 text-lfc-red dark:text-red-800' 
-                        : 'bg-lfc-gold/10 text-lfc-gold'
+                        ? 'bg-lfc-red/10 text-lfc-red dark:bg-red-900/30 dark:text-red-400' 
+                        : 'bg-lfc-gold/10 text-lfc-gold dark:bg-yellow-900/30 dark:text-yellow-400'
                     }`}>
                       {isSuperAdmin ? (
                         <FaUserCog className="mr-1" />
@@ -389,7 +389,7 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
                     navigate("/dashboard/profile");
                     setOpen(false);
                   }}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:bg-gray-200 transition-colors duration-200 flex items-center"
+                  className="w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[var(--bg-secondary)] transition-colors duration-200 flex items-center"
                 >
                   <FaUser className="mr-3 text-gray-400" />
                   My Profile
@@ -401,7 +401,7 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
                     setOpen(false);
                     navigate("/");
                   }}
-                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50 dark:bg-gray-200 transition-colors duration-200 flex items-center"
+                  className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200 flex items-center border-t border-gray-200 dark:border-[var(--border-primary)]"
                 >
                   <FaChevronDown className="mr-3 text-red-400 transform rotate-90" />
                   Logout

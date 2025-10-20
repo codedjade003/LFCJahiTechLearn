@@ -15,7 +15,7 @@ export default function Landing() {
       <Navbar />
       
       {/* MAIN CONTENT AREA - This is where the background goes */}
-      <main className="flex-1 relative overflow-hidden">
+      <main className="flex-1 overflow-y-auto">
         {/* Techy Background - Only in the main content area */}
         <div className="absolute inset-0">
           {/* Light Mode */}

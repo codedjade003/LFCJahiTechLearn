@@ -11,14 +11,14 @@ import {
   FaChevronRight,
   FaBars,
 } from "react-icons/fa";
-import CourseInfoTab from "../components/Admin/CourseTabs/CourseInfoTab.tsx";
-import CourseContentTab from "../components/Admin/CourseTabs/CourseContentTab.tsx";
-import CourseAssignmentsTab from "../components/Admin/CourseTabs/CourseAssignmentsTab.tsx";
-import CourseProjectsTab from "../components/Admin/CourseTabs/CourseProjectsTab.tsx";
-import CourseSettingsTab from "../components/Admin/CourseTabs/CourseSettingsTab.tsx";
-import CoursePublishTab from "../components/Admin/CourseTabs/CoursePublishTab.tsx";
-import OnboardingTour from "../components/shared/OnboardingTour";
-import { courseManagementTour } from "../config/onboardingTours";
+import CourseInfoTab from "../../components/Admin/CourseTabs/CourseInfoTab.tsx";
+import CourseContentTab from "../../components/Admin/CourseTabs/CourseContentTab.tsx";
+import CourseAssignmentsTab from "../../components/Admin/CourseTabs/CourseAssignmentsTab.tsx";
+import CourseProjectsTab from "../../components/Admin/CourseTabs/CourseProjectsTab.tsx";
+import CourseSettingsTab from "../../components/Admin/CourseTabs/CourseSettingsTab.tsx";
+import CoursePublishTab from "../../components/Admin/CourseTabs/CoursePublishTab.tsx";
+import OnboardingTour from "../../components/shared/OnboardingTour.tsx";
+import { courseManagementTour } from "../../config/onboardingTours.ts";
 
 export default function Course() {
   const [activeTab, setActiveTab] = useState("info");

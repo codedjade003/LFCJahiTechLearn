@@ -117,7 +117,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
   };
 
   return (
-    <div className="flex items-center justify-between h-16 px-4 bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] border-b border-gray-200 dark:border-[var(--border-primary)] sticky top-0 z-30">
+    <div className="flex items-center justify-between h-16 px-4 bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] border-b border-gray-200 dark:border-[var(--border-primary)] sticky top-0 z-10">
       {/* Left Section */}
       <div className="flex items-center flex-1">
         <button 
@@ -236,7 +236,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex items-center space-x-2 p-2 rounded-lg bg-gray-100 dark:bg-[var(--bg-tertiary)] hover:bg-gray-200 dark:hover:bg-[var(--bg-secondary)] transition-colors duration-200"
+            className="flex items-center space-x-2 p-2 rounded-full bg-gray-100 dark:bg-[var(--bg-tertiary)] hover:bg-gray-200 dark:hover:bg-[var(--bg-secondary)] transition-colors duration-200"
           >
             <div className="relative">
               <img
@@ -264,7 +264,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
               </span>
               {isAdmin && (
                 <span className={`text-xs font-medium ${
-                  isSuperAdmin ? 'text-lfc-red dark:text-red-400' : 'text-lfc-gold dark:text-yellow-400'
+                  isSuperAdmin ? 'text-lfc-red dark:text-red-700' : 'text-lfc-gold dark:text-yellow-400'
                 }`}>
                   {isSuperAdmin ? 'Super Admin' : 'Admin'}
                 </span>
@@ -323,7 +323,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
                   logout();
                   setDropdownOpen(false);
                 }}
-                className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200 flex items-center border-t border-gray-200 dark:border-[var(--border-primary)] mt-2 pt-2"
+                className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200 flex items-center border-t border-gray-200 dark:border-[var(--border-primary)] mt-2 pt-2"
               >
                 <FaChevronDown className="mr-3 text-red-400 transform rotate-90" />
                 Logout

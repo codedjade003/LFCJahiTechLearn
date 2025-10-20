@@ -144,7 +144,7 @@ export default function RecentActivity({ items: initialItems }: { items?: Activi
   }
 
   return (
-    <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] ">
+    <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg dark:shadow-[var(--shadow-md)] ">
       <div className="p-4 border-b flex justify-between items-center">
         <h2 className="text-lg font-semibold text-gray-800 dark:text-[var(--text-primary)]">Recent Activity</h2>
         <button 

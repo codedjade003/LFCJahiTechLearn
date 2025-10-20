@@ -463,7 +463,7 @@ const StudentDashboard = () => {
       <TechyBackground variant="subtle" />
       
       {/* Content */}
-      <div className="relative z-10">
+      <div className="relative z-[10px]">
         {/* Onboarding Tour - Shows BEFORE profile completion */}
         <OnboardingTour tourKey="dashboard" steps={dashboardTourSteps} />
 
@@ -528,7 +528,7 @@ const StudentDashboard = () => {
 
         {/* Course Grid */}
         <div className="mb-8" data-tour="courses">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          <h2 className="text-2xl font-bold text-gray-900 dark-text-gray-200 mb-4">
             {selectedCategory === "All Courses" ? "Recommended Courses" : selectedCategory}
           </h2>
           <CourseGrid 

@@ -12,7 +12,7 @@ const CourseCategory = ({ name, selected = false, onClick }: CourseCategoryProps
         ${
           selected
             ? "bg-yellow-500 text-white focus:ring-yellow-600"
-            : "bg-gray-200 text-gray-800 hover:bg-gray-300 focus:ring-gray-400"
+            : "bg-gray-200 dark:bg-[var(--bg-elevated)] text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-[var(--bg-secondary)] focus:ring-gray-400"
         }`}
     >
       {name}

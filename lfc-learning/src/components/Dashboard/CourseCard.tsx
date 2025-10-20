@@ -197,7 +197,7 @@ const CourseCard: React.FC<Props> = ({
   return (
     <>
       <div
-        className="course-card flex flex-col bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] rounded-lg shadow-lg border border-gray-200 dark:border-[var(--border-primary)] overflow-hidden hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer w-full max-w-sm mx-auto"
+        className="course-card flex flex-col bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow-lg border border-gray-200 dark:border-[var(--border-primary)] overflow-hidden hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer w-full max-w-sm mx-auto"
         onClick={handleCardClick}
       >
         {/* Thumbnail Section - Fixed flickering */}
@@ -284,12 +284,12 @@ const CourseCard: React.FC<Props> = ({
           )}
 
           {/* Title */}
-          <h3 className="text-xl font-bold text-gray-900 line-clamp-2 mb-3 leading-tight">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-300 line-clamp-2 mb-3 leading-tight">
             {title}
           </h3>
 
           {/* Description */}
-          <p className="text-gray-600 line-clamp-3 mb-4 leading-relaxed">
+          <p className="text-gray-600 dark:text-gray-400 line-clamp-3 mb-4 leading-relaxed">
             {description}
           </p>
 
@@ -347,7 +347,7 @@ const CourseCard: React.FC<Props> = ({
                     <div className="absolute inset-0 bg-gray-300 animate-pulse" />
                   )}
                 </div>
-                <span className="ml-3 text-sm font-medium text-gray-700 truncate">
+                <span className="ml-3 text-sm font-medium text-gray-700 dark:text-gray-400 truncate">
                   {displayInstructor}
                 </span>
               </div>
@@ -380,6 +380,7 @@ const CourseCard: React.FC<Props> = ({
         </div>
       </div>
 
+      <div className="z-60">
       <CourseModal
         course={{
           _id,
@@ -407,6 +408,8 @@ const CourseCard: React.FC<Props> = ({
         enrolled={enrolled}
         progress={progress}
       />
+      </div>
+
     </>
   );
 };
