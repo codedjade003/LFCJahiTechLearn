@@ -139,11 +139,11 @@ export default function CertificateValidation() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
         <div className="text-center">
           <FaSpinner className="text-5xl text-emerald-600 animate-spin mx-auto mb-4" />
-          <p className="text-xl font-semibold text-gray-800">Validating certificate...</p>
-          <p className="text-sm text-gray-600 mt-2">Please wait while we verify the authenticity</p>
+          <p className="text-xl font-semibold text-gray-800 dark:text-gray-100">Validating certificate...</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Please wait while we verify the authenticity</p>
         </div>
       </div>
     );
@@ -151,14 +151,14 @@ export default function CertificateValidation() {
 
   if (error || !certificate) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow-sm p-8 text-center border border-gray-100">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8 text-center border border-gray-100 dark:border-gray-700">
           <FaTimesCircle className="text-6xl text-red-400 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Invalid Certificate</h1>
-          <div className="bg-red-50 border border-red-100 p-4 mb-6 rounded-lg">
-            <p className="text-red-700 font-medium">{error || "Certificate not found"}</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Invalid Certificate</h1>
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 p-4 mb-6 rounded-lg">
+            <p className="text-red-700 dark:text-red-300 font-medium">{error || "Certificate not found"}</p>
           </div>
-          <p className="text-gray-600 mb-6 text-sm">
+          <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm">
             This certificate could not be verified. It may have been revoked, expired, or the validation code is incorrect.
           </p>
           <div className="space-y-3">
@@ -170,7 +170,7 @@ export default function CertificateValidation() {
             </Link>
             <button
               onClick={() => window.location.reload()}
-              className="block w-full px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+              className="block w-full px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors font-medium"
             >
               Try Again
             </button>
@@ -186,50 +186,55 @@ export default function CertificateValidation() {
   return (
     <>
       <style>{printStyles}</style>
-      <div className="min-h-screen bg-gray-50 py-8 px-4">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
         <div className="max-w-4xl mx-auto">
           {/* Success Header */}
-          <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-xl shadow-sm p-8 mb-6 text-center border border-gray-100 no-print">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8 mb-6 text-center border border-gray-100 dark:border-gray-700 no-print">
             <FaCheckCircle className="text-6xl text-emerald-500 mx-auto mb-4" />
-            <div className="inline-block px-4 py-2 bg-emerald-50 text-emerald-700 rounded-full text-sm font-semibold mb-4 border border-emerald-100">
+            <div className="inline-block px-4 py-2 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-full text-sm font-semibold mb-4 border border-emerald-100 dark:border-emerald-800">
               ✓ VERIFIED AUTHENTIC
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Certificate Verified!</h1>
-            <p className="text-lg text-gray-700">This certificate is valid and authentic</p>
-            <p className="text-sm text-gray-500 mt-2">Issued by LFC Jahi Tech Learn</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Certificate Verified!</h1>
+            <p className="text-lg text-gray-700 dark:text-gray-300">This certificate is valid and authentic</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Issued by LFC Jahi Tech Learn</p>
           </div>
 
           {/* Certificate Details */}
-          <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-xl shadow-sm p-8 border border-gray-100 print-area">
-            <div className="border-2 border-gray-100 rounded-xl p-8 bg-gradient-to-br from-gray-50 to-white">
-              {/* Certificate Header */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8 border border-gray-100 dark:border-gray-700 print-area">
+            <div className="border-2 border-gray-100 dark:border-gray-700 rounded-xl p-8 bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
+              {/* Certificate Header with Logo */}
               <div className="text-center mb-8">
+                <img 
+                  src="/logo.png" 
+                  alt="LFC Jahi Tech Learn Logo" 
+                  className="h-20 w-auto mx-auto mb-4"
+                />
                 <FaCertificate className="text-5xl text-emerald-500 mx-auto mb-4" />
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">Certificate of Completion</h2>
-                <p className="text-gray-600 font-medium">LFC Jahi Tech Learn</p>
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Certificate of Completion</h2>
+                <p className="text-gray-600 dark:text-gray-400 font-medium">LFC Jahi Tech Learn</p>
               </div>
 
               {/* Student Info */}
               <div className="mb-8 text-center">
                 <div className="flex items-center justify-center gap-2 mb-2">
-                  <FaUser className="text-gray-500" />
-                  <p className="text-gray-600">This certifies that</p>
+                  <FaUser className="text-gray-500 dark:text-gray-400" />
+                  <p className="text-gray-600 dark:text-gray-400">This certifies that</p>
                 </div>
-                <h3 className="text-4xl font-bold text-gray-900 mb-4 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                <h3 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent">
                   {certificate.studentName}
                 </h3>
-                <p className="text-gray-600 mb-2">has successfully completed</p>
-                <h4 className="text-2xl font-semibold text-emerald-600">{certificate.courseTitle}</h4>
+                <p className="text-gray-600 dark:text-gray-400 mb-2">has successfully completed</p>
+                <h4 className="text-2xl font-semibold text-emerald-600 dark:text-emerald-400">{certificate.courseTitle}</h4>
               </div>
 
               {/* Details Grid */}
               <div className="grid md:grid-cols-2 gap-6 mb-8">
-                <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg p-4 border border-gray-100 shadow-sm">
+                <div className="bg-white dark:bg-gray-700 rounded-lg p-4 border border-gray-100 dark:border-gray-600 shadow-sm">
                   <div className="flex items-center gap-2 mb-2">
-                    <FaCalendar className="text-gray-500" />
-                    <p className="font-semibold text-gray-900">Completion Date</p>
+                    <FaCalendar className="text-gray-500 dark:text-gray-400" />
+                    <p className="font-semibold text-gray-900 dark:text-gray-100">Completion Date</p>
                   </div>
-                  <p className="text-gray-700">
+                  <p className="text-gray-700 dark:text-gray-300">
                     {completionDate.toLocaleDateString('en-US', {
                       year: 'numeric',
                       month: 'long',
@@ -239,41 +244,41 @@ export default function CertificateValidation() {
                 </div>
 
                 {certificate.finalScore && (
-                  <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg p-4 border border-gray-100 shadow-sm">
+                  <div className="bg-white dark:bg-gray-700 rounded-lg p-4 border border-gray-100 dark:border-gray-600 shadow-sm">
                     <div className="flex items-center gap-2 mb-2">
                       <FaTrophy className="text-amber-500" />
-                      <p className="font-semibold text-gray-900">Final Score</p>
+                      <p className="font-semibold text-gray-900 dark:text-gray-100">Final Score</p>
                     </div>
-                    <p className="text-2xl font-bold text-emerald-600">{certificate.finalScore}%</p>
+                    <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{certificate.finalScore}%</p>
                   </div>
                 )}
 
                 {certificate.metadata?.courseLevel && (
-                  <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg p-4 border border-gray-100 shadow-sm">
+                  <div className="bg-white dark:bg-gray-700 rounded-lg p-4 border border-gray-100 dark:border-gray-600 shadow-sm">
                     <div className="flex items-center gap-2 mb-2">
-                      <FaBook className="text-gray-500" />
-                      <p className="font-semibold text-gray-900">Course Level</p>
+                      <FaBook className="text-gray-500 dark:text-gray-400" />
+                      <p className="font-semibold text-gray-900 dark:text-gray-100">Course Level</p>
                     </div>
-                    <p className="text-gray-700">{certificate.metadata.courseLevel}</p>
+                    <p className="text-gray-700 dark:text-gray-300">{certificate.metadata.courseLevel}</p>
                   </div>
                 )}
 
                 {certificate.metadata?.courseDuration && (
-                  <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg p-4 border border-gray-100 shadow-sm">
+                  <div className="bg-white dark:bg-gray-700 rounded-lg p-4 border border-gray-100 dark:border-gray-600 shadow-sm">
                     <div className="flex items-center gap-2 mb-2">
-                      <FaCalendar className="text-gray-500" />
-                      <p className="font-semibold text-gray-900">Duration</p>
+                      <FaCalendar className="text-gray-500 dark:text-gray-400" />
+                      <p className="font-semibold text-gray-900 dark:text-gray-100">Duration</p>
                     </div>
-                    <p className="text-gray-700">{certificate.metadata.courseDuration}</p>
+                    <p className="text-gray-700 dark:text-gray-300">{certificate.metadata.courseDuration}</p>
                   </div>
                 )}
               </div>
 
               {/* Certificate ID */}
-              <div className="border-t border-gray-200 pt-6 text-center">
-                <p className="text-sm text-gray-600 mb-1 font-medium">Certificate ID</p>
-                <p className="font-mono text-lg font-semibold text-gray-900">{certificate.certificateId}</p>
-                <p className="text-xs text-gray-500 mt-2">
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-6 text-center">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 font-medium">Certificate ID</p>
+                <p className="font-mono text-lg font-semibold text-gray-900 dark:text-gray-100">{certificate.certificateId}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                   Issued on {issuedDate.toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
@@ -284,9 +289,9 @@ export default function CertificateValidation() {
 
               {certificate.instructorName && (
                 <div className="mt-6 text-center">
-                  <div className="inline-block border-t-2 border-gray-300 pt-4">
-                    <p className="font-semibold text-gray-900">{certificate.instructorName}</p>
-                    <p className="text-sm text-gray-600">Course Instructor</p>
+                  <div className="inline-block border-t-2 border-gray-300 dark:border-gray-600 pt-4">
+                    <p className="font-semibold text-gray-900 dark:text-gray-100">{certificate.instructorName}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Course Instructor</p>
                   </div>
                 </div>
               )}
@@ -294,11 +299,11 @@ export default function CertificateValidation() {
 
             {/* Footer */}
             <div className="mt-8 text-center space-y-4">
-              <div className="bg-emerald-50 border border-emerald-100 rounded-lg p-4">
-                <p className="text-sm text-gray-900 font-medium mb-2">
+              <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 rounded-lg p-4">
+                <p className="text-sm text-gray-900 dark:text-emerald-300 font-medium mb-2">
                   ✓ This certificate has been verified and is authentic.
                 </p>
-                <p className="text-xs text-gray-600">
+                <p className="text-xs text-gray-600 dark:text-gray-400">
                   Verified on {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                 </p>
               </div>
@@ -311,7 +316,7 @@ export default function CertificateValidation() {
                 </Link>
                 <button
                   onClick={() => window.print()}
-                  className="inline-block px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+                  className="inline-block px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors font-medium"
                 >
                   Print Certificate
                 </button>

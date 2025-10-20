@@ -393,7 +393,7 @@ const SupportDashboard: React.FC = () => {
 
       {/* Ticket Detail Modal */}
       {selectedTicket && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-55">
           <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg max-w-4xl w-full h-[80vh] flex flex-col">
             {/* Header */}
             <div className="bg-lfc-red dark:bg-red-800 text-white p-4 rounded-t-lg flex justify-between items-center">

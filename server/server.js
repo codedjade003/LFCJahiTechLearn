@@ -51,8 +51,8 @@ const allowedOrigins = [
   "http://localhost:3000",
 ].filter(Boolean); // remove undefined/null values
 
-const swaggerJsdoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express');
+import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
 
 // Swagger configuration
 const options = {
@@ -74,12 +74,12 @@ const options = {
         description: 'Production server'
       },
       {
-        url: 'http://localhost:3000', 
+        url: 'http://localhost:5000', 
         description: 'Development server'
       }
     ],
   },
-  apis: ['./routes/*.js', './app.js'], // paths to files containing OpenAPI definitions
+  apis: ['./routes/*.js', './swagger.js', './server.js'], // paths to files containing OpenAPI definitions
 };
 
 const specs = swaggerJsdoc(options);
