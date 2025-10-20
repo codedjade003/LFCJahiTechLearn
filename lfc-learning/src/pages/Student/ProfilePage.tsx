@@ -458,7 +458,7 @@ const validateUsername = (username: string) => {
       <TechyBackground variant="minimal" />
       
       {/* Content */}
-      <div className="relative z-10">
+      <div className="relative z-[10]">
         {/* Cover Photo Banner */}
       <div className="relative h-64 bg-gradient-to-r from-redCustom to-goldCustom">
         {(coverPhotoPreview || user.coverPhoto?.url) ? (
