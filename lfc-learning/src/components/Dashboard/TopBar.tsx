@@ -126,7 +126,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
   };
 
   return (
-    <div className="flex items-center justify-between h-16 px-4 bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] border-b border-gray-200 dark:border-[var(--border-primary)] sticky top-0 z-10">
+    <div className="flex items-center justify-between h-16 px-4 bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] border-b border-gray-200 dark:border-[var(--border-primary)] sticky top-0 z-40">
       {/* Left Section */}
       <div className="flex items-center flex-1">
         <button 
@@ -172,7 +172,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
 
           {/* Notifications Dropdown */}
           {showNotifications && (
-            <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 dark:border-[var(--border-primary)] rounded-lg shadow-lg z-20 max-h-96 overflow-y-auto">
+            <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 dark:border-[var(--border-primary)] rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
               <div className="p-4 border-b border-gray-200 dark:border-[var(--border-primary)]">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-gray-800 dark:text-[var(--text-primary)]">Notifications</h3>
@@ -283,7 +283,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
           </button>
 
           {dropdownOpen && (
-            <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 dark:border-[var(--border-primary)] rounded-lg shadow-xl z-20 py-1">
+            <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 dark:border-[var(--border-primary)] rounded-lg shadow-xl z-50 py-1">
               {/* User Info Section */}
               <div className="px-4 py-3 border-b border-gray-100 dark:border-[var(--border-primary)]">
                 <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.name}</p>

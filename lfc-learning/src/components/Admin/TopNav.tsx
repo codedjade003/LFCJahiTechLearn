@@ -190,7 +190,7 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
   }, []);
 
   return (
-    <header className="sticky top-0 z-10 bg-white dark:bg-[var(--bg-elevated)] border-b border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">
+    <header className="sticky top-0 z-40 bg-white dark:bg-[var(--bg-elevated)] border-b border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">
       <div className="px-3 sm:px-4 py-3 flex items-center justify-between">
         {/* Left: Menu button and Title */}
         <div className="flex items-center gap-3">
@@ -236,7 +236,7 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
 
             {/* Notifications Dropdown */}
             {showNotifications && (
-              <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 dark:border-[var(--border-primary)] rounded-lg shadow-lg z-20 max-h-96 overflow-y-auto">
+              <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 dark:border-[var(--border-primary)] rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
                 <div className="p-4 border-b border-gray-200 dark:border-[var(--border-primary)]">
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-semibold text-gray-800 dark:text-[var(--text-primary)] dark:text-[var(--text-primary)]">Notifications</h3>
@@ -362,7 +362,7 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
             </button>
 
             {open && (
-              <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 dark:border-[var(--border-primary)] rounded-lg shadow-xl z-20 py-1">
+              <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 dark:border-[var(--border-primary)] rounded-lg shadow-xl z-50 py-1">
                 {/* User Info Section */}
                 <div className="px-4 py-3 border-b border-gray-100 dark:border-[var(--border-primary)]">
                   <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.name}</p>
