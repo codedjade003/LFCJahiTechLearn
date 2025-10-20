@@ -45,18 +45,10 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       {/* Mobile Overlay */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-49 lg:hidden"
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
           onClick={onClose}
         />
       )}
-
-      {/* Mobile header button */}
-      <button
-        onClick={onClose}
-        className="lg:hidden fixed top-4 left-4 z-51 bg-lfc-red dark:bg-[var(--lfc-red)] text-white p-2 rounded-lg shadow-lg"
-      >
-        <FaBars className="text-lg" />
-      </button>
       
       {/* Sidebar */}
       <div className={`

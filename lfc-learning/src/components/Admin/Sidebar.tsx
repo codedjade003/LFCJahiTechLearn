@@ -91,18 +91,10 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps)
       {/* Mobile overlay */}
       {isMobileOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-49 lg:hidden"
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
           onClick={() => setIsMobileOpen(false)}
         />
       )}
-
-      {/* Mobile header button */}
-      <button
-        onClick={() => setIsMobileOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-51 bg-lfc-red dark:bg-[var(--lfc-red)] text-white p-2 rounded-lg shadow-lg"
-      >
-        <FaBars className="text-lg" />
-      </button>
 
         <div
           className={`sidebar fixed lg:relative ${

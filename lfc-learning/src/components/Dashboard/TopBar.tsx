@@ -133,9 +133,9 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
       <div className="flex items-center flex-1">
         <button 
           onClick={onMenuClick}
-          className="p-2 text-gray-600 dark:text-[var(--text-secondary)] hover:bg-gray-100 dark:hover:bg-[var(--hover-bg)] rounded-full transition-colors duration-200"
+          className="p-2 text-gray-600 dark:text-[var(--text-secondary)] hover:bg-gray-100 dark:hover:bg-[var(--hover-bg)] rounded-full transition-colors duration-200 lg:hidden"
         >
-          <FaBars className="text-lg md:hidden" />
+          <FaBars className="text-lg" />
         </button>
         
         {/* Logo for mobile */}
