@@ -154,6 +154,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
         assessmentGrading: true,
         supportTickets: true,
         adminSupport: true,
+        surveyResponses: true,
       };
 
       setProgress(allCompleted);
@@ -184,6 +185,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
       assessmentGrading: false,
       supportTickets: false,
       adminSupport: false,
+      surveyResponses: false,
     });
   };
 
