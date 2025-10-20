@@ -155,8 +155,8 @@ export default function Contact() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Email</h3>
-                  <a href="mailto:info@lfcjahi.edu.ng" className="text-lfc-red dark:text-red-400 hover:underline">
-                    info@lfcjahi.edu.ng
+                  <a href="mailto:hello@lfctechlearn.com" className="text-lfc-red dark:text-red-400 hover:underline">
+                    hello@lfctechlearn.com
                   </a>
                 </div>
               </div>
