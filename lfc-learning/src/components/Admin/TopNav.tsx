@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, type JSX } from "react";
 import { FaBell, FaChevronDown, FaBars, FaUserShield, FaUserCog, FaUser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useModal } from "../../context/ModalContext";
 import ThemeToggle from "../ThemeToggle";
 
 interface TopNavProps {
@@ -12,6 +13,7 @@ interface TopNavProps {
 export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const { user, logout } = useAuth();
+  const { isModalOpen } = useModal();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const notificationsRef = useRef<HTMLDivElement | null>(null);
@@ -190,7 +192,7 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 bg-white dark:bg-[var(--bg-elevated)] border-b border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]">
+    <header className={`sticky top-0 ${isModalOpen ? 'z-0' : 'z-40'} bg-white dark:bg-[var(--bg-elevated)] border-b border-gray-200 dark:border-[var(--border-primary)] dark:border-[var(--border-primary)]`}>
       <div className="px-3 sm:px-4 py-3 flex items-center justify-between">
         {/* Left: Menu button and Title */}
         <div className="flex items-center gap-3">

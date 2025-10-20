@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { FaBars, FaBell, FaChevronDown, FaUserShield, FaUserCog, FaUser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useModal } from "../../context/ModalContext";
 import ThemeToggle from "../ThemeToggle";
 
 interface TopbarProps {
@@ -21,6 +22,7 @@ interface Notification {
 const Topbar = ({ onMenuClick }: TopbarProps) => {
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const { user, logout } = useAuth();
+  const { isModalOpen } = useModal();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -126,7 +128,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
   };
 
   return (
-    <div className="flex items-center justify-between h-16 px-4 bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] border-b border-gray-200 dark:border-[var(--border-primary)] sticky top-0 z-40">
+    <div className={`flex items-center justify-between h-16 px-4 bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] border-b border-gray-200 dark:border-[var(--border-primary)] sticky top-0 ${isModalOpen ? 'z-0' : 'z-40'}`}>
       {/* Left Section */}
       <div className="flex items-center flex-1">
         <button 

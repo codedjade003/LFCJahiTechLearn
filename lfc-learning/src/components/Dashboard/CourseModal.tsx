@@ -1,6 +1,7 @@
 // src/components/CourseModal.tsx - FIXED HOOKS ORDER
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useModalState } from "../../context/ModalContext";
 import type { Course } from "../../types/course";
 import { FaPlay, FaPause, FaVolumeUp, FaVolumeMute, FaExpand, 
          FaCheck, FaClock, FaUser, FaTag, FaArrowRight, 
@@ -27,6 +28,7 @@ const CourseModal: React.FC<CourseModalProps> = ({
   progress = 0,
 }) => {
   const navigate = useNavigate();
+  useModalState(open); // Notify context when modal opens/closes
   const videoRef = useRef<HTMLVideoElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
