@@ -65,7 +65,7 @@ const options = {
       contact: {
         name: 'API Support',
         url: 'https://lfctechlearn.com',
-        email: 'support@lfctechlearn.com'
+        email: 'hello@lfctechlearn.com'
       }
     },
     servers: [
