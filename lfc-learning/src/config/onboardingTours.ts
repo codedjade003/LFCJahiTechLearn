@@ -23,7 +23,7 @@ export const courseDetailsTour: Step[] = [
   {
     target: "main",
     content: "This is the main content area where you'll watch videos, read PDFs, and take quizzes. Your progress is automatically tracked as you complete modules.",
-    placement: "top",
+    placement: "right",
     disableBeacon: true,
   },
 ];
