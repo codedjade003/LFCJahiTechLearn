@@ -41,6 +41,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import BlacklistedPage from "./pages/BlacklistedPage";
 
 function App() {
   return (
@@ -56,6 +57,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/blacklisted" element={<BlacklistedPage />} />
 
         {/* Protected Student Routes */}
         <Route

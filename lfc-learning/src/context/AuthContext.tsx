@@ -70,6 +70,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
+      
+      // Handle blacklisted users
+      if (res.status === 403 && data.isBlacklisted) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        localStorage.removeItem("isVerified");
+        setUser(null);
+        navigate("/", { 
+          state: { 
+            blacklisted: true, 
+            reason: data.reason 
+          } 
+        });
+        return;
+      }
+      
       if (res.status === 401) {
         logout();
       } else if (!res.ok) {
@@ -88,7 +104,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setLoading(false);
     }
 
-  }, [API_BASE, logout]);
+  }, [API_BASE, logout, navigate]);
 
   useEffect(() => {
     fetchUser();

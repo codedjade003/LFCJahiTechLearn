@@ -1,11 +1,13 @@
 // backend/controllers/authController.js
 import User from "../models/User.js";
+import Blacklist from "../models/Blacklist.js";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import sendEmail from "../utils/sendEmail.js";
 // controllers/authControllers.js
 import { cloudinary } from '../config/cloudinary.js';
 import { updateUserStreakForUser } from "../utils/streakUtils.js";
+import { logAccessAttempt } from "./blacklistController.js";
 
 
 const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
@@ -231,6 +233,22 @@ export const loginUser = async (req, res) => {
 
     const isMatch = await user.matchPassword(password);
     if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
+
+    // Check if user is blacklisted
+    const blacklistEntry = await Blacklist.findOne({ userId: user._id });
+    if (blacklistEntry) {
+      // Log the login attempt
+      const ipAddress = req.ip || req.connection.remoteAddress;
+      const userAgent = req.get("user-agent");
+      await logAccessAttempt(user._id, ipAddress, userAgent, "/api/auth/login");
+
+      return res.status(403).json({
+        message: "Access denied. Your account has been restricted.",
+        isBlacklisted: true,
+        reason: blacklistEntry.reason,
+        blacklistedAt: blacklistEntry.blacklistedAt,
+      });
+    }
 
     if (!user.isVerified && user.role !== "admin-only") {
       return res.status(403).json({

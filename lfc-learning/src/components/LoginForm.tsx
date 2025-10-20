@@ -57,6 +57,12 @@ export default function LoginForm() {
       const data = await res.json();
 
       if (!res.ok) {
+        // Handle blacklisted users
+        if (res.status === 403 && data.isBlacklisted) {
+          setError(`Access denied: ${data.reason || "Your account has been restricted."}`);
+          return;
+        }
+        
         if (data.message === "User not found") {
           setError("Account not found. Please register.");
         } else if (data.message === "EMAIL_NOT_VERIFIED") {

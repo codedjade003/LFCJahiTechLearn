@@ -1,11 +1,12 @@
 // src/pages/Admin/Users.tsx
 import { useState, useEffect } from "react";
-import { FaUsers, FaUserPlus, FaShieldAlt, FaClipboardList, FaChevronRight, FaBars } from "react-icons/fa";
+import { FaUsers, FaUserPlus, FaShieldAlt, FaClipboardList, FaBan, FaChevronRight, FaBars } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 import AllUsersTab from "../../components/Admin/UsersTabs/AllUsersTab.tsx";
 import AddUsersTab from "../../components/Admin/UsersTabs/AddUsersTab.tsx";
 import AccessSettingsTab from "../../components/Admin/UsersTabs/AccessSettingsTab.tsx";
 import LogsTab from "../../components/Admin/UsersTabs/LogsTab.tsx";
+import BlacklistTab from "../../components/Admin/UsersTabs/BlacklistTab.tsx";
 import OnboardingTour from "../../components/shared/OnboardingTour";
 import type { Step } from "react-joyride";
 
@@ -38,6 +39,7 @@ export default function Users() {
     { key: "all", label: "All Users", icon: <FaUsers /> },
     { key: "add", label: "Add Users", icon: <FaUserPlus /> },
     { key: "access", label: "Access Settings", icon: <FaShieldAlt /> },
+    { key: "blacklist", label: "Blacklist", icon: <FaBan /> },
     { key: "logs", label: "Logs", icon: <FaClipboardList /> },
   ];
 
@@ -49,6 +51,8 @@ export default function Users() {
         return <AddUsersTab />;
       case "access":
         return <AccessSettingsTab />;
+      case "blacklist":
+        return <BlacklistTab />;
       case "logs":
         return <LogsTab />;
       default:
@@ -144,6 +148,7 @@ export default function Users() {
                 {activeTab === "all" && "View, search and manage all registered users."}
                 {activeTab === "add" && "Add a single user or upload users in bulk."}
                 {activeTab === "access" && "Manage user roles and access levels."}
+                {activeTab === "blacklist" && "Manage blacklisted users and prevent unauthorized access."}
                 {activeTab === "logs" && "View user activity logs and login history."}
               </p>
             </div>
