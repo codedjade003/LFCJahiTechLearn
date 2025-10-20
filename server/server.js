@@ -51,6 +51,51 @@ const allowedOrigins = [
   "http://localhost:3000",
 ].filter(Boolean); // remove undefined/null values
 
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+
+// Swagger configuration
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'LFC Tech Learn API',
+      version: '1.0.0',
+      description: 'API documentation for testing routes',
+      contact: {
+        name: 'API Support',
+        url: 'https://lfctechlearn.com',
+        email: 'support@lfctechlearn.com'
+      }
+    },
+    servers: [
+      {
+        url: 'https://api.lfctechlearn.com',
+        description: 'Production server'
+      },
+      {
+        url: 'http://localhost:3000', 
+        description: 'Development server'
+      }
+    ],
+  },
+  apis: ['./routes/*.js', './app.js'], // paths to files containing OpenAPI definitions
+};
+
+const specs = swaggerJsdoc(options);
+
+// Add this to your existing Express app
+app.use('/doc', swaggerUi.serve, swaggerUi.setup(specs, {
+  explorer: true,
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: "LFC Tech Learn API Docs"
+}));
+
+// Optional: Also serve raw JSON spec
+app.get('/doc-json', (req, res) => {
+  res.json(specs);
+});
+
 app.use(
   cors({
     origin: (origin, callback) => {
