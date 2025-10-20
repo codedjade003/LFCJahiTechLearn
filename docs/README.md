@@ -1,6 +1,6 @@
 # LFC Learning Platform
 
-A comprehensive Learning Management System (LMS) built for Liverpool FC Church Technical Department, featuring course management, assessments, progress tracking, and advanced features like proctored quizzes, dark mode, and interactive onboarding.
+A comprehensive Learning Management System (LMS) built for Living Faith Church, Jahi, Technical Department, featuring course management, assessments, progress tracking, and advanced features like proctored quizzes, dark mode, and interactive onboarding.
 
 ## 🎯 Overview
 
@@ -506,7 +506,7 @@ The application will be available at:
 
 ## 🤝 Contributing
 
-This is a private project for Liverpool FC Church. For internal contributions:
+This is a private project for Living Faith Church, Jahi, For internal contributions:
 
 1. Create a feature branch
 2. Make your changes
@@ -516,23 +516,18 @@ This is a private project for Liverpool FC Church. For internal contributions:
 
 ## 📝 License
 
-Proprietary - All rights reserved by Liverpool FC Church Technical Department
+Proprietary - All rights reserved by Living Faith Church, Jahi, Technical Department
 
-## 👥 Team
-
-- **Lead Developer**: [Your Name]
-- **Project Manager**: [PM Name]
-- **Technical Director**: Liverpool FC Church
 
 ## 📞 Support
 
 For technical support or questions:
-- Email: support@lfctech.com
+- Email: hello@lfctechlearn.com
 - Internal Slack: #lfc-learning-support
 
 ## 🙏 Acknowledgments
 
-- Liverpool FC Church Technical Department
+- Living Faith Church, Jahi, Technical Department
 - All beta testers and early users
 - Open source community for amazing tools
 
@@ -542,4 +537,4 @@ For technical support or questions:
 **Last Updated**: October 2025  
 **Status**: Production Ready
 
-Built with ❤️ for Liverpool FC Church
+Built with ❤️ for Living Faith Church, Jahi.
