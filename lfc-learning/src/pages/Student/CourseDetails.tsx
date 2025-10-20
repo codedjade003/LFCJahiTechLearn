@@ -780,8 +780,8 @@ export default function CourseDetails() {
         
         // Show completion modal with survey
         if (course) {
-          const module = course.sections
-            .flatMap(s => s.modules)
+          const module = (course.sections || [])
+            .flatMap(s => s.modules || [])
             .find(m => m._id === moduleId);
           
           if (module) {
@@ -1009,10 +1009,10 @@ export default function CourseDetails() {
           <div className="p-4">
             <h2 className="font-semibold text-[var(--text-primary)] mb-4">Course Content</h2>
             <div className="space-y-2">
-              {course.sections.map((section) => {
+              {(course.sections || []).map((section) => {
                 const sectionProgress = enrollment?.sectionProgress?.find(sp => 
                   sp.sectionId === section._id
-                ) || { completed: false, modulesCompleted: 0, totalModules: section.modules.length };
+                ) || { completed: false, modulesCompleted: 0, totalModules: (section.modules || []).length };
                 
                 const isExpanded = expandedSections.has(section._id);
 

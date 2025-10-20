@@ -115,8 +115,8 @@ const StudentDashboard = () => {
           })
         ]);
 
-        let apiCourses: any[] = [];
-        let userEnrollments: any[] = [];
+        let apiCourses: Course[] = [];
+        let userEnrollments: Array<{ courseId: string; progress: number }> = [];
 
         if (coursesRes.status === 'fulfilled' && coursesRes.value.ok) {
           apiCourses = await coursesRes.value.json();
@@ -463,7 +463,7 @@ const StudentDashboard = () => {
       <TechyBackground variant="subtle" />
       
       {/* Content */}
-      <div className="relative z-[10px]">
+      <div className="relative z-0">
         {/* Onboarding Tour - Shows BEFORE profile completion */}
         <OnboardingTour tourKey="dashboard" steps={dashboardTourSteps} />
 

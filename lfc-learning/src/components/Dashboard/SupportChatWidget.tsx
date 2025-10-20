@@ -155,14 +155,14 @@ const SupportChatWidget: React.FC = () => {
       {/* Floating Chat Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 bg-lfc-red dark:bg-red-800 text-white p-4 rounded-full shadow-lg hover:bg-red-700 dark:hover:bg-lfc-red transition-all z-50"
+        className="fixed bottom-6 right-6 bg-lfc-red dark:bg-red-800 text-white p-4 rounded-full shadow-lg hover:bg-red-700 dark:hover:bg-lfc-red transition-all z-40"
       >
         <FaComments size={24} />
       </button>
 
       {/* Chat Widget */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-96 h-[600px] bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow-2xl border border-gray-200 z-50 flex flex-col">
+        <div className="fixed bottom-6 right-6 w-96 h-[600px] bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow-2xl border border-gray-200 z-40 flex flex-col">
           {/* Header */}
           <div className="bg-lfc-red dark:bg-red-800 text-white p-4 rounded-t-lg flex justify-between items-center">
             <div className="flex items-center">

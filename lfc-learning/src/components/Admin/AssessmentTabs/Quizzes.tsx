@@ -91,8 +91,8 @@ export default function Quizzes() {
         const course = await res.json();
         
         // Find the quiz module
-        for (const section of course.sections) {
-          for (const module of section.modules) {
+        for (const section of course.sections || []) {
+          for (const module of section.modules || []) {
             if (module._id === moduleId && module.type === 'quiz') {
               setQuizDetails({
                 _id: module._id,

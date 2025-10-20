@@ -33,12 +33,17 @@ interface Module {
   };
 }
 
+interface Course {
+  _id: string;
+  title: string;
+}
+
 export default function SurveyResponses() {
   const [responses, setResponses] = useState<SurveyResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCourse, setSelectedCourse] = useState<string>("all");
   const [selectedModule, setSelectedModule] = useState<string>("all");
-  const [courses, setCourses] = useState<any[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [modules, setModules] = useState<Module[]>([]);
   const [expandedResponse, setExpandedResponse] = useState<string | null>(null);
 
@@ -173,20 +178,20 @@ export default function SurveyResponses() {
           {[1, 2, 3, 4, 5].map(star => (
             <FaStar
               key={star}
-              className={star <= value ? "text-lfc-gold" : "text-gray-300"}
+              className={star <= value ? "text-lfc-gold" : "text-gray-300 dark:text-gray-600"}
               size={16}
             />
           ))}
-          <span className="ml-2 text-sm text-gray-600">({value}/5)</span>
+          <span className="ml-2 text-sm text-gray-600 dark:text-gray-300">({value}/5)</span>
         </div>
       );
     }
     
     if (typeof value === 'object') {
-      return <pre className="text-sm text-gray-700">{JSON.stringify(value, null, 2)}</pre>;
+      return <pre className="text-sm text-gray-700 dark:text-gray-200">{JSON.stringify(value, null, 2)}</pre>;
     }
     
-    return <p className="text-sm text-gray-700">{value}</p>;
+    return <p className="text-sm text-gray-700 dark:text-gray-200">{value}</p>;
   };
 
   const getModuleQuestions = (moduleId: string) => {
@@ -210,8 +215,8 @@ export default function SurveyResponses() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Survey Responses</h1>
-          <p className="text-gray-600 mt-1">View and analyze student feedback from module surveys</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Survey Responses</h1>
+          <p className="text-gray-600 dark:text-gray-300 mt-1">View and analyze student feedback from module surveys</p>
         </div>
         <button
           onClick={exportToCSV}
@@ -227,12 +232,12 @@ export default function SurveyResponses() {
       {/* Filters */}
       <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 p-4" data-tour="filters">
         <div className="flex items-center gap-2 mb-3">
-          <FaFilter className="text-gray-500" />
-          <h3 className="font-semibold text-gray-900">Filters</h3>
+          <FaFilter className="text-gray-500 dark:text-gray-400" />
+          <h3 className="font-semibold text-gray-900 dark:text-gray-100">Filters</h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Course</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Course</label>
             <select
               value={selectedCourse}
               onChange={(e) => setSelectedCourse(e.target.value)}
@@ -245,7 +250,7 @@ export default function SurveyResponses() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Module</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Module</label>
             <select
               value={selectedModule}
               onChange={(e) => setSelectedModule(e.target.value)}
@@ -264,18 +269,18 @@ export default function SurveyResponses() {
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 p-4">
-          <div className="text-sm text-gray-600">Total Responses</div>
-          <div className="text-3xl font-bold text-gray-900 mt-1">{filteredResponses.length}</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">Total Responses</div>
+          <div className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-1">{filteredResponses.length}</div>
         </div>
         <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 p-4">
-          <div className="text-sm text-gray-600">Unique Students</div>
-          <div className="text-3xl font-bold text-gray-900 mt-1">
+          <div className="text-sm text-gray-600 dark:text-gray-400">Unique Students</div>
+          <div className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-1">
             {new Set(filteredResponses.map(r => r.userId._id)).size}
           </div>
         </div>
         <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 p-4">
-          <div className="text-sm text-gray-600">Courses Covered</div>
-          <div className="text-3xl font-bold text-gray-900 mt-1">
+          <div className="text-sm text-gray-600 dark:text-gray-400">Courses Covered</div>
+          <div className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-1">
             {new Set(filteredResponses.map(r => r.courseId._id)).size}
           </div>
         </div>
@@ -284,7 +289,7 @@ export default function SurveyResponses() {
       {/* Responses List */}
       <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200" data-tour="responses-table">
         <div className="p-4 border-b border-gray-200">
-          <h3 className="font-semibold text-gray-900">Responses ({filteredResponses.length})</h3>
+          <h3 className="font-semibold text-gray-900 dark:text-gray-100">Responses ({filteredResponses.length})</h3>
         </div>
         <div className="divide-y divide-gray-200">
           {filteredResponses.length === 0 ? (
@@ -301,16 +306,25 @@ export default function SurveyResponses() {
                   <div
                     className="flex items-center justify-between cursor-pointer"
                     onClick={() => setExpandedResponse(isExpanded ? null : response._id)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setExpandedResponse(isExpanded ? null : response._id);
+                      }
+                    }}
+                    role="button"
+                    tabIndex={0}
+                    aria-expanded={isExpanded}
                   >
                     <div className="flex-1">
                       <div className="flex items-center gap-3">
-                        <div className="font-medium text-gray-900">{response.userId.name}</div>
-                        <div className="text-sm text-gray-500">{response.userId.email}</div>
+                        <div className="font-medium text-gray-900 dark:text-gray-100">{response.userId.name}</div>
+                        <div className="text-sm text-gray-500 dark:text-gray-400">{response.userId.email}</div>
                       </div>
-                      <div className="text-sm text-gray-600 mt-1">
+                      <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">
                         {response.courseId.title} • {response.moduleTitle}
                       </div>
-                      <div className="text-xs text-gray-500 mt-1">
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         Submitted {new Date(response.submittedAt).toLocaleString()}
                       </div>
                     </div>
@@ -327,7 +341,7 @@ export default function SurveyResponses() {
                         
                         return (
                           <div key={key} className="space-y-2">
-                            <div className="font-medium text-sm text-gray-900">
+                            <div className="font-medium text-sm text-gray-900 dark:text-gray-100">
                               {question?.question || `Question ${questionIndex + 1}`}
                             </div>
                             {renderResponseValue(value, question?.type)}

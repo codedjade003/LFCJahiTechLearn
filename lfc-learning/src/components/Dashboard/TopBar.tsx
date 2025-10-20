@@ -9,12 +9,21 @@ interface TopbarProps {
   onMenuClick: () => void;
 }
 
+interface Notification {
+  _id: string;
+  title: string;
+  message: string;
+  type: string;
+  read: boolean;
+  createdAt: string;
+}
+
 const Topbar = ({ onMenuClick }: TopbarProps) => {
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const { user, logout } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const [notifications, setNotifications] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
 
@@ -38,11 +47,11 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
       if (response.ok) {
         const data = await response.json();
         // Handle both direct array and nested response
-        const notificationsArray = data.notifications || data || [];
+        const notificationsArray: Notification[] = data.notifications || data || [];
         setNotifications(notificationsArray);
         
         // Calculate unread count from the data
-        const unread = notificationsArray.filter((n: { read: any; }) => !n.read).length;
+        const unread = notificationsArray.filter((n) => !n.read).length;
         setUnreadCount(unread);
       } else {
         console.error('Failed to fetch notifications:', response.status);
@@ -163,7 +172,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
 
           {/* Notifications Dropdown */}
           {showNotifications && (
-            <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 dark:border-[var(--border-primary)] rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+            <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 dark:border-[var(--border-primary)] rounded-lg shadow-lg z-20 max-h-96 overflow-y-auto">
               <div className="p-4 border-b border-gray-200 dark:border-[var(--border-primary)]">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-gray-800 dark:text-[var(--text-primary)]">Notifications</h3>
@@ -274,7 +283,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
           </button>
 
           {dropdownOpen && (
-            <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 dark:border-[var(--border-primary)] rounded-lg shadow-xl z-50 py-1">
+            <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 dark:border-[var(--border-primary)] rounded-lg shadow-xl z-20 py-1">
               {/* User Info Section */}
               <div className="px-4 py-3 border-b border-gray-100 dark:border-[var(--border-primary)]">
                 <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.name}</p>

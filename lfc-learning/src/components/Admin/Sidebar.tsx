@@ -99,7 +99,7 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps)
       {/* Mobile header button */}
       <button
         onClick={() => setIsMobileOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-30 bg-lfc-red dark:bg-[var(--lfc-red)] text-white p-2 rounded-lg shadow-lg"
+        className="lg:hidden fixed top-4 left-4 z-20 bg-lfc-red dark:bg-[var(--lfc-red)] text-white p-2 rounded-lg shadow-lg"
       >
         <FaBars className="text-lg" />
       </button>
@@ -107,7 +107,7 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps)
         <div
           className={`sidebar fixed lg:relative ${
             collapsed ? "w-20" : "w-64"
-          } bg-gradient-to-b from-lfc-red to-lfc-red/90 dark:from-red-800 dark:to-red-900 text-white flex flex-col transition-all duration-300 h-screen z-50 transform ${
+          } bg-gradient-to-b from-lfc-red to-lfc-red/90 dark:from-red-800 dark:to-red-900 text-white flex flex-col transition-all duration-300 h-screen z-30 transform ${
             isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
           } shadow-2xl border-r border-lfc-gold/30 dark:border-red-700/30`}
         >
@@ -141,6 +141,15 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps)
         {/* User Profile */}
         <div 
           onClick={handleProfileClick}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleProfileClick();
+            }
+          }}
+          role="button"
+          tabIndex={0}
+          aria-label="View profile"
           className="p-4 border-b border-lfc-gold/30 dark:border-red-700/30 bg-lfc-red/50 dark:bg-red-900/50 cursor-pointer hover:bg-lfc-red/70 dark:hover:bg-red-900/70 transition-all duration-200 group"
         >
           <div className="flex items-center space-x-3">

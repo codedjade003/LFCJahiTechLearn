@@ -42,11 +42,13 @@ import Contact from "./pages/Contact";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import BlacklistedPage from "./pages/BlacklistedPage";
+import ErrorBoundary from "./components/shared/ErrorBoundary";
 
 function App() {
   return (
-    <div className="min-h-screen bg-white dark:bg-[var(--bg-elevated)] text-gray-900 dark:text-gray-100">
-      <Routes>
+    <ErrorBoundary>
+      <div className="min-h-screen bg-white dark:bg-[var(--bg-elevated)] text-gray-900 dark:text-gray-100">
+        <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/signup" element={<SignupPage />} />
@@ -119,7 +121,8 @@ function App() {
       </Routes>
       
       <ToastContainer position="top-right" autoClose={3000} />
-    </div>
+      </div>
+    </ErrorBoundary>
   );
 }
 

@@ -380,7 +380,6 @@ const CourseCard: React.FC<Props> = ({
         </div>
       </div>
 
-      <div className="z-60">
       <CourseModal
         course={{
           _id,
@@ -408,7 +407,6 @@ const CourseCard: React.FC<Props> = ({
         enrolled={enrolled}
         progress={progress}
       />
-      </div>
 
     </>
   );

@@ -40,7 +40,7 @@ export default function Notification({ message, type, onClose, duration = 5000 }
   };
 
   return (
-    <div className={`fixed top-4 right-4 z-50 border rounded-lg shadow-lg p-4 max-w-sm ${getStyles()}`}>
+    <div className={`fixed top-4 right-4 z-60 border rounded-lg shadow-lg p-4 max-w-sm ${getStyles()}`}>
       <div className="flex items-start space-x-3">
         {getIcon()}
         <div className="flex-1">
