@@ -45,7 +45,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       {/* Mobile Overlay */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black bg-opacity-50 z-45 lg:hidden"
           onClick={onClose}
         />
       )}
@@ -53,7 +53,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       {/* Mobile header button */}
       <button
         onClick={onClose}
-        className="lg:hidden fixed top-4 left-4 z-20 bg-lfc-red dark:bg-[var(--lfc-red)] text-white p-2 rounded-lg shadow-lg"
+        className="lg:hidden fixed top-4 left-4 z-46 bg-lfc-red dark:bg-[var(--lfc-red)] text-white p-2 rounded-lg shadow-lg"
       >
         <FaBars className="text-lg" />
       </button>
@@ -62,7 +62,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       <div className={`
         fixed lg:relative ${collapsed ? 'w-20' : 'w-64'} bg-gradient-to-b from-lfc-red to-lfc-red/90 dark:from-red-800 dark:to-red-900 text-white flex flex-col transition-all duration-300 h-screen transform
         ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-        shadow-2xl border-r border-lfc-gold/30 dark:border-red-700/30 z-30 lg:z-auto
+        shadow-2xl border-r border-lfc-gold/30 dark:border-red-700/30 z-45 lg:z-auto
       `}>
         <div className="flex flex-col w-full h-full">
           {/* Header */}

@@ -91,7 +91,7 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps)
       {/* Mobile overlay */}
       {isMobileOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black bg-opacity-50 z-45 lg:hidden"
           onClick={() => setIsMobileOpen(false)}
         />
       )}
@@ -99,7 +99,7 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps)
       {/* Mobile header button */}
       <button
         onClick={() => setIsMobileOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-20 bg-lfc-red dark:bg-[var(--lfc-red)] text-white p-2 rounded-lg shadow-lg"
+        className="lg:hidden fixed top-4 left-4 z-46 bg-lfc-red dark:bg-[var(--lfc-red)] text-white p-2 rounded-lg shadow-lg"
       >
         <FaBars className="text-lg" />
       </button>
@@ -107,7 +107,7 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps)
         <div
           className={`sidebar fixed lg:relative ${
             collapsed ? "w-20" : "w-64"
-          } bg-gradient-to-b from-lfc-red to-lfc-red/90 dark:from-red-800 dark:to-red-900 text-white flex flex-col transition-all duration-300 h-screen z-30 transform ${
+          } bg-gradient-to-b from-lfc-red to-lfc-red/90 dark:from-red-800 dark:to-red-900 text-white flex flex-col transition-all duration-300 h-screen z-45 transform ${
             isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
           } shadow-2xl border-r border-lfc-gold/30 dark:border-red-700/30`}
         >
