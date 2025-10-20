@@ -167,8 +167,8 @@ export default function Contact() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Phone</h3>
-                  <a href="tel:+2348012345678" className="text-lfc-red dark:text-red-400 hover:underline">
-                    +234 801 234 5678
+                  <a href="tel:+2349015845913" className="text-lfc-red dark:text-red-400 hover:underline">
+                    +234 901 584 5913
                   </a>
                 </div>
               </div>
