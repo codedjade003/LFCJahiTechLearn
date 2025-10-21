@@ -11,7 +11,6 @@ import {
   FaUserGraduate,
   FaSignOutAlt,
   FaChevronDown,
-  FaBars,
   FaHeadset,
 } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";

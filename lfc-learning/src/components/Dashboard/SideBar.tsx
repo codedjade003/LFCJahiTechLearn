@@ -1,5 +1,5 @@
 // src/components/Sidebar.tsx
-import { FaHome, FaBookOpen, FaTasks, FaUser, FaTimes, FaQuestionCircle, FaGraduationCap, FaProjectDiagram, FaChevronLeft, FaBars } from "react-icons/fa";
+import { FaHome, FaBookOpen, FaTasks, FaUser, FaTimes, FaQuestionCircle, FaGraduationCap, FaProjectDiagram, FaChevronLeft} from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useState } from "react";
