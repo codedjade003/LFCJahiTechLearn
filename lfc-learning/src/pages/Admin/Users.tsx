@@ -63,7 +63,7 @@ export default function Users() {
   const activeIndex = tabs.findIndex((tab) => tab.key === activeTab);
 
   return (
-    <div className="container flex flex-col min-h-screen bg-yt-light-gray text-yt-text-dark">
+    <div className="flex flex-col h-full bg-yt-light-gray text-yt-text-dark">
       {/* Onboarding Tour */}
       <OnboardingTour tourKey="userManagement" steps={userManagementTour} />
       
@@ -83,7 +83,7 @@ export default function Users() {
         </div>
       </header>
 
-      <div className="flex flex-1 relative">
+      <div className="flex flex-1 relative overflow-y-hidden overflow-x-auto">
         {/* Sidebar */}
         <aside
           className={`absolute md:static inset-y-0 left-0 z-30 w-64 bg-white dark:bg-[var(--bg-elevated)] border-r border-yt-light-border flex-shrink-0 overflow-y-auto shadow-sm transform transition-transform duration-300 ease-in-out ${
