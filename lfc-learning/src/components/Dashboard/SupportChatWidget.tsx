@@ -162,7 +162,7 @@ const SupportChatWidget: React.FC = () => {
 
       {/* Chat Widget */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-96 h-[600px] bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow-2xl border border-gray-200 z-40 flex flex-col">
+        <div className="fixed bottom-6 right-6 w-96 max-h-[90vh] bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow-2xl border border-gray-200 z-40 flex flex-col overflow-hidden">
           {/* Header */}
           <div className="bg-lfc-red dark:bg-red-800 text-white p-4 rounded-t-lg flex justify-between items-center">
             <div className="flex items-center">
@@ -191,7 +191,7 @@ const SupportChatWidget: React.FC = () => {
           <div className="flex-1 flex flex-col">
             {showNewTicketForm ? (
               // New Ticket Form
-              <div className="flex-1 p-4">
+              <div className="flex-1 overflow-y-auto p-4">
                 <h4 className="font-semibold mb-4">Create New Ticket</h4>
                 <form onSubmit={createNewTicket} className="space-y-3">
                   <input

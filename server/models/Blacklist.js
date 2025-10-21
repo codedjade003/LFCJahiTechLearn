@@ -46,7 +46,6 @@ const blacklistSchema = new mongoose.Schema(
 );
 
 // Index for fast lookups
-blacklistSchema.index({ userId: 1 });
 blacklistSchema.index({ email: 1 });
 
 const Blacklist = mongoose.model("Blacklist", blacklistSchema);
