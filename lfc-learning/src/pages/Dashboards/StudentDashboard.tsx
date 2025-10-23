@@ -81,7 +81,7 @@ const StudentDashboard = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [onboardingDismissed, setOnboardingDismissed] = useState(false);
-  const [enrollmentAttempted, setEnrollmentAttempted] = useState(false);
+  const [, setEnrollmentAttempted] = useState(false);
   const [showProfileWarning, setShowProfileWarning] = useState(false);
   const [notification, setNotification] = useState<{ message: string; type: 'error' | 'success' | 'warning'; visible: boolean }>({
     message: '',

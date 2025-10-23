@@ -20,6 +20,7 @@ export interface UserProfile {
     current: boolean;
   }[];
   profilePicture?: {
+    position(position: any): unknown;
     publicid: string;
     url: string;
   };
