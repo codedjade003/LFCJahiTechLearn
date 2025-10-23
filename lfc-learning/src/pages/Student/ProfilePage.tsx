@@ -451,7 +451,75 @@ const validateUsername = (username: string) => {
       }
     };
 
-  // Add this component inside your ProfilePage component, before the return statement
+  // Profile Picture Editor Component
+  const ProfilePictureEditor = () => {
+    if (!showProfilePictureEditor || !profilePicturePreview) return null;
+
+    const handlePositionChange = (e: React.MouseEvent<HTMLDivElement>) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      setProfilePicturePosition({ x: Math.max(0, Math.min(100, x)), y: Math.max(0, Math.min(100, y)) });
+    };
+
+    const handleSavePosition = () => {
+      setShowProfilePictureEditor(false);
+    };
+
+    const handleCancel = () => {
+      setShowProfilePictureEditor(false);
+      setProfilePicturePreview(null);
+      setProfilePictureFile(null);
+    };
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+        <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg p-6 max-w-2xl w-full mx-4">
+          <h3 className="text-xl font-bold mb-4 dark:text-white">Adjust Profile Picture</h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">Click on the image to set the visible area</p>
+          
+          <div 
+            className="relative w-64 h-64 mx-auto bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden cursor-crosshair"
+            onClick={handlePositionChange}
+          >
+            <img 
+              src={profilePicturePreview} 
+              alt="Profile preview" 
+              className="w-full h-full object-cover"
+              style={{
+                objectPosition: `${profilePicturePosition.x}% ${profilePicturePosition.y}%`
+              }}
+            />
+            <div 
+              className="absolute w-4 h-4 border-2 border-white rounded-full shadow-lg"
+              style={{
+                left: `${profilePicturePosition.x}%`,
+                top: `${profilePicturePosition.y}%`,
+                transform: 'translate(-50%, -50%)'
+              }}
+            />
+          </div>
+
+          <div className="flex justify-end gap-3 mt-4">
+            <button
+              onClick={handleCancel}
+              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSavePosition}
+              className="px-4 py-2 bg-redCustom text-white rounded-lg hover:bg-red-700"
+            >
+              Save Position
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Cover Photo Editor Component
   const CoverPhotoEditor = () => {
     if (!showCoverPhotoEditor || !coverPhotoPreview) return null;
 
@@ -1356,72 +1424,7 @@ const validateUsername = (username: string) => {
     <CoverPhotoEditor />
     
     {/* Profile Picture Editor Modal */}
-    {showProfilePictureEditor && (
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Adjust Profile Picture Position
-          </h3>
-          
-          <div className="mb-4">
-            <div 
-              className="w-48 h-48 mx-auto rounded-full overflow-hidden border-4 border-gray-200 dark:border-gray-600"
-              style={{
-                backgroundImage: `url(${profilePicturePreview || user.profilePicture?.url || "/default-avatar.png"})`,
-                backgroundSize: 'cover',
-                backgroundPosition: `${profilePicturePosition.x}% ${profilePicturePosition.y}%`
-              }}
-            />
-          </div>
-          
-          <div className="space-y-4 mb-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Horizontal Position
-              </label>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={profilePicturePosition.x}
-                onChange={(e) => setProfilePicturePosition(prev => ({ ...prev, x: parseInt(e.target.value) }))}
-                className="w-full"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Vertical Position
-              </label>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={profilePicturePosition.y}
-                onChange={(e) => setProfilePicturePosition(prev => ({ ...prev, y: parseInt(e.target.value) }))}
-                className="w-full"
-              />
-            </div>
-          </div>
-          
-          <div className="flex gap-3">
-            <button
-              onClick={() => setShowProfilePictureEditor(false)}
-              className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-            >
-              Done
-            </button>
-            <button
-              onClick={() => {
-                setProfilePicturePosition({ x: 50, y: 50 });
-              }}
-              className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
-            >
-              Reset
-            </button>
-          </div>
-        </div>
-      </div>
-    )}
+    <ProfilePictureEditor />
       </div>
     </div>
   );

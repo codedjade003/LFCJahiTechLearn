@@ -4,7 +4,11 @@ import { useNavigate } from "react-router-dom";
 export interface UserProfile {
   role: string;
   technicalUnit: string;
-  coverPhoto: any;
+  coverPhoto?: {
+    url: string;
+    publicId: string;
+    position?: { x: number; y: number };
+  };
   lastLogin: string | number | Date;
   loginCount: number;
   streak: any;
@@ -20,9 +24,9 @@ export interface UserProfile {
     current: boolean;
   }[];
   profilePicture?: {
-    position(position: any): unknown;
-    publicid: string;
     url: string;
+    publicId: string;
+    position?: { x: number; y: number };
   };
   dateOfBirth?: string;
   maritalStatus?: string;
