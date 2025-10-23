@@ -40,7 +40,7 @@ export default function Notification({ message, type, onClose, duration = 5000 }
   };
 
   return (
-    <div className={`fixed top-4 right-4 z-60 border rounded-lg shadow-lg p-4 max-w-sm ${getStyles()}`}>
+    <div className={`fixed top-4 right-4 z-[70] border rounded-lg shadow-lg p-4 max-w-sm ${getStyles()} dark:bg-opacity-95`}>
       <div className="flex items-start space-x-3">
         {getIcon()}
         <div className="flex-1">
@@ -48,7 +48,7 @@ export default function Notification({ message, type, onClose, duration = 5000 }
         </div>
         <button
           onClick={onClose}
-          className="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
+          className="flex-shrink-0 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors"
         >
           <FaTimes size={14} />
         </button>

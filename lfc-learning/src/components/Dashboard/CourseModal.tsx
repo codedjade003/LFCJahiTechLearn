@@ -483,7 +483,10 @@ const CourseModal: React.FC<CourseModalProps> = ({
                           <FaClock className="text-green-500 mr-2" />
                           <span className="font-semibold text-green-700">Duration</span>
                         </div>
-                        <p className="text-green-600">{course.duration}</p>
+                        <p className="text-green-600">{course.duration.replace(/(\d+)\s*(day|week|month|hour|minute)s?/gi, (match, num, unit) => {
+                          const number = parseInt(num);
+                          return `${number} ${unit}${number === 1 ? '' : 's'}`;
+                        })}</p>
                       </div>
                     )}
                   </div>

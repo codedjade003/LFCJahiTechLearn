@@ -21,6 +21,7 @@ interface UserProfile {
   maritalStatus: string;
   technicalUnit: string;
   profilePicturePreview?: string;
+  profilePicturePosition?: { x: number; y: number };
   hasSeenOnboarding?: boolean;
 }
 
@@ -176,12 +177,13 @@ const StudentDashboard = () => {
         if (userRes.ok) {
           const userData = await userRes.json();
           const userProfile: UserProfile = {
-            profilePicture: userData.profilePicture || "",
+            profilePicture: userData.profilePicture?.url || userData.profilePicture || "",
             name: userData.name || "",
             dateOfBirth: userData.dateOfBirth || "",
             phoneNumber: userData.phoneNumber || "",
             maritalStatus: userData.maritalStatus || "",
             technicalUnit: userData.technicalUnit || "All Courses",
+            profilePicturePosition: userData.profilePicture?.position || { x: 50, y: 50 },
             hasSeenOnboarding: userData.hasSeenOnboarding || false,
           };
 
@@ -220,14 +222,29 @@ const StudentDashboard = () => {
         return;
       }
 
-      console.log("Starting profile update...");
-      console.log("Profile data:", profile);
-      console.log("File to upload:", file);
+      // Validate age if date of birth is provided
+      if (profile.dateOfBirth) {
+        const today = new Date();
+        const birth = new Date(profile.dateOfBirth);
+        let age = today.getFullYear() - birth.getFullYear();
+        const monthDiff = today.getMonth() - birth.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+          age--;
+        }
+        if (age < 18) {
+          alert("You must be at least 18 years old to join the Technical Unit.");
+          return;
+        }
+      }
 
       if (file) {
-        console.log("Uploading profile picture...");
         const pictureFormData = new FormData();
         pictureFormData.append("image", file);
+        
+        // Add position data if available
+        if (profile.profilePicturePosition) {
+          pictureFormData.append("position", JSON.stringify(profile.profilePicturePosition));
+        }
 
         const pictureResponse = await fetch(`${API_BASE}/api/auth/profile-picture`, {
           method: "PUT",
@@ -235,20 +252,14 @@ const StudentDashboard = () => {
           body: pictureFormData,
         });
         
-        console.log("Picture upload response status:", pictureResponse.status);
-        
         if (!pictureResponse.ok) {
           const errorData = await pictureResponse.json().catch(() => ({ message: "Unknown error" }));
-          console.error("Picture upload failed:", errorData);
+          console.error("Picture upload failed");
           throw new Error(`Failed to upload profile picture: ${errorData.message || pictureResponse.statusText}`);
         }
-        
-        console.log("Picture uploaded successfully");
       }
 
-      const { profilePicturePreview, profilePicture, ...safeProfile } = profile;
-      
-      console.log("Updating profile with data:", safeProfile);
+      const { profilePicturePreview, profilePicture, profilePicturePosition, ...safeProfile } = profile;
 
       const profileResponse = await fetch(`${API_BASE}/api/auth/update-profile`, {
         method: "PUT",
@@ -259,18 +270,14 @@ const StudentDashboard = () => {
         body: JSON.stringify(safeProfile),
       });
       
-      console.log("Profile update response status:", profileResponse.status);
-      
       if (!profileResponse.ok) {
         const errorData = await profileResponse.json().catch(() => ({ message: "Unknown error" }));
-        console.error("Profile update failed:", errorData);
+        console.error("Profile update failed");
         throw new Error(`Failed to update profile: ${errorData.message || profileResponse.statusText}`);
       }
 
-      const profileData = await profileResponse.json();
-      console.log("Profile updated successfully:", profileData);
+      await profileResponse.json();
 
-      console.log("Marking onboarding as seen...");
       await fetch(`${API_BASE}/api/auth/seen-onboarding`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
@@ -280,7 +287,6 @@ const StudentDashboard = () => {
       setOnboardingDismissed(true);
       setProfile(prev => prev ? { ...prev, ...safeProfile, hasSeenOnboarding: true } : null);
       await fetchUser();
-      console.log("Profile update complete!");
     } catch (err) {
       console.error("Error saving profile:", err);
       alert(`Failed to save profile: ${err instanceof Error ? err.message : "Unknown error"}`);
@@ -391,12 +397,19 @@ const StudentDashboard = () => {
   const completionPercent = useMemo(() => {
     if (!profile) return 100;
     
-    const fields: (keyof UserProfile)[] = ['name', 'dateOfBirth', 'phoneNumber', 'maritalStatus', 'technicalUnit'];
-    const filledFields = fields.filter(field => 
+    // Profile completion criteria: 5 fields total
+    // name (already there), email (already there), dateOfBirth, phoneNumber, maritalStatus
+    // So initially it's 2/5 = 40%
+    const totalFields = 5;
+    const alreadyFilledFields = 2; // name and email are always there from signup
+    
+    const additionalFields: (keyof UserProfile)[] = ['dateOfBirth', 'phoneNumber', 'maritalStatus'];
+    const filledAdditionalFields = additionalFields.filter(field => 
       profile[field] !== undefined && profile[field] !== null && profile[field] !== ""
     ).length;
     
-    return Math.round((filledFields / fields.length) * 100);
+    const totalFilledFields = alreadyFilledFields + filledAdditionalFields;
+    return Math.round((totalFilledFields / totalFields) * 100);
   }, [profile]);
 
   const isProfileIncomplete = useMemo(() => 
@@ -424,6 +437,12 @@ const StudentDashboard = () => {
     handleInputChange("technicalUnit", value);
     setSelectedCategory(value);
   }, [handleInputChange]);
+
+  const handleProfilePicturePositionChange = useCallback((position: { x: number; y: number }) => {
+    setProfile((prev: UserProfile | null) => 
+      prev ? { ...prev, profilePicturePosition: position } : null
+    );
+  }, []);
 
   const showBanner = useMemo(() => 
     !isInitialLoading && profile && isProfileIncomplete,
@@ -485,6 +504,7 @@ const StudentDashboard = () => {
           onSkip={handleSkip}
           onNextStep={handleNextStep}
           onInputChange={handleInputChange}
+          onProfilePicturePositionChange={handleProfilePicturePositionChange}
           onFileChange={handleFileChange}
           onCategoryChange={handleOnboardingCategoryChange}
         />

@@ -485,7 +485,7 @@ export const updateProfile = async (req, res) => {
   
   console.log("=== UPDATE PROFILE REQUEST ===");
   console.log("User ID:", userId);
-  console.log("Request body:", JSON.stringify(req.body, null, 2));
+  // Security: Don't log full request body as it may contain sensitive data
   
   const {
     name,
@@ -656,6 +656,22 @@ export const uploadProfilePicture = async (req, res) => {
       public_id: req.file.public_id,
       url: req.file.path
     };
+
+    // ✅ Save profile picture position if provided
+    if (req.body.position) {
+      try {
+        const position = JSON.parse(req.body.position);
+        user.profilePicture.position = {
+          x: position.x || 50,
+          y: position.y || 50
+        };
+      } catch (error) {
+        console.error('Error parsing profile picture position:', error);
+        user.profilePicture.position = { x: 50, y: 50 };
+      }
+    } else {
+      user.profilePicture.position = { x: 50, y: 50 };
+    }
 
     await user.save();
     

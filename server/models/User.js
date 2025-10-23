@@ -69,11 +69,14 @@ const userSchema = new mongoose.Schema(
     profilePicture: {
       public_id: { type: String, default: "" },
       url: { type: String, default: "" },
+      position: {
+        x: { type: Number, default: 50 }, // Default center position (50%)
+        y: { type: Number, default: 50 }  // Default center position (50%)
+      }
     },
     coverPhoto: {
       public_id: { type: String, default: "" },
       url: { type: String, default: "" },
-      // ✅ ADD COVER POSITION FIELD
       position: {
         x: { type: Number, default: 50 }, // Default center position (50%)
         y: { type: Number, default: 50 }  // Default center position (50%)

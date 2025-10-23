@@ -36,6 +36,9 @@ const ProfilePage = () => {
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [profilePictureFile, setProfilePictureFile] = useState<File | null>(null);
+  const [profilePicturePreview, setProfilePicturePreview] = useState<string | null>(null);
+  const [showProfilePictureEditor, setShowProfilePictureEditor] = useState(false);
+  const [profilePicturePosition, setProfilePicturePosition] = useState({ x: 50, y: 50 });
   // Add these state variables at the top of your component
   const [coverPhotoPreview, setCoverPhotoPreview] = useState<string | null>(null);
   const [showCoverPhotoEditor, setShowCoverPhotoEditor] = useState(false);
@@ -63,9 +66,14 @@ const ProfilePage = () => {
     hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(newPassword),
   }), [newPassword]);
 
+  const isDifferentFromCurrent = useMemo(() => 
+    currentPassword === "" || newPassword !== currentPassword,
+    [currentPassword, newPassword]
+  );
+
   const allCriteriaMet = useMemo(() => 
-    Object.values(passwordCriteria).every(Boolean),
-    [passwordCriteria]
+    Object.values(passwordCriteria).every(Boolean) && isDifferentFromCurrent,
+    [passwordCriteria, isDifferentFromCurrent]
   );
 
   const passwordsMatch = useMemo(() => 
@@ -73,6 +81,20 @@ const ProfilePage = () => {
     [newPassword, confirmPassword]
   );
 
+
+  // Initialize profile picture position from user data
+  useEffect(() => {
+    if (user?.profilePicture?.position) {
+      setProfilePicturePosition(user.profilePicture.position);
+    }
+  }, [user?.profilePicture?.position]);
+
+  // Initialize cover position from user data
+  useEffect(() => {
+    if (user?.coverPhoto?.position) {
+      setCoverPosition(user.coverPhoto.position);
+    }
+  }, [user?.coverPhoto?.position]);
 
   if (!user) return <div className="flex justify-center items-center min-h-screen">
     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-redCustom"></div>
@@ -84,8 +106,35 @@ const ProfilePage = () => {
     return d.toISOString().split("T")[0];
   };
 
+  const calculateAge = (birthDate: string) => {
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
+  const getMaxBirthDate = () => {
+    const today = new Date();
+    const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+    return maxDate.toISOString().split("T")[0];
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    
+    // Validate age for date of birth
+    if (name === "dateOfBirth" && value) {
+      const age = calculateAge(value);
+      if (age < 18) {
+        setError("You must be at least 18 years old to join the Technical Unit.");
+        return;
+      }
+    }
+    
     setUser((prev) => prev && { ...prev, [name]: value });
   };
 
@@ -266,6 +315,7 @@ const ProfilePage = () => {
       if (profilePictureFile) {
         const pictureFormData = new FormData();
         pictureFormData.append("image", profilePictureFile); // Note: field name is 'image' not 'file'
+        pictureFormData.append("position", JSON.stringify(profilePicturePosition));
         
         const pictureRes = await fetch(`${API_BASE}/api/auth/profile-picture`, {
           method: "PUT", // Note: PUT method, not POST
@@ -535,21 +585,44 @@ const validateUsername = (username: string) => {
         {/* Profile Picture Overlay */}
         <div className="absolute -bottom-16 left-8">
           <div className="relative">
-            <img
-              src={user.profilePicture?.url || "/default-avatar.png"}
-              alt="Profile"
-              className="w-32 h-32 rounded-full border-4 border-white object-cover"
+            <div 
+              className="w-32 h-32 rounded-full border-4 border-white overflow-hidden"
+              style={{
+                backgroundImage: `url(${profilePicturePreview || user.profilePicture?.url || "/default-avatar.png"})`,
+                backgroundSize: 'cover',
+                backgroundPosition: `${profilePicturePosition.x}% ${profilePicturePosition.y}%`
+              }}
             />
             {isEditing && (
-              <label className="absolute bottom-2 right-2 bg-redCustom text-white p-2 rounded-full cursor-pointer hover:bg-red-700">
-                <FaCamera />
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setProfilePictureFile(e.target.files?.[0] || null)}
-                  className="hidden"
-                />
-              </label>
+              <>
+                <label className="absolute bottom-2 right-2 bg-redCustom text-white p-2 rounded-full cursor-pointer hover:bg-red-700">
+                  <FaCamera />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setProfilePictureFile(file);
+                        setProfilePicturePreview(URL.createObjectURL(file));
+                      }
+                    }}
+                    className="hidden"
+                  />
+                </label>
+                {(profilePicturePreview || user.profilePicture?.url) && (
+                  <button
+                    type="button"
+                    onClick={() => setShowProfilePictureEditor(!showProfilePictureEditor)}
+                    className="absolute top-2 right-2 bg-lfc-gold text-white p-2 rounded-full hover:bg-lfc-gold-hover transition-colors shadow-lg"
+                    title="Adjust position"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                    </svg>
+                  </button>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -718,7 +791,7 @@ const validateUsername = (username: string) => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-2">
                     <FaCalendar />
                     Date of Birth
                   </label>
@@ -726,10 +799,14 @@ const validateUsername = (username: string) => {
                     type="date"
                     name="dateOfBirth"
                     value={formatDateForInput(user.dateOfBirth)}
+                    max={getMaxBirthDate()}
                     onChange={handleChange}
                     disabled={!isEditing}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                    className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Technical Unit members must be 18 years or older
+                  </p>
                 </div>
 
                 <div>
@@ -1191,6 +1268,10 @@ const validateUsername = (username: string) => {
                           met={passwordCriteria.hasSpecialChar} 
                           text="One special character (!@#$%^&*)" 
                         />
+                        <PasswordCriteriaItem 
+                          met={isDifferentFromCurrent} 
+                          text="Different from current password" 
+                        />
                       </div>
                     </div>
                   )}
@@ -1270,6 +1351,74 @@ const validateUsername = (username: string) => {
       </div>
     {/* Cover Photo Editor Modal */}
     <CoverPhotoEditor />
+    
+    {/* Profile Picture Editor Modal */}
+    {showProfilePictureEditor && (
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            Adjust Profile Picture Position
+          </h3>
+          
+          <div className="mb-4">
+            <div 
+              className="w-48 h-48 mx-auto rounded-full overflow-hidden border-4 border-gray-200 dark:border-gray-600"
+              style={{
+                backgroundImage: `url(${profilePicturePreview || user.profilePicture?.url || "/default-avatar.png"})`,
+                backgroundSize: 'cover',
+                backgroundPosition: `${profilePicturePosition.x}% ${profilePicturePosition.y}%`
+              }}
+            />
+          </div>
+          
+          <div className="space-y-4 mb-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Horizontal Position
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={profilePicturePosition.x}
+                onChange={(e) => setProfilePicturePosition(prev => ({ ...prev, x: parseInt(e.target.value) }))}
+                className="w-full"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Vertical Position
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={profilePicturePosition.y}
+                onChange={(e) => setProfilePicturePosition(prev => ({ ...prev, y: parseInt(e.target.value) }))}
+                className="w-full"
+              />
+            </div>
+          </div>
+          
+          <div className="flex gap-3">
+            <button
+              onClick={() => setShowProfilePictureEditor(false)}
+              className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+            >
+              Done
+            </button>
+            <button
+              onClick={() => {
+                setProfilePicturePosition({ x: 50, y: 50 });
+              }}
+              className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
+            >
+              Reset
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
       </div>
     </div>
   );

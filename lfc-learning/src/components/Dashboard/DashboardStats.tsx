@@ -88,7 +88,7 @@ const DashboardStats: React.FC = () => {
         <>
           <StatCard
             title="Current Streak"
-            value={`${stats.streak} days`}
+            value={`${stats.streak} ${stats.streak === 1 ? 'day' : 'days'}`}
             icon={<FaFire className="text-xl" />}
             progress={Math.min(100, Math.round((stats.streak / 7) * 100))}
             description="Keep it up! Log in tomorrow to continue your streak."
