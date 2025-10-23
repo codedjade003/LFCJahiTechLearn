@@ -1,5 +1,5 @@
 // src/pages/ProfilePage.tsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 import TechyBackground from "../../components/shared/TechyBackground";
@@ -22,6 +22,13 @@ interface Education {
   current: boolean;
 }
 
+interface PasswordCriteria {
+  minLength: boolean;
+  hasUpperCase: boolean;
+  hasNumber: boolean;
+  hasSpecialChar: boolean;
+}
+
 const ProfilePage = () => {
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const { user, setUser, fetchUser } = useAuth();
@@ -42,11 +49,29 @@ const ProfilePage = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [passwordMessage, setPasswordMessage] = useState("");
+  const [showPasswordCriteria, setShowPasswordCriteria] = useState(false);
   
   // Theme and preferences
   const { theme, setTheme } = useTheme();
   const [onboardingEnabled, setOnboardingEnabled] = useState(true);
   const [preferencesLoading, setPreferencesLoading] = useState(false);
+
+  const passwordCriteria = useMemo<PasswordCriteria>(() => ({
+    minLength: newPassword.length >= 8,
+    hasUpperCase: /[A-Z]/.test(newPassword),
+    hasNumber: /[0-9]/.test(newPassword),
+    hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(newPassword),
+  }), [newPassword]);
+
+  const allCriteriaMet = useMemo(() => 
+    Object.values(passwordCriteria).every(Boolean),
+    [passwordCriteria]
+  );
+
+  const passwordsMatch = useMemo(() => 
+    confirmPassword === "" || newPassword === confirmPassword,
+    [newPassword, confirmPassword]
+  );
 
 
   if (!user) return <div className="flex justify-center items-center min-h-screen">
@@ -83,6 +108,12 @@ const ProfilePage = () => {
       setPasswordMessage("Please fill in all fields");
       return;
     }
+    
+    if (!allCriteriaMet) {
+      setPasswordMessage("Password does not meet all requirements");
+      return;
+    }
+    
     if (newPassword !== confirmPassword) {
       setPasswordMessage("New passwords do not match");
       return;
@@ -681,7 +712,7 @@ const validateUsername = (username: string) => {
                   {usernameError && (
                     <p className="mt-1 text-sm text-red-600">{usernameError}</p>
                   )}
-                  {!usernameError && user.username && (
+                  {!usernameError && user.username && isEditing && (
                     <p className="mt-1 text-sm text-green-600">Username is available!</p>
                   )}
                 </div>
@@ -796,7 +827,7 @@ const validateUsername = (username: string) => {
             <div className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-2">
                     <FaBriefcase />
                     Occupation
                   </label>
@@ -806,12 +837,12 @@ const validateUsername = (username: string) => {
                     value={user.occupation || ""}
                     onChange={handleChange}
                     disabled={!isEditing}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                    className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-2">
                     <FaBuilding />
                     Company
                   </label>
@@ -821,7 +852,7 @@ const validateUsername = (username: string) => {
                     value={user.company || ""}
                     onChange={handleChange}
                     disabled={!isEditing}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                    className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
               </div>
@@ -1094,9 +1125,17 @@ const validateUsername = (username: string) => {
 
               {/* Password Settings */}
               <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                  Change Password
-                </h3>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Change Password
+                  </h3>
+                  <a
+                    href="/forgot-password"
+                    className="text-sm text-redCustom dark:text-[var(--lfc-red)] hover:text-goldCustom dark:hover:text-[var(--lfc-gold)] transition-colors"
+                  >
+                    Forgot Password?
+                  </a>
+                </div>
 
                 <div className="space-y-4">
                   <div>
@@ -1119,24 +1158,75 @@ const validateUsername = (username: string) => {
                     <input
                       type="password"
                       value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
+                      onChange={(e) => {
+                        setNewPassword(e.target.value);
+                        setShowPasswordCriteria(true);
+                      }}
+                      onFocus={() => setShowPasswordCriteria(true)}
                       className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-[var(--bg-elevated)] dark:bg-gray-700 text-gray-900 dark:text-white"
                       placeholder="Enter new password"
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Confirm New Password
-                    </label>
-                    <input
-                      type="password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-[var(--bg-elevated)] dark:bg-gray-700 text-gray-900 dark:text-white"
-                      placeholder="Confirm new password"
-                    />
-                  </div>
+                  {/* Password Criteria */}
+                  {showPasswordCriteria && newPassword && (
+                    <div className="p-3 bg-gray-50 dark:bg-[var(--bg-tertiary)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)] animate-in slide-in-from-top-2 duration-300">
+                      <p className="text-xs font-medium text-gray-700 dark:text-[var(--text-secondary)] mb-2">
+                        Password Requirements:
+                      </p>
+                      <div className="space-y-1">
+                        <PasswordCriteriaItem 
+                          met={passwordCriteria.minLength} 
+                          text="At least 8 characters" 
+                        />
+                        <PasswordCriteriaItem 
+                          met={passwordCriteria.hasUpperCase} 
+                          text="One uppercase letter" 
+                        />
+                        <PasswordCriteriaItem 
+                          met={passwordCriteria.hasNumber} 
+                          text="One number" 
+                        />
+                        <PasswordCriteriaItem 
+                          met={passwordCriteria.hasSpecialChar} 
+                          text="One special character (!@#$%^&*)" 
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Confirm Password - Only show after all criteria are met */}
+                  {allCriteriaMet && (
+                    <div className="animate-in slide-in-from-top-2 duration-300">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Confirm New Password
+                      </label>
+                      <input
+                        type="password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        className={`w-full border rounded-lg px-3 py-2 bg-white dark:bg-[var(--bg-elevated)] dark:bg-gray-700 text-gray-900 dark:text-white ${
+                          confirmPassword && !passwordsMatch
+                            ? 'border-red-500 dark:border-red-500'
+                            : 'border-gray-300 dark:border-gray-600'
+                        }`}
+                        placeholder="Confirm new password"
+                      />
+                      {confirmPassword && !passwordsMatch && (
+                        <p className="text-red-500 text-xs mt-1 animate-in fade-in duration-200">
+                          Passwords do not match
+                        </p>
+                      )}
+                      {confirmPassword && passwordsMatch && (
+                        <p className="text-green-500 dark:text-[var(--success)] text-xs mt-1 animate-in fade-in duration-200 flex items-center">
+                          <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                          </svg>
+                          Passwords match
+                        </p>
+                      )}
+                    </div>
+                  )}
 
                   <button
                     type="button"
@@ -1184,5 +1274,24 @@ const validateUsername = (username: string) => {
     </div>
   );
 };
+
+function PasswordCriteriaItem({ met, text }: { met: boolean; text: string }) {
+  return (
+    <div className={`flex items-center text-xs transition-all duration-300 ${
+      met ? 'text-green-600 dark:text-[var(--success)]' : 'text-gray-500 dark:text-[var(--text-muted)]'
+    }`}>
+      <div className={`w-4 h-4 mr-2 rounded-full flex items-center justify-center transition-all duration-300 ${
+        met ? 'bg-green-500 dark:bg-[var(--success)] scale-100' : 'bg-gray-300 dark:bg-gray-600 scale-90'
+      }`}>
+        {met && (
+          <svg className="w-3 h-3 text-white animate-in zoom-in duration-200" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+          </svg>
+        )}
+      </div>
+      <span className={met ? 'font-medium' : ''}>{text}</span>
+    </div>
+  );
+}
 
 export default ProfilePage;

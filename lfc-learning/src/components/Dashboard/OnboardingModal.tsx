@@ -37,8 +37,8 @@ const OnboardingModal: React.FC<OnboardingModalProps> = memo(({
   useModalState(true); // This modal is always open when rendered
   
   return (
-    <div className="fixed inset-0 z-55 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-gray-800 rounded-2xl shadow-2xl p-8 w-11/12 max-w-2xl h-auto max-h-[85vh] overflow-auto relative border border-gray-200 dark:border-gray-700">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-gray-800 rounded-2xl shadow-2xl p-8 w-11/12 max-w-2xl h-auto max-h-[85vh] overflow-auto relative border border-gray-200 dark:border-gray-700 scrollbar-hide">
         <button
           onClick={onSkip}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"

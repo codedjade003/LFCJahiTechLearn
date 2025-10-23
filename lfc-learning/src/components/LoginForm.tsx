@@ -9,8 +9,6 @@ export default function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
-  const [staySignedIn, setStaySignedIn] = useState(false);
   const { setUser, fetchUser } = useAuth();
   const [searchParams] = useSearchParams();
 
@@ -151,31 +149,7 @@ export default function LoginForm() {
         />
       </div>
 
-      <div className="mb-4 flex items-center justify-between">
-        <div className="flex flex-col space-y-2">
-          <label className="flex items-center space-x-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-              className="w-4 h-4 text-lfc-red border-gray-300 dark:border-gray-600 rounded focus:ring-lfc-red"
-            />
-            <span className="text-sm text-gray-600 dark:text-gray-400">
-              Remember me
-            </span>
-          </label>
-          <label className="flex items-center space-x-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={staySignedIn}
-              onChange={(e) => setStaySignedIn(e.target.checked)}
-              className="w-4 h-4 text-lfc-red border-gray-300 dark:border-gray-600 rounded focus:ring-lfc-red"
-            />
-            <span className="text-sm text-gray-600 dark:text-gray-400">
-              Stay signed in
-            </span>
-          </label>
-        </div>
+      <div className="mb-4 flex items-center justify-end">
         <Link to="/forgot-password" className="text-sm text-redCustom dark:text-[var(--lfc-red)] hover:text-goldCustom dark:hover:text-[var(--lfc-gold)] transition-colors">
           Forgot password?
         </Link>

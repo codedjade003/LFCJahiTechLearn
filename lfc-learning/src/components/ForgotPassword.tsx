@@ -1,8 +1,15 @@
 // src/pages/ForgotPassword.tsx
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
+
+interface PasswordCriteria {
+  minLength: boolean;
+  hasUpperCase: boolean;
+  hasNumber: boolean;
+  hasSpecialChar: boolean;
+}
 
 export default function ForgotPassword() {
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -15,11 +22,29 @@ export default function ForgotPassword() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [cooldown, setCooldown] = useState(0);
+  const [showPasswordCriteria, setShowPasswordCriteria] = useState(false);
 
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
   const navigate = useNavigate();
 
   const codeStr = code.join("");
+
+  const passwordCriteria = useMemo<PasswordCriteria>(() => ({
+    minLength: newPassword.length >= 8,
+    hasUpperCase: /[A-Z]/.test(newPassword),
+    hasNumber: /[0-9]/.test(newPassword),
+    hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(newPassword),
+  }), [newPassword]);
+
+  const allCriteriaMet = useMemo(() => 
+    Object.values(passwordCriteria).every(Boolean),
+    [passwordCriteria]
+  );
+
+  const passwordsMatch = useMemo(() => 
+    confirmPassword === "" || newPassword === confirmPassword,
+    [newPassword, confirmPassword]
+  );
 
   // Handle requesting code
   const handleRequestCode = async (silent = false) => {
@@ -56,10 +81,17 @@ export default function ForgotPassword() {
   // Handle resetting password
   const handleResetPassword = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+    
+    if (!allCriteriaMet) {
+      setError("Password does not meet all requirements.");
+      return;
+    }
+    
     if (newPassword !== confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
+    
     try {
       setLoading(true);
       setMessage(null);
@@ -203,26 +235,83 @@ export default function ForgotPassword() {
 
         {step === "reset" && (
           <>
-            <input
-              type="password"
-              placeholder="Enter new password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full p-3 mb-3 border rounded-lg focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)]"
-              required
-            />
-            <input
-              type="password"
-              placeholder="Confirm new password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full p-3 mb-4 border dark:border-[var(--border-primary)] rounded-lg bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)] focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)]"
-              required
-            />
+            <div className="mb-2">
+              <input
+                type="password"
+                placeholder="Enter new password"
+                value={newPassword}
+                onChange={(e) => {
+                  setNewPassword(e.target.value);
+                  setShowPasswordCriteria(true);
+                }}
+                onFocus={() => setShowPasswordCriteria(true)}
+                className="w-full p-3 border dark:border-[var(--border-primary)] rounded-lg bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)] focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)]"
+                required
+              />
+            </div>
+
+            {/* Password Criteria */}
+            {showPasswordCriteria && newPassword && (
+              <div className="mb-4 p-3 bg-gray-50 dark:bg-[var(--bg-tertiary)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)] animate-in slide-in-from-top-2 duration-300">
+                <p className="text-xs font-medium text-gray-700 dark:text-[var(--text-secondary)] mb-2">
+                  Password Requirements:
+                </p>
+                <div className="space-y-1">
+                  <PasswordCriteriaItem 
+                    met={passwordCriteria.minLength} 
+                    text="At least 8 characters" 
+                  />
+                  <PasswordCriteriaItem 
+                    met={passwordCriteria.hasUpperCase} 
+                    text="One uppercase letter" 
+                  />
+                  <PasswordCriteriaItem 
+                    met={passwordCriteria.hasNumber} 
+                    text="One number" 
+                  />
+                  <PasswordCriteriaItem 
+                    met={passwordCriteria.hasSpecialChar} 
+                    text="One special character (!@#$%^&*)" 
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Confirm Password - Only show after all criteria are met */}
+            {allCriteriaMet && (
+              <div className="mb-4 animate-in slide-in-from-top-2 duration-300">
+                <input
+                  type="password"
+                  placeholder="Confirm new password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className={`w-full p-3 border rounded-lg bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)] focus:ring-2 ${
+                    confirmPassword && !passwordsMatch
+                      ? 'border-red-500 dark:border-red-500 focus:ring-red-500'
+                      : 'border-gray-200 dark:border-[var(--border-primary)] focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)]'
+                  }`}
+                  required
+                />
+                {confirmPassword && !passwordsMatch && (
+                  <p className="text-red-500 text-xs mt-1 animate-in fade-in duration-200">
+                    Passwords do not match
+                  </p>
+                )}
+                {confirmPassword && passwordsMatch && (
+                  <p className="text-green-500 dark:text-[var(--success)] text-xs mt-1 animate-in fade-in duration-200 flex items-center">
+                    <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    Passwords match
+                  </p>
+                )}
+              </div>
+            )}
+
             <button
               type="submit"
-              disabled={loading}
-              className="bg-redCustom w-full text-white py-2 px-4 rounded-lg"
+              disabled={loading || !allCriteriaMet || !passwordsMatch}
+              className="bg-goldCustom dark:bg-[var(--lfc-gold)] w-full text-white py-2 px-4 rounded-lg hover:bg-[var(--lfc-gold-hover)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "Resetting..." : "Reset Password"}
             </button>
@@ -237,6 +326,25 @@ export default function ForgotPassword() {
           </a>
         </p>
       </form>
+    </div>
+  );
+}
+
+function PasswordCriteriaItem({ met, text }: { met: boolean; text: string }) {
+  return (
+    <div className={`flex items-center text-xs transition-all duration-300 ${
+      met ? 'text-green-600 dark:text-[var(--success)]' : 'text-gray-500 dark:text-[var(--text-muted)]'
+    }`}>
+      <div className={`w-4 h-4 mr-2 rounded-full flex items-center justify-center transition-all duration-300 ${
+        met ? 'bg-green-500 dark:bg-[var(--success)] scale-100' : 'bg-gray-300 dark:bg-gray-600 scale-90'
+      }`}>
+        {met && (
+          <svg className="w-3 h-3 text-white animate-in zoom-in duration-200" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+          </svg>
+        )}
+      </div>
+      <span className={met ? 'font-medium' : ''}>{text}</span>
     </div>
   );
 }
