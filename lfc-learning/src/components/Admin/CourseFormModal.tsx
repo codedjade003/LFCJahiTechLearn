@@ -15,6 +15,7 @@ export default function CourseFormModal({ isOpen, onClose, onSubmit }: CourseFor
     type: "Video",
     level: "Beginner",
     instructorName: "",
+    isRequired: false,
   });
 
   const [saving, setSaving] = useState(false);
@@ -31,17 +32,23 @@ export default function CourseFormModal({ isOpen, onClose, onSubmit }: CourseFor
     setSaving(true);
     
     try {
+      // Build categories array
+      const categories = [formData.type];
+      if (formData.isRequired) {
+        categories.push("Required");
+      }
+
       // Prepare course data with all required fields
       const courseData = {
         title: formData.title.trim(),
         description: formData.description.trim(),
         type: formData.type,
+        categories: categories,
         level: formData.level,
         instructor: {
           name: formData.instructorName.trim() || "Unknown Instructor",
           avatar: "" // Default empty, can be updated later
         },
-        // Remove categories field since it's not needed
         thumbnail: "", // Default empty
         promoVideo: "", // Default empty
       };
@@ -55,6 +62,7 @@ export default function CourseFormModal({ isOpen, onClose, onSubmit }: CourseFor
         type: "Video",
         level: "Beginner",
         instructorName: "",
+        isRequired: false,
       });
     } catch (error) {
       console.error("Error in form submission:", error);
@@ -124,7 +132,7 @@ export default function CourseFormModal({ isOpen, onClose, onSubmit }: CourseFor
           {/* Type */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-[var(--text-secondary)] mb-2">
-              Course Type
+              Course Type (Technical Unit)
             </label>
             <select
               name="type"
@@ -135,11 +143,27 @@ export default function CourseFormModal({ isOpen, onClose, onSubmit }: CourseFor
               <option value="Video">Video</option>
               <option value="Audio">Audio</option>
               <option value="Graphics">Graphics</option>
-              <option value="Required">Required</option>
               <option value="Content Creation">Content Creation</option>
               <option value="Utility">Utility</option>
               <option value="Secretariat">Secretariat</option>
             </select>
+          </div>
+
+          {/* Mark as Required */}
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="isRequired"
+              checked={formData.isRequired}
+              onChange={(e) => setFormData(prev => ({ ...prev, isRequired: e.target.checked }))}
+              className="w-4 h-4 text-lfc-red border-gray-300 rounded focus:ring-lfc-red focus:ring-2"
+            />
+            <label htmlFor="isRequired" className="ml-2 text-sm font-medium text-gray-700 dark:text-[var(--text-secondary)]">
+              Mark as Required Course
+              <span className="block text-xs text-gray-500 dark:text-gray-400 font-normal">
+                Required courses will be shown to all students regardless of their technical unit
+              </span>
+            </label>
           </div>
 
           {/* Level */}

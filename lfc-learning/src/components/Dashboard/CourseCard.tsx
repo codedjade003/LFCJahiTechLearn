@@ -252,8 +252,17 @@ const CourseCard: React.FC<Props> = ({
 
           {/* Badges */}
           <div className="absolute top-3 left-3 right-3 flex justify-between items-start">
-            <div className={`text-xs font-semibold px-2 py-1 rounded bg-white/90 ${typeClass} border backdrop-blur-sm`}>
-              {displayCategory}
+            <div className="flex flex-col gap-2">
+              {/* Required Badge - Show first if course is required */}
+              {categories?.includes("Required") && (
+                <div className="text-xs font-bold px-2 py-1 rounded bg-red-600 text-white shadow-md border-2 border-white">
+                  REQUIRED
+                </div>
+              )}
+              {/* Type Badge */}
+              <div className={`text-xs font-semibold px-2 py-1 rounded bg-white/90 ${typeClass} border backdrop-blur-sm`}>
+                {displayCategory}
+              </div>
             </div>
             
             {level && (

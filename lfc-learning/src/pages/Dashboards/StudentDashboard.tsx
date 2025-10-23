@@ -69,6 +69,7 @@ const StudentDashboard = () => {
     "Video",
     "Audio",
     "Graphics",
+    "Secretariat",
     "Required",
     "Content Creation",
     "Utility",
@@ -585,10 +586,48 @@ const StudentDashboard = () => {
             onSelectFilter={handleCategoryChange} filterType={"type"}          />
         </div>
 
+        {/* Required Courses Section - Only show when viewing "All Courses" and required courses exist */}
+        {selectedCategory === "All Courses" && courses.some(c => c.categories?.includes("Required")) && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-4 flex items-center gap-2">
+              Required Courses
+              <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
+                (Mandatory for all students)
+              </span>
+            </h2>
+            <CourseGrid 
+              courses={courses.filter(c => c.categories?.includes("Required")).slice(0, 6)} 
+              searchQuery=""
+              onEnrollmentUpdate={handleEnrollmentUpdate}
+              isProfileComplete={!isProfileIncomplete}
+              onEnrollmentBlocked={handleEnrollmentBlocked}
+            />
+          </div>
+        )}
+
+        {/* User's Technical Unit Courses - Only show when viewing "All Courses" and user has technical unit */}
+        {selectedCategory === "All Courses" && user?.technicalUnit && courses.some(c => c.type === user.technicalUnit) && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-4 flex items-center gap-2">
+              {user.technicalUnit} Courses
+              <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
+                (Your technical unit)
+              </span>
+            </h2>
+            <CourseGrid 
+              courses={courses.filter(c => c.type === user.technicalUnit).slice(0, 6)} 
+              searchQuery=""
+              onEnrollmentUpdate={handleEnrollmentUpdate}
+              isProfileComplete={!isProfileIncomplete}
+              onEnrollmentBlocked={handleEnrollmentBlocked}
+            />
+          </div>
+        )}
+
         {/* Course Grid */}
         <div className="mb-8" data-tour="courses">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-4">
-            {selectedCategory === "All Courses" ? "Recommended Courses" : selectedCategory}
+            {selectedCategory === "All Courses" ? "All Courses" : selectedCategory}
           </h2>
           <CourseGrid 
             courses={paginatedCourses} 

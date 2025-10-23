@@ -923,15 +923,22 @@ const validateUsername = (username: string) => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Technical Unit</label>
-                  <input
-                    type="text"
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Technical Unit</label>
+                  <select
                     name="technicalUnit"
                     value={user.technicalUnit || ""}
                     onChange={handleChange}
                     disabled={!isEditing}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                  />
+                    className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  >
+                    <option value="">Select Technical Unit</option>
+                    <option value="Video">Video</option>
+                    <option value="Audio">Audio</option>
+                    <option value="Utility">Utility</option>
+                    <option value="Secretariat">Secretariat</option>
+                    <option value="Graphics">Graphics</option>
+                    <option value="Content Creation">Content Creation</option>
+                  </select>
                 </div>
 
                 <div>
