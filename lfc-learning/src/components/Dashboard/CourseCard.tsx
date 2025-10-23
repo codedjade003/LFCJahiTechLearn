@@ -7,6 +7,7 @@ import CourseModal from "./CourseModal";
 interface Props extends Course {
   onEnroll?: (courseId: string) => Promise<void>;
   promoVideo?: string;
+  isProfileComplete?: boolean;
 }
 
 const levelColor: Record<NonNullable<Course["level"]>, string> = {
@@ -69,6 +70,7 @@ const CourseCard: React.FC<Props> = ({
   prerequisites = [],
   isPublic = true,
   onEnroll,
+  isProfileComplete = true,
 }) => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
@@ -409,6 +411,7 @@ const CourseCard: React.FC<Props> = ({
         isEnrolling={isEnrolling}
         enrolled={enrolled}
         progress={progress}
+        isProfileComplete={isProfileComplete}
       />
 
     </>

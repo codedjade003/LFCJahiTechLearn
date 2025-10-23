@@ -6,11 +6,27 @@ interface CourseGridProps {
   courses: Course[];
   searchQuery?: string;
   onEnrollmentUpdate?: (courseId: string, enrolled: boolean) => void;
+  isProfileComplete?: boolean;
+  onEnrollmentBlocked?: () => void;
 }
 
-const CourseGrid = ({ courses, searchQuery = "", onEnrollmentUpdate }: CourseGridProps) => {
+const CourseGrid = ({ 
+  courses, 
+  searchQuery = "", 
+  onEnrollmentUpdate,
+  isProfileComplete = true,
+  onEnrollmentBlocked
+}: CourseGridProps) => {
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const handleEnroll = async (courseId: string): Promise<void> => {
+    // Check if profile is complete before allowing enrollment
+    if (!isProfileComplete) {
+      if (onEnrollmentBlocked) {
+        onEnrollmentBlocked();
+      }
+      throw new Error("Please complete your profile before enrolling in courses");
+    }
+    
     const token = localStorage.getItem("token");
     if (!token) throw new Error("Authentication required");
 
@@ -51,7 +67,12 @@ const CourseGrid = ({ courses, searchQuery = "", onEnrollmentUpdate }: CourseGri
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
       {courses.map((course) => (
-        <CourseCard key={course._id} {...course} onEnroll={handleEnroll} />
+        <CourseCard 
+          key={course._id} 
+          {...course} 
+          onEnroll={handleEnroll}
+          isProfileComplete={isProfileComplete}
+        />
       ))}
     </div>
   );

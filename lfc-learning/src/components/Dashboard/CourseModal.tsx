@@ -16,6 +16,7 @@ interface CourseModalProps {
   isEnrolling?: boolean;
   enrolled?: boolean;
   progress?: number;
+  isProfileComplete?: boolean;
 }
 
 const CourseModal: React.FC<CourseModalProps> = ({
@@ -26,6 +27,7 @@ const CourseModal: React.FC<CourseModalProps> = ({
   isEnrolling = false,
   enrolled = false,
   progress = 0,
+  isProfileComplete = true,
 }) => {
   const navigate = useNavigate();
   useModalState(open); // Notify context when modal opens/closes
@@ -518,12 +520,13 @@ const CourseModal: React.FC<CourseModalProps> = ({
                     </button>
                     <button
                       onClick={handleEnroll}
-                      disabled={isEnrolling}
+                      disabled={isEnrolling || (!enrolled && !isProfileComplete)}
                       className={`px-8 py-4 rounded-xl text-white font-semibold text-lg flex items-center justify-center transition-all ${
                         enrolled
                           ? "bg-blue-600 hover:bg-blue-700"
                           : "bg-lfc-red hover:bg-red-700"
                       } disabled:opacity-50 disabled:cursor-not-allowed flex-1`}
+                      title={!isProfileComplete && !enrolled ? "Complete your profile to enroll" : ""}
                     >
                       {enrolled ? (
                         <>

@@ -23,6 +23,7 @@ interface OnboardingModalProps {
   onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onCategoryChange: (value: string) => void;
   onProfilePicturePositionChange?: (position: { x: number; y: number }) => void;
+  showWarning?: boolean;
 }
 
 const OnboardingModal: React.FC<OnboardingModalProps> = memo(({
@@ -35,7 +36,8 @@ const OnboardingModal: React.FC<OnboardingModalProps> = memo(({
   onInputChange,
   onFileChange,
   onCategoryChange,
-  onProfilePicturePositionChange
+  onProfilePicturePositionChange,
+  showWarning = false
 }) => {
   useModalState(true); // This modal is always open when rendered
   const [showPositionEditor, setShowPositionEditor] = useState(false);
@@ -82,6 +84,25 @@ const OnboardingModal: React.FC<OnboardingModalProps> = memo(({
           </div>
         </div>
 
+        {/* Warning Banner - Shows for 5 seconds when triggered by enrollment attempt */}
+        {showWarning && (
+          <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 rounded-r-lg animate-in slide-in-from-top-2 duration-300">
+            <div className="flex items-start">
+              <svg className="w-5 h-5 text-red-500 dark:text-red-400 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+              <div>
+                <p className="text-sm font-semibold text-red-800 dark:text-red-300">
+                  Profile Completion Required
+                </p>
+                <p className="text-sm text-red-700 dark:text-red-400 mt-1">
+                  You must complete your profile before enrolling in courses. Please fill in all required fields below.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         <h2 className="text-2xl font-bold mb-2 dark:text-white text-gray-900 dark:text-white">
           {onboardingSteps[currentStep]}
         </h2>
@@ -123,43 +144,7 @@ const OnboardingModal: React.FC<OnboardingModalProps> = memo(({
                 </div>
               )}
               
-              {showPositionEditor && (profile.profilePicturePreview || profile.profilePicture) && (
-                <div className="w-full mb-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">Adjust Photo Position</p>
-                  <div className="space-y-2">
-                    <div>
-                      <label className="text-xs text-gray-600 dark:text-gray-400">Horizontal</label>
-                      <input
-                        type="range"
-                        min="0"
-                        max="100"
-                        value={tempPosition.x}
-                        onChange={(e) => {
-                          const newPos = { ...tempPosition, x: parseInt(e.target.value) };
-                          setTempPosition(newPos);
-                          onProfilePicturePositionChange?.(newPos);
-                        }}
-                        className="w-full"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-xs text-gray-600 dark:text-gray-400">Vertical</label>
-                      <input
-                        type="range"
-                        min="0"
-                        max="100"
-                        value={tempPosition.y}
-                        onChange={(e) => {
-                          const newPos = { ...tempPosition, y: parseInt(e.target.value) };
-                          setTempPosition(newPos);
-                          onProfilePicturePositionChange?.(newPos);
-                        }}
-                        className="w-full"
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
+
               
               <label className="cursor-pointer bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg transition-colors inline-flex items-center gap-2">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -283,6 +268,60 @@ const OnboardingModal: React.FC<OnboardingModalProps> = memo(({
           </button>
         </div>
       </div>
+
+      {/* Profile Picture Position Editor Modal */}
+      {showPositionEditor && (profile.profilePicturePreview || profile.profilePicture) && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[70]">
+          <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg p-6 max-w-2xl w-full mx-4">
+            <h3 className="text-xl font-bold mb-4 dark:text-white">Adjust Profile Picture</h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">Click on the image to set the visible area</p>
+            
+            <div 
+              className="relative w-64 h-64 mx-auto bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden cursor-crosshair"
+              onClick={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                const newPos = { x: Math.max(0, Math.min(100, x)), y: Math.max(0, Math.min(100, y)) };
+                setTempPosition(newPos);
+                onProfilePicturePositionChange?.(newPos);
+              }}
+            >
+              <img 
+                src={profile.profilePicturePreview || profile.profilePicture} 
+                alt="Profile preview" 
+                className="w-full h-full object-cover"
+                style={{
+                  objectPosition: `${tempPosition.x}% ${tempPosition.y}%`
+                }}
+              />
+              <div 
+                className="absolute w-4 h-4 border-2 border-white rounded-full shadow-lg"
+                style={{
+                  left: `${tempPosition.x}%`,
+                  top: `${tempPosition.y}%`,
+                  transform: 'translate(-50%, -50%)'
+                }}
+              />
+            </div>
+
+            <div className="flex justify-end gap-3 mt-4">
+              <button
+                onClick={() => setShowPositionEditor(false)}
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => setShowPositionEditor(false)}
+                className="px-4 py-2 bg-lfc-red text-white rounded-lg hover:bg-red-700"
+              >
+                Save Position
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 });

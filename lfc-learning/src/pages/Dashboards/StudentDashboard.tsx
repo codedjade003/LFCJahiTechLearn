@@ -10,6 +10,7 @@ import ProfileCompletionBanner from "../../components/Dashboard/ProfileCompletio
 import OnboardingModal from "../../components/Dashboard/OnboardingModal";
 import OnboardingTour from "../../components/shared/OnboardingTour";
 import TechyBackground from "../../components/shared/TechyBackground";
+import Notification from "../../components/shared/Notification";
 import type { Course } from "../../types/course";
 import type { Step } from "react-joyride";
 
@@ -80,6 +81,13 @@ const StudentDashboard = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [onboardingDismissed, setOnboardingDismissed] = useState(false);
+  const [enrollmentAttempted, setEnrollmentAttempted] = useState(false);
+  const [showProfileWarning, setShowProfileWarning] = useState(false);
+  const [notification, setNotification] = useState<{ message: string; type: 'error' | 'success' | 'warning'; visible: boolean }>({
+    message: '',
+    type: 'error',
+    visible: false
+  });
   const { fetchUser } = useAuth();
   const { progress } = useOnboarding();
 
@@ -444,6 +452,26 @@ const StudentDashboard = () => {
     );
   }, []);
 
+  const handleEnrollmentBlocked = useCallback(() => {
+    // Show 403 error notification
+    setNotification({
+      message: 'Please complete your profile before enrolling in courses',
+      type: 'error',
+      visible: true
+    });
+    
+    // Show profile completion modal with warning
+    setEnrollmentAttempted(true);
+    setShowProfileWarning(true);
+    setCurrentStep(0);
+    setShowOnboarding(true);
+    
+    // Hide warning after 5 seconds
+    setTimeout(() => {
+      setShowProfileWarning(false);
+    }, 5000);
+  }, []);
+
   const showBanner = useMemo(() => 
     !isInitialLoading && profile && isProfileIncomplete,
     [isInitialLoading, profile, isProfileIncomplete]
@@ -478,6 +506,16 @@ const StudentDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[var(--bg-primary)] relative">
+      {/* Notification */}
+      {notification.visible && (
+        <Notification
+          message={notification.message}
+          type={notification.type}
+          onClose={() => setNotification(prev => ({ ...prev, visible: false }))}
+          duration={5000}
+        />
+      )}
+      
       {/* Techy Background */}
       <TechyBackground variant="subtle" />
       
@@ -507,6 +545,7 @@ const StudentDashboard = () => {
           onProfilePicturePositionChange={handleProfilePicturePositionChange}
           onFileChange={handleFileChange}
           onCategoryChange={handleOnboardingCategoryChange}
+          showWarning={showProfileWarning}
         />
       )}
 
@@ -555,6 +594,8 @@ const StudentDashboard = () => {
             courses={paginatedCourses} 
             searchQuery={searchQuery}
             onEnrollmentUpdate={handleEnrollmentUpdate}
+            isProfileComplete={!isProfileIncomplete}
+            onEnrollmentBlocked={handleEnrollmentBlocked}
           />
         </div>
 
