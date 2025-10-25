@@ -263,6 +263,12 @@ const CourseCard: React.FC<Props> = ({
               <div className={`text-xs font-semibold px-2 py-1 rounded bg-white/90 ${typeClass} border backdrop-blur-sm`}>
                 {displayCategory}
               </div>
+              {/* Enrollment Badge - Moved here to avoid overlap */}
+              {enrolled && (
+                <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full shadow-sm inline-block">
+                  Enrolled • {progress}%
+                </span>
+              )}
             </div>
             
             {level && (
@@ -271,15 +277,6 @@ const CourseCard: React.FC<Props> = ({
               </div>
             )}
           </div>
-
-          {/* Enrollment Badge */}
-          {enrolled && (
-            <div className="absolute top-12 left-3">
-              <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full shadow-sm">
-                Enrolled • {progress}%
-              </span>
-            </div>
-          )}
         </div>
 
         {/* Content Section */}

@@ -233,7 +233,7 @@ const OnboardingModal: React.FC<OnboardingModalProps> = memo(({
                 Select Technical Unit *
               </label>
               <div className="grid grid-cols-2 gap-3">
-                {fixedCategories.filter(cat => cat !== "All Courses").map((cat) => (
+                {fixedCategories.filter(cat => cat !== "All Courses" && cat !== "Required").map((cat) => (
                   <button
                     key={cat}
                     onClick={() => onCategoryChange(cat)}
