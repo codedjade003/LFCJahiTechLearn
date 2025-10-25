@@ -89,7 +89,7 @@ const StudentDashboard = () => {
     type: 'error',
     visible: false
   });
-  const { fetchUser } = useAuth();
+  const { fetchUser, user } = useAuth();
   const { progress } = useOnboarding();
 
   // Use the fixed categories for the filter options
