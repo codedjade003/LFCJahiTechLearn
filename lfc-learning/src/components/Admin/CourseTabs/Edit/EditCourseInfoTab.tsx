@@ -44,14 +44,14 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
     promoVideo: "",
     promoVideoFile: null as File | null,
     category: "",
+    isRequired: false,
   });
 
-  // Replace your categories state with a fixed array
+  // Replace your categories state with a fixed array (excluding Required - it's a checkbox now)
   const categories = [
     "Video",
     "Audio",
     "Graphics",
-    "Required",
     "Content Creation",
     "Utility",
     "Secretariat",
@@ -74,6 +74,11 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
   // Initialize form data when course prop changes - FIXED: Added proper dependency array
   useEffect(() => {
     if (course) {
+      // Check if "Required" is in categories
+      const isRequired = course.categories?.includes("Required") || false;
+      // Get the technical unit category (first non-Required category)
+      const techCategory = course.categories?.find((cat: string) => cat !== "Required") || "";
+      
       setFormData({
         title: course.title || "",
         description: course.description || "",
@@ -86,7 +91,8 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
         thumbnailFile: null,
         promoVideo: course.promoVideo || "",
         promoVideoFile: null,
-        category: course.categories?.[0] || "",
+        category: techCategory,
+        isRequired: isRequired,
       });
 
       // Also sync the URL inputs + active tabs
@@ -244,10 +250,16 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
         uploadedAvatar = avatarUrlInput;
       }
 
+      // Build categories array
+      const categories = formData.category ? [formData.category] : [];
+      if (formData.isRequired) {
+        categories.push("Required");
+      }
+
       const courseData = {
         title: formData.title,
         description: formData.description,
-        categories: formData.category ? [formData.category] : [],
+        categories: categories,
         level: formData.level,
         type: formData.type,
         thumbnail: uploadedThumb,
@@ -417,7 +429,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
           {/* Category and Type */}
           <div className="grid grid-cols-1 gap-4 mt-4">
             <div>
-              <label className="block text-sm font-medium">Category</label>
+              <label className="block text-sm font-medium">Category (Technical Unit)</label>
               <select
                 name="category"
                 className="w-full border border-[var(--border-primary)] rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm md:text-base"
@@ -433,6 +445,23 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
                 ))}
               </select>
             </div>
+          </div>
+
+          {/* Mark as Required */}
+          <div className="flex items-start mt-4">
+            <input
+              type="checkbox"
+              id="isRequired"
+              checked={formData.isRequired}
+              onChange={(e) => setFormData(prev => ({ ...prev, isRequired: e.target.checked }))}
+              className="w-4 h-4 mt-0.5 text-lfc-red border-gray-300 rounded focus:ring-lfc-red focus:ring-2"
+            />
+            <label htmlFor="isRequired" className="ml-2 text-sm font-medium text-[var(--text-primary)]">
+              Mark as Required Course
+              <span className="block text-xs text-[var(--text-secondary)] font-normal mt-1">
+                Required courses will be shown to all students regardless of their technical unit
+              </span>
+            </label>
           </div>
 
           {/* Level */}

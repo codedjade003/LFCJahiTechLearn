@@ -82,21 +82,22 @@ export default function CourseFormModal({ isOpen, onClose, onSubmit }: CourseFor
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-55">
-      <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] rounded-lg shadow dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)]-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 sm:p-4 z-[60]">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow-xl dark:shadow-[var(--shadow-md)] border dark:border-[var(--border-primary)] w-full max-w-md max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex justify-between items-center p-6 border-b">
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-[var(--text-primary)]">Create New Course</h2>
+        <div className="flex justify-between items-center p-4 sm:p-6 border-b">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-800 dark:text-[var(--text-primary)]">Create New Course</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 dark:text-[var(--text-secondary)] transition-colors"
+            className="text-gray-400 hover:text-gray-600 dark:text-[var(--text-secondary)] transition-colors p-2"
+            type="button"
           >
-            <FaTimes size={20} />
+            <FaTimes size={18} className="sm:w-5 sm:h-5" />
           </button>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-3 sm:space-y-4">
           {/* Title - Required */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-[var(--text-secondary)] mb-2">
@@ -199,18 +200,18 @@ export default function CourseFormModal({ isOpen, onClose, onSubmit }: CourseFor
           </div>
 
           {/* Form Actions */}
-          <div className="flex justify-end space-x-3 pt-4">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-gray-600 dark:text-[var(--text-secondary)] hover:text-gray-800 dark:text-[var(--text-primary)] font-medium"
+              className="w-full sm:w-auto px-4 py-2 text-gray-600 dark:text-[var(--text-secondary)] hover:text-gray-800 dark:hover:text-[var(--text-primary)] font-medium border border-gray-300 dark:border-gray-600 rounded-lg"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving || !formData.title.trim() || !formData.description.trim()}
-              className="bg-lfc-red dark:bg-red-800 hover:bg-red-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+              className="w-full sm:w-auto bg-lfc-red dark:bg-red-800 hover:bg-red-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-medium transition-colors"
             >
               {saving ? (
                 <span className="flex items-center">

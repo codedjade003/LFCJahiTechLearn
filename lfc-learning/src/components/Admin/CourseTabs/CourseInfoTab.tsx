@@ -26,6 +26,7 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
   const [avatarUrl, setAvatarUrl] = useState('');
   const [thumbnailUrlInput, setThumbnailUrlInput] = useState('');
   const [promoVideoUrlInput, setPromoVideoUrlInput] = useState('');
+  const [isRequired, setIsRequired] = useState(false);
 
   useEffect(() => {
     if (courseId) {
@@ -69,15 +70,15 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
           console.log("Enums API response:", data);
           setLevelOptions(data.levels || ["Beginner", "Intermediate", "Advanced"]);
 
-          // ✅ FIXED: Use categories from API or fallback
+          // ✅ FIXED: Use categories from API or fallback (excluding Required - it's a checkbox now)
           setCategories(
             data.categories && data.categories.length > 0
-              ? data.categories
-              : ["Video", "Audio", "Graphics", "Required", "Content Creation", "Utility", "Secretariat"]
+              ? data.categories.filter((cat: string) => cat !== "Required")
+              : ["Video", "Audio", "Graphics", "Content Creation", "Utility", "Secretariat"]
           );
         } else {
           // fallback if endpoint fails
-          setCategories(["Video", "Audio", "Graphics", "Required", "Content Creation", "Utility", "Secretariat"]);
+          setCategories(["Video", "Audio", "Graphics", "Content Creation", "Utility", "Secretariat"]);
           setLevelOptions(["Beginner", "Intermediate", "Advanced"]);
         }
       } catch (err) {
@@ -156,10 +157,16 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
         uploadedAvatar = await uploadFile(instructorAvatar, "image");
       }
 
+    // Build categories array
+    const categoriesArray = selectedCategory ? [selectedCategory] : [];
+    if (isRequired) {
+      categoriesArray.push("Required");
+    }
+
     const courseData = {
       title,
       description,
-      categories: selectedCategory ? [selectedCategory] : [], // ✅ Convert to array like EditCourseInfoTab
+      categories: categoriesArray,
       level,
       type: selectedCategory, // Or keep separate type field if needed
       thumbnail: uploadedThumb,
@@ -350,7 +357,7 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
 
           {/* Category and Type */}
           <div className="mt-4">
-            <label className="block text-sm font-medium mb-2">Category</label>
+            <label className="block text-sm font-medium mb-2">Category (Technical Unit)</label>
             <select
               className="w-full border border-[var(--border-primary)] rounded-md px-3 py-2.5 focus:ring-2 focus:ring-lfc-gold focus:border-lfc-gold text-sm md:text-base text-sm md:text-base"
               value={selectedCategory}
@@ -364,6 +371,23 @@ export default function CourseInfoTab({ courseId, onCourseCreated }: CourseInfoT
                 </option>
               ))}
             </select>
+          </div>
+
+          {/* Mark as Required */}
+          <div className="flex items-start mt-4">
+            <input
+              type="checkbox"
+              id="isRequired"
+              checked={isRequired}
+              onChange={(e) => setIsRequired(e.target.checked)}
+              className="w-4 h-4 mt-0.5 text-lfc-red border-gray-300 rounded focus:ring-lfc-red focus:ring-2"
+            />
+            <label htmlFor="isRequired" className="ml-2 text-sm font-medium text-[var(--text-primary)]">
+              Mark as Required Course
+              <span className="block text-xs text-[var(--text-secondary)] font-normal mt-1">
+                Required courses will be shown to all students regardless of their technical unit
+              </span>
+            </label>
           </div>
 
           {/* Level */}
