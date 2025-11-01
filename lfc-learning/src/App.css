@@ -267,3 +267,46 @@ body {
     height: -webkit-fill-available;
   }
 }
+/* ========================================
+   SCROLLBAR HIDING
+   ======================================== */
+
+/* Hide scrollbars but keep functionality */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
+/* Apply to all scrollable elements by default */
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+/* ========================================
+   KEYBOARD NAVIGATION SUPPORT
+   ======================================== */
+
+/* Smooth scroll behavior for keyboard navigation */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Focus visible for keyboard navigation */
+*:focus-visible {
+  outline: 2px solid var(--lfc-gold);
+  outline-offset: 2px;
+}
+
+/* Remove default focus outline but keep for keyboard users */
+*:focus:not(:focus-visible) {
+  outline: none;
+}

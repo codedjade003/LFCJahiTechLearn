@@ -37,6 +37,7 @@ import SupportDashboard from "./components/Admin/SupportDashboard";
 import SupportTickets from "./components/Dashboard/SupportTickets";
 import CertificateValidation from "./pages/CertificateValidation";
 import SurveyResponses from "./pages/Admin/SurveyResponses";
+import SendNotifications from "./pages/Admin/SendNotifications";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Privacy from "./pages/Privacy";
@@ -100,6 +101,7 @@ function App() {
           <Route path="assessments/projects" element={<Projects />} />
           <Route path="assessments/quizzes" element={<Quizzes />} />
           <Route path="survey-responses" element={<SurveyResponses />} />
+          <Route path="notifications/send" element={<SendNotifications />} />
           <Route path="support" element={<SupportDashboard />} /> {/* ✅ Fixed */}
           
           {/* Placeholder routes */}

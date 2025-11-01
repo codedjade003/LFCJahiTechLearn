@@ -52,13 +52,7 @@ router.get('/progress/overview', protect, isAdminOnly, async (req, res) => {
         riskLevel,
         timeSpent: timeSpentHours,
         enrolledAt: e.enrolledAt,
-        estimatedDuration: e.course.duration || '1 month',
-        user: e.user ? {
-          _id: e.user._id,
-          name: e.user.name,
-          email: e.user.email,
-          profilePicture: e.user.profilePicture
-        } : null
+        estimatedDuration: e.course.duration || '1 month'
       };
     });
 

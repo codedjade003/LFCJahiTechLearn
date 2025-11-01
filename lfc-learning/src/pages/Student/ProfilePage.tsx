@@ -57,6 +57,7 @@ const ProfilePage = () => {
   // Theme and preferences
   const { theme, setTheme } = useTheme();
   const [onboardingEnabled, setOnboardingEnabled] = useState(true);
+  const [scrollHintsEnabled, setScrollHintsEnabled] = useState(true);
   const [preferencesLoading, setPreferencesLoading] = useState(false);
 
   const passwordCriteria = useMemo<PasswordCriteria>(() => ({
@@ -211,6 +212,7 @@ const ProfilePage = () => {
         if (res.ok) {
           const data = await res.json();
           setOnboardingEnabled(data.preferences?.onboardingEnabled !== false);
+          setScrollHintsEnabled(localStorage.getItem("scrollHintsDisabled") !== "true");
           // Only set theme if it's different from current theme to avoid unwanted switches
           if (data.preferences?.theme && data.preferences.theme !== theme) {
             // Don't override current theme on page load - user's current selection takes precedence
@@ -242,6 +244,9 @@ const ProfilePage = () => {
         if (key === "theme") {
           setTheme(value);
         } else if (key === "onboardingEnabled") {
+        } else if (key === "scrollHintsEnabled") {
+          setScrollHintsEnabled(value);
+          localStorage.setItem("scrollHintsDisabled", value ? "false" : "true");
           setOnboardingEnabled(value);
         }
       }
@@ -1275,6 +1280,27 @@ const validateUsername = (username: string) => {
                       </p>
                     </div>
                   )}
+                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <div>
+                      <p className="font-medium text-gray-900 dark:text-white">Show Scroll Hints</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Display daily reminders about hidden scrollbars
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => handlePreferenceUpdate("scrollHintsEnabled", !scrollHintsEnabled)}
+                      disabled={preferencesLoading}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                        scrollHintsEnabled ? "bg-redCustom" : "bg-gray-300 dark:bg-gray-600"
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                          scrollHintsEnabled ? "translate-x-6" : "translate-x-1"
+                        }`}
+                      />
+                    </button>
+                  </div>
                 </div>
               </div>
 

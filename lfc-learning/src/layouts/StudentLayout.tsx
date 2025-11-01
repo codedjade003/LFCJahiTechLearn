@@ -4,6 +4,7 @@ import Sidebar from "../components/Dashboard/SideBar";
 import Topbar from "../components/Dashboard/TopBar";
 import { useState } from "react";
 import SupportChatWidget from "../components/Dashboard/SupportChatWidget";
+import ScrollHint from "../components/shared/ScrollHint";
 
 const StudentLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -20,6 +21,7 @@ const StudentLayout = () => {
         <Topbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
 
         <main className="flex-1 overflow-y-auto relative z-0">
+          <ScrollHint />
           <Outlet />
         </main>
       </div>

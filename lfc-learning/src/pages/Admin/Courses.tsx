@@ -65,7 +65,7 @@ export default function Course() {
   const progressPercent = ((activeIndex + 1) / tabs.length) * 100;
 
   return (
-    <div className="flex flex-col h-full bg-yt-light-gray dark:bg-[var(--bg-primary)] text-yt-text-dark dark:text-gray-100">
+    <div className="flex flex-col h-screen bg-yt-light-gray dark:bg-[var(--bg-primary)] text-yt-text-dark dark:text-gray-100">
       {/* Onboarding Tour */}
       <OnboardingTour tourKey="courseManagement" steps={courseManagementTour} />
       

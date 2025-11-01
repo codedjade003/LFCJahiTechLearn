@@ -15,15 +15,15 @@ export const courseDetailsTour: Step[] = [
     disableBeacon: true,
   },
   {
-    target: "aside",
+    target: "aside nav",
     content: "This sidebar shows all course sections and modules. Click on any module to start learning. Green checkmarks indicate completed modules.",
-    placement: "right",
+    placement: "right-start",
     disableBeacon: true,
   },
   {
     target: "main",
     content: "This is the main content area where you'll watch videos, read PDFs, and take quizzes. Your progress is automatically tracked as you complete modules.",
-    placement: "right",
+    placement: "right-start",
     disableBeacon: true,
   },
 ];
@@ -69,9 +69,9 @@ export const courseManagementTour: Step[] = [
     disableBeacon: true,
   },
   {
-    target: "aside",
+    target: "aside nav",
     content: "Use these tabs to navigate through different sections of course creation. Start with Details, then add Content, Assignments, Projects, Settings, and finally Publish.",
-    placement: "right",
+    placement: "right-start",
     disableBeacon: true,
   },
 ];
@@ -80,7 +80,7 @@ export const assessmentGradingTour: Step[] = [
   {
     target: '[data-tour="pending-list"]',
     content: "All pending submissions are listed here, organized by due date.",
-    placement: "right",
+    placement: "right-start",
     disableBeacon: true,
   },
   {

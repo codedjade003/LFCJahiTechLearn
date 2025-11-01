@@ -132,7 +132,7 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
   const markAllAsRead = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE}/api/notifications/mark-all-read`, {
+      const response = await fetch(`${API_BASE}/api/notifications/my/read-all`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -238,7 +238,7 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
 
             {/* Notifications Dropdown */}
             {showNotifications && (
-              <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 dark:border-[var(--border-primary)] rounded-lg shadow-lg z-45 max-h-96 overflow-y-auto">
+              <div className="absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 dark:border-[var(--border-primary)] rounded-lg shadow-lg z-45 max-h-96 overflow-y-auto">
                 <div className="p-4 border-b border-gray-200 dark:border-[var(--border-primary)]">
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-semibold text-gray-800 dark:text-[var(--text-primary)] dark:text-[var(--text-primary)]">Notifications</h3>
@@ -246,7 +246,7 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
                       {unreadCount > 0 && (
                         <button
                           onClick={markAllAsRead}
-                          className="text-xs text-blue-600 hover:text-blue-800"
+                          className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
                         >
                           Mark all read
                         </button>
@@ -261,11 +261,11 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
                 <div className="p-2">
                   {notificationsLoading ? (
                     <div className="text-center py-4">
-                      <div className="w-6 h-6 border-2 border-gray-300 border-t-lfc-red rounded-full animate-spin mx-auto"></div>
-                      <p className="text-sm text-gray-500 mt-2">Loading notifications...</p>
+                      <div className="w-6 h-6 border-2 border-gray-300 dark:border-gray-600 border-t-lfc-red rounded-full animate-spin mx-auto"></div>
+                      <p className="text-sm text-gray-500 dark:text-[var(--text-tertiary)] mt-2">Loading notifications...</p>
                     </div>
                   ) : notifications.length === 0 ? (
-                    <div className="text-center py-4 text-gray-500 text-sm">
+                    <div className="text-center py-4 text-gray-500 dark:text-[var(--text-tertiary)] text-sm">
                       No notifications yet
                     </div>
                   ) : (
@@ -275,8 +275,8 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
                           key={notification._id}
                           className={`p-3 rounded-lg mb-2 cursor-pointer transition-colors ${
                             notification.read 
-                              ? 'bg-gray-50 dark:bg-[var(--bg-secondary)] hover:bg-gray-100 dark:bg-[var(--bg-tertiary)]' 
-                              : 'bg-blue-50 hover:bg-blue-100 border-l-4 border-l-blue-500'
+                              ? 'bg-gray-50 dark:bg-[var(--bg-secondary)] hover:bg-gray-100 dark:hover:bg-[var(--hover-bg)]' 
+                              : 'bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 border-l-4 border-l-blue-500 dark:border-l-blue-400'
                           }`}
                           onClick={() => markAsRead(notification._id)}
                         >
@@ -288,11 +288,11 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
                                 {notification.title || 'Notification'}
                               </p>
                               {notification.message && (
-                                <p className="text-xs text-gray-600 dark:text-[var(--text-secondary)] mt-1 line-clamp-2">
+                                <p className="text-xs text-gray-600 dark:text-[var(--text-tertiary)] mt-1 line-clamp-2">
                                   {notification.message}
                                 </p>
                               )}
-                              <p className="text-xs text-gray-400 mt-1">
+                              <p className="text-xs text-gray-400 dark:text-[var(--text-muted)] mt-1">
                                 {formatTime(notification.createdAt)}
                               </p>
                             </div>
@@ -310,7 +310,7 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
                             // Navigate to full notifications page
                             // navigate('/dashboard/notifications');
                           }}
-                          className="w-full text-center py-2 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors"
+                          className="w-full text-center py-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
                         >
                           View all notifications
                         </button>

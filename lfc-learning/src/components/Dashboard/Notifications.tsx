@@ -161,7 +161,7 @@ const Notifications = () => {
           </select>
           <button 
             onClick={markAllAsRead}
-            className="text-sm text-lfc-red dark:text-[var(--lfc-red)] hover:text-lfc-gold dark:hover:text-[var(--lfc-gold)]"
+            className="text-sm text-lfc-red dark:text-red-400 hover:text-lfc-gold dark:hover:text-yellow-400"
           >
             Mark all read
           </button>
@@ -192,7 +192,7 @@ const Notifications = () => {
             {notifications.length > 3 && (
               <button
                 onClick={() => setExpanded(!expanded)}
-                className="w-full text-center py-2 text-sm text-lfc-red dark:text-[var(--lfc-red)] hover:text-lfc-gold dark:hover:text-[var(--lfc-gold)] hover:bg-gray-50 rounded-lg transition-colors flex items-center justify-center gap-2"
+                className="w-full text-center py-2 text-sm text-lfc-red dark:text-red-400 hover:text-lfc-gold dark:hover:text-yellow-400 hover:bg-gray-50 rounded-lg transition-colors flex items-center justify-center gap-2"
               >
                 {expanded ? (
                   <>
