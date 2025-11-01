@@ -167,7 +167,7 @@ const SendNotifications = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
+        await response.json();
         toast.success(`Notification sent to ${userIds.length} user(s)`);
         
         // Reset form
