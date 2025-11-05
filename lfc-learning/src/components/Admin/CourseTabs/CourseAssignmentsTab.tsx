@@ -82,6 +82,12 @@ export default function CourseAssignmentsTab({ courseId }: { courseId: string | 
       materials // Just pass the materials array directly
     };
     
+    console.log('📤 Sending assignment data:', assignmentData);
+    console.log('📤 Materials:', materials);
+    console.log('📤 Materials type:', typeof materials);
+    console.log('📤 Materials is array:', Array.isArray(materials));
+    console.log('📤 First material:', materials[0]);
+    
     const token = localStorage.getItem("token");
     
     if (!token) {

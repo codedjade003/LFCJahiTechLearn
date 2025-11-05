@@ -716,8 +716,17 @@ export const addAssignment = async (req, res) => {
       materials: materials || []
     };
     
+    console.log('📝 Assignment object before push:', JSON.stringify(assignment, null, 2));
+    console.log('📝 Materials type:', typeof assignment.materials);
+    console.log('📝 Materials is array:', Array.isArray(assignment.materials));
+    console.log('📝 First material:', assignment.materials[0]);
+    console.log('📝 First material type:', typeof assignment.materials[0]);
+    
     course.assignments.push(assignment);
+    
+    console.log('💾 About to save course...');
     await course.save();
+    console.log('✅ Course saved successfully');
     
     await notifyEnrolledUsers(
       courseId,

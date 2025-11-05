@@ -59,6 +59,16 @@ const sectionSchema = new mongoose.Schema({
 }, { _id: true });
 
 /**
+ * MATERIAL - Subdocument schema for materials
+ */
+const materialSchema = new mongoose.Schema({
+  url: { type: String, required: true },
+  name: { type: String, required: true },
+  type: { type: String, required: true },
+  public_id: String
+}, { _id: false });
+
+/**
  * ASSIGNMENT - IMPROVED with better ID tracking
  */
 const assignmentSchema = new mongoose.Schema({
@@ -69,14 +79,7 @@ const assignmentSchema = new mongoose.Schema({
   },
   title: { type: String, required: true },
   instructions: String,
-  materials: [
-    {
-      url: String,
-      name: String,
-      type: String,
-      public_id: String
-    }
-  ],
+  materials: [materialSchema],
   submissionTypes: {
     type: [String],
     enum: ["text", "file_upload", "link"],
@@ -120,14 +123,7 @@ const courseSchema = new mongoose.Schema(
     project: {
       title: String,
       instructions: String,
-      materials: [
-        {
-          url: String,
-          name: String,
-          type: String,
-          public_id: String
-        }
-      ],
+      materials: [materialSchema],
       submissionTypes: {
         type: [String],
         enum: ["text", "file_upload", "link"],
