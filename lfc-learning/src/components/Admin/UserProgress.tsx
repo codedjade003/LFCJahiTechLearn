@@ -193,7 +193,6 @@ export default function UserProgress() {
                 
                 <div className="flex justify-between mb-1 text-sm text-gray-600 dark:text-[var(--text-secondary)]">
                   <span>{course.percentage}% complete</span>
-                  <span>{course.timeSpent}h spent</span>
                 </div>
                 
                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mb-2">

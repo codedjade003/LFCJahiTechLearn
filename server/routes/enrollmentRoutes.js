@@ -35,7 +35,7 @@ router.delete("/unenroll-all/:courseId", protect, logAction('unenroll all', 'cou
 router.get('/progress/overview', protect, isAdminOnly, async (req, res) => {
   try {
     const enrollments = await Enrollment.find({ status: 'active' })
-      .populate('user', 'name email')
+      .populate('user', 'name email profilePicture')
       .populate('course', 'title duration type');
 
     const validEnrollments = enrollments.filter(e => e.course);

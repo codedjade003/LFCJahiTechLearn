@@ -915,17 +915,7 @@ export const createProject = async (req, res) => {
     
     res.status(201).json({ 
       message: "Project created successfully", 
-      project: {
-        ...course.project.toObject(),
-        // Convert back to objects for response
-        materials: course.project.materials.map(materialStr => {
-          try {
-            return JSON.parse(materialStr);
-          } catch {
-            return { name: 'Unknown', url: '', type: 'file' };
-          }
-        })
-      }
+      project: course.project.toObject()
     });
   } catch (err) {
     console.error('❌ createProject error:', err);

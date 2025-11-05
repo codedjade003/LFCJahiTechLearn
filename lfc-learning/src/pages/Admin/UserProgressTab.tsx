@@ -48,6 +48,43 @@ const UserProgressTab = () => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [selectedUser, setSelectedUser] = useState<UserProgress | null>(null);
 
+  const handleManualComplete = async () => {
+    if (!selectedUser) return;
+    
+    const confirmed = window.confirm(
+      `Are you sure you want to mark ALL modules, assignments, and projects as complete for ${selectedUser.user.name} in ${selectedUser.course.title}?`
+    );
+    
+    if (!confirmed) return;
+    
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `${API_BASE}/api/progress/admin/${selectedUser.user._id}/${selectedUser.course._id}/mark-complete`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ type: "all" })
+        }
+      );
+      
+      if (response.ok) {
+        alert("Successfully marked course as complete!");
+        setSelectedUser(null);
+        fetchProgressData();
+      } else {
+        const error = await response.json();
+        alert(`Failed to mark complete: ${error.message}`);
+      }
+    } catch (error) {
+      console.error("Error marking complete:", error);
+      alert("Failed to mark complete. Please try again.");
+    }
+  };
+
   useEffect(() => {
     fetchProgressData();
   }, []);
@@ -122,7 +159,6 @@ const UserProgressTab = () => {
     return 'low';
   };
 
-  const formatTimeSpent = (seconds: number) => {
     if (!seconds || isNaN(seconds)) return '0h 0m';
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
@@ -146,6 +182,14 @@ const UserProgressTab = () => {
 
   return (
     <div className="space-y-6 p-6">
+      {/* Page Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-[var(--text-primary)]">User Progress</h1>
+        <p className="text-gray-600 dark:text-[var(--text-secondary)] mt-1">
+          Track and manage student progress across all courses
+        </p>
+      </div>
+
       {/* Header Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white dark:bg-[var(--bg-secondary)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-6">
@@ -301,7 +345,6 @@ const UserProgressTab = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900 dark:text-[var(--text-primary)]">
-                    {formatTimeSpent(progress.timeSpent)}
                   </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(progress)}`}>
@@ -368,7 +411,6 @@ const UserProgressTab = () => {
                   <p><strong>Course:</strong> {selectedUser.course.title || 'N/A'}</p>
                   <p><strong>Progress:</strong> {selectedUser.progress || 0}%</p>
                   <p><strong>Status:</strong> {selectedUser.completed ? 'Completed' : 'In Progress'}</p>
-                  <p><strong>Time Spent:</strong> {formatTimeSpent(selectedUser.timeSpent)}</p>
                 </div>
                 
                 <div>
@@ -387,7 +429,14 @@ const UserProgressTab = () => {
                 </div>
               </div>
               
-              <div className="mt-6 flex justify-end">
+              <div className="mt-6 flex justify-between">
+                <button 
+                  onClick={handleManualComplete}
+                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2"
+                >
+                  <FaCheckCircle />
+                  Mark All Complete
+                </button>
                 <button 
                   onClick={() => setSelectedUser(null)}
                   className="bg-lfc-red text-white px-4 py-2 rounded-lg hover:bg-red-700"

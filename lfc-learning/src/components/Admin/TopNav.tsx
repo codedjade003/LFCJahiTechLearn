@@ -96,6 +96,15 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
     
     // Refresh every 30 seconds
     const interval = setInterval(fetchNotifications, 30000);
+    
+    // Listen for notification updates from other components
+    const handleNotificationUpdate = () => fetchNotifications();
+    window.addEventListener("notificationUpdate", handleNotificationUpdate);
+    
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("notificationUpdate", handleNotificationUpdate);
+    };
     return () => clearInterval(interval);
   }, []);
 
@@ -117,6 +126,8 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
           prev.map((n: any) => n._id === notificationId ? { ...n, read: true } : n)
         );
         setUnreadCount(prev => Math.max(0, prev - 1));
+        // Trigger refresh for other components
+        window.dispatchEvent(new CustomEvent("notificationUpdate"));
         console.log('🔔 Marked notification as read:', notificationId);
       } else {
         console.error('🔔 Failed to mark as read:', response.status);
@@ -238,7 +249,7 @@ export default function TopNav({ onMenuToggle }: TopNavProps): JSX.Element {
 
             {/* Notifications Dropdown */}
             {showNotifications && (
-              <div className="absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 dark:border-[var(--border-primary)] rounded-lg shadow-lg z-45 max-h-96 overflow-y-auto">
+              <div className="fixed sm:absolute right-2 sm:right-0 mt-2 w-[calc(100vw-1rem)] sm:w-80 bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 dark:border-[var(--border-primary)] rounded-lg shadow-lg z-[9999] max-h-96 overflow-y-auto">
                 <div className="p-4 border-b border-gray-200 dark:border-[var(--border-primary)]">
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-semibold text-gray-800 dark:text-[var(--text-primary)] dark:text-[var(--text-primary)]">Notifications</h3>

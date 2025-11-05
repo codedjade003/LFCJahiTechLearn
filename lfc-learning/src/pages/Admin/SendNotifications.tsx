@@ -51,7 +51,7 @@ const SendNotifications = () => {
       }
 
       // Fetch users
-      const usersRes = await fetch(`${API_BASE}/api/users`, {
+      const usersRes = await fetch(`${API_BASE}/api/auth/users`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -59,7 +59,14 @@ const SendNotifications = () => {
       
       if (usersRes.ok) {
         const usersData = await usersRes.json();
-        setUsers(usersData);
+        console.log("Users fetched:", usersData);
+        // Handle both array and object with users property
+        const usersList = Array.isArray(usersData) ? usersData : usersData.users || [];
+        setUsers(usersList);
+        console.log("Users set:", usersList.length);
+      } else {
+        console.error("Failed to fetch users:", usersRes.status);
+        toast.error("Failed to load users");
       }
     } catch (error) {
       console.error("Error fetching data:", error);

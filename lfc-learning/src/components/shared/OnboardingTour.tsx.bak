@@ -38,10 +38,6 @@ export default function OnboardingTour({
     if (status === STATUS.FINISHED || status === STATUS.SKIPPED) {
       setRun(false);
       
-      // Force re-enable scrolling
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-      
       if (status === STATUS.FINISHED) {
         await completeTour(tourKey);
       }
@@ -50,10 +46,6 @@ export default function OnboardingTour({
     // Handle skip all tours
     if (action === ACTIONS.CLOSE && status === STATUS.RUNNING) {
       setRun(false);
-      
-      // Force re-enable scrolling
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
       await skipAllTours();
     }
   };

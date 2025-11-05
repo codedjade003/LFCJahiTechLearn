@@ -1,5 +1,6 @@
 // src/components/Notifications.tsx - FIXED
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { FaBookmark, FaVideo, FaUsers, FaBell, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import NotificationCard from "./NotificationCard";
 
@@ -18,6 +19,7 @@ interface Notification {
 }
 
 const Notifications = () => {
+  const navigate = useNavigate();
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -32,6 +34,39 @@ const Notifications = () => {
   useEffect(() => {
     fetchNotifications();
   }, [filters]);
+
+  // Listen for notification updates from other components
+  useEffect(() => {
+    const handleNotificationUpdate = () => fetchNotifications();
+    window.addEventListener("notificationUpdate", handleNotificationUpdate);
+    return () => window.removeEventListener("notificationUpdate", handleNotificationUpdate);
+  }, []);
+
+  const handleNotificationClick = async (notification: Notification) => {
+    try {
+      const response = await fetch(`${API_BASE}/api/notifications/${notification._id}/read`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json"
+        }
+      });
+      
+      if (response.ok) {
+        setNotifications(prev => 
+          prev.map(n => n._id === notification._id ? { ...n, read: true } : n)
+        );
+        setUnreadCount(prev => Math.max(0, prev - 1));
+        window.dispatchEvent(new CustomEvent("notificationUpdate"));
+      }
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+    }
+    
+    if (notification.link) {
+      navigate(notification.link);
+    }
+  };
 
   const fetchNotifications = async () => {
     try {
@@ -185,6 +220,8 @@ const Notifications = () => {
                 highlight={!notification.read}
                 type={notification.type}
                 isManual={notification.manual}
+                onClick={() => handleNotificationClick(notification)}
+                link={notification.link}
               />
             ))}
             

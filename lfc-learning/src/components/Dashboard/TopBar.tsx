@@ -17,6 +17,7 @@ interface Notification {
   type: string;
   read: boolean;
   createdAt: string;
+  link?: string;
 }
 
 const Topbar = ({ onMenuClick }: TopbarProps) => {
@@ -70,10 +71,27 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
     fetchNotificationCount();
     // Refresh every 30 seconds
     const interval = setInterval(fetchNotificationCount, 30000);
-    return () => clearInterval(interval);
+    
+    // Listen for notification updates from other components
+    const handleNotificationUpdate = () => fetchNotificationCount();
+    window.addEventListener("notificationUpdate", handleNotificationUpdate);
+    
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("notificationUpdate", handleNotificationUpdate);
+    };
   }, []);
     
   // Mark as read function
+  // Handle notification click
+  const handleNotificationClick = async (notification: Notification) => {
+    await markAsRead(notification._id);
+    if (notification.link) {
+      navigate(notification.link);
+      setShowNotifications(false);
+    }
+  };
+
   const markAsRead = async (notificationId: string) => {
     try {
       const response = await fetch(`${API_BASE}/api/notifications/${notificationId}/read`, {
@@ -90,6 +108,8 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
           prev.map(n => n._id === notificationId ? { ...n, read: true } : n)
         );
         setUnreadCount(prev => Math.max(0, prev - 1));
+        // Trigger refresh for other components
+        window.dispatchEvent(new CustomEvent("notificationUpdate"));
       } else {
         console.error('Failed to mark as read:', response.status);
       }
@@ -174,7 +194,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
 
           {/* Notifications Dropdown */}
           {showNotifications && (
-            <div className="absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 dark:border-[var(--border-primary)] rounded-lg shadow-lg z-45 max-h-96 overflow-y-auto">
+            <div className="fixed sm:absolute right-2 sm:right-0 mt-2 w-[calc(100vw-1rem)] sm:w-80 bg-white dark:bg-[var(--bg-elevated)] border border-gray-200 dark:border-[var(--border-primary)] rounded-lg shadow-lg z-[9999] max-h-96 overflow-y-auto">
               <div className="p-4 border-b border-gray-200 dark:border-[var(--border-primary)]">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-gray-800 dark:text-[var(--text-primary)]">Notifications</h3>
@@ -200,7 +220,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
                           ? 'bg-gray-50 dark:bg-[var(--bg-tertiary)] hover:bg-gray-100 dark:hover:bg-[var(--hover-bg)]' 
                           : 'bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 border-l-4 border-l-blue-500 dark:border-l-blue-400'
                       }`}
-                      onClick={() => markAsRead(notification._id)}
+                      onClick={() => handleNotificationClick(notification)}
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">

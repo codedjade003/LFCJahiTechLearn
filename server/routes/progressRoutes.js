@@ -134,3 +134,129 @@ router.get('/:courseId', protect, async (req, res) => {
 });
 
 export default router;
+// Admin: Manually mark course/modules as complete for a user
+import { isAdminOnly } from '../middleware/isAdminOnly.js';
+import Course from '../models/Course.js';
+
+router.post('/admin/:userId/:courseId/mark-complete', protect, isAdminOnly, async (req, res) => {
+  try {
+    const { userId, courseId } = req.params;
+    const { type, moduleIds, sectionIds } = req.body; // type: 'all', 'sections', 'modules'
+    
+    const enrollment = await Enrollment.findOne({ user: userId, course: courseId });
+    if (!enrollment) {
+      return res.status(404).json({ message: 'Enrollment not found' });
+    }
+    
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+    
+    if (type === 'all') {
+      // Mark all modules as complete
+      const allModules = [];
+      course.sections.forEach(section => {
+        section.modules.forEach(module => {
+          allModules.push({
+            moduleId: module._id,
+            sectionId: section._id,
+            completed: true,
+            completedAt: new Date()
+          });
+        });
+      });
+      
+      enrollment.moduleProgress = allModules;
+      
+      // Mark all assignments as complete if they exist
+      if (course.assignments && course.assignments.length > 0) {
+        enrollment.assignmentProgress = course.assignments.map(assignment => ({
+          assignmentId: assignment._id,
+          submitted: true,
+          submittedAt: new Date(),
+          score: 100,
+          feedback: 'Manually marked as complete by admin'
+        }));
+      }
+      
+      // Mark project as complete if it exists
+      if (course.project && course.project.title) {
+        enrollment.projectProgress = {
+          submitted: true,
+          submittedAt: new Date(),
+          score: 100,
+          feedback: 'Manually marked as complete by admin'
+        };
+      }
+      
+    } else if (type === 'sections' && sectionIds) {
+      // Mark specific sections as complete
+      sectionIds.forEach(sectionId => {
+        const section = course.sections.find(s => s._id.toString() === sectionId);
+        if (section) {
+          section.modules.forEach(module => {
+            const existingProgress = enrollment.moduleProgress.find(
+              mp => mp.moduleId.toString() === module._id.toString()
+            );
+            if (existingProgress) {
+              existingProgress.completed = true;
+              existingProgress.completedAt = new Date();
+            } else {
+              enrollment.moduleProgress.push({
+                moduleId: module._id,
+                sectionId: section._id,
+                completed: true,
+                completedAt: new Date()
+              });
+            }
+          });
+        }
+      });
+    } else if (type === 'modules' && moduleIds) {
+      // Mark specific modules as complete
+      moduleIds.forEach(moduleId => {
+        const existingProgress = enrollment.moduleProgress.find(
+          mp => mp.moduleId.toString() === moduleId
+        );
+        if (existingProgress) {
+          existingProgress.completed = true;
+          existingProgress.completedAt = new Date();
+        } else {
+          // Find the section for this module
+          let sectionId;
+          course.sections.forEach(section => {
+            if (section.modules.some(m => m._id.toString() === moduleId)) {
+              sectionId = section._id;
+            }
+          });
+          if (sectionId) {
+            enrollment.moduleProgress.push({
+              moduleId,
+              sectionId,
+              completed: true,
+              completedAt: new Date()
+            });
+          }
+        }
+      });
+    }
+    
+    await enrollment.save();
+    
+    // Recalculate progress
+    const { calculateProgress } = await import('../controllers/progressController.js');
+    const progress = await calculateProgress(enrollment, course);
+    
+    res.json({
+      message: 'Progress updated successfully',
+      progress,
+      enrollment
+    });
+    
+  } catch (error) {
+    console.error('Error marking complete:', error);
+    res.status(500).json({ message: 'Error updating progress', error: error.message });
+  }
+});
+
