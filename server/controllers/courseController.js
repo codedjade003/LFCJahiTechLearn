@@ -373,7 +373,7 @@ export const addSection = async (req, res) => {
       `New section added: "${req.body.title}"`,
       "section",
       null,
-      `/courses/${course._id}/sections/${course.sections.slice(-1)[0]._id}`
+      `/dashboard/courses/${course._id}`
     );
     res.status(201).json(JSON.parse(JSON.stringify(course.sections[course.sections.length - 1])));
   } catch (err) {
@@ -394,7 +394,7 @@ export const updateSection = async (req, res) => {
       `Section updated: "${section.title}"`,
       "section",
       null,
-      `/courses/${course._id}/sections/${section._id}`
+      `/dashboard/courses/${course._id}`
     );
     res.json(JSON.parse(JSON.stringify(section)));
   } catch (err) {
@@ -421,7 +421,7 @@ export const deleteSection = async (req, res) => {
       `Section deleted: "${deletedTitle}"`,
       "section",
       null,
-      `/courses/${course._id}`
+      `/dashboard/courses/${course._id}`
     );
 
     res.json({ message: "Section deleted" });
@@ -511,7 +511,7 @@ export const addModule = async (req, res) => {
       `New module added: "${title}"`,
       "module",
       dueDate,
-      `/courses/${courseId}/sections/${sectionId}/modules/${newModule._id}`
+      `/dashboard/courses/${courseId}`
     );
 
     res.status(201).json({ 
@@ -575,7 +575,7 @@ export const updateModule = async (req, res) => {
       `Module updated: "${module.title}"`,
       "module",
       module.dueDate,
-      `/courses/${course._id}/sections/${section._id}/modules/${module._id}`
+      `/dashboard/courses/${course._id}`
     );
 
     res.json(JSON.parse(JSON.stringify(module)));
@@ -608,7 +608,7 @@ export const deleteModule = async (req, res) => {
       `Module deleted: "${deletedTitle}"`,
       "module",
       null,
-      `/courses/${course._id}/sections/${section._id}`
+      `/dashboard/courses/${course._id}`
     );
     
     res.json({ message: "Module deleted" });
@@ -733,7 +733,7 @@ export const addAssignment = async (req, res) => {
       `New assignment: "${title}"`,
       "assignment",
       dueDate,
-      `/courses/${courseId}/assignments/${course.assignments.slice(-1)[0]._id}`
+      `/dashboard/assignments/${course.assignments.slice(-1)[0]._id}`
     );
     
     res.status(201).json({ message: "Assignment added and notifications sent", assignment: course.assignments.slice(-1)[0] });
@@ -793,7 +793,7 @@ export const updateAssignment = async (req, res) => {
       `Assignment updated: "${assignment.title}"`,
       "assignment",
       assignment.dueDate,
-      `/courses/${course._id}/assignments/${assignment._id}`
+      `/dashboard/assignments/${assignment._id}`
     );
     
     res.json(assignment);
@@ -822,7 +822,7 @@ export const deleteAssignment = async (req, res) => {
       `Assignment deleted: "${deletedTitle}"`,
       "assignment",
       null,
-      `/courses/${course._id}/assignments`
+      `/dashboard/assignments`
     );
 
     res.json({ message: "Assignment deleted" });
@@ -1024,7 +1024,7 @@ export const deleteProject = async (req, res) => {
       `Project deleted: "${deletedTitle}"`,
       "project",
       null,
-      `/courses/${course._id}`
+      `/dashboard/courses/${course._id}`
     );
 
     res.json({ message: "Project deleted" });
@@ -1060,7 +1060,7 @@ const notifyEnrolledUsers = async (courseId, title, type, dueDate, link = null) 
           userId: enrollment.user,
           title: notificationTitle,
           type,
-          link: link || `/courses/${courseId}`,
+          link: link || `/dashboard/courses/${courseId}`,
           dueDate: dueDate || undefined,
         });
         

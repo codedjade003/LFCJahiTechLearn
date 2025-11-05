@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaBookmark, FaVideo, FaUsers, FaBell, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import NotificationCard from "./NotificationCard";
+import ManualNotificationModal from "../ManualNotificationModal";
 
 interface Notification {
   _id: string;
@@ -30,6 +31,8 @@ const Notifications = () => {
     source: 'all'
   });
   const [expanded, setExpanded] = useState(false);
+  const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     fetchNotifications();
@@ -63,7 +66,11 @@ const Notifications = () => {
       console.error("Error marking notification as read:", error);
     }
     
-    if (notification.link) {
+    // If it's a manual notification, show modal instead of navigating
+    if (notification.manual) {
+      setSelectedNotification(notification);
+      setShowModal(true);
+    } else if (notification.link) {
       navigate(notification.link);
     }
   };
@@ -247,6 +254,16 @@ const Notifications = () => {
           </>
         )}
       </div>
+      
+      {/* Manual Notification Modal */}
+      <ManualNotificationModal
+        isOpen={showModal}
+        onClose={() => {
+          setShowModal(false);
+          setSelectedNotification(null);
+        }}
+        notification={selectedNotification}
+      />
     </div>
   );
 };

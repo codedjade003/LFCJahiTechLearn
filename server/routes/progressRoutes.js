@@ -244,8 +244,8 @@ router.post('/admin/:userId/:courseId/mark-complete', protect, isAdminOnly, asyn
     await enrollment.save();
     
     // Recalculate progress
-    const { calculateProgress } = await import('../controllers/progressController.js');
-    const progress = await calculateProgress(enrollment, course);
+    const { calculateCourseProgress } = await import('../controllers/progressController.js');
+    const progress = calculateCourseProgress(enrollment, course);
     
     res.json({
       message: 'Progress updated successfully',

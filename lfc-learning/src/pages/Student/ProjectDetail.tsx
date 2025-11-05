@@ -401,9 +401,9 @@ export default function ProjectDetail() {
         {/* Submission Area */}
         <div className="p-6">
           {isSubmitted ? (
-            <div className="bg-gray-50 rounded-lg p-6">
-              <h3 className="text-lg font-semibold mb-4 flex items-center">
-                <FaCheckCircle className="text-green-500 mr-2" />
+            <div className="bg-gray-50 dark:bg-[var(--bg-tertiary)] rounded-lg p-6">
+              <h3 className="text-lg font-semibold mb-4 flex items-center text-gray-900 dark:text-[var(--text-primary)]">
+                <FaCheckCircle className="text-green-500 dark:text-green-400 mr-2" />
                 Project Submitted
               </h3>
               
