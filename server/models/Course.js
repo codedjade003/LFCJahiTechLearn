@@ -74,6 +74,7 @@ const assignmentSchema = new mongoose.Schema({
       url: String,
       name: String,
       type: String,
+      public_id: String
     }
   ],
   submissionTypes: {
@@ -124,6 +125,7 @@ const courseSchema = new mongoose.Schema(
           url: String,
           name: String,
           type: String,
+          public_id: String
         }
       ],
       submissionTypes: {

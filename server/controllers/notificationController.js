@@ -19,7 +19,7 @@ export const createManualNotification = async (req, res) => {
 
     for (const userId of userIdArray) {
       const notification = await Notification.create({
-        userId,
+        user: userId,
         title,
         message,
         type,

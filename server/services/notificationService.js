@@ -3,7 +3,7 @@ import Notification from "../models/Notification.js";
 // services/notificationService.js
 const allowedTypes = ["course", "section", "module", "assignment", "project", "quiz", "support"];
 
-export const createNotificationForUser = async ({ userId, title, message, type, link }) => {
+export const createNotificationForUser = async ({ userId, title, message, type, link, dueDate }) => {
   if (!userId || !title) throw new Error("User and title are required");
   if (!allowedTypes.includes(type)) throw new Error(`Invalid notification type: ${type}`);
 

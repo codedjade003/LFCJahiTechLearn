@@ -729,6 +729,7 @@ export const addAssignment = async (req, res) => {
     
     res.status(201).json({ message: "Assignment added and notifications sent", assignment: course.assignments.slice(-1)[0] });
   } catch (err) {
+    console.error('❌ addAssignment error:', err);
     res.status(500).json({ message: "Failed to add assignment", error: err.message });
   }
 };
