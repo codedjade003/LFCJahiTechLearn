@@ -13,6 +13,8 @@ import {
   getUserProgressOverview
 } from '../controllers/progressController.js';
 import Enrollment from '../models/Enrollment.js';
+import { isAdminOnly } from '../middleware/isAdminOnly.js';
+import {Course} from '../models/Course.js';
 
 const router = express.Router();
 
@@ -134,9 +136,6 @@ router.get('/:courseId', protect, async (req, res) => {
 });
 
 export default router;
-// Admin: Manually mark course/modules as complete for a user
-import { isAdminOnly } from '../middleware/isAdminOnly.js';
-import Course from '../models/Course.js';
 
 router.post('/admin/:userId/:courseId/mark-complete', protect, isAdminOnly, async (req, res) => {
   try {
