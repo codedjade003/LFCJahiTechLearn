@@ -325,8 +325,8 @@ export default function CourseManagement() {
 
         {/* Search and Selection Header - Mobile optimized */}
         {courses.length > 0 && (
-          <div className="border rounded-lg">
-            <div className="p-3 border-b bg-gray-50 dark:bg-[var(--bg-secondary)] space-y-3 sm:space-y-0 sm:flex sm:items-center sm:justify-between">
+          <div className="border border-gray-200 dark:border-[var(--border-primary)] rounded-lg">
+            <div className="p-3 border-b border-gray-200 dark:border-[var(--border-primary)] bg-gray-50 dark:bg-[var(--bg-secondary)] space-y-3 sm:space-y-0 sm:flex sm:items-center sm:justify-between">
               <div className="flex items-center space-x-3">
                 <input
                   type="checkbox"
@@ -361,7 +361,7 @@ export default function CourseManagement() {
                 currentCourses.map(course => (
                   <div
                     key={course._id}
-                    className="p-3 border-b hover:bg-gray-50 dark:bg-[var(--bg-secondary)] flex items-start space-x-3"
+                    className="p-3 border-b border-gray-200 dark:border-[var(--border-primary)] hover:bg-gray-50 dark:bg-[var(--bg-secondary)] flex items-start space-x-3"
                   >
                     <input
                       type="checkbox"

@@ -86,28 +86,32 @@ export default function AdminDashboard(): JSX.Element {
       value: stats.totalCourses, 
       Icon: FaBook, 
       iconBgClass: "bg-lfc-gold/20 dark:bg-lfc-gold", 
-      iconColorClass: "text-lfc-red dark:text-red-800" 
+      iconColorClass: "text-lfc-red dark:text-red-800",
+      valueColorClass: "text-lfc-red dark:text-red-800"
     },
     { 
       label: "Active Users", 
       value: stats.activeUsers, 
       Icon: FaUsers, 
       iconBgClass: "bg-green-100 dark:bg-green-900", 
-      iconColorClass: "text-green-600 dark:text-green-400" 
+      iconColorClass: "text-green-600 dark:text-green-400",
+      valueColorClass: "text-green-600 dark:text-green-400"
     },
     { 
       label: "Pending Assessments", 
       value: stats.pendingAssessments, 
       Icon: FaClipboardList, 
       iconBgClass: "bg-yellow-100 dark:bg-yellow-900", 
-      iconColorClass: "text-yellow-600 dark:text-yellow-400" 
+      iconColorClass: "text-yellow-600 dark:text-yellow-400",
+      valueColorClass: "text-yellow-600 dark:text-yellow-400"
     },
     { 
       label: "Potential Abscondees", 
       value: stats.atRiskUsers, 
       Icon: FaExclamationTriangle, 
       iconBgClass: "bg-red-100 dark:bg-red-800", 
-      iconColorClass: "text-red-600 dark:text-red-300" 
+      iconColorClass: "text-red-600 dark:text-red-300",
+      valueColorClass: "text-red-600 dark:text-red-300"
     },
   ];
 
@@ -147,6 +151,7 @@ export default function AdminDashboard(): JSX.Element {
             Icon={s.Icon}
             iconBgClass={s.iconBgClass}
             iconColorClass={s.iconColorClass}
+            valueColorClass={s.valueColorClass}
           />
         ))}
       </div>
