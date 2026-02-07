@@ -289,9 +289,78 @@ const UserProgressTab = () => {
         </div>
       </div>
 
+      {/* Mobile Cards */}
+      <div className="md:hidden space-y-3">
+        {filteredProgress.map((progress) => {
+          if (!progress || !progress.user || !progress.course) return null;
+          return (
+            <div key={`mobile-${progress._id}`} className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <button
+                    onClick={() => handleUserClick(progress)}
+                    className="text-sm font-semibold text-gray-900 dark:text-[var(--text-primary)] hover:text-lfc-red text-left"
+                  >
+                    {progress.user.name || 'N/A'}
+                  </button>
+                  <div className="text-xs text-gray-500 break-all">{progress.user.email || 'N/A'}</div>
+                  <div className="text-xs font-medium text-lfc-red mt-1">
+                    {progress.course.title || 'N/A'}
+                  </div>
+                </div>
+                <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(progress)}`}>
+                  {progress.completed ? 'Completed' : progress.progress > 0 ? 'In Progress' : 'Not Started'}
+                </span>
+              </div>
+
+              <div className="mt-3">
+                <div className="flex items-center">
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${progress.progress || 0}%` }}
+                    ></div>
+                  </div>
+                  <span className="ml-3 text-xs font-medium">{progress.progress || 0}%</span>
+                </div>
+              </div>
+
+              <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-gray-600 dark:text-[var(--text-secondary)]">
+                <div>
+                  <span className="font-medium text-gray-700 dark:text-[var(--text-primary)]">Time:</span>{' '}
+                  {formatTime(progress.timeSpent)}
+                </div>
+                <div>
+                  <span className="font-medium text-gray-700 dark:text-[var(--text-primary)]">Last:</span>{' '}
+                  {progress.lastAccessed ? new Date(progress.lastAccessed).toLocaleDateString() : 'N/A'}
+                </div>
+                <div className="col-span-2">
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    calculateRiskLevel(progress) === 'high' ? 'bg-red-100 text-red-800' :
+                    calculateRiskLevel(progress) === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                    calculateRiskLevel(progress) === 'low' ? 'bg-green-100 text-green-800' :
+                    'bg-blue-100 dark:bg-blue-900/30 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300'
+                  }`}>
+                    <FaExclamationTriangle className="mr-1" />
+                    {calculateRiskLevel(progress).toUpperCase()}
+                  </span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+
+        {filteredProgress.length === 0 && (
+          <div className="text-center py-12">
+            <FaSearch className="mx-auto text-gray-400 text-4xl" />
+            <p className="mt-4 text-gray-600">No progress records found</p>
+          </div>
+        )}
+      </div>
+
       {/* Progress Table */}
-      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)] overflow-hidden">
-        <div className="overflow-x-auto">
+      <div className="hidden md:block bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)] overflow-hidden">
+        <div className="overflow-x-auto touch-pan-x">
           <table className="w-full">
             <thead className="bg-gray-50 dark:bg-[var(--bg-secondary)]">
               <tr>
@@ -387,9 +456,9 @@ const UserProgressTab = () => {
 
       {/* Modal */}
       {selectedUser && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-            <div className="p-6">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-3 sm:p-6">
+          <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg max-w-2xl w-[95vw] sm:w-full max-h-[85vh] overflow-y-auto">
+            <div className="p-4 sm:p-6">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-bold text-gray-900 dark:text-[var(--text-primary)]">User Progress Details</h3>
                 <button 

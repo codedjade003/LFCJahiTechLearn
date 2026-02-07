@@ -184,6 +184,8 @@ const AllUsersTab: React.FC = () => {
     return new Date(value).toLocaleDateString();
   };
 
+  const isVeryLongEmail = (email?: string) => (email?.length ?? 0) > 48;
+
   useEffect(() => {
     const updateContainerHeight = () => {
       if (tableContainerRef.current) {
@@ -699,7 +701,7 @@ const AllUsersTab: React.FC = () => {
                   </th>
                 )}
                 {visibleFields.email && (
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[200px]">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[280px] min-w-[280px] max-w-[280px]">
                     Email
                   </th>
                 )}
@@ -849,7 +851,7 @@ const AllUsersTab: React.FC = () => {
                     </td>
                   )}
                   {visibleFields.email && (
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 w-[280px] min-w-[280px] max-w-[280px]">
                       {user.isEditing ? (
                         <input
                           type="email"
@@ -858,7 +860,9 @@ const AllUsersTab: React.FC = () => {
                           className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                         />
                       ) : (
-                        <div className="text-sm dark:text-gray-200">{user.email}</div>
+                        <div className={`text-sm dark:text-gray-200 break-words ${isVeryLongEmail(user.email) ? 'line-clamp-2' : 'whitespace-normal'}`}>
+                          {user.email}
+                        </div>
                       )}
                     </td>
                   )}
