@@ -199,8 +199,8 @@ const UserProgressTab = () => {
               <FaUser className="text-blue-600 text-xl" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Users</p>
-              <p className="text-2xl font-bold">
+              <p className="text-sm font-medium text-gray-600 dark:text-[var(--text-secondary)]">Total Users</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-[var(--text-primary)]">
                 {new Set(progressData.filter(p => p?.user?._id).map(p => p.user._id)).size}
               </p>
             </div>
@@ -213,8 +213,8 @@ const UserProgressTab = () => {
               <FaCheckCircle className="text-green-600 text-xl" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Courses Completed</p>
-              <p className="text-2xl font-bold">
+              <p className="text-sm font-medium text-gray-600 dark:text-[var(--text-secondary)]">Courses Completed</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-[var(--text-primary)]">
                 {progressData.filter(p => p?.completed).length}
               </p>
             </div>
@@ -227,8 +227,8 @@ const UserProgressTab = () => {
               <FaExclamationTriangle className="text-orange-600 text-xl" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">At Risk</p>
-              <p className="text-2xl font-bold">
+              <p className="text-sm font-medium text-gray-600 dark:text-[var(--text-secondary)]">At Risk</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-[var(--text-primary)]">
                 {progressData.filter(p => p && calculateRiskLevel(p) === 'high').length}
               </p>
             </div>
@@ -241,8 +241,8 @@ const UserProgressTab = () => {
               <FaBook className="text-purple-600 text-xl" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Active Courses</p>
-              <p className="text-2xl font-bold">
+              <p className="text-sm font-medium text-gray-600 dark:text-[var(--text-secondary)]">Active Courses</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-[var(--text-primary)]">
                 {new Set(progressData.filter(p => p?.course?._id).map(p => p.course._id)).size}
               </p>
             </div>
