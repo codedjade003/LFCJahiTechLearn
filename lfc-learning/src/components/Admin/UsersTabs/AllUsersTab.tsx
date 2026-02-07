@@ -179,6 +179,11 @@ const AllUsersTab: React.FC = () => {
   const paddingTop = startIndex * rowHeight;
   const paddingBottom = Math.max(0, (paginatedUsers.length - endIndex) * rowHeight);
 
+  const formatDate = (value?: string) => {
+    if (!value) return 'N/A';
+    return new Date(value).toLocaleDateString();
+  };
+
   useEffect(() => {
     const updateContainerHeight = () => {
       if (tableContainerRef.current) {
@@ -504,8 +509,179 @@ const AllUsersTab: React.FC = () => {
         </div>
       )}
 
+      {/* Mobile Cards */}
+      <div className="md:hidden space-y-3">
+        {paginatedUsers.map((user) => (
+          <div key={`mobile-${user.id}`} className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <div className="text-sm font-semibold text-gray-900 dark:text-[var(--text-primary)]">
+                  {user.isEditing ? (
+                    <input
+                      type="text"
+                      value={user.name || ''}
+                      onChange={(e) => handleFieldChange(user.id, 'name', e.target.value)}
+                      className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                    />
+                  ) : (
+                    user.name || 'N/A'
+                  )}
+                </div>
+                <div className="text-xs text-gray-500 break-all">
+                  {user.isEditing ? (
+                    <input
+                      type="email"
+                      value={user.email}
+                      onChange={(e) => handleFieldChange(user.id, 'email', e.target.value)}
+                      className="w-full px-2 py-1 border border-gray-300 rounded text-sm mt-1"
+                    />
+                  ) : (
+                    user.email
+                  )}
+                </div>
+                {visibleFields.username && (
+                  <div className="text-xs text-gray-500 mt-1">
+                    {user.isEditing ? (
+                      <input
+                        type="text"
+                        value={user.username || ''}
+                        onChange={(e) => handleFieldChange(user.id, 'username', e.target.value)}
+                        className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                      />
+                    ) : (
+                      <>Username: {user.username || 'N/A'}</>
+                    )}
+                  </div>
+                )}
+              </div>
+              <div className="flex-shrink-0">
+                {user.isEditing ? (
+                  <select
+                    value={user.role}
+                    onChange={(e) => handleFieldChange(user.id, 'role', e.target.value)}
+                    className="px-2 py-1 border border-gray-300 rounded text-xs"
+                  >
+                    <option value="student">Student</option>
+                    <option value="admin">Admin</option>
+                    <option value="admin-only">Admin Only</option>
+                  </select>
+                ) : (
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    user.role === 'admin' ? 'bg-purple-100 text-purple-800' :
+                    user.role === 'admin-only' ? 'bg-blue-100 text-blue-800' :
+                    'bg-green-100 text-green-800'
+                  }`}>
+                    {user.role}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-gray-600 dark:text-[var(--text-secondary)]">
+              {visibleFields.phoneNumber && (
+                <div>
+                  <span className="font-medium text-gray-700 dark:text-[var(--text-primary)]">Phone:</span>{' '}
+                  {user.isEditing ? (
+                    <input
+                      type="text"
+                      value={user.phoneNumber || ''}
+                      onChange={(e) => handleFieldChange(user.id, 'phoneNumber', e.target.value)}
+                      className="w-full px-2 py-1 border border-gray-300 rounded text-xs mt-1"
+                    />
+                  ) : (
+                    user.phoneNumber || 'N/A'
+                  )}
+                </div>
+              )}
+              {visibleFields.lastLogin && (
+                <div>
+                  <span className="font-medium text-gray-700 dark:text-[var(--text-primary)]">Last Login:</span>{' '}
+                  {formatDate(user.lastLogin)}
+                </div>
+              )}
+              {visibleFields.loginCount && (
+                <div>
+                  <span className="font-medium text-gray-700 dark:text-[var(--text-primary)]">Logins:</span>{' '}
+                  {user.loginCount}
+                </div>
+              )}
+              {visibleFields.createdAt && (
+                <div>
+                  <span className="font-medium text-gray-700 dark:text-[var(--text-primary)]">Created:</span>{' '}
+                  {formatDate(user.createdAt)}
+                </div>
+              )}
+            </div>
+
+            <div className="mt-3 flex flex-wrap gap-2 text-xs">
+              {visibleFields.isVerified && (
+                <span className={`px-2 py-1 rounded-full font-medium ${
+                  user.isVerified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {user.isVerified ? 'Verified' : 'Unverified'}
+                </span>
+              )}
+              {visibleFields.isOnboarded && (
+                <span className={`px-2 py-1 rounded-full font-medium ${
+                  user.isOnboarded ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {user.isOnboarded ? 'Onboarded' : 'Not Onboarded'}
+                </span>
+              )}
+              {visibleFields.firstLogin && (
+                <span className={`px-2 py-1 rounded-full font-medium ${
+                  user.firstLogin ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'
+                }`}>
+                  {user.firstLogin ? 'First Login' : 'Returning'}
+                </span>
+              )}
+            </div>
+
+            <div className="mt-4 flex items-center justify-end gap-3">
+              {user.isEditing ? (
+                <>
+                  <button
+                    onClick={() => handleSave(user.id)}
+                    className="px-3 py-1 text-green-700 border border-green-200 rounded"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={() => handleCancel(user.id)}
+                    className="px-3 py-1 text-red-700 border border-red-200 rounded"
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => handleEdit(user.id)}
+                    className="px-3 py-1 text-blue-700 border border-blue-200 rounded"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(user.id)}
+                    className="px-3 py-1 text-red-700 border border-red-200 rounded"
+                    disabled={user.email === 'codedjade003@gmail.com'}
+                  >
+                    Delete
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        ))}
+        {filteredUsers.length === 0 && (
+          <div className="text-center py-8 text-gray-500">
+            No users found matching your criteria
+          </div>
+        )}
+      </div>
+
       {/* Users Table */}
-    <div className="overflow-x-auto bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
+    <div className="hidden md:block overflow-x-auto bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
       <div className="relative">
         <div
           ref={tableContainerRef}

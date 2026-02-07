@@ -206,8 +206,56 @@ const LogsTab = () => {
           </button>
         </div>
 
+        {/* Mobile Cards */}
+        <div className="md:hidden space-y-3">
+          {paginatedLogs.map((log) => (
+            <div key={`mobile-${log.id}`} className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-xs text-gray-500">
+                    {new Date(log.timestamp).toLocaleString()}
+                  </div>
+                  <div className="text-sm font-medium text-gray-900 dark:text-[var(--text-primary)]">
+                    {log.userName}
+                  </div>
+                  <div className="text-xs text-gray-500 break-all">{log.userEmail}</div>
+                </div>
+                <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(log.status)}`}>
+                  {log.status}
+                </span>
+              </div>
+
+              <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-gray-600 dark:text-[var(--text-secondary)]">
+                <div>
+                  <span className="font-medium text-gray-700 dark:text-[var(--text-primary)]">Action:</span>{' '}
+                  <span className="capitalize">{log.action}</span>
+                </div>
+                <div>
+                  <span className="font-medium text-gray-700 dark:text-[var(--text-primary)]">Resource:</span>{' '}
+                  <span className="capitalize">{log.resource}</span>
+                </div>
+                {log.courseName && (
+                  <div className="col-span-2">
+                    <span className="font-medium text-gray-700 dark:text-[var(--text-primary)]">Course:</span>{' '}
+                    {log.courseName}
+                  </div>
+                )}
+                <div className="col-span-2">
+                  <span className="font-medium text-gray-700 dark:text-[var(--text-primary)]">IP:</span>{' '}
+                  <span className="font-mono text-[11px]">{log.ipAddress}</span>
+                </div>
+              </div>
+
+              <div className="mt-3 text-xs text-gray-600 dark:text-[var(--text-secondary)]">
+                <div className="font-medium text-gray-700 dark:text-[var(--text-primary)]">Details</div>
+                <div className="mt-1 break-words">{log.details}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+
         {/* Logs Table */}
-        <div className="overflow-x-auto touch-pan-x">
+        <div className="hidden md:block overflow-x-auto touch-pan-x">
           <table className="min-w-[900px] w-full">
             <thead className="bg-gray-50 dark:bg-[var(--bg-secondary)]">
               <tr>

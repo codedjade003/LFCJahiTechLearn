@@ -432,8 +432,143 @@ const AccessSettingsTab = () => {
           </div>
         </div>
 
+        {/* Mobile Cards */}
+        <div className="md:hidden space-y-3">
+          {filteredUsers.map((user) => {
+            const userCourses = courses.filter(course => 
+              course.instructors.some(instructor => instructor.userId === user.id)
+            );
+
+            return (
+              <div key={`mobile-${user.id}-${activeTab}`} className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <div className="flex-shrink-0 h-8 w-8 bg-gray-200 rounded-full flex items-center justify-center">
+                        {getRoleIcon(user.role)}
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium text-gray-900 dark:text-[var(--text-primary)]">{user.name}</div>
+                        <div className="text-xs text-gray-500 break-all">{user.email}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={selectedUsers.has(user.id)}
+                    onChange={() => toggleUserSelection(user.id)}
+                    className="rounded border-gray-300 mt-1"
+                  />
+                </div>
+
+                <div className="mt-3 text-xs text-gray-600 dark:text-[var(--text-secondary)]">
+                  <div className="font-medium text-gray-700 dark:text-[var(--text-primary)]">
+                    Current {activeTab === 'roles' ? 'Role' : 'Courses'}
+                  </div>
+                  {activeTab === 'roles' ? (
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleColor(user.role)}`}>
+                      {getRoleIcon(user.role)}
+                      <span className="ml-1 capitalize">{user.role}</span>
+                    </span>
+                  ) : (
+                    <div className="mt-1 space-y-1">
+                      {userCourses.map(course => (
+                        <span
+                          key={`${course._id}-${user.id}-mobile`}
+                          onClick={() => setSelectedCourseForModal(course)}
+                          className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs mr-1 mb-1 cursor-pointer hover:bg-blue-200 transition-colors truncate max-w-[220px]"
+                          title={course.title}
+                        >
+                          <FaBook className="mr-1 flex-shrink-0" size={8} />
+                          <span className="truncate">{course.title}</span>
+                        </span>
+                      ))}
+                      {userCourses.length === 0 && (
+                        <span className="text-xs text-gray-500">No courses assigned</span>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-3">
+                  <div className="text-xs font-medium text-gray-700 dark:text-[var(--text-primary)]">
+                    {activeTab === 'roles' ? 'New Role' : 'Assign to Course'}
+                  </div>
+                  {activeTab === 'roles' ? (
+                    <select
+                      value={roleChanges[user.id] || user.role}
+                      onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                      disabled={!selectedUsers.has(user.id)}
+                      className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-lfc-gold disabled:opacity-50"
+                    >
+                      <option value="student">Student</option>
+                      <option value="admin">Admin</option>
+                      <option value="admin-only">Admin Only</option>
+                    </select>
+                  ) : (
+                    <select
+                      value={instructorAssignments[user.id] || ''}
+                      onChange={(e) => handleInstructorAssignment(user.id, e.target.value)}
+                      disabled={!selectedUsers.has(user.id) || !selectedCourse}
+                      className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-lfc-gold disabled:opacity-50"
+                    >
+                      <option value="">Select course...</option>
+                      {courses.map(course => (
+                        <option key={course._id} value={course._id}>
+                          {course.title}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+
+                <div className="mt-3 text-xs">
+                  {activeTab === 'roles' ? (
+                    roleChanges[user.id] && roleChanges[user.id] !== user.role ? (
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                        Pending Change
+                      </span>
+                    ) : user.isVerified ? (
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        Verified
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        Unverified
+                      </span>
+                    )
+                  ) : (
+                    instructorAssignments[user.id] ? (
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                        Assignment Pending
+                      </span>
+                    ) : user.isVerified ? (
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        Available
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        Unverified
+                      </span>
+                    )
+                  )}
+                </div>
+              </div>
+            );
+          })}
+
+          {filteredUsers.length === 0 && (
+            <div className="text-center py-8 text-gray-500">
+              {activeTab === 'roles' 
+                ? 'No users found matching your search'
+                : 'No admin users found matching your search'
+              }
+            </div>
+          )}
+        </div>
+
         {/* Users Table */}
-        <div className="overflow-x-auto touch-pan-x bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
+        <div className="hidden md:block overflow-x-auto touch-pan-x bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
           <table className="min-w-[700px] w-full">
             <thead className="bg-gray-50 dark:bg-[var(--bg-secondary)]">
               <tr>
