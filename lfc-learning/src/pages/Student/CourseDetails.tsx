@@ -21,8 +21,8 @@ import {
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShareButton } from "../../components/ShareButton";
-import ModuleSurvey, { type SurveyData } from "../../components/shared/ModuleSurvey";
 import ModuleOverviewModal from "../../components/Student/ModuleOverviewModal";
+import ModuleSurvey, { type SurveyQuestion } from "../../components/shared/ModuleSurvey";
 import ModuleCompletionModal from "../../components/Student/ModuleCompletionModal";
 import OnboardingTour from "../../components/shared/OnboardingTour";
 import { courseDetailsTour } from "../../config/onboardingTours";
@@ -135,6 +135,18 @@ const QuizComponent = ({
     violations: 0,
     timeLeft: module.quiz?.timeLimit || 1800 // 30 minutes default
   });
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const updateIsMobile = () => {
+      const isSmall = window.innerWidth < 768;
+      const isTouch = navigator.maxTouchPoints > 0;
+      setIsMobile(isSmall || isTouch);
+    };
+    updateIsMobile();
+    window.addEventListener('resize', updateIsMobile);
+    return () => window.removeEventListener('resize', updateIsMobile);
+  }, []);
 
   const handleAnswerSelect = (answer: string) => {
     setQuizState(prev => ({ ...prev, selectedAnswer: answer }));
@@ -289,6 +301,23 @@ const QuizComponent = ({
 
   // Enhanced Proctoring System
   const enableAdvancedProctoring = () => {
+    if (isMobile) {
+      const handleVisibilityChange = () => {
+        if (document.hidden) {
+          setProctoring(prev => ({
+            ...prev,
+            tabSwitches: prev.tabSwitches + 1,
+            visibilityChanges: prev.visibilityChanges + 1
+          }));
+          recordViolation('tab_switch');
+        }
+      };
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+      return () => {
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+      };
+    }
+
     // 1. Force fullscreen
     const requestFullscreen = async () => {
       try {
@@ -435,7 +464,7 @@ const QuizComponent = ({
   useEffect(() => {
     const cleanup = enableAdvancedProctoring();
     return cleanup;
-  }, []);
+  }, [isMobile]);
 
   // Format time display
   const formatTime = (seconds: number) => {
@@ -510,21 +539,25 @@ const QuizComponent = ({
   if (!question) return null;
 
   return (
-    <div className="p-6 bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-[var(--border-primary)]">
+    <div className="p-4 sm:p-6 bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-[var(--border-primary)]">
       {/* Enhanced Quiz Header with Proctoring Info */}
       <div className="bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-700 rounded-lg p-4 mb-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center">
             <FaClock className="text-red-500 mr-2" />
-            <span className="text-red-800 dark:text-red-200 font-semibold">Secure Quiz Mode Active</span>
+            <span className="text-red-800 dark:text-red-200 font-semibold">
+              {isMobile ? "Quiz Mode Active" : "Secure Quiz Mode Active"}
+            </span>
           </div>
           <div className="text-red-600 font-bold">
             Time: {formatTime(proctoring.timeLeft)}
           </div>
         </div>
-        <p className="text-red-600 text-sm mt-1">
-          Fullscreen mode • Tab switching monitored • Right-click disabled • Keyboard shortcuts blocked
-        </p>
+        {!isMobile && (
+          <p className="text-red-600 text-sm mt-1">
+            Fullscreen mode • Tab switching monitored • Right-click disabled • Keyboard shortcuts blocked
+          </p>
+        )}
         {proctoring.tabSwitches > 0 && (
           <p className="text-red-500 text-xs mt-1 font-semibold">
             ⚠️ Tab switches detected: {proctoring.tabSwitches}
@@ -532,11 +565,11 @@ const QuizComponent = ({
         )}
       </div>
 
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
         <div>
           <h3 className="text-xl font-semibold">Question {quizState.currentQuestion + 1} of {module.quiz?.questions.length}</h3>
         </div>
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-wrap items-center gap-2">
           <div className="bg-gray-200 dark:bg-[var(--bg-tertiary)] px-3 py-1 rounded-full text-sm">
             Score: {quizState.score}
           </div>
@@ -634,12 +667,13 @@ export default function CourseDetails() {
   const [submittingFeedback, setSubmittingFeedback] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [rating, setRating] = useState(5);
-  const [showSurvey, setShowSurvey] = useState(false);
-  const [surveyModuleId] = useState<string | null>(null);
-  const [surveyModuleTitle] = useState<string>('');
   const [showOverviewModal, setShowOverviewModal] = useState(false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [pendingModule, setPendingModule] = useState<Module | null>(null);
+  const [showSurvey, setShowSurvey] = useState(false);
+  const [surveyModuleId, setSurveyModuleId] = useState<string | null>(null);
+  const [surveyModuleTitle, setSurveyModuleTitle] = useState<string>('');
+  const [surveyQuestions, setSurveyQuestions] = useState<SurveyQuestion[] | undefined>(undefined);
 
   const submitFeedback = async () => {
     if (!feedback.trim()) return;
@@ -831,8 +865,16 @@ export default function CourseDetails() {
     }
   };
 
-  const handleSurveySubmit = async (surveyData: SurveyData) => {
+
+  const isModuleCompleted = (moduleId: string) => {
+    return enrollment?.moduleProgress?.some(mp => 
+      mp.moduleId === moduleId && mp.completed
+    ) || false;
+  };
+
+  const handleSurveySubmit = async (surveyData: Record<string, any>) => {
     try {
+      if (!surveyModuleId) return;
       const token = localStorage.getItem("token");
       const res = await fetch(`${API_BASE}/api/feedback/modules/${surveyModuleId}`, {
         method: "POST",
@@ -841,8 +883,10 @@ export default function CourseDetails() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          responses: surveyData,
           courseId,
-          ...surveyData
+          moduleTitle: surveyModuleTitle,
+          source: "moduleSurvey"
         })
       });
 
@@ -854,12 +898,6 @@ export default function CourseDetails() {
     } catch (error) {
       console.error("Error submitting survey:", error);
     }
-  };
-
-  const isModuleCompleted = (moduleId: string) => {
-    return enrollment?.moduleProgress?.some(mp => 
-      mp.moduleId === moduleId && mp.completed
-    ) || false;
   };
 
   const getModuleIcon = (type: string) => {
@@ -1576,17 +1614,6 @@ export default function CourseDetails() {
         </main>
       </div>
 
-      {/* Module Survey Modal */}
-      {showSurvey && surveyModuleId && courseId && (
-        <ModuleSurvey
-          moduleTitle={surveyModuleTitle}
-          courseId={courseId}
-          moduleId={surveyModuleId}
-          onClose={() => setShowSurvey(false)}
-          onSubmit={handleSurveySubmit}
-        />
-      )}
-
       {/* Module Overview Modal */}
       {showOverviewModal && pendingModule && (
         <ModuleOverviewModal
@@ -1635,6 +1662,7 @@ export default function CourseDetails() {
             setShowCompletionModal(false);
             setPendingModule(null);
           }}
+          useExternalSurvey={!!pendingModule.survey?.questions?.length}
           onComplete={async (surveyResponses) => {
             setShowCompletionModal(false);
             
@@ -1658,6 +1686,13 @@ export default function CourseDetails() {
                 console.error("Error submitting survey:", err);
               }
             }
+
+            if (pendingModule?.survey?.questions?.length) {
+              setSurveyModuleId(pendingModule._id);
+              setSurveyModuleTitle(pendingModule.title);
+              setSurveyQuestions(pendingModule.survey.questions);
+              setShowSurvey(true);
+            }
             
             // Auto-advance to next module
             if (course && pendingModule) {
@@ -1677,6 +1712,23 @@ export default function CourseDetails() {
             title: pendingModule.title,
             survey: pendingModule.survey,
           }}
+        />
+      )}
+
+      {/* Module Survey Modal */}
+      {showSurvey && surveyModuleId && courseId && (
+        <ModuleSurvey
+          moduleTitle={surveyModuleTitle}
+          courseId={courseId}
+          moduleId={surveyModuleId}
+          questions={surveyQuestions}
+          onClose={() => {
+            setShowSurvey(false);
+            setSurveyModuleId(null);
+            setSurveyModuleTitle('');
+            setSurveyQuestions(undefined);
+          }}
+          onSubmit={handleSurveySubmit}
         />
       )}
     </div>

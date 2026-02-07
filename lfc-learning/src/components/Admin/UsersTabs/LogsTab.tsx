@@ -157,7 +157,7 @@ const LogsTab = () => {
 
       {/* Controls */}
       <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-6">
-        <div className="flex flex-col md:flex-row gap-4 mb-4">
+        <div className="flex flex-col md:flex-row flex-wrap gap-4 mb-4">
           <div className="flex-1 relative">
             <FaSearch className="absolute left-3 top-3 text-gray-400" />
             <input
@@ -172,7 +172,7 @@ const LogsTab = () => {
           <select
             value={filterAction}
             onChange={(e) => setFilterAction(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg"
+            className="px-3 py-2 border border-gray-300 rounded-lg w-full sm:w-auto"
           >
             <option value="all">All Actions</option>
             <option value="login">Login</option>
@@ -187,7 +187,7 @@ const LogsTab = () => {
           <select
             value={filterResource}
             onChange={(e) => setFilterResource(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg"
+            className="px-3 py-2 border border-gray-300 rounded-lg w-full sm:w-auto"
           >
             <option value="all">All Resources</option>
             <option value="course">Course</option>
@@ -199,7 +199,7 @@ const LogsTab = () => {
 
           <button
             onClick={downloadLogs}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center"
+            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center justify-center w-full sm:w-auto"
           >
             <FaDownload className="mr-2" />
             Download JSON
@@ -207,8 +207,8 @@ const LogsTab = () => {
         </div>
 
         {/* Logs Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full">
+        <div className="overflow-x-auto touch-pan-x">
+          <table className="min-w-[900px] w-full">
             <thead className="bg-gray-50 dark:bg-[var(--bg-secondary)]">
               <tr>
                 <th className="px-4 py-3 text-left cursor-pointer" onClick={() => handleSort('timestamp')}>

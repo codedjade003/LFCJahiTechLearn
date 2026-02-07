@@ -18,21 +18,25 @@ class CertificateService {
   async generateCertificatePDF(certificateData) {
     return new Promise((resolve, reject) => {
       try {
-        console.log('='.repeat(80));
-        console.log('📄 GENERATING CERTIFICATE PDF');
-        console.log('='.repeat(80));
+        const debugEnabled = process.env.CERTIFICATE_DEBUG === 'true';
+
+        if (debugEnabled) {
+          console.log('='.repeat(80));
+          console.log('📄 GENERATING CERTIFICATE PDF');
+          console.log('='.repeat(80));
+        }
         
         // Convert Mongoose document to plain object if needed
         const certData = certificateData.toObject ? certificateData.toObject() : certificateData;
         
-        console.log('Certificate Data Type:', typeof certData);
-        console.log('Is Mongoose Document:', !!certificateData.toObject);
-        console.log('Certificate Data Received:');
-        console.log(JSON.stringify(certData, null, 2));
-        console.log('Student Name:', certData.studentName);
-        console.log('Course Title:', certData.courseTitle);
-        console.log('Certificate ID:', certData.certificateId);
-        console.log('='.repeat(80));
+        if (debugEnabled) {
+          console.log('Certificate Data Type:', typeof certData);
+          console.log('Is Mongoose Document:', !!certificateData.toObject);
+          console.log('Student Name:', certData.studentName);
+          console.log('Course Title:', certData.courseTitle);
+          console.log('Certificate ID:', certData.certificateId);
+          console.log('='.repeat(80));
+        }
         
         // Use the plain object for PDF generation
         certificateData = certData;
@@ -237,12 +241,15 @@ class CertificateService {
   drawHeader(doc) {
     // Try to add logo
     try {
+      const envLogoPath = process.env.CERTIFICATE_LOGO_PATH;
+
       // Try multiple possible logo paths
       const logoPaths = [
-        path.join(__dirname, '../../lfc-learning/public/logo.png'),
+        envLogoPath,
         path.join(__dirname, '../public/logo.png'),
-        path.join(__dirname, '../../public/logo.png')
-      ];
+        path.join(__dirname, '../../public/logo.png'),
+        path.join(__dirname, '../../lfc-learning/public/logo.png')
+      ].filter(Boolean);
       
       let logoPath = null;
       for (const p of logoPaths) {
@@ -297,7 +304,9 @@ class CertificateService {
            });
       }
     } catch (error) {
-      console.error('Error adding logo to certificate:', error);
+      if (process.env.CERTIFICATE_DEBUG === 'true') {
+        console.error('Error adding logo to certificate:', error);
+      }
       // Fallback without logo
       doc.fontSize(18)
          .font('Helvetica-Bold')

@@ -28,7 +28,7 @@ export default function AdminLayout() {
       <div className="flex-1 flex flex-col lg:ml-0">
         <TopNav onMenuToggle={() => setIsMobileOpen(!isMobileOpen)} />
         {/* Hide scrollbars but maintain functionality */}
-        <main className="flex-1 bg-gray-50 overflow-auto dark:bg-[var(--bg-elevated)] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <main className="flex-1 min-w-0 bg-gray-50 overflow-y-auto overflow-x-auto dark:bg-[var(--bg-elevated)] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <ScrollHint />
           <Outlet />
         </main>

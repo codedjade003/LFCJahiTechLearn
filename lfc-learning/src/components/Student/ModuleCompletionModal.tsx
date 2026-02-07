@@ -12,6 +12,7 @@ interface ModuleCompletionModalProps {
   isOpen: boolean;
   onClose: () => void;
   onComplete: (surveyResponses?: Record<string, any>) => void;
+  useExternalSurvey?: boolean;
   module: {
     title: string;
     survey?: {
@@ -24,6 +25,7 @@ export default function ModuleCompletionModal({
   isOpen,
   onClose,
   onComplete,
+  useExternalSurvey = false,
   module,
 }: ModuleCompletionModalProps) {
   const [surveyResponses, setSurveyResponses] = useState<Record<string, any>>({});
@@ -32,12 +34,13 @@ export default function ModuleCompletionModal({
   if (!isOpen) return null;
 
   const hasSurvey = module.survey && module.survey.questions.length > 0;
+  const shouldUseExternalSurvey = useExternalSurvey && hasSurvey;
 
   const handleContinue = () => {
-    if (hasSurvey && currentStep === "completion") {
+    if (!shouldUseExternalSurvey && hasSurvey && currentStep === "completion") {
       setCurrentStep("survey");
     } else {
-      onComplete(hasSurvey ? surveyResponses : undefined);
+      onComplete(!shouldUseExternalSurvey && hasSurvey ? surveyResponses : undefined);
     }
   };
 
@@ -168,7 +171,7 @@ export default function ModuleCompletionModal({
 
         {/* Footer */}
         <div className="sticky bottom-0 bg-gray-50 dark:bg-[var(--bg-primary)] border-t border-gray-200 dark:border-[var(--border-primary)] px-6 py-4 flex items-center justify-end gap-3">
-          {currentStep === "survey" && (
+          {currentStep === "survey" && !shouldUseExternalSurvey && (
             <button
               onClick={handleSkipSurvey}
               className="px-6 py-2 text-gray-600 dark:text-[var(--text-secondary)] hover:text-gray-800 dark:hover:text-[var(--text-primary)] transition-colors"
@@ -181,9 +184,11 @@ export default function ModuleCompletionModal({
             className="px-6 py-2 bg-lfc-red text-white rounded-lg hover:bg-lfc-red/90 transition-colors font-medium"
           >
             {currentStep === "completion"
-              ? hasSurvey
-                ? "Continue"
-                : "Next Module"
+              ? shouldUseExternalSurvey
+                ? "Continue to Survey"
+                : hasSurvey
+                  ? "Continue"
+                  : "Next Module"
               : "Submit & Continue"}
           </button>
         </div>

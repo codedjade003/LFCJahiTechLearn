@@ -509,7 +509,7 @@ const AllUsersTab: React.FC = () => {
       <div className="relative">
         <div
           ref={tableContainerRef}
-          className="overflow-x-auto"
+          className="overflow-x-auto touch-pan-x"
           style={{ maxWidth: '100vw', maxHeight: '70vh' }}
           onScroll={(e) => setScrollTop((e.target as HTMLDivElement).scrollTop)}
         >

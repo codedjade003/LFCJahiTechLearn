@@ -134,10 +134,6 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
-app.use((req, res, next) => {
-  console.log(`[REQ] ${req.method} ${req.originalUrl}`);
-  next();
-});
 
 
 // Base route

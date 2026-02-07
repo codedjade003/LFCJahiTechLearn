@@ -348,10 +348,10 @@ const AccessSettingsTab = () => {
 
       {/* Tab Navigation */}
       <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-4">
-        <div className="flex space-x-4 mb-4">
+        <div className="flex flex-wrap gap-2 mb-4">
           <button
             onClick={() => setActiveTab('roles')}
-            className={`px-4 py-2 rounded-lg font-medium ${
+            className={`px-4 py-2 rounded-lg font-medium w-full sm:w-auto ${
               activeTab === 'roles'
                 ? 'bg-lfc-gold text-white'
                 : 'bg-gray-100 dark:bg-[var(--bg-tertiary)] text-gray-700 dark:text-[var(--text-secondary)] hover:bg-gray-200'
@@ -362,7 +362,7 @@ const AccessSettingsTab = () => {
           </button>
           <button
             onClick={() => setActiveTab('instructors')}
-            className={`px-4 py-2 rounded-lg font-medium ${
+            className={`px-4 py-2 rounded-lg font-medium w-full sm:w-auto ${
               activeTab === 'instructors'
                 ? 'bg-lfc-gold text-white'
                 : 'bg-gray-100 dark:bg-[var(--bg-tertiary)] text-gray-700 dark:text-[var(--text-secondary)] hover:bg-gray-200'
@@ -374,7 +374,7 @@ const AccessSettingsTab = () => {
         </div>
 
         {/* Search and Controls */}
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <div className="flex flex-col md:flex-row flex-wrap gap-4 mb-6">
           <div className="flex-1 relative">
             <FaSearch className="absolute left-3 top-3 text-gray-400" />
             <input
@@ -394,7 +394,7 @@ const AccessSettingsTab = () => {
             <select
               value={selectedCourse}
               onChange={(e) => setSelectedCourse(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-lfc-gold"
+              className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-lfc-gold w-full sm:w-auto"
               disabled={coursesLoading}
             >
               <option value="">Select a course...</option>
@@ -412,7 +412,7 @@ const AccessSettingsTab = () => {
             </select>
           )}
           
-          <div className="flex gap-4">
+          <div className="flex gap-4 w-full sm:w-auto">
             <button
               onClick={activeTab === 'roles' ? saveRoleChanges : saveInstructorAssignments}
               disabled={saving || (
@@ -420,7 +420,7 @@ const AccessSettingsTab = () => {
                   ? Object.keys(roleChanges).length === 0
                   : Object.keys(instructorAssignments).length === 0
               )}
-              className="bg-lfc-gold text-white px-6 py-2 rounded-lg hover:bg-lfc-gold/90 disabled:opacity-50 flex items-center"
+              className="bg-lfc-gold text-white px-6 py-2 rounded-lg hover:bg-lfc-gold/90 disabled:opacity-50 flex items-center justify-center w-full sm:w-auto"
             >
               <FaSave className="mr-2" />
               {saving ? 'Saving...' : `Save Changes (${
@@ -433,8 +433,8 @@ const AccessSettingsTab = () => {
         </div>
 
         {/* Users Table */}
-        <div className="overflow-x-auto bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
-          <table className="w-full">
+        <div className="overflow-x-auto touch-pan-x bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
+          <table className="min-w-[700px] w-full">
             <thead className="bg-gray-50 dark:bg-[var(--bg-secondary)]">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
