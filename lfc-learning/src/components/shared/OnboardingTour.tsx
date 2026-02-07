@@ -32,6 +32,13 @@ export default function OnboardingTour({
     return () => clearTimeout(timer);
   }, [tourKey, shouldShowTour]);
 
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    };
+  }, []);
+
   const handleJoyrideCallback = async (data: CallBackProps) => {
     const { status, action } = data;
 

@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { FaCheckCircle, FaTimesCircle, FaSpinner, FaCertificate, FaCalendar, FaTrophy, FaUser, FaBook } from "react-icons/fa";
+import { FaCheckCircle, FaTimesCircle, FaSpinner } from "react-icons/fa";
 import { toast } from "react-toastify";
+import CertificateCard from "../components/shared/CertificateCard";
 
 // Add print styles
 const printStyles = `
@@ -170,9 +171,6 @@ export default function CertificateValidation() {
     );
   }
 
-  const completionDate = new Date(certificate.completionDate);
-  const issuedDate = new Date(certificate.issuedAt);
-
   return (
     <>
       <style>{printStyles}</style>
@@ -198,115 +196,16 @@ export default function CertificateValidation() {
 
           {/* Certificate Details */}
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-8 border border-gray-200 dark:border-gray-700 print-area">
-            <div className="border-2 border-gray-300 dark:border-gray-600 rounded-xl p-8 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 relative overflow-hidden">
-              {/* Decorative elements */}
-              <div className="absolute top-0 left-0 w-32 h-32 bg-blue-500/5 dark:bg-blue-400/10 rounded-full -translate-x-16 -translate-y-16"></div>
-              <div className="absolute bottom-0 right-0 w-40 h-40 bg-green-500/5 dark:bg-green-400/10 rounded-full translate-x-20 translate-y-20"></div>
-              
-              {/* Certificate Header with Logo */}
-              <div className="text-center mb-8 relative z-10">
-                <div className="flex items-center justify-center gap-6 mb-6">
-                  <div className="w-20 h-1 bg-gradient-to-r from-blue-500 to-green-500 rounded-full"></div>
-                  <img 
-                    src="/logo.png" 
-                    alt="LFC Tech Learn Logo" 
-                    className="h-24 w-auto dark:invert"
-                  />
-                  <div className="w-20 h-1 bg-gradient-to-r from-green-500 to-blue-500 rounded-full"></div>
-                </div>
-                <FaCertificate className="text-6xl text-blue-500 dark:text-blue-400 mx-auto mb-4" />
-                <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-green-600 dark:from-blue-400 dark:to-green-400 bg-clip-text text-transparent mb-2">
-                  Certificate of Completion
-                </h2>
-                <p className="text-gray-600 dark:text-gray-400 font-semibold text-lg">LFC Tech Learn</p>
-              </div>
-
-              {/* Student Info */}
-              <div className="mb-8 text-center relative z-10">
-                <div className="flex items-center justify-center gap-2 mb-4">
-                  <FaUser className="text-gray-500 dark:text-gray-400" />
-                  <p className="text-gray-600 dark:text-gray-400 font-medium">This certifies that</p>
-                </div>
-                <h3 className="text-5xl font-bold text-gray-900 dark:text-gray-100 mb-6 py-4 border-y border-gray-200 dark:border-gray-700">
-                  {certificate.studentName}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4 text-lg">has successfully completed the course</p>
-                <h4 className="text-3xl font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-6 py-4 rounded-xl border border-blue-100 dark:border-blue-800">
-                  {certificate.courseTitle}
-                </h4>
-              </div>
-
-              {/* Details Grid */}
-              <div className="grid md:grid-cols-2 gap-6 mb-8 relative z-10">
-                <div className="bg-white dark:bg-gray-700 rounded-lg p-6 border border-gray-200 dark:border-gray-600 shadow-sm">
-                  <div className="flex items-center gap-3 mb-3">
-                    <FaCalendar className="text-blue-500 dark:text-blue-400 text-lg" />
-                    <p className="font-semibold text-gray-900 dark:text-gray-100">Completion Date</p>
-                  </div>
-                  <p className="text-gray-700 dark:text-gray-300 text-lg font-medium">
-                    {completionDate.toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </p>
-                </div>
-
-                {certificate.finalScore && (
-                  <div className="bg-white dark:bg-gray-700 rounded-lg p-6 border border-gray-200 dark:border-gray-600 shadow-sm">
-                    <div className="flex items-center gap-3 mb-3">
-                      <FaTrophy className="text-amber-500 text-lg" />
-                      <p className="font-semibold text-gray-900 dark:text-gray-100">Final Score</p>
-                    </div>
-                    <p className="text-3xl font-bold text-green-600 dark:text-green-400">{certificate.finalScore}%</p>
-                  </div>
-                )}
-
-                {certificate.metadata?.courseLevel && (
-                  <div className="bg-white dark:bg-gray-700 rounded-lg p-6 border border-gray-200 dark:border-gray-600 shadow-sm">
-                    <div className="flex items-center gap-3 mb-3">
-                      <FaBook className="text-purple-500 dark:text-purple-400 text-lg" />
-                      <p className="font-semibold text-gray-900 dark:text-gray-100">Course Level</p>
-                    </div>
-                    <p className="text-gray-700 dark:text-gray-300 text-lg font-medium">{certificate.metadata.courseLevel}</p>
-                  </div>
-                )}
-
-                {certificate.metadata?.courseDuration && (
-                  <div className="bg-white dark:bg-gray-700 rounded-lg p-6 border border-gray-200 dark:border-gray-600 shadow-sm">
-                    <div className="flex items-center gap-3 mb-3">
-                      <FaCalendar className="text-cyan-500 dark:text-cyan-400 text-lg" />
-                      <p className="font-semibold text-gray-900 dark:text-gray-100">Duration</p>
-                    </div>
-                    <p className="text-gray-700 dark:text-gray-300 text-lg font-medium">{certificate.metadata.courseDuration}</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Certificate ID */}
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-8 text-center relative z-10">
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 font-semibold uppercase tracking-wide">Certificate ID</p>
-                <p className="font-mono text-xl font-bold text-gray-900 dark:text-gray-100 bg-gray-100 dark:bg-gray-700 px-4 py-2 rounded-lg">
-                  {certificate.certificateId}
-                </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">
-                  Issued on {issuedDate.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
-                </p>
-              </div>
-
-              {certificate.instructorName && (
-                <div className="mt-8 text-center relative z-10">
-                  <div className="inline-block border-t-2 border-gray-300 dark:border-gray-600 pt-6">
-                    <p className="font-bold text-gray-900 dark:text-gray-100 text-lg">{certificate.instructorName}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Course Instructor</p>
-                  </div>
-                </div>
-              )}
-            </div>
+            <CertificateCard
+              studentName={certificate.studentName}
+              courseTitle={certificate.courseTitle}
+              completionDate={certificate.completionDate}
+              issuedAt={certificate.issuedAt}
+              finalScore={certificate.finalScore}
+              instructorName={certificate.instructorName}
+              certificateId={certificate.certificateId}
+              metadata={certificate.metadata}
+            />
 
             {/* Footer */}
             <div className="mt-8 text-center space-y-4 no-print">

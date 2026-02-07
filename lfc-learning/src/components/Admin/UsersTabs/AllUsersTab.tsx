@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { FaEdit, FaTrash, FaSearch, FaSave, FaTimes, FaFileExcel, FaFileCsv, FaFilter } from 'react-icons/fa';
 
 interface User {
@@ -63,6 +63,11 @@ const AllUsersTab: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('all');
   const [filterVerified, setFilterVerified] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+  const [scrollTop, setScrollTop] = useState(0);
+  const [containerHeight, setContainerHeight] = useState(0);
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [visibleFields, setVisibleFields] = useState({
     name: true,
@@ -147,6 +152,50 @@ const AllUsersTab: React.FC = () => {
       return matchesSearch && matchesRole && matchesVerified;
     });
   }, [users, searchTerm, filterRole, filterVerified]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterRole, filterVerified, pageSize]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / pageSize));
+  const paginatedUsers = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredUsers.slice(start, start + pageSize);
+  }, [filteredUsers, currentPage, pageSize]);
+
+  const visibleColumnCount = useMemo(() => {
+    const visibleFieldsCount = Object.entries(visibleFields)
+      .filter(([key, isVisible]) => key !== 'showFieldPicker' && isVisible)
+      .length;
+    return visibleFieldsCount + 1;
+  }, [visibleFields]);
+
+  const rowHeight = 56;
+  const overscan = 6;
+  const visibleCount = containerHeight > 0 ? Math.ceil(containerHeight / rowHeight) : 10;
+  const startIndex = Math.max(0, Math.floor(scrollTop / rowHeight) - overscan);
+  const endIndex = Math.min(paginatedUsers.length, startIndex + visibleCount + overscan * 2);
+  const visibleRows = paginatedUsers.slice(startIndex, endIndex);
+  const paddingTop = startIndex * rowHeight;
+  const paddingBottom = Math.max(0, (paginatedUsers.length - endIndex) * rowHeight);
+
+  useEffect(() => {
+    const updateContainerHeight = () => {
+      if (tableContainerRef.current) {
+        setContainerHeight(tableContainerRef.current.clientHeight);
+      }
+    };
+    updateContainerHeight();
+    window.addEventListener('resize', updateContainerHeight);
+    return () => window.removeEventListener('resize', updateContainerHeight);
+  }, []);
+
+  useEffect(() => {
+    if (tableContainerRef.current) {
+      tableContainerRef.current.scrollTop = 0;
+    }
+    setScrollTop(0);
+  }, [currentPage, pageSize, searchTerm, filterRole, filterVerified]);
 
   // Add this function to handle data export
   const exportToExcel = (format: 'xlsx' | 'csv') => {
@@ -376,11 +425,11 @@ const AllUsersTab: React.FC = () => {
           />
         </div>
         
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-3 items-center">
           <select
             value={filterRole}
             onChange={(e) => setFilterRole(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-lfc-gold"
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-lfc-gold w-full sm:w-auto"
           >
             <option value="all">All Roles</option>
             <option value="student">Student</option>
@@ -391,7 +440,7 @@ const AllUsersTab: React.FC = () => {
           <select
             value={filterVerified}
             onChange={(e) => setFilterVerified(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-lfc-gold"
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-lfc-gold w-full sm:w-auto"
           >
             <option value="all">All Users</option>
             <option value="verified">Verified</option>
@@ -407,7 +456,7 @@ const AllUsersTab: React.FC = () => {
           </button>
 
           {/* Export buttons */}
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button
               onClick={() => exportToExcel('xlsx')}
               disabled={filteredUsers.length === 0}
@@ -458,7 +507,12 @@ const AllUsersTab: React.FC = () => {
       {/* Users Table */}
     <div className="overflow-x-auto bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
       <div className="relative">
-        <div className="overflow-x-auto" style={{ maxWidth: '100vw', maxHeight: '70vh' }}>
+        <div
+          ref={tableContainerRef}
+          className="overflow-x-auto"
+          style={{ maxWidth: '100vw', maxHeight: '70vh' }}
+          onScroll={(e) => setScrollTop((e.target as HTMLDivElement).scrollTop)}
+        >
           <table className="w-full">
             <thead className="bg-gray-50 dark:bg-[var(--bg-tertiary)] sticky top-0 z-10">
               <tr>
@@ -596,7 +650,12 @@ const AllUsersTab: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {filteredUsers.map((user) => (
+              {paddingTop > 0 && (
+                <tr>
+                  <td colSpan={visibleColumnCount} style={{ height: paddingTop }} />
+                </tr>
+              )}
+              {visibleRows.map((user) => (
                 <tr key={user.id} className="hover:bg-gray-50 dark:bg-[var(--bg-tertiary)]">
                   {/* All your existing td elements for fields */}
                   {visibleFields.name && (
@@ -859,6 +918,11 @@ const AllUsersTab: React.FC = () => {
                     </td>
                   </tr>
                 ))}
+              {paddingBottom > 0 && (
+                <tr>
+                  <td colSpan={visibleColumnCount} style={{ height: paddingBottom }} />
+                </tr>
+              )}
               </tbody>
             </table>
           </div>
@@ -871,8 +935,43 @@ const AllUsersTab: React.FC = () => {
         )}
       </div>
 
-      <div className="text-sm text-gray-500">
-        Showing {filteredUsers.length} of {users.length} users
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-sm text-gray-500">
+        <div>
+          {filteredUsers.length === 0 ? (
+            <>Showing 0 of 0 users</>
+          ) : (
+            <>Showing {(currentPage - 1) * pageSize + 1}-{Math.min(currentPage * pageSize, filteredUsers.length)} of {filteredUsers.length} users</>
+          )}
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <span>Rows:</span>
+          <select
+            value={pageSize}
+            onChange={(e) => setPageSize(parseInt(e.target.value, 10))}
+            className="px-2 py-1 border border-gray-300 rounded"
+          >
+            {[10, 25, 50, 100].map(size => (
+              <option key={size} value={size}>{size}</option>
+            ))}
+          </select>
+          <button
+            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            Prev
+          </button>
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -6,6 +6,18 @@ import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
+let certificateRepairService = undefined;
+const loadCertificateRepairService = async () => {
+  if (certificateRepairService !== undefined) return certificateRepairService;
+  try {
+    const mod = await import('../services/certificateRepairService.js');
+    certificateRepairService = mod.default || mod;
+  } catch (error) {
+    certificateRepairService = null;
+  }
+  return certificateRepairService;
+};
+
 /**
  * Generate and download certificate for a completed course
  * POST /api/certificates/generate/:enrollmentId
@@ -207,6 +219,11 @@ router.post('/revoke/:certificateId', protect, async (req, res) => {
  */
 router.post('/repair/:certificateId', async (req, res) => {
   try {
+    const repairService = await loadCertificateRepairService();
+    if (!repairService) {
+      return res.status(501).json({ message: 'Certificate repair service not configured' });
+    }
+
     const { certificateId } = req.params;
     
     const certificate = await Certificate.findOne({ certificateId });
@@ -214,7 +231,7 @@ router.post('/repair/:certificateId', async (req, res) => {
       return res.status(404).json({ message: 'Certificate not found' });
     }
     
-    const repairedCertificate = await certificateRepairService.repairCertificate(certificate);
+    const repairedCertificate = await repairService.repairCertificate(certificate);
     
     res.json({
       message: 'Certificate repaired successfully',
@@ -235,7 +252,12 @@ router.post('/repair/:certificateId', async (req, res) => {
  */
 router.post('/repair-all', async (req, res) => {
   try {
-    const repairedCount = await certificateRepairService.repairAllCertificates();
+    const repairService = await loadCertificateRepairService();
+    if (!repairService) {
+      return res.status(501).json({ message: 'Certificate repair service not configured' });
+    }
+
+    const repairedCount = await repairService.repairAllCertificates();
     
     res.json({
       message: `Successfully repaired ${repairedCount} certificates`,

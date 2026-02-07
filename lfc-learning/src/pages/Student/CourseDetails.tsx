@@ -10,6 +10,7 @@ import {
   FaCheckCircle,
   FaClock,
   FaBook,
+  FaBars,
   FaChevronDown,
   FaChevronRight,
   FaDownload,
@@ -627,6 +628,9 @@ export default function CourseDetails() {
   const [activePage, setActivePage] = useState<Page>('overview');
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
   const [activeModule, setActiveModule] = useState<string | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() =>
+    typeof window !== "undefined" ? window.innerWidth >= 768 : true
+  );
   const [submittingFeedback, setSubmittingFeedback] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [rating, setRating] = useState(5);
@@ -679,6 +683,22 @@ export default function CourseDetails() {
       fetchEnrollmentProgress();
     }
   }, [courseId]);
+
+  useEffect(() => {
+    const updateSidebarForViewport = () => {
+      const isDesktop = window.innerWidth >= 768;
+      setIsSidebarOpen(isDesktop);
+    };
+    updateSidebarForViewport();
+    window.addEventListener("resize", updateSidebarForViewport);
+    return () => window.removeEventListener("resize", updateSidebarForViewport);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      setIsSidebarOpen(false);
+    }
+  }, [activePage, courseId]);
 
   useEffect(() => {
     if (enrollment?.completed && enrollment._id) {
@@ -969,6 +989,16 @@ export default function CourseDetails() {
             )}
           </div>
 
+          <div className="mt-4 flex items-center justify-between md:hidden">
+            <button
+              onClick={() => setIsSidebarOpen(true)}
+              className="inline-flex items-center gap-2 px-3 py-2 border border-[var(--border-primary)] rounded-md text-sm text-[var(--text-primary)] hover:bg-[var(--hover-bg)]"
+            >
+              <FaBars />
+              Course Content
+            </button>
+          </div>
+
           {/* Navigation Tabs */}
           <nav className="flex space-x-8 mt-4 border-b">
             {(['overview', 'modules'] as Page[]).map((page) => (
@@ -1003,9 +1033,19 @@ export default function CourseDetails() {
       </header>
 
       {/* Main Content */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden relative">
+        {isSidebarOpen && (
+          <div
+            className="absolute inset-0 bg-black/40 z-30 md:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
         {/* Sidebar - Course Outline */}
-        <aside className="w-80 bg-white dark:bg-[var(--bg-elevated)] border-r border-[var(--border-primary)] overflow-y-auto">
+        <aside
+          className={`absolute md:static inset-y-0 left-0 z-40 w-72 md:w-80 bg-white dark:bg-[var(--bg-elevated)] border-r border-[var(--border-primary)] overflow-y-auto transform transition-transform duration-300 ${
+            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } md:translate-x-0`}
+        >
           <div className="p-4">
             <h2 className="font-semibold text-[var(--text-primary)] mb-4">Course Content</h2>
             <div className="space-y-2">
@@ -1068,10 +1108,11 @@ export default function CourseDetails() {
                                         } catch (err) {
                                           console.error("Error tracking module access:", err);
                                         }
-                                      }
+                                  }
                                       
                                       setActiveModule(module._id);
                                       setActivePage('modules');
+                                      setIsSidebarOpen(false);
                                     }
                                   }}
                                   className={`w-full text-left p-2 rounded text-sm transition-colors ${
