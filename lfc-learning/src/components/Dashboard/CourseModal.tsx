@@ -171,7 +171,7 @@ const CourseModal: React.FC<CourseModalProps> = ({
   console.log('🎨 Rendering modal with promoVideo:', course?.promoVideo);
 
   return (
-    <div className="fixed inset-x-0 bottom-0 top-16 bg-black/80 z-30 flex items-start justify-center p-2 sm:p-4">
+    <div className="fixed inset-x-0 bottom-0 top-16 md:inset-0 bg-black/80 z-30 flex items-start md:items-center justify-center p-2 sm:p-4">
       {/* Modal Container */}
       <div 
         ref={modalRef}
