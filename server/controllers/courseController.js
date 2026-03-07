@@ -5,6 +5,18 @@ import { Submission } from '../models/Submission.js';import Enrollment from "../
 import { callCreateNotification } from "./notificationController.js";
 import { getUserCoursePermissions } from "../utils/coursePermissions.js";
 
+const COURSE_LEVEL_MAP = {
+  beginner: "Beginner",
+  intermediate: "Intermediate",
+  advanced: "Advanced",
+};
+
+function normalizeCourseLevel(level) {
+  if (typeof level !== "string") return level;
+  const normalized = COURSE_LEVEL_MAP[level.trim().toLowerCase()];
+  return normalized || level;
+}
+
 /**
  * COURSES
  */
@@ -19,6 +31,9 @@ export const createCourse = async (req, res) => {
       // Don't create empty project - let admin add it later if needed
       project: undefined // Remove any project data from creation
     };
+    if (Object.prototype.hasOwnProperty.call(courseData, "level")) {
+      courseData.level = normalizeCourseLevel(courseData.level);
+    }
     console.log('🗃️ Creating course in database...');
     const course = await Course.create(courseData);
     console.log('✅ Course created successfully');
@@ -39,6 +54,9 @@ export const updateCourse = async (req, res) => {
     
     // REMOVE all project handling from here - projects have their own endpoints now
     let updateData = { ...req.body };
+    if (Object.prototype.hasOwnProperty.call(updateData, "level")) {
+      updateData.level = normalizeCourseLevel(updateData.level);
+    }
     
     // Don't handle project data here anymore
     // Projects are managed through separate /project endpoints

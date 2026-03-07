@@ -6,6 +6,7 @@ import { FaPlay, FaPause, FaVolumeUp, FaVolumeMute, FaExpand,
          FaCheck, FaClock, FaUser, FaTag, FaArrowRight, 
          FaInfoCircle, FaChevronRight } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import { useModalState } from "../../context/ModalContext";
 
 interface CourseModalProps {
   course: Course;
@@ -36,6 +37,7 @@ const CourseModal: React.FC<CourseModalProps> = ({
   const [videoError, setVideoError] = useState(false);
   const [currentPage, setCurrentPage] = useState<'video' | 'details'>('video');
   const [videoLoaded, setVideoLoaded] = useState(false);
+  useModalState(open);
 
   // LOG COURSE DATA - This runs every time course changes
   useEffect(() => {
@@ -171,11 +173,11 @@ const CourseModal: React.FC<CourseModalProps> = ({
   console.log('🎨 Rendering modal with promoVideo:', course?.promoVideo);
 
   return (
-    <div className="fixed inset-x-0 bottom-0 top-16 md:inset-0 bg-black/80 z-30 flex items-start md:items-center justify-center p-2 sm:p-4">
+    <div className="fixed inset-0 bg-black/80 z-[80] flex items-center justify-center p-2 sm:p-4">
       {/* Modal Container */}
       <div 
         ref={modalRef}
-        className="bg-black rounded-xl shadow-2xl w-full max-w-6xl h-full max-h-[calc(100vh-4rem)] overflow-hidden relative"
+        className="bg-black rounded-xl shadow-2xl w-full max-w-6xl h-full max-h-[calc(100vh-1rem)] sm:max-h-[calc(100vh-2rem)] overflow-hidden relative"
       >
         {/* Close Button */}
         <button

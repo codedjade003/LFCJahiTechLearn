@@ -1,5 +1,5 @@
 // src/components/shared/OnboardingTour.tsx
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Joyride, { STATUS, ACTIONS, type Step, type CallBackProps } from "react-joyride";
 import { useOnboarding } from "../../context/OnboardingContext";
 
@@ -20,6 +20,17 @@ export default function OnboardingTour({
 }: OnboardingTourProps) {
   const { shouldShowTour, completeTour, skipAllTours } = useOnboarding();
   const [run, setRun] = useState(false);
+  
+  const clearScrollLocks = useCallback(() => {
+    document.body.style.overflow = "";
+    document.body.style.overflowX = "";
+    document.body.style.overflowY = "";
+    document.body.style.position = "";
+    document.body.style.width = "";
+    document.documentElement.style.overflow = "";
+    document.documentElement.style.overflowX = "";
+    document.documentElement.style.overflowY = "";
+  }, []);
 
   useEffect(() => {
     // Small delay to ensure DOM elements are rendered
@@ -34,10 +45,15 @@ export default function OnboardingTour({
 
   useEffect(() => {
     return () => {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
+      clearScrollLocks();
     };
-  }, []);
+  }, [clearScrollLocks]);
+
+  useEffect(() => {
+    if (!run) {
+      clearScrollLocks();
+    }
+  }, [run, clearScrollLocks]);
 
   const handleJoyrideCallback = async (data: CallBackProps) => {
     const { status, action } = data;
@@ -46,8 +62,7 @@ export default function OnboardingTour({
       setRun(false);
       
       // Force re-enable scrolling
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
+      clearScrollLocks();
       
       if (status === STATUS.FINISHED) {
         await completeTour(tourKey);
@@ -59,8 +74,7 @@ export default function OnboardingTour({
       setRun(false);
       
       // Force re-enable scrolling
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
+      clearScrollLocks();
       await skipAllTours();
     }
   };
@@ -122,6 +136,7 @@ export default function OnboardingTour({
       disableCloseOnEsc
       spotlightClicks
       disableScrolling={false}
+      disableScrollParentFix
       scrollToFirstStep={false}
       scrollOffset={100}
     />

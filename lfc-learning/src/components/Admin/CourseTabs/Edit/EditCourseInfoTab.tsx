@@ -10,6 +10,14 @@ interface EditCourseInfoTabProps {
 
 export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: EditCourseInfoTabProps) {
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  
+  const normalizeLevel = (value?: string) => {
+    if (!value) return "Beginner";
+    const normalized = value.trim().toLowerCase();
+    if (normalized === "intermediate") return "Intermediate";
+    if (normalized === "advanced") return "Advanced";
+    return "Beginner";
+  };
 
   // Update the resolveImageUrl function to handle video files
   function resolveImageUrl(url?: string) {
@@ -35,7 +43,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
     title: "",
     description: "",
     type: "Video",
-    level: "beginner",
+    level: "Beginner",
     instructorName: "",
     instructorAvatar: "",
     instructorAvatarFile: null as File | null,
@@ -83,7 +91,7 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
         title: course.title || "",
         description: course.description || "",
         type: course.type || "Video",
-        level: course.level || "beginner",
+        level: normalizeLevel(course.level),
         instructorName: course.instructor?.name || "",
         instructorAvatar: course.instructor?.avatar || "",
         instructorAvatarFile: null,
@@ -474,9 +482,9 @@ export default function EditCourseInfoTab({ course, onCourseUpdated, onBack }: E
               onChange={handleInputChange}
               required
             >
-              <option value="beginner">Beginner</option>
-              <option value="intermediate">Intermediate</option>
-              <option value="advanced">Advanced</option>
+              <option value="Beginner">Beginner</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Advanced">Advanced</option>
             </select>
           </div>
 
