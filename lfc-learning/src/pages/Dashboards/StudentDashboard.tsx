@@ -40,22 +40,22 @@ const StudentDashboard = () => {
     {
       target: '[data-tour="stats"]',
       content: "Here you can see your learning progress, enrolled courses, and achievements at a glance.",
-      placement: "bottom",
+      placement: "bottom-start",
     },
     {
       target: '[data-tour="search"]',
       content: "Use the search bar to quickly find courses, instructors, or topics you're interested in.",
-      placement: "bottom",
+      placement: "bottom-start",
     },
     {
       target: '[data-tour="categories"]',
       content: "Browse courses by category. Click on any category to filter the course list.",
-      placement: "bottom",
+      placement: "bottom-start",
     },
     {
       target: '[data-tour="courses"]',
       content: "All available courses are displayed here. Click on any course to view details and enroll.",
-      placement: "top",
+      placement: "bottom-start",
     },
   ];
 

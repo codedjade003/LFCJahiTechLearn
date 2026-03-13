@@ -38,19 +38,19 @@ export const adminDashboardTour: Step[] = [
   {
     target: '[data-tour="stats"]',
     content: "These cards show key metrics at a glance: total courses, active users, pending assessments, and at-risk users who need attention.",
-    placement: "bottom",
+    placement: "bottom-start",
     disableBeacon: true,
   },
   {
     target: '[data-tour="recent-activity"]',
     content: "Track recent user activities and system events here. This helps you monitor what's happening across the platform in real-time.",
-    placement: "top",
+    placement: "bottom-start",
     disableBeacon: true,
   },
   {
     target: '[data-tour="pending-assessments"]',
     content: "View and manage pending assignments, projects, and quizzes that need grading. Click on any item to grade and provide feedback.",
-    placement: "top",
+    placement: "bottom-start",
     disableBeacon: true,
   },
   {
