@@ -131,9 +131,6 @@ export default function OnboardingTour({
         disableAnimation: false,
         disableFlip: false,
         hideArrow: false,
-        positionWhenFlipped: "bottom",
-        autoOpen: true,
-        ropePlacement: "bottom",
       }}
       disableOverlayClose
       disableCloseOnEsc
