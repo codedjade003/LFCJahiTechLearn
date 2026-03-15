@@ -10,6 +10,21 @@ const supportTicketsTour: Step[] = [
     content: "Welcome to Support! Here you can create tickets, track your requests, and communicate with the support team.",
     placement: "center",
   },
+  {
+    target: '[data-tour="support-create-ticket"]',
+    content: "Use this button to create a new support ticket with priority and category.",
+    placement: "left",
+  },
+  {
+    target: '[data-tour="support-filters"]',
+    content: "Filter tickets by status, category, and priority to find issues quickly.",
+    placement: "bottom",
+  },
+  {
+    target: '[data-tour="support-ticket-list"]',
+    content: "This list shows all your tickets, current status, and recent activity.",
+    placement: "top",
+  },
 ];
 
 const SupportTickets: React.FC = () => {
@@ -175,6 +190,7 @@ const SupportTickets: React.FC = () => {
         </div>
         <button
           onClick={() => setShowNewTicket(true)}
+          data-tour="support-create-ticket"
           className="bg-lfc-red text-white px-4 py-2 rounded-lg hover:bg-red-700 flex items-center"
         >
           <FaPlus className="mr-2" />
@@ -184,7 +200,7 @@ const SupportTickets: React.FC = () => {
 
       {/* New Ticket Modal */}
       {showNewTicket && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-55">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[1200]">
           <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg max-w-2xl w-full p-6">
             <h2 className="text-xl font-bold mb-4">Create Support Ticket</h2>
             <form onSubmit={createTicket}>
@@ -277,7 +293,7 @@ const SupportTickets: React.FC = () => {
 
       {/* Ticket Detail Modal */}
       {selectedTicket && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-55">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[1200]">
           <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg max-w-4xl w-full h-[80vh] flex flex-col">
             {/* Header */}
             <div className="bg-lfc-red text-white p-4 rounded-t-lg flex justify-between items-center">
@@ -355,7 +371,7 @@ const SupportTickets: React.FC = () => {
         </div>
       )}
 
-      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 p-4 mb-6">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 p-4 mb-6" data-tour="support-filters">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <select
             value={filters.status}
@@ -405,7 +421,7 @@ const SupportTickets: React.FC = () => {
 
 
       {/* Tickets List */}
-      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200" data-tour="support-ticket-list">
         {tickets.length === 0 ? (
           <div className="p-8 text-center">
             <FaExclamationCircle className="text-4xl text-gray-400 mx-auto mb-4" />

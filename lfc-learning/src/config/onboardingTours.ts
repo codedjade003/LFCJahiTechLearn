@@ -3,25 +3,25 @@ import type { Step } from "react-joyride";
 
 export const courseDetailsTour: Step[] = [
   {
-    target: "body",
+    target: '[data-tour="course-header"]',
     content: "Welcome to your course! Let's take a quick tour of the course page.",
-    placement: "center",
+    placement: "bottom",
     disableBeacon: true,
   },
   {
-    target: "header",
+    target: '[data-tour="course-tabs"]',
     content: "This is the course header. You can see the course title and navigate between Overview, Course Content, and Completion tabs.",
     placement: "bottom",
     disableBeacon: true,
   },
   {
-    target: "aside nav",
+    target: '[data-tour="course-sidebar"]',
     content: "This sidebar shows all course sections and modules. Click on any module to start learning. Green checkmarks indicate completed modules.",
     placement: "right-start",
     disableBeacon: true,
   },
   {
-    target: "main",
+    target: '[data-tour="course-main-content"]',
     content: "This is the main content area where you'll watch videos, read PDFs, and take quizzes. Your progress is automatically tracked as you complete modules.",
     placement: "right-start",
     disableBeacon: true,
@@ -69,7 +69,7 @@ export const courseManagementTour: Step[] = [
     disableBeacon: true,
   },
   {
-    target: "aside nav",
+    target: '[data-tour="course-management-tabs"]',
     content: "Use these tabs to navigate through different sections of course creation. Start with Details, then add Content, Assignments, Projects, Settings, and finally Publish.",
     placement: "right-start",
     disableBeacon: true,

@@ -442,8 +442,8 @@ const fetchQuizSubmissions = async () => {
 
       {/* Quiz Details Modal */}
       {isModalOpen && selectedSubmission && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-55">
-          <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] rounded-lg max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[1200]">
+          <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg max-w-6xl w-full max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="flex justify-between items-center p-6 border-b">
               <div className="flex items-center">

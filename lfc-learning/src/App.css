@@ -328,6 +328,7 @@ html {
 
 .animate-slide-in {
   animation: slide-in 0.3s ease-out forwards;
+  transition: none;
 }
 
 .animate-slide-in:hover {
@@ -356,7 +357,7 @@ html {
 
 /* Fix joyride floater positioning to stay in viewport */
 .react-joyride__floater {
-  z-index: 10001 !important;
+  z-index: 10002 !important;
 }
 
 /* Ensure spotlight container doesn't distort layout */
@@ -366,5 +367,5 @@ html {
 
 /* Constrain overlay to prevent screen distortion */
 .react-joyride__overlay {
-  z-index: 9999 !important;
+  z-index: 10000 !important;
 }

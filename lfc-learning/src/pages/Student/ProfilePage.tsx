@@ -3,6 +3,8 @@ import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 import TechyBackground from "../../components/shared/TechyBackground";
+import OnboardingTour from "../../components/shared/OnboardingTour";
+import { profileTour } from "../../config/onboardingTours";
 import { 
   FaUser, FaEnvelope, FaCalendar, FaPhone, FaBriefcase, 
   FaBuilding, FaGlobe, FaLink, FaSave,
@@ -611,6 +613,7 @@ const validateUsername = (username: string) => {
   // YouTube-inspired layout with banner
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[var(--bg-primary)] relative">
+      <OnboardingTour tourKey="profile" steps={profileTour} />
       {/* Techy Background */}
       <TechyBackground variant="minimal" />
       
@@ -716,6 +719,7 @@ const validateUsername = (username: string) => {
           
           <button
             onClick={() => setIsEditing(!isEditing)}
+            data-tour="edit-button"
             className="flex items-center gap-2 bg-redCustom text-white px-4 py-2 rounded-lg hover:bg-red-700"
           >
             <FaEdit />
@@ -750,7 +754,7 @@ const validateUsername = (username: string) => {
 
         {/* Navigation Tabs */}
         <div className="border-b border-gray-200 mb-6">
-          <nav className="flex space-x-8">
+          <nav className="flex space-x-8" data-tour="profile-tabs">
             {["basic", "professional", "social", "preferences"].map((tab) => (
               <button
                 key={tab}
@@ -1245,9 +1249,9 @@ const validateUsername = (username: string) => {
 
           {/* Preferences Tab */}
           {activeTab === "preferences" && (
-            <div className="space-y-8 max-w-2xl mx-auto">
+            <div className="space-y-8 max-w-2xl mx-auto" data-tour="preferences-tab">
               {/* Onboarding Settings */}
-              <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+              <div className="bg-white dark:bg-[var(--bg-elevated)] p-6 rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                   Onboarding & Hints
                 </h3>
@@ -1280,7 +1284,7 @@ const validateUsername = (username: string) => {
                       </p>
                     </div>
                   )}
-                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200 dark:border-[var(--border-primary)]">
                     <div>
                       <p className="font-medium text-gray-900 dark:text-white">Show Scroll Hints</p>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -1305,7 +1309,7 @@ const validateUsername = (username: string) => {
               </div>
 
               {/* Password Settings */}
-              <div className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+              <div className="bg-white dark:bg-[var(--bg-elevated)] p-6 rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                     Change Password
@@ -1327,7 +1331,7 @@ const validateUsername = (username: string) => {
                       type="password"
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
-                      className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-[var(--bg-elevated)] dark:bg-gray-700 text-gray-900 dark:text-white"
+                      className="w-full border border-gray-300 dark:border-[var(--border-primary)] rounded-lg px-3 py-2 bg-white dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-white"
                       placeholder="Enter your current password"
                     />
                   </div>
@@ -1344,7 +1348,7 @@ const validateUsername = (username: string) => {
                         setShowPasswordCriteria(true);
                       }}
                       onFocus={() => setShowPasswordCriteria(true)}
-                      className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-[var(--bg-elevated)] dark:bg-gray-700 text-gray-900 dark:text-white"
+                      className="w-full border border-gray-300 dark:border-[var(--border-primary)] rounded-lg px-3 py-2 bg-white dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-white"
                       placeholder="Enter new password"
                     />
                   </div>
@@ -1390,7 +1394,7 @@ const validateUsername = (username: string) => {
                         type="password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        className={`w-full border rounded-lg px-3 py-2 bg-white dark:bg-[var(--bg-elevated)] dark:bg-gray-700 text-gray-900 dark:text-white ${
+                        className={`w-full border rounded-lg px-3 py-2 bg-white dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-white ${
                           confirmPassword && !passwordsMatch
                             ? 'border-red-500 dark:border-red-500'
                             : 'border-gray-300 dark:border-gray-600'

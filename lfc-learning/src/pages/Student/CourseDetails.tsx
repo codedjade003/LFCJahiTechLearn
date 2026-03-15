@@ -996,7 +996,7 @@ export default function CourseDetails() {
       <OnboardingTour tourKey="courseDetails" steps={courseDetailsTour} />
       
       {/* Header */}
-      <header className="bg-white dark:bg-[var(--bg-elevated)] border-b border-[var(--border-primary)] shadow-sm">
+      <header className="bg-white dark:bg-[var(--bg-elevated)] border-b border-[var(--border-primary)] shadow-sm" data-tour="course-header">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
@@ -1038,7 +1038,7 @@ export default function CourseDetails() {
           </div>
 
           {/* Navigation Tabs */}
-          <nav className="flex space-x-8 mt-4 border-b">
+          <nav className="flex space-x-8 mt-4 border-b" data-tour="course-tabs">
             {(['overview', 'modules'] as Page[]).map((page) => (
               <button
                 key={page}
@@ -1080,6 +1080,7 @@ export default function CourseDetails() {
         )}
         {/* Sidebar - Course Outline */}
         <aside
+          data-tour="course-sidebar"
           className={`absolute md:static inset-y-0 left-0 z-40 w-72 md:w-80 bg-white dark:bg-[var(--bg-elevated)] border-r border-[var(--border-primary)] overflow-y-auto transform transition-transform duration-300 ${
             isSidebarOpen ? "translate-x-0" : "-translate-x-full"
           } md:translate-x-0`}
@@ -1183,7 +1184,7 @@ export default function CourseDetails() {
         </aside>
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto bg-white dark:bg-[var(--bg-elevated)] p-6">
+        <main className="flex-1 overflow-y-auto bg-white dark:bg-[var(--bg-elevated)] p-6" data-tour="course-main-content">
           <AnimatePresence mode="wait">
             {activePage === 'overview' && (
               <motion.div

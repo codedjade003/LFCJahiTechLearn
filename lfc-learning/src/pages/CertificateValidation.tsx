@@ -130,7 +130,7 @@ export default function CertificateValidation() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gray-50 dark:bg-[var(--bg-primary)] flex items-center justify-center p-4">
         <div className="text-center">
           <FaSpinner className="text-5xl text-blue-600 dark:text-blue-400 animate-spin mx-auto mb-4" />
           <p className="text-xl font-semibold text-gray-800 dark:text-gray-200">Validating certificate...</p>
@@ -142,8 +142,8 @@ export default function CertificateValidation() {
 
   if (error || !certificate) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 text-center border border-gray-200 dark:border-gray-700">
+      <div className="min-h-screen bg-gray-50 dark:bg-[var(--bg-primary)] flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white dark:bg-[var(--bg-elevated)] rounded-lg shadow-lg p-8 text-center border border-gray-200 dark:border-[var(--border-primary)]">
           <FaTimesCircle className="text-6xl text-red-500 dark:text-red-400 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Invalid Certificate</h1>
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4 mb-6 rounded-lg">
@@ -174,10 +174,10 @@ export default function CertificateValidation() {
   return (
     <>
       <style>{printStyles}</style>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
+      <div className="min-h-screen bg-gray-50 dark:bg-[var(--bg-primary)] py-8 px-4">
         <div className="max-w-4xl mx-auto">
           {/* Success Header */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 mb-6 text-center border border-gray-200 dark:border-gray-700 no-print">
+          <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-xl shadow-lg p-8 mb-6 text-center border border-gray-200 dark:border-[var(--border-primary)] no-print">
             <div className="flex items-center justify-center gap-4 mb-4">
               <img 
                 src="/logo.png" 
@@ -195,7 +195,7 @@ export default function CertificateValidation() {
           </div>
 
           {/* Certificate Details */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-8 border border-gray-200 dark:border-gray-700 print-area">
+          <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-xl shadow-2xl p-8 border border-gray-200 dark:border-[var(--border-primary)] print-area">
             <CertificateCard
               studentName={certificate.studentName}
               courseTitle={certificate.courseTitle}

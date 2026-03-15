@@ -157,7 +157,7 @@ export default function ForgotPassword() {
             ? handleVerifyCode
             : handleResetPassword
         }
-        className="bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-elevated)] p-6 rounded-lg shadow-md dark:shadow-[var(--shadow-xl)] w-full max-w-md border dark:border-[var(--border-primary)]"
+        className="bg-white dark:bg-[var(--bg-elevated)] p-6 rounded-lg shadow-md dark:shadow-[var(--shadow-xl)] w-full max-w-md border dark:border-[var(--border-primary)]"
       >
         <h2 className="text-2xl font-semibold mb-4 text-center text-gray-900 dark:text-[var(--text-primary)]">
           {step === "request"
@@ -177,7 +177,7 @@ export default function ForgotPassword() {
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 mb-4 border dark:border-[var(--border-primary)] rounded-lg bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)] focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)]"
+              className="w-full p-3 mb-4 border dark:border-[var(--border-primary)] rounded-lg bg-white dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)] focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)]"
               required
             />
             <button
@@ -205,7 +205,7 @@ export default function ForgotPassword() {
                   value={digit}
                   onChange={(e) => handleChange(e.target.value, idx)}
                   onKeyDown={(e) => handleKeyDown(e, idx)}
-                  className="w-12 h-12 border dark:border-[var(--border-primary)] rounded-lg bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)] text-center text-xl focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)]"
+                  className="w-12 h-12 border dark:border-[var(--border-primary)] rounded-lg bg-white dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)] text-center text-xl focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)]"
                 />
               ))}
             </div>
@@ -245,7 +245,7 @@ export default function ForgotPassword() {
                   setShowPasswordCriteria(true);
                 }}
                 onFocus={() => setShowPasswordCriteria(true)}
-                className="w-full p-3 border dark:border-[var(--border-primary)] rounded-lg bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)] focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)]"
+                className="w-full p-3 border dark:border-[var(--border-primary)] rounded-lg bg-white dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)] focus:ring-2 focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)]"
                 required
               />
             </div>
@@ -285,7 +285,7 @@ export default function ForgotPassword() {
                   placeholder="Confirm new password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className={`w-full p-3 border rounded-lg bg-white dark:bg-[var(--bg-elevated)] dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)] focus:ring-2 ${
+                  className={`w-full p-3 border rounded-lg bg-white dark:bg-[var(--bg-tertiary)] text-gray-900 dark:text-[var(--text-primary)] focus:ring-2 ${
                     confirmPassword && !passwordsMatch
                       ? 'border-red-500 dark:border-red-500 focus:ring-red-500'
                       : 'border-gray-200 dark:border-[var(--border-primary)] focus:ring-goldCustom dark:focus:ring-[var(--lfc-gold)]'

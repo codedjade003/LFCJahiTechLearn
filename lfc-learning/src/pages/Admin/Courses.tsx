@@ -93,7 +93,7 @@ export default function Course() {
       <div className="flex flex-1 overflow-hidden relative">
         {/* Sidebar */}
         <aside className={`absolute md:static inset-y-0 left-0 z-30 w-64 bg-white dark:bg-[var(--bg-elevated)] border-r border-yt-light-border dark:border-gray-700 flex-shrink-0 overflow-y-auto shadow-sm transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
-          <nav className="p-3">
+          <nav className="p-3" data-tour="course-management-tabs">
             <div className="mb-6">
               <h2 className="px-3 py-2 text-xs font-medium text-yt-text-light uppercase tracking-wider">Course Setup</h2>
               <ul>

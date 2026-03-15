@@ -11,6 +11,21 @@ const adminSupportTour: Step[] = [
     content: "Welcome to the Support Dashboard! Here you can view and manage all user support tickets.",
     placement: "center",
   },
+  {
+    target: '[data-tour="admin-support-stats"]',
+    content: "These cards summarize open, in-progress, and resolved ticket counts.",
+    placement: "bottom",
+  },
+  {
+    target: '[data-tour="admin-support-filters"]',
+    content: "Use filters to narrow tickets by status, category, and urgency.",
+    placement: "bottom",
+  },
+  {
+    target: '[data-tour="admin-support-list"]',
+    content: "Review tickets here, update status, assign ownership, and open full conversations.",
+    placement: "top",
+  },
 ];
 
 const SupportDashboard: React.FC = () => {
@@ -211,7 +226,7 @@ const SupportDashboard: React.FC = () => {
       </div>
 
       {/* Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6" data-tour="admin-support-stats">
         <div className="bg-white dark:bg-[var(--bg-elevated)] p-4 rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
           <div className="flex items-center justify-between">
             <div>
@@ -254,7 +269,7 @@ const SupportDashboard: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-4 mb-6">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)] p-4 mb-6" data-tour="admin-support-filters">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <select
             value={filters.status}
@@ -303,7 +318,7 @@ const SupportDashboard: React.FC = () => {
       </div>
 
       {/* Tickets Table */}
-      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)]">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-gray-200 dark:border-[var(--border-primary)]" data-tour="admin-support-list">
         <div className="p-4 border-b border-gray-200 dark:border-[var(--border-primary)]">
           <h3 className="font-semibold text-gray-900 dark:text-[var(--text-primary)]">Support Tickets</h3>
           <p className="text-sm text-gray-600 dark:text-[var(--text-secondary)] mt-1">
@@ -393,7 +408,7 @@ const SupportDashboard: React.FC = () => {
 
       {/* Ticket Detail Modal */}
       {selectedTicket && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-55">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[1200]">
           <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg max-w-4xl w-full h-[80vh] flex flex-col">
             {/* Header */}
             <div className="bg-lfc-red dark:bg-red-800 text-white p-4 rounded-t-lg flex justify-between items-center">

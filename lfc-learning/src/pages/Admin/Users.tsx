@@ -17,7 +17,7 @@ const userManagementTour: Step[] = [
     placement: "center",
   },
   {
-    target: "aside",
+    target: '[data-tour="user-management-tabs"]',
     content: "Use these tabs to navigate: All Users shows everyone, Add Users lets you create accounts, Access Settings manages roles, and Logs tracks user activities.",
     placement: "right",
   },
@@ -90,7 +90,7 @@ export default function Users() {
             isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
           }`}
         >
-          <nav className="p-3">
+          <nav className="p-3" data-tour="user-management-tabs">
             <div className="mb-6">
               <h2 className="px-3 py-2 text-xs font-medium text-yt-text-light uppercase tracking-wider">
                 User Controls

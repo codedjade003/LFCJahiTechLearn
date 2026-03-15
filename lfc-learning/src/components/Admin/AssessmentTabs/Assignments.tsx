@@ -14,6 +14,8 @@ import {
 } from "react-icons/fa";
 import AssignmentSubmissionModal from "./AssignmentSubmissionModal";
 import { useNotification } from "../../../hooks/useNotification";
+import OnboardingTour from "../../shared/OnboardingTour";
+import { assessmentGradingTour } from "../../../config/onboardingTours";
 
 interface AssignmentSubmission {
   _id: string;
@@ -305,6 +307,7 @@ const getStatusBadge = (submission: AssignmentSubmission) => {
 
   return (
     <div className="p-6">
+      <OnboardingTour tourKey="assessmentGrading" steps={assessmentGradingTour} />
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div>
@@ -418,7 +421,7 @@ const getStatusBadge = (submission: AssignmentSubmission) => {
       </div>
 
       {/* Submissions List */}
-      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-[var(--border-primary)]">
+      <div className="bg-white dark:bg-[var(--bg-elevated)] rounded-lg border border-[var(--border-primary)]" data-tour="pending-list">
         <div className="p-4 border-b border-yt-light-border">
           <h3 className="font-semibold text-yt-text-dark">Assignment Submissions</h3>
         </div>
@@ -491,6 +494,7 @@ const getStatusBadge = (submission: AssignmentSubmission) => {
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => openSubmission(submission)}
+                        data-tour="grade-submission"
                         className={`p-2 rounded-lg transition-colors ${
                           canGrade 
                             ? 'text-yt-text-gray hover:text-lfc-red hover:bg-red-50' 
