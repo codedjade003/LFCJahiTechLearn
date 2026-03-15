@@ -105,8 +105,8 @@ export const profileTour: Step[] = [
     disableBeacon: true,
   },
   {
-    target: '[data-tour="theme-preference"]',
-    content: "Use this setting to switch between light and dark mode anytime from your profile preferences.",
+    target: '[data-tour="preferences-tab-button"]',
+    content: "Next stop is Preferences. Click this tab anytime to open onboarding controls and theme mode settings.",
     placement: "top-start",
     disableBeacon: true,
   },

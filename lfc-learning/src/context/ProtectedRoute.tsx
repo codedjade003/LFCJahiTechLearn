@@ -9,7 +9,8 @@ interface ProtectedRouteProps {
 
 export default function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
   const token = localStorage.getItem("token");
-  const isVerified = localStorage.getItem("isVerified") === "true";
+  const isVerifiedRaw = localStorage.getItem("isVerified");
+  const isVerified = isVerifiedRaw === null ? true : isVerifiedRaw === "true";
   const role = localStorage.getItem("role");
   const location = useLocation();
 

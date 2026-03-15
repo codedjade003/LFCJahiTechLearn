@@ -1,5 +1,5 @@
 // src/pages/ProfilePage.tsx
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 import { useOnboarding } from "../../context/OnboardingContext";
@@ -64,6 +64,7 @@ const ProfilePage = () => {
   const [scrollHintsEnabled, setScrollHintsEnabled] = useState(true);
   const [preferencesLoading, setPreferencesLoading] = useState(false);
   const [tourResetMessage, setTourResetMessage] = useState<string | null>(null);
+  const hasTriedSessionRestore = useRef(false);
 
   const passwordCriteria = useMemo<PasswordCriteria>(() => ({
     minLength: newPassword.length >= 8,
@@ -104,6 +105,15 @@ const ProfilePage = () => {
       setCoverPosition(user.coverPhoto.position);
     }
   }, [user?.coverPhoto?.position]);
+
+  // Deep-refresh guard: if auth context is briefly empty but a token exists, restore once.
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!user && token && !hasTriedSessionRestore.current) {
+      hasTriedSessionRestore.current = true;
+      void fetchUser();
+    }
+  }, [fetchUser, user]);
 
   if (!user) return <div className="flex justify-center items-center min-h-screen">
     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-redCustom"></div>
@@ -275,7 +285,13 @@ const ProfilePage = () => {
 
 
 // Then update the education state with proper typing
-  const [education, setEducation] = useState<Education[]>(user.education || []);
+  const [education, setEducation] = useState<Education[]>(user?.education || []);
+
+  useEffect(() => {
+    if (user?.education) {
+      setEducation(user.education);
+    }
+  }, [user?.education]);
 
   const handleEducationChange = (index: number, field: keyof Education, value: string | number | boolean) => {
     const updatedEducation = [...education];
@@ -781,6 +797,7 @@ const validateUsername = (username: string) => {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
+                data-tour={tab === "preferences" ? "preferences-tab-button" : undefined}
                 className={`py-2 px-1 border-b-2 font-medium text-sm capitalize ${
                   activeTab === tab
                     ? "border-redCustom text-redCustom"
