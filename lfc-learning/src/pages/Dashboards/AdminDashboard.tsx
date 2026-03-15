@@ -135,7 +135,12 @@ export default function AdminDashboard(): JSX.Element {
       {/* Content */}
       <div className="relative z-10 space-y-6 p-3 sm:p-4 md:p-6 overflow-y-auto">
         {/* Onboarding Tour */}
-        <OnboardingTour tourKey="adminDashboard" steps={adminDashboardTour} />
+        <OnboardingTour
+          tourKey="adminDashboard"
+          steps={adminDashboardTour}
+          safeViewportScroll
+          scrollToFirstStep={false}
+        />
       
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" data-tour="stats">
