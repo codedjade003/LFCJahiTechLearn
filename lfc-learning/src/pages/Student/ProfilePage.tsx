@@ -2,6 +2,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
+import { useOnboarding } from "../../context/OnboardingContext";
 import TechyBackground from "../../components/shared/TechyBackground";
 import OnboardingTour from "../../components/shared/OnboardingTour";
 import { profileTour } from "../../config/onboardingTours";
@@ -34,6 +35,7 @@ interface PasswordCriteria {
 const ProfilePage = () => {
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const { user, setUser, fetchUser } = useAuth();
+  const { resetProgress } = useOnboarding();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -61,6 +63,7 @@ const ProfilePage = () => {
   const [onboardingEnabled, setOnboardingEnabled] = useState(true);
   const [scrollHintsEnabled, setScrollHintsEnabled] = useState(true);
   const [preferencesLoading, setPreferencesLoading] = useState(false);
+  const [tourResetMessage, setTourResetMessage] = useState<string | null>(null);
 
   const passwordCriteria = useMemo<PasswordCriteria>(() => ({
     minLength: newPassword.length >= 8,
@@ -246,10 +249,10 @@ const ProfilePage = () => {
         if (key === "theme") {
           setTheme(value);
         } else if (key === "onboardingEnabled") {
+          setOnboardingEnabled(value);
         } else if (key === "scrollHintsEnabled") {
           setScrollHintsEnabled(value);
           localStorage.setItem("scrollHintsDisabled", value ? "false" : "true");
-          setOnboardingEnabled(value);
         }
       }
     } catch (err) {
@@ -257,6 +260,17 @@ const ProfilePage = () => {
     } finally {
       setPreferencesLoading(false);
     }
+  };
+
+  const handleRestartTours = async () => {
+    setTourResetMessage(null);
+    resetProgress();
+
+    if (!onboardingEnabled) {
+      await handlePreferenceUpdate("onboardingEnabled", true);
+    }
+
+    setTourResetMessage("Tours reset. Navigate through dashboard pages to replay Joyride flows.");
   };
 
 
@@ -1304,6 +1318,30 @@ const validateUsername = (username: string) => {
                         }`}
                       />
                     </button>
+                  </div>
+
+                  <div className="mt-4 pt-4 border-t border-gray-200 dark:border-[var(--border-primary)]">
+                    <div className="flex items-center justify-between gap-4">
+                      <div>
+                        <p className="font-medium text-gray-900 dark:text-white">Replay Joyride Tours</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          Reset onboarding progress so you can manually run all tours again for testing.
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleRestartTours}
+                        disabled={preferencesLoading}
+                        className="px-4 py-2 bg-lfc-gold text-white rounded-lg hover:bg-lfc-gold-hover disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Restart Tours
+                      </button>
+                    </div>
+                    {tourResetMessage && (
+                      <p className="mt-2 text-sm text-green-600 dark:text-[var(--success)]">
+                        {tourResetMessage}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>

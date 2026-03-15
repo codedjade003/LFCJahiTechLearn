@@ -5,6 +5,7 @@ import { FaArrowDown, FaTimes, FaCog } from "react-icons/fa";
 const ScrollHint = () => {
   const [show, setShow] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     // Check if hint was shown today
@@ -41,12 +42,24 @@ const ScrollHint = () => {
 
   if (!show) return null;
 
+  const animationState = isHovered ? "paused" : "running";
+
   return (
-    <div className="fixed top-20 right-4 z-50 animate-bounce">
+    <div
+      className="fixed top-20 right-4 z-[1250] animate-bounce"
+      style={{ animationPlayState: animationState }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onFocus={() => setIsHovered(true)}
+      onBlur={() => setIsHovered(false)}
+    >
       <div className="bg-white dark:bg-[var(--bg-elevated)] border-2 border-lfc-gold dark:border-yellow-500 rounded-lg shadow-lg p-4 max-w-xs">
         <div className="flex items-start justify-between mb-2">
           <div className="flex items-center space-x-2">
-            <FaArrowDown className="text-lfc-gold dark:text-yellow-400 animate-bounce" />
+            <FaArrowDown
+              className="text-lfc-gold dark:text-yellow-400 animate-bounce"
+              style={{ animationPlayState: animationState }}
+            />
             <h3 className="text-sm font-semibold text-gray-900 dark:text-[var(--text-primary)]">
               Scroll Tip
             </h3>
