@@ -13,6 +13,7 @@ interface OnboardingTourProps {
   disableScrolling?: boolean;
   scrollToFirstStep?: boolean;
   safeViewportScroll?: boolean;
+  onStepBefore?: (index: number) => void;
 }
 
 export default function OnboardingTour({
@@ -24,6 +25,7 @@ export default function OnboardingTour({
   disableScrolling = false,
   scrollToFirstStep = false,
   safeViewportScroll = false,
+  onStepBefore,
 }: OnboardingTourProps) {
   const { shouldShowTour, completeTour, skipAllTours } = useOnboarding();
   const { theme } = useTheme();
@@ -121,17 +123,33 @@ export default function OnboardingTour({
       const rect = target.getBoundingClientRect();
       const topPadding = isMobile ? 76 : 92;
       const bottomPadding = 24;
-      const inViewport = rect.top >= topPadding && rect.bottom <= window.innerHeight - bottomPadding;
+      const upperBound = topPadding;
+      const lowerBound = window.innerHeight - bottomPadding;
 
-      if (inViewport) return;
+      let delta = 0;
 
-      const centerY = window.scrollY + rect.top + rect.height / 2;
-      const targetScrollTop = Math.max(centerY - window.innerHeight / 2 - topPadding / 2, 0);
+      // Nudge upward if top edge is hidden behind sticky areas.
+      if (rect.top < upperBound) {
+        delta = rect.top - upperBound;
+      }
+
+      // Nudge downward if bottom edge is cut off by viewport.
+      if (rect.bottom > lowerBound) {
+        delta = rect.bottom - lowerBound;
+      }
+
+      if (Math.abs(delta) < 6) return;
+
+      const targetScrollTop = Math.max(window.scrollY + delta, 0);
       window.scrollTo({ top: targetScrollTop, behavior: "smooth" });
     };
 
-    if (type === EVENTS.STEP_BEFORE && safeViewportScroll && typeof index === "number") {
-      setTimeout(() => keepStepInViewport(index), 30);
+    if (type === EVENTS.STEP_BEFORE && typeof index === "number") {
+      onStepBefore?.(index);
+
+      if (safeViewportScroll) {
+        setTimeout(() => keepStepInViewport(index), 30);
+      }
     }
 
     if (type === EVENTS.STEP_AFTER) {

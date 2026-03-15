@@ -627,7 +627,15 @@ const validateUsername = (username: string) => {
   // YouTube-inspired layout with banner
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[var(--bg-primary)] relative">
-      <OnboardingTour tourKey="profile" steps={profileTour} />
+      <OnboardingTour
+        tourKey="profile"
+        steps={profileTour}
+        onStepBefore={(index) => {
+          if (index === 3) {
+            setActiveTab("preferences");
+          }
+        }}
+      />
       {/* Techy Background */}
       <TechyBackground variant="minimal" />
       
