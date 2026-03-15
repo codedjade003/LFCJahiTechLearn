@@ -12,6 +12,7 @@ interface OnboardingTourProps {
   showSkipButton?: boolean;
   disableScrolling?: boolean;
   scrollToFirstStep?: boolean;
+  safeViewportScroll?: boolean;
 }
 
 export default function OnboardingTour({
@@ -22,6 +23,7 @@ export default function OnboardingTour({
   showSkipButton = true,
   disableScrolling = false,
   scrollToFirstStep = false,
+  safeViewportScroll = false,
 }: OnboardingTourProps) {
   const { shouldShowTour, completeTour, skipAllTours } = useOnboarding();
   const { theme } = useTheme();
@@ -108,6 +110,29 @@ export default function OnboardingTour({
 
   const handleJoyrideCallback = async (data: CallBackProps) => {
     const { status, action, type, index } = data;
+
+    const keepStepInViewport = (stepIdx: number) => {
+      const step = steps[stepIdx];
+      if (!step || typeof step.target !== "string") return;
+
+      const target = document.querySelector(step.target) as HTMLElement | null;
+      if (!target) return;
+
+      const rect = target.getBoundingClientRect();
+      const topPadding = isMobile ? 76 : 92;
+      const bottomPadding = 24;
+      const inViewport = rect.top >= topPadding && rect.bottom <= window.innerHeight - bottomPadding;
+
+      if (inViewport) return;
+
+      const centerY = window.scrollY + rect.top + rect.height / 2;
+      const targetScrollTop = Math.max(centerY - window.innerHeight / 2 - topPadding / 2, 0);
+      window.scrollTo({ top: targetScrollTop, behavior: "smooth" });
+    };
+
+    if (type === EVENTS.STEP_BEFORE && safeViewportScroll && typeof index === "number") {
+      setTimeout(() => keepStepInViewport(index), 30);
+    }
 
     if (type === EVENTS.STEP_AFTER) {
       const delta = action === ACTIONS.PREV ? -1 : 1;

@@ -531,7 +531,7 @@ const StudentDashboard = () => {
         <OnboardingTour
           tourKey="dashboard"
           steps={dashboardTourSteps}
-          disableScrolling
+          safeViewportScroll
           scrollToFirstStep={false}
         />
 
