@@ -10,6 +10,8 @@ interface OnboardingTourProps {
   continuous?: boolean;
   showProgress?: boolean;
   showSkipButton?: boolean;
+  disableScrolling?: boolean;
+  scrollToFirstStep?: boolean;
 }
 
 export default function OnboardingTour({
@@ -18,6 +20,8 @@ export default function OnboardingTour({
   continuous = true,
   showProgress = true,
   showSkipButton = true,
+  disableScrolling = false,
+  scrollToFirstStep = false,
 }: OnboardingTourProps) {
   const { shouldShowTour, completeTour, skipAllTours } = useOnboarding();
   const { theme } = useTheme();
@@ -69,7 +73,7 @@ export default function OnboardingTour({
         backgroundColor: isDarkMode ? "#1A1D22" : "#FFFFFF",
         overlayColor: isDarkMode ? "rgba(0, 0, 0, 0.72)" : "rgba(0, 0, 0, 0.5)",
         arrowColor: isDarkMode ? "#1A1D22" : "#FFFFFF",
-        zIndex: 10000,
+        zIndex: 20000,
       },
       tooltip: {
         borderRadius: "12px",
@@ -179,8 +183,8 @@ export default function OnboardingTour({
       disableOverlayClose
       disableCloseOnEsc
       spotlightClicks
-      disableScrolling={false}
-      scrollToFirstStep={false}
+      disableScrolling={disableScrolling}
+      scrollToFirstStep={scrollToFirstStep}
       scrollOffset={isMobile ? 56 : 100}
     />
   );

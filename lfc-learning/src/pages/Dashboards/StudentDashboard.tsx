@@ -528,7 +528,12 @@ const StudentDashboard = () => {
       {/* Content */}
       <div className="relative z-0">
         {/* Onboarding Tour - Shows BEFORE profile completion */}
-        <OnboardingTour tourKey="dashboard" steps={dashboardTourSteps} />
+        <OnboardingTour
+          tourKey="dashboard"
+          steps={dashboardTourSteps}
+          disableScrolling
+          scrollToFirstStep={false}
+        />
 
       {/* Profile completion banner */}
       {showBanner && (

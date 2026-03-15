@@ -1320,6 +1320,43 @@ const validateUsername = (username: string) => {
                     </button>
                   </div>
 
+                  <div className="mt-4 pt-4 border-t border-gray-200 dark:border-[var(--border-primary)]" data-tour="theme-preference">
+                    <div className="flex items-center justify-between gap-4">
+                      <div>
+                        <p className="font-medium text-gray-900 dark:text-white">Theme Mode</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          Choose how the platform looks while you learn.
+                        </p>
+                      </div>
+                      <div className="inline-flex rounded-lg border border-gray-300 dark:border-[var(--border-primary)] overflow-hidden">
+                        <button
+                          type="button"
+                          onClick={() => handlePreferenceUpdate("theme", "light")}
+                          disabled={preferencesLoading}
+                          className={`px-3 py-1.5 text-sm ${
+                            theme === "light"
+                              ? "bg-lfc-red text-white"
+                              : "bg-white dark:bg-[var(--bg-tertiary)] text-gray-700 dark:text-gray-300"
+                          }`}
+                        >
+                          Light
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handlePreferenceUpdate("theme", "dark")}
+                          disabled={preferencesLoading}
+                          className={`px-3 py-1.5 text-sm border-l border-gray-300 dark:border-[var(--border-primary)] ${
+                            theme === "dark"
+                              ? "bg-lfc-red text-white"
+                              : "bg-white dark:bg-[var(--bg-tertiary)] text-gray-700 dark:text-gray-300"
+                          }`}
+                        >
+                          Dark
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="mt-4 pt-4 border-t border-gray-200 dark:border-[var(--border-primary)]">
                     <div className="flex items-center justify-between gap-4">
                       <div>

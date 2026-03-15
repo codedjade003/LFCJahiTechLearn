@@ -357,7 +357,7 @@ html {
 
 /* Fix joyride floater positioning to stay in viewport */
 .react-joyride__floater {
-  z-index: 10002 !important;
+  z-index: 20002 !important;
 }
 
 /* Ensure spotlight container doesn't distort layout */
@@ -367,5 +367,5 @@ html {
 
 /* Constrain overlay to prevent screen distortion */
 .react-joyride__overlay {
-  z-index: 10000 !important;
+  z-index: 20000 !important;
 }
