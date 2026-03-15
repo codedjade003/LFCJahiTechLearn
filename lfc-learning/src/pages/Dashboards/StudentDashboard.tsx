@@ -36,26 +36,31 @@ const StudentDashboard = () => {
       target: "body",
       content: "Welcome to your Student Dashboard! Let's take a quick tour to help you get started.",
       placement: "center",
+      disableBeacon: true,
     },
     {
       target: '[data-tour="stats"]',
       content: "Here you can see your learning progress, enrolled courses, and achievements at a glance.",
-      placement: "bottom-start",
+      placement: "top-start",
+      disableBeacon: true,
     },
     {
       target: '[data-tour="search"]',
       content: "Use the search bar to quickly find courses, instructors, or topics you're interested in.",
-      placement: "bottom-start",
+      placement: "top-start",
+      disableBeacon: true,
     },
     {
       target: '[data-tour="categories"]',
       content: "Browse courses by category. Click on any category to filter the course list.",
-      placement: "bottom-start",
+      placement: "top-start",
+      disableBeacon: true,
     },
     {
       target: '[data-tour="courses"]',
       content: "All available courses are displayed here. Click on any course to view details and enroll.",
-      placement: "bottom-start",
+      placement: "top-start",
+      disableBeacon: true,
     },
   ];
 
